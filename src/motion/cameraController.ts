@@ -19,6 +19,16 @@ const ZOOM_OUT_SCALE = 1;
 const PAN_DISTANCE = 200;
 const FOCUS_SCALE = 1.2;
 const SUBTLE_DRIFT_DISTANCE = 45;
+const FRAME_HALF_WIDTH = 540;
+const FRAME_HALF_HEIGHT = 960;
+const FRAME_MARGIN = 32;
+
+interface CameraContentBounds {
+  minX: number;
+  maxX: number;
+  minY: number;
+  maxY: number;
+}
 
 const clamp = (value: number, min: number, max: number): number => Math.min(max, Math.max(min, value));
 
@@ -59,8 +69,13 @@ export interface CameraPlanInput {
   durationOverride?: number;
   action?: CameraActionType;
   focusTarget?: PixelPosition;
+  activeZone?: 'upper_third' | 'center';
+  reserveBottomPercent?: number;
   zoomOverride?: number;
   easingOverride?: string;
+  allowDrift?: boolean;
+  lockXAxis?: boolean;
+  contentBounds?: CameraContentBounds;
   logger: RuntimeLogger;
 }
 
@@ -69,16 +84,24 @@ const resolveDuration = (sceneDuration: number): number => {
   return clamp(proportionalDuration || DEFAULT_CAMERA_DURATION, MIN_CAMERA_DURATION, MAX_CAMERA_DURATION);
 };
 
-const getFocusTargetCoordinates = (focusTarget?: PixelPosition): PixelPosition => {
+const getFocusTargetCoordinates = (
+  focusTarget: PixelPosition | undefined,
+  activeZone: 'upper_third' | 'center',
+  reserveBottomPercent: number,
+): PixelPosition => {
   if (!focusTarget) {
     return {x: 0, y: 0};
   }
+
+  const clampedReserveBottomPercent = clamp(reserveBottomPercent, 0, 40);
+  const upperThirdBias = activeZone === 'upper_third' ? 80 : 0;
+  const reserveBias = clampedReserveBottomPercent * 0.25;
 
   // Invert target position because moving the camera node shifts scene space.
   // Safe offset is already applied in normalized node positions.
   return {
     x: -focusTarget.x,
-    y: -focusTarget.y,
+    y: -focusTarget.y - upperThirdBias - reserveBias,
   };
 };
 
@@ -90,6 +113,8 @@ const createCameraTransition = (
   focusTarget: PixelPosition,
   timingFunction: TimingFunction,
   zoomOverride?: number,
+  lockXAxis = false,
+  contentBounds?: CameraContentBounds,
 ): ThreadGenerator => {
   let targetScale = cameraState.scale;
   let targetX = cameraState.x;
@@ -112,7 +137,7 @@ const createCameraTransition = (
       break;
     case CameraActionType.Focus:
       targetScale = FOCUS_SCALE;
-      targetX = cameraState.originX + focusTarget.x;
+      targetX = lockXAxis ? cameraState.originX : cameraState.originX + focusTarget.x;
       targetY = cameraState.originY + focusTarget.y;
       break;
     case CameraActionType.Wide:
@@ -126,6 +151,27 @@ const createCameraTransition = (
 
   if (typeof zoomOverride === 'number') {
     targetScale = zoomOverride;
+  }
+
+  if (contentBounds) {
+    const contentWidth = Math.max(1, contentBounds.maxX - contentBounds.minX);
+    const contentHeight = Math.max(1, contentBounds.maxY - contentBounds.minY);
+    const frameWidth = FRAME_HALF_WIDTH * 2 - FRAME_MARGIN * 2;
+    const frameHeight = FRAME_HALF_HEIGHT * 2 - FRAME_MARGIN * 2;
+    const fitScale = Math.min(frameWidth / contentWidth, frameHeight / contentHeight);
+    targetScale = Math.max(0.72, Math.min(targetScale, fitScale));
+
+    const minTargetX = (-FRAME_HALF_WIDTH + FRAME_MARGIN) / targetScale - contentBounds.minX;
+    const maxTargetX = (FRAME_HALF_WIDTH - FRAME_MARGIN) / targetScale - contentBounds.maxX;
+    const minTargetY = (-FRAME_HALF_HEIGHT + FRAME_MARGIN) / targetScale - contentBounds.minY;
+    const maxTargetY = (FRAME_HALF_HEIGHT - FRAME_MARGIN) / targetScale - contentBounds.maxY;
+
+    if (!lockXAxis) {
+      targetX = minTargetX <= maxTargetX ? clamp(targetX, minTargetX, maxTargetX) : (minTargetX + maxTargetX) / 2;
+    } else {
+      targetX = minTargetX <= maxTargetX ? clamp(targetX, minTargetX, maxTargetX) : cameraState.originX;
+    }
+    targetY = minTargetY <= maxTargetY ? clamp(targetY, minTargetY, maxTargetY) : (minTargetY + maxTargetY) / 2;
   }
 
   cameraState.scale = targetScale;
@@ -169,12 +215,21 @@ export const createCameraPlan = ({
   durationOverride,
   action,
   focusTarget,
+  activeZone = 'upper_third',
+  reserveBottomPercent = 25,
   zoomOverride,
   easingOverride,
+  allowDrift = true,
+  lockXAxis = false,
+  contentBounds,
   logger,
 }: CameraPlanInput): CameraPlan | null => {
   const resolvedAction = action;
-  const targetCoordinates = getFocusTargetCoordinates(focusTarget);
+  const targetCoordinates = getFocusTargetCoordinates(
+    focusTarget,
+    activeZone,
+    reserveBottomPercent,
+  );
   const baseDuration = durationOverride ?? resolveDuration(sceneDuration);
   const timingFunction = resolveTimingFunction(easingOverride);
 
@@ -184,7 +239,7 @@ export const createCameraPlan = ({
     return null;
   }
 
-  const driftPlan = createSubtleDrift(view, cameraState, sceneDuration);
+  const driftPlan = allowDrift ? createSubtleDrift(view, cameraState, sceneDuration) : null;
 
   if (cameraState.lastAction === resolvedAction) {
     cameraState.actionStreak += 1;
@@ -210,6 +265,8 @@ export const createCameraPlan = ({
     targetCoordinates,
     timingFunction,
     zoomOverride,
+    lockXAxis,
+    contentBounds,
   );
 
   if (!driftPlan) {

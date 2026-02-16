@@ -13,6 +13,8 @@ import {AnimationType, CameraActionType} from '../schema/visualGrammar.js';
 export type SlideDirection = 'left' | 'right' | 'up' | 'down';
 
 const SLIDE_DISTANCE = 140;
+const DROP_ENTRY_DISTANCE = 150;
+const DROP_BOUNCE_OVERSHOOT = 10;
 const DEFAULT_FADE_IN_DURATION = 0.35;
 const DEFAULT_SHAKE_INTENSITY = 8;
 
@@ -96,6 +98,27 @@ export function* applyScaleIn(node: Node, duration = 0.55): ThreadGenerator {
   yield* node.scale(1, duration * 0.3, easeInOutCubic);
 }
 
+export function* applyDropBounce(node: Node, duration = 0.55): ThreadGenerator {
+  const targetY = node.y();
+  const phaseOneDuration = Math.max(0.08, duration * 0.64);
+  const phaseTwoDuration = Math.max(0.06, duration - phaseOneDuration);
+
+  node.y(targetY - DROP_ENTRY_DISTANCE);
+  node.scale(0.96);
+  node.opacity(Math.min(node.opacity(), 0.2));
+
+  yield* all(
+    node.y(targetY + DROP_BOUNCE_OVERSHOOT, phaseOneDuration, easeOutCubic),
+    node.opacity(1, Math.max(0.08, phaseOneDuration * 0.75), easeOutCubic),
+    node.scale(1.02, phaseOneDuration, easeOutCubic),
+  );
+
+  yield* all(
+    node.y(targetY, phaseTwoDuration, easeInOutCubic),
+    node.scale(1, phaseTwoDuration, easeInOutCubic),
+  );
+}
+
 export interface ShakeOptions {
   duration?: number;
   intensity?: number;
@@ -134,18 +157,55 @@ export function* applyFlow(
   source: Node,
   target: Node,
   duration = 0.6,
+  options?: {
+    color?: string;
+    size?: number;
+    opacity?: number;
+  },
 ): ThreadGenerator {
-  const packet = new Circle({
-    width: 16,
-    height: 16,
-    fill: '#facc15',
-    opacity: 1,
+  const packetSize = Math.max(3, options?.size ?? 8);
+  const flowColor = options?.color ?? '#facc15';
+  const packet = new Node({
+    opacity: options?.opacity ?? 1,
+    zIndex: 30,
   });
+
+  packet.add(
+    new Circle({
+      width: packetSize * 4.6,
+      height: packetSize * 4.6,
+      fill: flowColor,
+      opacity: 0.18,
+      shadowColor: flowColor,
+      shadowBlur: packetSize * 2.6,
+    }),
+  );
+  packet.add(
+    new Circle({
+      width: packetSize * 2.2,
+      height: packetSize * 2.2,
+      fill: flowColor,
+      opacity: 0.65,
+    }),
+  );
+  packet.add(
+    new Circle({
+      width: packetSize,
+      height: packetSize,
+      fill: '#ffffff',
+      opacity: 0.95,
+    }),
+  );
 
   container.add(packet);
   packet.position(source.position());
+  packet.scale(0.92);
 
-  yield* packet.position(target.position(), duration, linear);
+  yield* all(
+    packet.position(target.position(), duration, linear),
+    packet.scale(1.08, duration * 0.35, easeOutCubic).to(0.88, duration * 0.65, easeInOutCubic),
+    packet.opacity(options?.opacity ?? 1, duration * 0.35, linear).to(0.08, duration * 0.65, linear),
+  );
   packet.remove();
 }
 
@@ -158,7 +218,7 @@ export function* runElementAnimation(node: Node, animation: AnimationType): Thre
 
   switch (animation) {
     case AnimationType.ZoomIn:
-      yield* applyScaleIn(node, duration);
+      yield* applyDropBounce(node, duration);
       break;
     case AnimationType.ZoomOut:
       node.scale(1.1);
@@ -194,11 +254,22 @@ export function* runElementAnimationTimed(
   switch (animation) {
     case AnimationType.ZoomIn: {
       const targetScale = options.scaleTarget ?? 1;
-      node.scale(0.84);
-      node.opacity(Math.min(node.opacity(), 0.2));
+      const targetY = node.y();
+      const phaseOneDuration = Math.max(0.08, duration * 0.62);
+      const phaseTwoDuration = Math.max(0.06, duration - phaseOneDuration);
+
+      node.y(targetY - Math.max(48, DROP_ENTRY_DISTANCE * 0.48));
+      node.scale(Math.max(0.05, targetScale * 0.05));
+      node.opacity(Math.min(node.opacity(), 0.05));
+
       yield* all(
-        node.scale(targetScale, duration, timing),
-        node.opacity(1, duration * 0.85, timing),
+        node.y(targetY + DROP_BOUNCE_OVERSHOOT, phaseOneDuration, easeOutBack),
+        node.scale(targetScale * 1.1, phaseOneDuration, easeOutBack),
+        node.opacity(1, Math.max(0.08, phaseOneDuration * 0.75), timing),
+      );
+      yield* all(
+        node.y(targetY, phaseTwoDuration, timing),
+        node.scale(targetScale, phaseTwoDuration, timing),
       );
       break;
     }

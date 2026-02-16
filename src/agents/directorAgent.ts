@@ -42,7 +42,7 @@ const cloneScene = (scene: Scene): Scene => ({
   elements: scene.elements.map(cloneElement),
 });
 
-const DEFAULT_ID_BY_COMPONENT: Record<ComponentType, string> = {
+const DEFAULT_ID_BY_COMPONENT: Partial<Record<ComponentType, string>> = {
   [ComponentType.UsersCluster]: 'users',
   [ComponentType.Server]: 'app1',
   [ComponentType.LoadBalancer]: 'lb1',
@@ -68,7 +68,7 @@ const COMPONENT_ORDER_INDEX = new Map<ComponentType, number>(
   COMPONENT_STAGE_ORDER.map((value, index) => [value, index]),
 );
 
-const COMPONENT_PREREQUISITES: Record<ComponentType, ComponentType[]> = {
+const COMPONENT_PREREQUISITES: Partial<Record<ComponentType, ComponentType[]>> = {
   [ComponentType.UsersCluster]: [],
   [ComponentType.Server]: [ComponentType.UsersCluster],
   [ComponentType.LoadBalancer]: [ComponentType.Server],
@@ -79,7 +79,7 @@ const COMPONENT_PREREQUISITES: Record<ComponentType, ComponentType[]> = {
   [ComponentType.Cdn]: [ComponentType.LoadBalancer],
 };
 
-const COMPONENT_ZONE_POSITIONS: Record<ComponentType, Position[]> = {
+const COMPONENT_ZONE_POSITIONS: Partial<Record<ComponentType, Position[]>> = {
   [ComponentType.UsersCluster]: [{x: 25, y: 56}, {x: 21, y: 50}],
   [ComponentType.Cdn]: [{x: 24, y: 28}],
   [ComponentType.LoadBalancer]: [{x: 33, y: 56}],
@@ -386,7 +386,7 @@ const fallbackTypeForBeat = (beatType: BeatType, context: DirectorContext): Comp
 };
 
 const resolveCanonicalId = (type: ComponentType, context: DirectorContext): string =>
-  context.canonicalIds.get(type) ?? DEFAULT_ID_BY_COMPONENT[type];
+  context.canonicalIds.get(type) ?? DEFAULT_ID_BY_COMPONENT[type] ?? `${type}_1`;
 
 const createFallbackElement = (type: ComponentType, context: DirectorContext): Element => ({
   id: resolveCanonicalId(type, context),
@@ -489,7 +489,7 @@ const prerequisitesSatisfied = (
   type: ComponentType,
   availableTypes: Set<ComponentType>,
 ): boolean =>
-  COMPONENT_PREREQUISITES[type].every((required) => availableTypes.has(required));
+  (COMPONENT_PREREQUISITES[type] ?? []).every((required) => availableTypes.has(required));
 
 const sortByComponentStage = (elements: Element[]): Element[] =>
   [...elements].sort((left, right) => {
@@ -612,7 +612,7 @@ const limitElements = (elements: Element[], hero: Element, beatType: BeatType): 
 };
 
 const getZonePosition = (type: ComponentType, countForType: number): Position => {
-  const zone = COMPONENT_ZONE_POSITIONS[type];
+  const zone = COMPONENT_ZONE_POSITIONS[type] ?? [HERO_CENTER];
   const index = Math.max(0, Math.min(zone.length - 1, countForType));
   const fallback = zone[index] ?? zone[0] ?? HERO_CENTER;
   return {x: fallback.x, y: fallback.y};

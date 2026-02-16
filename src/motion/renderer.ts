@@ -9,8 +9,8 @@ const buildSceneSource = (renderSpec: MotionRenderSpec): string => {
   const renderSpecLiteral = JSON.stringify(renderSpec, null, 2);
 
   return `/** @jsxImportSource @motion-canvas/2d/lib */
-import {makeScene2D, Txt} from '@motion-canvas/2d';
-import {createRef} from '@motion-canvas/core';
+import {Line, Node, makeScene2D, Txt} from '@motion-canvas/2d';
+import {all, createRef} from '@motion-canvas/core';
 import {StyleTokens} from '../config/styleTokens.js';
 import {
   createRuntimeLogger,
@@ -27,6 +27,36 @@ const TIMELINE_EPSILON = 0.001;
 export default makeScene2D(function* (view) {
   const caption = createRef<Txt>();
   view.fill(StyleTokens.colors.background);
+  const world = new Node({zIndex: 0});
+  view.add(world);
+  const gridLayer = new Node({
+    opacity: 0.05,
+    zIndex: -200,
+  });
+  const gridSpacing = 140;
+
+  for (let x = -540; x <= 540; x += gridSpacing) {
+    gridLayer.add(
+      new Line({
+        points: [[x, -960], [x, 960]],
+        stroke: '#3B4252',
+        lineWidth: 1,
+        opacity: 0.45,
+      }),
+    );
+  }
+
+  for (let y = -960; y <= 960; y += gridSpacing) {
+    gridLayer.add(
+      new Line({
+        points: [[-540, y], [540, y]],
+        stroke: '#303646',
+        lineWidth: 1,
+        opacity: 0.35,
+      }),
+    );
+  }
+  view.add(gridLayer);
 
   view.add(
     <Txt
@@ -48,27 +78,41 @@ export default makeScene2D(function* (view) {
     caption: caption(),
     logger,
   });
-  sceneState.camera.originX = view.x();
-  sceneState.camera.originY = view.y();
+  sceneState.camera.originX = world.x();
+  sceneState.camera.originY = world.y();
   sceneState.camera.x = sceneState.camera.originX;
   sceneState.camera.y = sceneState.camera.originY;
+  const sceneThread = (function* sceneLoopThread() {
+    for (const scene of renderSpec.scenes) {
+      const sceneDuration = scene.end - scene.start;
 
-  for (const scene of renderSpec.scenes) {
-    const sceneDuration = scene.end - scene.start;
+      if (sceneDuration <= 0) {
+        throw new Error(\`Invalid scene duration: \${scene.id}\`);
+      }
 
-    if (sceneDuration <= 0) {
-      throw new Error(\`Invalid scene duration: \${scene.id}\`);
+      validateSceneForRuntime(scene, logger);
+
+      yield* waitUntil(timeline, scene.start, logger);
+      yield* executeScene(world, scene, sceneState);
+      advanceTimeline(timeline, sceneState.lastExecutionDuration);
+      yield* waitUntil(timeline, scene.end, logger);
+
+      sceneState.sceneIndex += 1;
     }
+  })();
 
-    validateSceneForRuntime(scene, logger);
+  const backgroundDriftThread = (function* backgroundDrift() {
+    const cycle = 8;
+    let elapsed = 0;
 
-    yield* waitUntil(timeline, scene.start, logger);
-    yield* executeScene(view, scene, sceneState);
-    advanceTimeline(timeline, sceneState.lastExecutionDuration);
-    yield* waitUntil(timeline, scene.end, logger);
+    while (elapsed < renderSpec.duration) {
+      const step = Math.min(cycle, renderSpec.duration - elapsed);
+      yield* gridLayer.y(14, step / 2).to(0, step / 2);
+      elapsed += step;
+    }
+  })();
 
-    sceneState.sceneIndex += 1;
-  }
+  yield* all(sceneThread, backgroundDriftThread);
 
   if (Math.abs(timeline.current - renderSpec.duration) > TIMELINE_EPSILON) {
     logger.warn('Timeline mismatch', {

@@ -77,12 +77,14 @@ export const createConnection = (
   from: ConnectionAnchor,
   to: ConnectionAnchor,
   style: ConnectionVisualStyle,
+  bidirectional = false,
   laneOffset = 0,
 ): Line =>
   new Line({
     points: routeConnectionPoints(from, to, laneOffset),
     stroke: style.color,
     lineWidth: style.width,
+    startArrow: bidirectional,
     endArrow: true,
     arrowSize: style.arrowSize,
     opacity: 0.9,
@@ -94,11 +96,13 @@ export const updateConnection = (
   from: ConnectionAnchor,
   to: ConnectionAnchor,
   style: ConnectionVisualStyle,
+  bidirectional = false,
   laneOffset = 0,
 ): void => {
   line.points(routeConnectionPoints(from, to, laneOffset));
   line.stroke(style.color);
   line.lineWidth(style.width);
+  line.startArrow(bidirectional);
   line.endArrow(true);
   line.arrowSize(style.arrowSize);
   line.opacity(0.9);

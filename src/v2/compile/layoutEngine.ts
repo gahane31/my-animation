@@ -16,8 +16,8 @@ const CANVAS_WIDTH = 1080;
 const CANVAS_HEIGHT = 1920;
 
 const STACK_CENTER_X = 50;
-const STACK_TOP_Y = 14;
-const STACK_BOTTOM_Y = 88;
+const STACK_TOP_Y = 12;
+const STACK_BOTTOM_Y = 76;
 
 const clamp = (value: number, min: number, max: number): number =>
   Math.min(max, Math.max(min, value));
@@ -43,6 +43,8 @@ const resolveChainPosition = (
 };
 
 const resolveVerticalBounds = (scene: CompositionScene): {minY: number; maxY: number} => {
+  const reserveBottomPercent = scene.directives?.camera.reserve_bottom_percent ?? 25;
+  const maxLayoutBottomY = clamp(100 - reserveBottomPercent - 3, 58, STACK_BOTTOM_Y);
   const maxHalfHeight = scene.visibleEntities.reduce((largestHalfHeight, entity) => {
     const definition = COMPONENT_CATALOG[entity.type];
     const height = definition?.dimensions.height ?? 120;
@@ -51,7 +53,7 @@ const resolveVerticalBounds = (scene: CompositionScene): {minY: number; maxY: nu
   }, 0);
 
   const boundedTop = Math.max(STACK_TOP_Y, maxHalfHeight);
-  const boundedBottom = Math.min(STACK_BOTTOM_Y, 100 - maxHalfHeight);
+  const boundedBottom = Math.min(maxLayoutBottomY, 100 - maxHalfHeight);
 
   if (boundedTop >= boundedBottom) {
     const mid = (STACK_TOP_Y + STACK_BOTTOM_Y) / 2;

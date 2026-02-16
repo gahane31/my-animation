@@ -247,8 +247,10 @@ export const createLoadBalancer = (input: ComponentFactoryInput): Node => {
   const coreRadius = scaleByStyle(14, style);
   const branchOffsetX = scaleByStyle(42, style);
   const branchOffsetY = scaleByStyle(22, style);
+  const spinner = new Node({});
+  (spinner as Node & {lbSpinnerTag?: boolean}).lbSpinnerTag = true;
 
-  node.add(
+  spinner.add(
     new Line({
       points: [
         [-branchOffsetX, 0],
@@ -259,7 +261,7 @@ export const createLoadBalancer = (input: ComponentFactoryInput): Node => {
       lineWidth: Math.max(2, style.strokeWidth - 1),
     }),
   );
-  node.add(
+  spinner.add(
     new Line({
       points: [
         [0, 0],
@@ -269,7 +271,7 @@ export const createLoadBalancer = (input: ComponentFactoryInput): Node => {
       lineWidth: Math.max(2, style.strokeWidth - 1),
     }),
   );
-  node.add(
+  spinner.add(
     new Line({
       points: [
         [0, 0],
@@ -280,7 +282,7 @@ export const createLoadBalancer = (input: ComponentFactoryInput): Node => {
     }),
   );
 
-  node.add(
+  spinner.add(
     new Circle({
       width: coreRadius * 2,
       height: coreRadius * 2,
@@ -289,6 +291,8 @@ export const createLoadBalancer = (input: ComponentFactoryInput): Node => {
       lineWidth: Math.max(2, style.strokeWidth - 1),
     }),
   );
+
+  node.add(spinner);
 
   return node;
 };
@@ -438,19 +442,98 @@ export const createWorker = (input: ComponentFactoryInput): Node =>
     radius: 14,
   });
 
-export const componentFactoryMap: Record<ComponentType, ComponentFactory> = {
+export const componentFactoryMap: Partial<Record<ComponentType, ComponentFactory>> = {
   [ComponentType.UsersCluster]: createUsers,
+  [ComponentType.SingleUser]: createUsers,
+  [ComponentType.MobileApp]: createUsers,
+  [ComponentType.WebBrowser]: createUsers,
+  [ComponentType.AdminUser]: createUsers,
+  [ComponentType.ThirdPartyService]: createUsers,
+  [ComponentType.IotDevices]: createUsers,
+  [ComponentType.Dns]: createLoadBalancer,
   [ComponentType.Server]: createServer,
+  [ComponentType.MonolithApp]: createServer,
+  [ComponentType.Microservice]: createServer,
+  [ComponentType.AuthService]: createServer,
+  [ComponentType.UserService]: createServer,
+  [ComponentType.PaymentService]: createServer,
+  [ComponentType.NotificationService]: createServer,
+  [ComponentType.MediaService]: createServer,
+  [ComponentType.SearchService]: createServer,
+  [ComponentType.VirtualMachine]: createServer,
+  [ComponentType.Container]: createServer,
+  [ComponentType.KubernetesCluster]: createServer,
+  [ComponentType.AutoScalingGroup]: createServer,
+  [ComponentType.WorkerNode]: createServer,
+  [ComponentType.JobProcessor]: createServer,
   [ComponentType.LoadBalancer]: createLoadBalancer,
+  [ComponentType.Waf]: createLoadBalancer,
+  [ComponentType.ApiGateway]: createLoadBalancer,
+  [ComponentType.ReverseProxy]: createLoadBalancer,
+  [ComponentType.RateLimiter]: createLoadBalancer,
   [ComponentType.Database]: createDatabase,
+  [ComponentType.PrimaryDatabase]: createDatabase,
+  [ComponentType.ReadReplica]: createDatabase,
+  [ComponentType.ShardedDatabase]: createDatabase,
+  [ComponentType.SqlDatabase]: createDatabase,
+  [ComponentType.NoSqlDatabase]: createDatabase,
+  [ComponentType.TimeSeriesDatabase]: createDatabase,
+  [ComponentType.GraphDatabase]: createDatabase,
+  [ComponentType.ObjectStorage]: createDatabase,
+  [ComponentType.MediaStorage]: createDatabase,
+  [ComponentType.BackupStorage]: createDatabase,
   [ComponentType.Cache]: createCache,
+  [ComponentType.EdgeCache]: createCache,
+  [ComponentType.QueryCache]: createCache,
+  [ComponentType.ApplicationCache]: createCache,
   [ComponentType.Queue]: createQueue,
+  [ComponentType.MessageQueue]: createQueue,
+  [ComponentType.EventStream]: createQueue,
+  [ComponentType.PubSub]: createQueue,
+  [ComponentType.DeadLetterQueue]: createQueue,
+  [ComponentType.BatchProcessor]: createQueue,
   [ComponentType.Cdn]: createCdn,
+  [ComponentType.InternetCloud]: createCdn,
+  [ComponentType.VpcBoundary]: createCdn,
+  [ComponentType.PublicSubnet]: createCdn,
+  [ComponentType.PrivateSubnet]: createCdn,
+  [ComponentType.FirewallBoundary]: createCdn,
+  [ComponentType.ShardIndicator]: createCdn,
+  [ComponentType.GlobalRegion]: createCdn,
+  [ComponentType.FailoverNode]: createCdn,
+  [ComponentType.HealthCheck]: createCdn,
+  [ComponentType.CircuitBreaker]: createCdn,
+  [ComponentType.RetryPolicy]: createCdn,
+  [ComponentType.MultiRegion]: createCdn,
+  [ComponentType.AuthorizationLock]: createCdn,
+  [ComponentType.OAuthProvider]: createCdn,
+  [ComponentType.JwtToken]: createCdn,
+  [ComponentType.TlsEncryption]: createCdn,
+  [ComponentType.SecretsManager]: createCdn,
+  [ComponentType.Logs]: createCdn,
+  [ComponentType.MetricsDashboard]: createCdn,
+  [ComponentType.Monitoring]: createCdn,
+  [ComponentType.Alerting]: createCdn,
+  [ComponentType.Tracing]: createCdn,
+  [ComponentType.PaymentGateway]: createCdn,
+  [ComponentType.EmailSmsService]: createCdn,
+  [ComponentType.MapsService]: createCdn,
+  [ComponentType.SocialLogin]: createCdn,
+  [ComponentType.LlmApi]: createCdn,
   [ComponentType.Worker]: createWorker,
 };
 
+const fallbackFactory: ComponentFactory = (input) =>
+  createCard(input, {
+    label: input.label ?? 'Component',
+    width: 164,
+    height: 112,
+    radius: 12,
+  });
+
 export const createComponentNode = (type: ComponentType, input: ComponentFactoryInput): Node => {
-  const node = componentFactoryMap[type](input);
+  const factory = componentFactoryMap[type] ?? fallbackFactory;
+  const node = factory(input);
   if (input.style) {
     applyComponentVisualStyle(node, input.style);
   }

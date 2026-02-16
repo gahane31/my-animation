@@ -19,6 +19,24 @@ const optionalIntensitySchema = z.preprocess(
   nullToUndefined,
   z.enum(['low', 'medium', 'high']).optional(),
 );
+
+const normalizeConnectionTypeInput = (value: unknown): unknown => {
+  if (typeof value !== 'string') {
+    return value;
+  }
+
+  const normalized = value.trim().toLowerCase().replace(/[\s-]+/g, '_');
+  if (normalized === 'bothways') {
+    return 'both_ways';
+  }
+
+  return normalized;
+};
+
+const optionalConnectionTypeSchema = z.preprocess(
+  (value) => normalizeConnectionTypeInput(nullToUndefined(value)),
+  z.enum(['static', 'flowing', 'both_ways']).optional(),
+);
 const optionalTransitionStyleSchema = z.preprocess(
   nullToUndefined,
   z.enum(['hooked_split_insert', 'soft_pop']).optional(),
@@ -33,6 +51,54 @@ const sceneComplexityBudgetSchema = z.object({
   max_visible_connections: z.number().int().min(0).max(12),
   max_simultaneous_motions: z.number().int().min(1).max(6),
 });
+
+export const topologyCameraDirectivesSchema = z.object({
+  mode: z.enum(['auto', 'follow_action', 'wide_recap', 'steady']).default('auto'),
+  zoom: z.enum(['tight', 'medium', 'wide']).default('tight'),
+  active_zone: z.enum(['upper_third', 'center']).default('upper_third'),
+  reserve_bottom_percent: z.number().min(0).max(40).default(25),
+});
+
+export const topologyVisualDirectivesSchema = z.object({
+  theme: z.enum(['default', 'neon']).default('neon'),
+  background_texture: z.enum(['none', 'grid']).default('grid'),
+  glow_strength: z.enum(['soft', 'strong']).default('strong'),
+});
+
+export const topologyMotionDirectivesSchema = z.object({
+  entry_style: z.enum(['drop_bounce', 'elastic_pop']).default('elastic_pop'),
+  pacing: z.enum(['balanced', 'reel_fast']).default('reel_fast'),
+});
+
+export const topologyFlowDirectivesSchema = z.object({
+  renderer: z.enum(['dashed', 'packets', 'hybrid']).default('hybrid'),
+});
+
+export const topologySceneDirectivesSchema = z.object({
+  camera: topologyCameraDirectivesSchema.default({
+    mode: 'auto',
+    zoom: 'tight',
+    active_zone: 'upper_third',
+    reserve_bottom_percent: 25,
+  }),
+  visual: topologyVisualDirectivesSchema.default({
+    theme: 'neon',
+    background_texture: 'grid',
+    glow_strength: 'strong',
+  }),
+  motion: topologyMotionDirectivesSchema.default({
+    entry_style: 'elastic_pop',
+    pacing: 'reel_fast',
+  }),
+  flow: topologyFlowDirectivesSchema.default({
+    renderer: 'hybrid',
+  }),
+});
+
+const optionalSceneDirectivesSchema = z.preprocess(
+  nullToUndefined,
+  topologySceneDirectivesSchema.optional(),
+);
 
 export const topologyEntitySchema = z.object({
   id: z.string().min(1),
@@ -50,6 +116,7 @@ export const topologyConnectionSchema = z.object({
   kind: z.enum(CONNECTION_KINDS),
   pattern: z.enum(FLOW_PATTERNS),
   intensity: optionalIntensitySchema,
+  connection_type: optionalConnectionTypeSchema,
 });
 
 const addEntityOperationSchema = z.object({
@@ -163,6 +230,7 @@ export const topologySceneSchema = z
       nullToUndefined,
       z.enum(['wide', 'focus', 'introduce', 'steady']).optional(),
     ),
+    directives: optionalSceneDirectivesSchema,
   })
   .superRefine((scene, context) => {
     const entityIds = new Set<string>();
@@ -364,6 +432,7 @@ export const topologyPlanResponseFormat = {
             'transition',
             'complexity_budget',
             'camera_intent',
+            'directives',
           ],
           properties: {
             id: {type: 'string', minLength: 1},
@@ -406,7 +475,7 @@ export const topologyPlanResponseFormat = {
               items: {
                 type: 'object',
                 additionalProperties: false,
-                required: ['id', 'from', 'to', 'kind', 'pattern', 'intensity'],
+                required: ['id', 'from', 'to', 'kind', 'pattern', 'intensity', 'connection_type'],
                 properties: {
                   id: {type: 'string', minLength: 1},
                   from: {type: 'string', minLength: 1},
@@ -415,6 +484,12 @@ export const topologyPlanResponseFormat = {
                   pattern: {type: 'string', enum: [...FLOW_PATTERNS]},
                   intensity: {
                     anyOf: [{type: 'string', enum: ['low', 'medium', 'high']}, {type: 'null'}],
+                  },
+                  connection_type: {
+                    anyOf: [
+                      {type: 'string', enum: ['static', 'flowing', 'both_ways']},
+                      {type: 'null'},
+                    ],
                   },
                 },
               },
@@ -586,6 +661,69 @@ export const topologyPlanResponseFormat = {
             camera_intent: {
               anyOf: [{type: 'string', enum: ['wide', 'focus', 'introduce', 'steady']}, {type: 'null'}],
             },
+            directives: {
+              anyOf: [
+                {
+                  type: 'object',
+                  additionalProperties: false,
+                  required: ['camera', 'visual', 'motion', 'flow'],
+                  properties: {
+                    camera: {
+                      type: 'object',
+                      additionalProperties: false,
+                      required: ['mode', 'zoom', 'active_zone', 'reserve_bottom_percent'],
+                      properties: {
+                        mode: {
+                          type: 'string',
+                          enum: ['auto', 'follow_action', 'wide_recap', 'steady'],
+                        },
+                        zoom: {
+                          type: 'string',
+                          enum: ['tight', 'medium', 'wide'],
+                        },
+                        active_zone: {
+                          type: 'string',
+                          enum: ['upper_third', 'center'],
+                        },
+                        reserve_bottom_percent: {
+                          type: 'number',
+                          minimum: 0,
+                          maximum: 40,
+                        },
+                      },
+                    },
+                    visual: {
+                      type: 'object',
+                      additionalProperties: false,
+                      required: ['theme', 'background_texture', 'glow_strength'],
+                      properties: {
+                        theme: {type: 'string', enum: ['default', 'neon']},
+                        background_texture: {type: 'string', enum: ['none', 'grid']},
+                        glow_strength: {type: 'string', enum: ['soft', 'strong']},
+                      },
+                    },
+                    motion: {
+                      type: 'object',
+                      additionalProperties: false,
+                      required: ['entry_style', 'pacing'],
+                      properties: {
+                        entry_style: {type: 'string', enum: ['drop_bounce', 'elastic_pop']},
+                        pacing: {type: 'string', enum: ['balanced', 'reel_fast']},
+                      },
+                    },
+                    flow: {
+                      type: 'object',
+                      additionalProperties: false,
+                      required: ['renderer'],
+                      properties: {
+                        renderer: {type: 'string', enum: ['dashed', 'packets', 'hybrid']},
+                      },
+                    },
+                  },
+                },
+                {type: 'null'},
+              ],
+            },
           },
         },
       },
@@ -598,3 +736,4 @@ export type TopologyScene = z.infer<typeof topologySceneSchema>;
 export type TopologyEntity = z.infer<typeof topologyEntitySchema>;
 export type TopologyConnection = z.infer<typeof topologyConnectionSchema>;
 export type TopologyOperation = z.infer<typeof topologyOperationSchema>;
+export type TopologySceneDirectives = z.infer<typeof topologySceneDirectivesSchema>;

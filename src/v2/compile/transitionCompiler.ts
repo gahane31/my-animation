@@ -5,11 +5,13 @@ import {
   type DesignedEntity,
   type DesignedMoment,
   type DesignedMomentsVideo,
+  type Interaction,
   type MomentTransition,
 } from '../../schema/moment.schema.js';
 import {VIDEO_LIMITS} from '../../config/constants.js';
 import type {TemplateId} from '../../design/templates.js';
 import {ComponentType} from '../../schema/visualGrammar.js';
+import {COMPONENT_CATALOG} from '../catalog/componentCatalog.js';
 import type {LaidOutPlan, LaidOutScene} from '../schema/compiledPlan.schema.js';
 
 const TEMPLATE_BY_ARCHETYPE: Record<string, TemplateId> = {
@@ -24,7 +26,84 @@ const TEMPLATE_BY_ARCHETYPE: Record<string, TemplateId> = {
   ending: 'HERO_FOCUS',
 };
 
-const toCamera = (): Camera => ({mode: 'wide', zoom: 1});
+const zoomByPreset = (zoom: 'tight' | 'medium' | 'wide' | undefined): number => {
+  switch (zoom) {
+    case 'tight':
+      return 1.18;
+    case 'medium':
+      return 1.1;
+    case 'wide':
+      return 1;
+    default:
+      return 1.1;
+  }
+};
+
+const resolveFollowActionZoomCap = (scene: LaidOutScene): number => {
+  const entityCount = scene.laidOutEntities.length;
+
+  if (entityCount <= 2) {
+    return 1.18;
+  }
+
+  if (entityCount === 3) {
+    return 1.12;
+  }
+
+  if (entityCount === 4) {
+    return 1.08;
+  }
+
+  if (entityCount === 5) {
+    return 1.04;
+  }
+
+  return 1;
+};
+
+const toCamera = (scene: LaidOutScene): Camera => {
+  const directives = scene.directives;
+  const cameraMode = directives?.camera.mode ?? 'auto';
+  const fallbackZoom =
+    scene.cameraIntent === 'wide' || scene.archetype === 'recap' ? 'wide' : 'tight';
+  const zoom = zoomByPreset(directives?.camera.zoom ?? fallbackZoom);
+  const focusTarget = scene.focusEntityId;
+
+  if (cameraMode === 'wide_recap') {
+    return {mode: 'wide', zoom: zoomByPreset('wide')};
+  }
+
+  if (cameraMode === 'follow_action') {
+    const zoomCap = resolveFollowActionZoomCap(scene);
+    return {
+      mode: 'focus',
+      target: focusTarget,
+      zoom: Math.min(zoom, zoomCap),
+    };
+  }
+
+  if (cameraMode === 'steady') {
+    return {mode: 'wide', zoom: zoomByPreset('medium')};
+  }
+
+  if (scene.cameraIntent === 'focus' || scene.cameraIntent === 'introduce') {
+    return {
+      mode: 'focus',
+      target: focusTarget,
+      zoom,
+    };
+  }
+
+  if (scene.cameraIntent === 'steady') {
+    return {mode: 'wide', zoom: zoomByPreset('medium')};
+  }
+
+  if (scene.archetype === 'recap') {
+    return {mode: 'wide', zoom: zoomByPreset('wide')};
+  }
+
+  return {mode: 'wide', zoom: zoomByPreset('medium')};
+};
 
 const ensureSinglePrimary = (
   entities: DesignedEntity[],
@@ -38,21 +117,10 @@ const ensureSinglePrimary = (
   }));
 };
 
-const DEFAULT_LABEL_BY_TYPE: Record<ComponentType, string> = {
-  [ComponentType.UsersCluster]: 'Users',
-  [ComponentType.Server]: 'Server',
-  [ComponentType.LoadBalancer]: 'Load Balancer',
-  [ComponentType.Database]: 'Database',
-  [ComponentType.Cache]: 'Cache',
-  [ComponentType.Queue]: 'Queue',
-  [ComponentType.Worker]: 'Worker',
-  [ComponentType.Cdn]: 'CDN',
-};
-
 const toStaticLabel = (
   type: ComponentType,
-  _label: string | undefined,
-): string => DEFAULT_LABEL_BY_TYPE[type];
+  label: string | undefined,
+): string => label ?? COMPONENT_CATALOG[type]?.label ?? 'Component';
 
 const toDesignedEntities = (scene: LaidOutScene): DesignedEntity[] => {
   const visibleIds = new Set(scene.laidOutEntities.map((entity) => entity.id));
@@ -87,9 +155,58 @@ const toConnections = (scene: LaidOutScene, visibleEntityIds: ReadonlySet<string
       id: connection.id,
       from: connection.from,
       to: connection.to,
-      direction: 'one_way',
+      direction: connection.connection_type === 'both_ways' ? 'bidirectional' : 'one_way',
       style: connection.kind === 'replication' ? 'dashed' : 'solid',
     }));
+};
+
+const toInteractions = (
+  scene: LaidOutScene,
+  visibleEntityIds: ReadonlySet<string>,
+): Interaction[] => {
+  const interactions: Interaction[] = [];
+
+  for (const connection of scene.visibleConnections) {
+    if (!visibleEntityIds.has(connection.from) || !visibleEntityIds.has(connection.to)) {
+      continue;
+    }
+
+    const connectionType = connection.connection_type ?? 'static';
+    if (connectionType === 'static') {
+      continue;
+    }
+
+    const intensity = connection.intensity ?? 'medium';
+    const interactionType =
+      connection.kind === 'cache_lookup'
+        ? 'ping'
+        : connection.pattern === 'burst'
+          ? 'burst'
+          : connection.pattern === 'broadcast'
+            ? 'broadcast'
+            : connection.pattern === 'ping'
+              ? 'ping'
+              : 'flow';
+    interactions.push({
+      id: `i_${connection.id}_fwd`,
+      from: connection.from,
+      to: connection.to,
+      type: interactionType,
+      intensity,
+    });
+
+    if (connectionType === 'both_ways') {
+      interactions.push({
+        id: `i_${connection.id}_rev`,
+        from: connection.to,
+        to: connection.from,
+        type: interactionType,
+        intensity,
+      });
+    }
+  }
+
+  return interactions;
 };
 
 const toMomentTransition = (scene: LaidOutScene): MomentTransition | undefined => {
@@ -120,6 +237,7 @@ const toDesignedMoment = (scene: LaidOutScene): DesignedMoment => {
   const entities = toDesignedEntities(scene);
   const visibleEntityIds = new Set(entities.map((entity) => entity.id));
   const connections = toConnections(scene, visibleEntityIds);
+  const interactions = toInteractions(scene, visibleEntityIds);
 
   return {
     id: scene.id,
@@ -128,11 +246,12 @@ const toDesignedMoment = (scene: LaidOutScene): DesignedMoment => {
     narration: scene.narration,
     entities,
     connections,
-    interactions: [],
+    interactions,
     stateChanges: [],
-    camera: toCamera(),
+    camera: toCamera(scene),
     transition: toMomentTransition(scene),
     template: TEMPLATE_BY_ARCHETYPE[scene.archetype] ?? 'ARCHITECTURE_FLOW',
+    directives: scene.directives,
   };
 };
 

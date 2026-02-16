@@ -67,6 +67,102 @@ Output:
 - Usually `src/scenes/generatedPipelineScene.tsx`.
 - Raw LLM output spec is saved to `output/videospec.llm.json` by default.
 
+## V2 Pipeline Usage
+
+The v2 pipeline supports:
+- StoryIntent agent -> Topology agent -> composition/layout/compile -> generated scene
+- Optional manual topology input for fast local iteration (no LLM calls)
+
+### V2 without params (defaults)
+
+```bash
+npm run generate:v2
+```
+
+Defaults used:
+- `topic`: `How systems scale to 1 million users`
+- `audience`: `beginner`
+- `duration`: `60`
+- `pipeline`: `v2`
+- `stableLayout`: `true` (v2 default)
+- `animate`:
+  - `false` in LLM mode (unless `--animate` is passed)
+  - `true` in manual topology mode (`--topology-input ...`)
+
+### V2 with params (LLM mode)
+
+```bash
+npm run generate:v2 -- \
+  --topic "How to scale an app to 1M users" \
+  --audience "beginner" \
+  --duration 60 \
+  --model gpt-5.2 \
+  --animate \
+  --stable-layout \
+  --personality ENERGETIC \
+  --output src/scenes/generatedPipelineScene.tsx \
+  --story-intent-output output/v2/story-intent.llm.json \
+  --topology-output output/v2/topology.llm.json
+```
+
+### V2 manual topology mode (no LLM)
+
+Use your own topology JSON for fast iteration:
+
+```bash
+npm run generate:v2 -- \
+  --topology-input output/v2/topology.manual.json \
+  --animate \
+  --stable-layout
+```
+
+Optional: provide a matching story intent file (used for tone/personality mapping and artifact output):
+
+```bash
+npm run generate:v2 -- \
+  --topology-input output/v2/topology.manual.json \
+  --story-intent-input output/v2/story-intent.llm.json \
+  --animate \
+  --stable-layout
+```
+
+There is also a convenience script:
+
+```bash
+npm run generate:v2:local
+```
+
+### V2 CLI flags
+
+All flags accepted by `src/cli/generate.ts` for v2:
+
+- `--topic <string>`
+- `--audience <string>`
+- `--duration <number>`
+- `--model <string>`
+- `--output <path>`
+- `--story-intent-output <path>`
+- `--topology-output <path>`
+- `--topology-input <path>`
+- `--story-intent-input <path>`
+- `--personality <CALM|ENERGETIC|PREMIUM>`
+- `--animate` (flag)
+- `--stable-layout` (flag)
+
+### V2 outputs and artifacts
+
+Standard outputs:
+- `src/scenes/generatedPipelineScene.tsx`
+- `output/v2/story-intent.llm.json` (LLM mode or provided path)
+- `output/v2/topology.llm.json`
+- `output/v2/composition.debug.json`
+- `output/v2/layout.debug.json`
+- `output/v2/moments.designed.json`
+- `output/v2/renderspec.debug.json`
+
+Run history snapshots (per run):
+- `output/history/v2/<run_id>/...`
+
 ## Create Video (Render)
 
 1. Start Motion Canvas studio:

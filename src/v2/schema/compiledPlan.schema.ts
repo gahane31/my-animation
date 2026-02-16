@@ -2,6 +2,7 @@ import {z} from 'zod';
 import {ComponentType} from '../../schema/visualGrammar.js';
 import {
   topologyConnectionSchema,
+  topologySceneDirectivesSchema,
   topologyOperationSchema,
   topologyTransitionSchema,
 } from './topologyPlan.schema.js';
@@ -38,6 +39,7 @@ export const compositionSceneSchema = z.object({
   operations: z.array(topologyOperationSchema),
   transition: topologyTransitionSchema.optional(),
   cameraIntent: z.enum(['wide', 'focus', 'introduce', 'steady']).default('focus'),
+  directives: topologySceneDirectivesSchema.optional(),
   complexity_budget: z.object({
     max_visible_components: z.number().int().min(1).max(8),
     max_visible_connections: z.number().int().min(0).max(12),

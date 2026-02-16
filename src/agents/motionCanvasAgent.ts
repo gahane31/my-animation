@@ -319,6 +319,61 @@ const createSceneSource = (moment: DesignedMoment): SceneSnapshot => ({
   camera: moment.camera ? {...moment.camera} : undefined,
 });
 
+const resolveTargetElementId = (
+  entityInstances: Map<string, string[]>,
+  targetEntityId: string | undefined,
+): string | undefined => {
+  if (!targetEntityId) {
+    return undefined;
+  }
+
+  const instances = entityInstances.get(targetEntityId) ?? [];
+  if (instances.length === 0) {
+    return undefined;
+  }
+
+  // Prefer the canonical lead element id (same as source entity id),
+  // then fall back to the first rendered replica.
+  return instances.find((instanceId) => instanceId === targetEntityId) ?? instances[0];
+};
+
+const resolveCameraMotionType = (
+  moment: DesignedMoment,
+): SceneCameraPlan['motionType'] => {
+  if (moment.camera?.mode === 'focus') {
+    return 'focus_primary';
+  }
+
+  return 'expand_architecture';
+};
+
+const buildExplicitSceneCameraPlan = (
+  moment: DesignedMoment,
+  currentEntityInstances: Map<string, string[]>,
+): SceneCameraPlan | null => {
+  if (!moment.camera) {
+    return null;
+  }
+
+  const cameraTargetId = moment.camera.target;
+  const targetElementId = resolveTargetElementId(
+    currentEntityInstances,
+    cameraTargetId,
+  );
+  const defaultZoom = moment.camera.mode === 'focus' ? 1.5 : 1;
+  const defaultDuration = moment.camera.mode === 'focus' ? 0.55 : 0.45;
+
+  return {
+    targetId: cameraTargetId,
+    targetElementId,
+    targetPosition: undefined,
+    zoom: moment.camera.zoom ?? defaultZoom,
+    duration: defaultDuration,
+    easing: 'cubic-bezier(0.2,0,0,1)',
+    motionType: resolveCameraMotionType(moment),
+  };
+};
+
 const hasSceneVisualActivity = (scene: MotionSceneSpec): boolean => {
   const hasStructuralChange =
     (scene.diff?.entityDiffs.length ?? 0) > 0 || (scene.diff?.connectionDiffs.length ?? 0) > 0;
@@ -360,6 +415,10 @@ const attachDiffAndPlan = (
   stableLayout: boolean,
 ): AttachDiffAndPlanResult => {
   const sceneScaleFactor = resolveSceneScaleFactor(currentMoment);
+  const explicitCameraPlan = buildExplicitSceneCameraPlan(
+    currentMoment,
+    currentEntityInstances,
+  );
 
   if (staticMode) {
     const hierarchy = buildHierarchyPlan(currentMoment, diff, previousHierarchy, personality);
@@ -417,7 +476,9 @@ const attachDiffAndPlan = (
     sceneDuration,
     primaryEntityIds,
     personality,
-    isHook: Boolean(currentMoment.isHook),
+    isHook: Boolean(
+      currentMoment.isHook || currentMoment.directives?.motion.pacing === 'reel_fast',
+    ),
     transition: currentMoment.transition,
   });
   const stablePlan = stableLayout
@@ -452,8 +513,13 @@ const attachDiffAndPlan = (
   );
   let resolvedCameraPlan: PlannedCamera | undefined = previousCameraPlan ?? undefined;
   let sceneCameraPlan: SceneCameraPlan | null = null;
+  const directiveCameraMode = currentMoment.directives?.camera.mode ?? 'auto';
+  const hasExplicitFollowCamera =
+    directiveCameraMode === 'follow_action' ||
+    directiveCameraMode === 'wide_recap' ||
+    currentMoment.camera?.mode === 'focus';
 
-  if (!stableLayout) {
+  if (!stableLayout && !hasExplicitFollowCamera) {
     const nextCameraPlan = buildCameraPlan(
       currentMoment,
       diff,
@@ -467,15 +533,29 @@ const attachDiffAndPlan = (
     resolvedCameraPlan = nextCameraPlan;
 
     if (detectCameraChange(previousCameraPlan, nextCameraPlan)) {
-      const targetElementId = nextCameraPlan.targetId
-        ? currentEntityInstances.get(nextCameraPlan.targetId)?.[0]
-        : undefined;
+      const targetElementId = resolveTargetElementId(
+        currentEntityInstances,
+        nextCameraPlan.targetId,
+      );
       sceneCameraPlan = {
         ...nextCameraPlan,
         targetElementId,
       };
     }
+  } else if (explicitCameraPlan) {
+    sceneCameraPlan = explicitCameraPlan;
   }
+
+  const sceneCameraAction = stableLayout
+    ? hasExplicitFollowCamera
+      ? scene.camera
+      : undefined
+    : stablePlan.cameraAction ?? scene.camera;
+  const resolvedSceneCameraPlan = stableLayout
+    ? hasExplicitFollowCamera
+      ? sceneCameraPlan
+      : null
+    : sceneCameraPlan;
 
   return {
     scene: {
@@ -488,13 +568,13 @@ const attachDiffAndPlan = (
           sceneScaleFactor,
         ),
       })),
-      camera: stableLayout ? undefined : stablePlan.cameraAction ?? scene.camera,
+      camera: sceneCameraAction,
       diff,
       hierarchy,
       hierarchyTransition,
       plan: stablePlan,
       animationPlan: stableAnimationPlan,
-      cameraPlan: stableLayout ? null : sceneCameraPlan,
+      cameraPlan: resolvedSceneCameraPlan,
     },
     resolvedCameraPlan,
   };
@@ -551,6 +631,7 @@ const toMotionScene = (
     connections: (moment.connections ?? []).map((connection) => ({...connection})),
     interactions: (moment.interactions ?? []).map((interaction) => ({...interaction})),
     sourceCamera: moment.camera ? {...moment.camera} : undefined,
+    directives: moment.directives,
     source: sourceScene,
   };
 

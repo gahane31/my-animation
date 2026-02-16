@@ -24,6 +24,95 @@ const COMPONENT_TYPE_ALIASES: Record<string, ComponentType> = {
   worker: ComponentType.Worker,
   workers: ComponentType.Worker,
   cdn: ComponentType.Cdn,
+  single_user: ComponentType.SingleUser,
+  mobile_app: ComponentType.MobileApp,
+  web_browser: ComponentType.WebBrowser,
+  admin_user: ComponentType.AdminUser,
+  admin: ComponentType.AdminUser,
+  third_party_service: ComponentType.ThirdPartyService,
+  third_party: ComponentType.ThirdPartyService,
+  iot_devices: ComponentType.IotDevices,
+  iot: ComponentType.IotDevices,
+  dns: ComponentType.Dns,
+  waf: ComponentType.Waf,
+  api_gateway: ComponentType.ApiGateway,
+  reverse_proxy: ComponentType.ReverseProxy,
+  rate_limiter: ComponentType.RateLimiter,
+  monolith_app: ComponentType.MonolithApp,
+  monolith: ComponentType.MonolithApp,
+  microservice: ComponentType.Microservice,
+  microservices: ComponentType.Microservice,
+  auth_service: ComponentType.AuthService,
+  user_service: ComponentType.UserService,
+  payment_service: ComponentType.PaymentService,
+  notification_service: ComponentType.NotificationService,
+  media_service: ComponentType.MediaService,
+  search_service: ComponentType.SearchService,
+  vm: ComponentType.VirtualMachine,
+  virtual_machine: ComponentType.VirtualMachine,
+  container: ComponentType.Container,
+  kubernetes_cluster: ComponentType.KubernetesCluster,
+  k8s: ComponentType.KubernetesCluster,
+  auto_scaling_group: ComponentType.AutoScalingGroup,
+  worker_node: ComponentType.WorkerNode,
+  job_processor: ComponentType.JobProcessor,
+  primary_db: ComponentType.PrimaryDatabase,
+  primary_database: ComponentType.PrimaryDatabase,
+  read_replica: ComponentType.ReadReplica,
+  sharded_db: ComponentType.ShardedDatabase,
+  sharded_database: ComponentType.ShardedDatabase,
+  sql_db: ComponentType.SqlDatabase,
+  sql_database: ComponentType.SqlDatabase,
+  nosql_db: ComponentType.NoSqlDatabase,
+  nosql_database: ComponentType.NoSqlDatabase,
+  time_series_db: ComponentType.TimeSeriesDatabase,
+  time_series_database: ComponentType.TimeSeriesDatabase,
+  graph_db: ComponentType.GraphDatabase,
+  graph_database: ComponentType.GraphDatabase,
+  object_storage: ComponentType.ObjectStorage,
+  media_storage: ComponentType.MediaStorage,
+  edge_cache: ComponentType.EdgeCache,
+  query_cache: ComponentType.QueryCache,
+  application_cache: ComponentType.ApplicationCache,
+  message_queue: ComponentType.MessageQueue,
+  event_stream: ComponentType.EventStream,
+  pub_sub: ComponentType.PubSub,
+  dlq: ComponentType.DeadLetterQueue,
+  dead_letter_queue: ComponentType.DeadLetterQueue,
+  batch_processor: ComponentType.BatchProcessor,
+  internet_cloud: ComponentType.InternetCloud,
+  vpc_boundary: ComponentType.VpcBoundary,
+  vpc: ComponentType.VpcBoundary,
+  public_subnet: ComponentType.PublicSubnet,
+  private_subnet: ComponentType.PrivateSubnet,
+  firewall_boundary: ComponentType.FirewallBoundary,
+  shard_indicator: ComponentType.ShardIndicator,
+  global_region: ComponentType.GlobalRegion,
+  failover: ComponentType.FailoverNode,
+  failover_node: ComponentType.FailoverNode,
+  health_check: ComponentType.HealthCheck,
+  circuit_breaker: ComponentType.CircuitBreaker,
+  retry_policy: ComponentType.RetryPolicy,
+  retry: ComponentType.RetryPolicy,
+  backup_storage: ComponentType.BackupStorage,
+  multi_region: ComponentType.MultiRegion,
+  authorization_lock: ComponentType.AuthorizationLock,
+  oauth_provider: ComponentType.OAuthProvider,
+  jwt_token: ComponentType.JwtToken,
+  jwt: ComponentType.JwtToken,
+  tls_encryption: ComponentType.TlsEncryption,
+  tls: ComponentType.TlsEncryption,
+  secrets_manager: ComponentType.SecretsManager,
+  logs: ComponentType.Logs,
+  metrics_dashboard: ComponentType.MetricsDashboard,
+  monitoring: ComponentType.Monitoring,
+  alerting: ComponentType.Alerting,
+  tracing: ComponentType.Tracing,
+  payment_gateway: ComponentType.PaymentGateway,
+  email_sms_service: ComponentType.EmailSmsService,
+  maps_service: ComponentType.MapsService,
+  social_login: ComponentType.SocialLogin,
+  llm_api: ComponentType.LlmApi,
 };
 
 const normalizeComponentTypeInput = (value: unknown): unknown => {
@@ -186,6 +275,54 @@ const optionalTransitionSchema = z.preprocess(
   MomentTransitionSchema.optional(),
 );
 
+export const SceneDirectivesSchema = z.object({
+  camera: z
+    .object({
+      mode: z.enum(['auto', 'follow_action', 'wide_recap', 'steady']).default('auto'),
+      zoom: z.enum(['tight', 'medium', 'wide']).default('tight'),
+      active_zone: z.enum(['upper_third', 'center']).default('upper_third'),
+      reserve_bottom_percent: z.number().min(0).max(40).default(25),
+    })
+    .default({
+      mode: 'auto',
+      zoom: 'tight',
+      active_zone: 'upper_third',
+      reserve_bottom_percent: 25,
+    }),
+  visual: z
+    .object({
+      theme: z.enum(['default', 'neon']).default('neon'),
+      background_texture: z.enum(['none', 'grid']).default('grid'),
+      glow_strength: z.enum(['soft', 'strong']).default('strong'),
+    })
+    .default({
+      theme: 'neon',
+      background_texture: 'grid',
+      glow_strength: 'strong',
+    }),
+  motion: z
+    .object({
+      entry_style: z.enum(['drop_bounce', 'elastic_pop']).default('elastic_pop'),
+      pacing: z.enum(['balanced', 'reel_fast']).default('reel_fast'),
+    })
+    .default({
+      entry_style: 'elastic_pop',
+      pacing: 'reel_fast',
+    }),
+  flow: z
+    .object({
+      renderer: z.enum(['dashed', 'packets', 'hybrid']).default('hybrid'),
+    })
+    .default({
+      renderer: 'hybrid',
+    }),
+});
+
+const optionalSceneDirectivesSchema = z.preprocess(
+  nullToUndefined,
+  SceneDirectivesSchema.optional(),
+);
+
 const MomentObjectSchema = z.object({
   id: z.string().min(1),
   start: z.number().min(0),
@@ -199,6 +336,7 @@ const MomentObjectSchema = z.object({
   template: optionalTemplateSchema,
   isHook: optionalHookFlagSchema,
   transition: optionalTransitionSchema,
+  directives: optionalSceneDirectivesSchema,
 });
 
 const validateMomentRules = (
@@ -435,6 +573,7 @@ export type Interaction = z.infer<typeof InteractionSchema>;
 export type EntityStateChange = z.infer<typeof EntityStateChangeSchema>;
 export type Camera = z.infer<typeof CameraSchema>;
 export type MomentTransition = z.infer<typeof MomentTransitionSchema>;
+export type SceneDirectives = z.infer<typeof SceneDirectivesSchema>;
 export type Moment = z.infer<typeof MomentSchema>;
 export type MomentsVideo = z.infer<typeof MomentsVideoSchema>;
 export type DesignedEntity = z.infer<typeof DesignedEntitySchema>;

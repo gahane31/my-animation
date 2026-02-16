@@ -16,19 +16,19 @@ export const StyleTokens = {
   },
 
   colors: {
-    background: '#0B0F14',
-    primary: '#4F8CFF',
-    secondary: '#8A94A6',
-    text: '#E6EDF3',
+    background: '#0A0A0A',
+    primary: '#2A4B88',
+    secondary: '#8AA4C8',
+    text: '#E8F6FF',
     states: {
-      normal: '#4F8CFF',
-      active: '#22C55E',
+      normal: '#5B92FF',
+      active: '#34D399',
       overloaded: '#EF4444',
-      error: '#F97316',
-      down: '#6B7280',
+      error: '#FB923C',
+      down: '#64748B',
     },
-    flow: '#60A5FA',
-    connection: '#94A3B8',
+    flow: '#22D3EE',
+    connection: '#00FFFF',
   },
 
   opacity: {
@@ -39,12 +39,12 @@ export const StyleTokens = {
 
   effects: {
     primaryGlow: true,
-    glowColor: '#4F8CFF',
-    glowBlur: 20,
+    glowColor: '#00FFFF',
+    glowBlur: 26,
   },
 
   connections: {
-    thickness: 3,
+    thickness: 4,
     curve: true,
     arrowSize: 10,
   },

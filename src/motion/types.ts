@@ -11,6 +11,7 @@ import type {
   Connection,
   DesignedEntity,
   Interaction,
+  SceneDirectives,
 } from '../schema/moment.schema.js';
 import type {SceneDiff} from '../pipeline/sceneDiff.js';
 import type {AnimationType, CameraActionType, ComponentType} from '../schema/visualGrammar.js';
@@ -99,6 +100,7 @@ export interface MotionSceneSpec {
   connections?: Connection[];
   interactions?: Interaction[];
   sourceCamera?: MomentCamera;
+  directives?: SceneDirectives;
   source?: MotionSceneSource;
   diff?: MomentDiff;
   sceneDiff?: SceneDiff;

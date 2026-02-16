@@ -70,6 +70,10 @@ const entityDiffIsPromotedPrimary = (
 const clampTimingDuration = (value: number, min: number, max: number): number =>
   Math.min(max, Math.max(min, value));
 
+const ADDITION_DELAY_MULTIPLIER = 0.18;
+const ADDITION_STAGGER_MULTIPLIER = 0.4;
+const ADDITION_DURATION_MULTIPLIER = 0.62;
+
 const transitionPaceMultiplier = (transition?: MomentTransition): number => {
   switch (transition?.pace) {
     case 'fast':
@@ -157,13 +161,18 @@ export const planEntityTimings = (
   additionsOrdered.forEach((entry, index) => {
     const isPrimary =
       (primaryEntityIds?.has(entry.entityId) ?? false) || entityDiffIsPromotedPrimary(entry);
-    const baseDelay = phases.enter.start + index * Math.max(0.05, effectiveStagger);
-    const delay = clampDelay(baseDelay + (isPrimary ? 0.1 : 0), phases.enter.end);
+    const baseDelay =
+      phases.enter.start * ADDITION_DELAY_MULTIPLIER +
+      index * Math.max(0.03, effectiveStagger * ADDITION_STAGGER_MULTIPLIER);
+    const delay = clampDelay(baseDelay + (isPrimary ? 0.05 : 0), phases.enter.end * 0.85);
     const baseDuration = phaseDuration(phases.enter);
     const duration = clampTimingDuration(
-      (isPrimary ? baseDuration * 1.2 : baseDuration) * effectiveSpeedMultiplier * paceMultiplier,
-      0.3,
-      isPrimary ? 1.05 : 0.95,
+      (isPrimary ? baseDuration * 1.05 : baseDuration) *
+        effectiveSpeedMultiplier *
+        paceMultiplier *
+        ADDITION_DURATION_MULTIPLIER,
+      0.2,
+      isPrimary ? 0.62 : 0.54,
     );
 
     timings.push({
@@ -195,11 +204,15 @@ export const planConnectionTimings = (
   const paceMultiplier = transitionPaceMultiplier(transition);
   const phases = getScenePhases(sceneDuration);
   const baseDuration = phaseDuration(phases.connect);
+  const connectionStart = Math.min(
+    sceneDuration * 0.14,
+    Math.max(0.12, phases.enter.start * 0.28),
+  );
 
   return diff.connectionDiffs.map((entry, index) => ({
     connectionId: entry.connectionId,
-    delay: clampDelay(phases.connect.start + index * effectiveStagger, phases.connect.end),
-    duration: clampTimingDuration(baseDuration * effectiveSpeedMultiplier * paceMultiplier, 0.22, 0.8),
+    delay: clampDelay(connectionStart + index * effectiveStagger, phases.connect.end),
+    duration: clampTimingDuration(baseDuration * effectiveSpeedMultiplier * paceMultiplier, 0.14, 0.42),
     easing: personalityTokens.easing,
   }));
 };

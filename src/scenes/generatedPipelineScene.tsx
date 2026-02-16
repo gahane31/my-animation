@@ -1,6 +1,6 @@
 /** @jsxImportSource @motion-canvas/2d/lib */
-import {makeScene2D, Txt} from '@motion-canvas/2d';
-import {createRef} from '@motion-canvas/core';
+import {Line, Node, makeScene2D, Txt} from '@motion-canvas/2d';
+import {all, createRef} from '@motion-canvas/core';
 import {StyleTokens} from '../config/styleTokens.js';
 import {
   createRuntimeLogger,
@@ -19,6 +19,7 @@ const renderSpec = {
       "start": 0,
       "end": 6,
       "narration": "A single Users cluster sends requests to one Server.",
+      "camera": "focus",
       "elements": [
         {
           "id": "users",
@@ -27,19 +28,19 @@ const renderSpec = {
           "label": "Users",
           "position": {
             "x": 50,
-            "y": 28.06
+            "y": 23.4
           },
           "enter": "zoom_in",
           "visualStyle": {
             "size": 130.5,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 3.612478373637689,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 24.505000000000003,
+            "textColor": "#E8F6FF",
             "fontSize": 40.6,
             "fontWeight": 600,
             "status": "normal"
@@ -52,19 +53,19 @@ const renderSpec = {
           "label": "Server",
           "position": {
             "x": 50,
-            "y": 73.94
+            "y": 60.6
           },
           "enter": "zoom_in",
           "visualStyle": {
             "size": 130.5,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 3.612478373637689,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 24.505000000000003,
+            "textColor": "#E8F6FF",
             "fontSize": 40.6,
             "fontWeight": 600,
             "status": "normal"
@@ -81,7 +82,7 @@ const renderSpec = {
           "label": "Users",
           "layout": {
             "x": 50,
-            "y": 28.06
+            "y": 23.4
           }
         },
         {
@@ -93,7 +94,7 @@ const renderSpec = {
           "label": "Server",
           "layout": {
             "x": 50,
-            "y": 73.94
+            "y": 60.6
           }
         }
       ],
@@ -106,10 +107,39 @@ const renderSpec = {
           "style": "solid"
         }
       ],
-      "interactions": [],
+      "interactions": [
+        {
+          "id": "i_c_users_app_req_fwd",
+          "from": "users",
+          "to": "app",
+          "type": "flow",
+          "intensity": "medium"
+        }
+      ],
       "sourceCamera": {
-        "mode": "wide",
-        "zoom": 1
+        "mode": "focus",
+        "target": "app",
+        "zoom": 1.18
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "tight",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "neon",
+          "background_texture": "grid",
+          "glow_strength": "strong"
+        },
+        "motion": {
+          "entry_style": "elastic_pop",
+          "pacing": "reel_fast"
+        },
+        "flow": {
+          "renderer": "hybrid"
+        }
       },
       "source": {
         "entities": [
@@ -122,7 +152,7 @@ const renderSpec = {
             "label": "Users",
             "layout": {
               "x": 50,
-              "y": 28.06
+              "y": 23.4
             }
           },
           {
@@ -134,7 +164,7 @@ const renderSpec = {
             "label": "Server",
             "layout": {
               "x": 50,
-              "y": 73.94
+              "y": 60.6
             }
           }
         ],
@@ -147,10 +177,19 @@ const renderSpec = {
             "style": "solid"
           }
         ],
-        "interactions": [],
+        "interactions": [
+          {
+            "id": "i_c_users_app_req_fwd",
+            "from": "users",
+            "to": "app",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
         "camera": {
-          "mode": "wide",
-          "zoom": 1
+          "mode": "focus",
+          "target": "app",
+          "zoom": 1.18
         }
       },
       "motionPersonality": "CALM",
@@ -171,14 +210,20 @@ const renderSpec = {
             "connectionId": "c_users_app_req"
           }
         ],
-        "interactionDiffs": [],
+        "interactionDiffs": [
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_users_app_req_fwd"
+          }
+        ],
         "cameraDiffs": [
           {
             "type": "camera_changed",
             "from": null,
             "to": {
-              "mode": "wide",
-              "zoom": 1
+              "mode": "focus",
+              "target": "app",
+              "zoom": 1.18
             }
           }
         ]
@@ -231,23 +276,40 @@ const renderSpec = {
             "connectionId": "c_users_app_req"
           }
         ],
-        "interactions": []
+        "interactions": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_app_req_fwd"
+          },
+          {
+            "entityId": "app",
+            "elementIds": [
+              "app"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_app_req_fwd"
+          }
+        ]
       },
       "animationPlan": {
         "entities": [
           {
             "entityId": "users",
             "action": "add",
-            "delay": 1.7999999999999998,
-            "duration": 0.95,
+            "delay": 0.32399999999999995,
+            "duration": 0.54,
             "easing": "cubic-bezier(0.2,0,0,1)",
             "isPrimary": false
           },
           {
             "entityId": "app",
             "action": "add",
-            "delay": 1.98,
-            "duration": 1.05,
+            "delay": 0.40399999999999997,
+            "duration": 0.62,
             "easing": "cubic-bezier(0.2,0,0,1)",
             "scale": 1.2,
             "isPrimary": true
@@ -256,14 +318,21 @@ const renderSpec = {
         "connections": [
           {
             "connectionId": "c_users_app_req",
-            "delay": 3,
-            "duration": 0.8,
+            "delay": 0.504,
+            "duration": 0.42,
             "easing": "cubic-bezier(0.2,0,0,1)"
           }
         ],
         "camera": null
       },
-      "cameraPlan": null,
+      "cameraPlan": {
+        "targetId": "app",
+        "targetElementId": "app",
+        "zoom": 1.18,
+        "duration": 0.55,
+        "easing": "cubic-bezier(0.2,0,0,1)",
+        "motionType": "focus_primary"
+      },
       "sceneDiff": {
         "addedEntities": [
           {
@@ -275,7 +344,7 @@ const renderSpec = {
             "label": "Users",
             "layout": {
               "x": 50,
-              "y": 28.06
+              "y": 23.4
             }
           },
           {
@@ -287,7 +356,7 @@ const renderSpec = {
             "label": "Server",
             "layout": {
               "x": 50,
-              "y": 73.94
+              "y": 60.6
             }
           }
         ],
@@ -304,14 +373,23 @@ const renderSpec = {
           }
         ],
         "removedConnections": [],
-        "addedInteractions": [],
+        "addedInteractions": [
+          {
+            "id": "i_c_users_app_req_fwd",
+            "from": "users",
+            "to": "app",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
         "removedInteractions": [],
         "interactionIntensityChanged": [],
         "cameraChanged": {
           "from": null,
           "to": {
-            "mode": "wide",
-            "zoom": 1
+            "mode": "focus",
+            "target": "app",
+            "zoom": 1.18
           }
         }
       }
@@ -321,6 +399,7 @@ const renderSpec = {
       "start": 6,
       "end": 12,
       "narration": "Users go to the Server, and the Server reads and writes to a single Database.",
+      "camera": "focus",
       "elements": [
         {
           "id": "users",
@@ -329,18 +408,18 @@ const renderSpec = {
           "label": "Users",
           "position": {
             "x": 50,
-            "y": 23.62
+            "y": 19.8
           },
           "visualStyle": {
             "size": 115.2,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 3.394112549695428,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 21.632,
+            "textColor": "#E8F6FF",
             "fontSize": 35.84,
             "fontWeight": 600,
             "status": "normal"
@@ -353,18 +432,18 @@ const renderSpec = {
           "label": "Server",
           "position": {
             "x": 50,
-            "y": 51
+            "y": 42
           },
           "visualStyle": {
             "size": 115.2,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 3.394112549695428,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 21.632,
+            "textColor": "#E8F6FF",
             "fontSize": 35.84,
             "fontWeight": 600,
             "status": "normal"
@@ -377,19 +456,19 @@ const renderSpec = {
           "label": "Database",
           "position": {
             "x": 50,
-            "y": 78.38
+            "y": 64.2
           },
           "enter": "zoom_in",
           "visualStyle": {
             "size": 115.2,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 3.394112549695428,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 21.632,
+            "textColor": "#E8F6FF",
             "fontSize": 35.84,
             "fontWeight": 600,
             "status": "normal"
@@ -406,7 +485,7 @@ const renderSpec = {
           "label": "Users",
           "layout": {
             "x": 50,
-            "y": 23.62
+            "y": 19.8
           }
         },
         {
@@ -418,7 +497,7 @@ const renderSpec = {
           "label": "Server",
           "layout": {
             "x": 50,
-            "y": 51
+            "y": 42
           }
         },
         {
@@ -430,7 +509,7 @@ const renderSpec = {
           "label": "Database",
           "layout": {
             "x": 50,
-            "y": 78.38
+            "y": 64.2
           }
         }
       ],
@@ -450,10 +529,46 @@ const renderSpec = {
           "style": "solid"
         }
       ],
-      "interactions": [],
+      "interactions": [
+        {
+          "id": "i_c_users_app_req_fwd",
+          "from": "users",
+          "to": "app",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_app_db_req_fwd",
+          "from": "app",
+          "to": "db",
+          "type": "flow",
+          "intensity": "medium"
+        }
+      ],
       "sourceCamera": {
-        "mode": "wide",
-        "zoom": 1
+        "mode": "focus",
+        "target": "db",
+        "zoom": 1.12
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "tight",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "neon",
+          "background_texture": "grid",
+          "glow_strength": "strong"
+        },
+        "motion": {
+          "entry_style": "elastic_pop",
+          "pacing": "reel_fast"
+        },
+        "flow": {
+          "renderer": "hybrid"
+        }
       },
       "source": {
         "entities": [
@@ -466,7 +581,7 @@ const renderSpec = {
             "label": "Users",
             "layout": {
               "x": 50,
-              "y": 23.62
+              "y": 19.8
             }
           },
           {
@@ -478,7 +593,7 @@ const renderSpec = {
             "label": "Server",
             "layout": {
               "x": 50,
-              "y": 51
+              "y": 42
             }
           },
           {
@@ -490,7 +605,7 @@ const renderSpec = {
             "label": "Database",
             "layout": {
               "x": 50,
-              "y": 78.38
+              "y": 64.2
             }
           }
         ],
@@ -510,10 +625,26 @@ const renderSpec = {
             "style": "solid"
           }
         ],
-        "interactions": [],
+        "interactions": [
+          {
+            "id": "i_c_users_app_req_fwd",
+            "from": "users",
+            "to": "app",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_app_db_req_fwd",
+            "from": "app",
+            "to": "db",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
         "camera": {
-          "mode": "wide",
-          "zoom": 1
+          "mode": "focus",
+          "target": "db",
+          "zoom": 1.12
         }
       },
       "motionPersonality": "CALM",
@@ -528,11 +659,11 @@ const renderSpec = {
             "entityId": "users",
             "from": {
               "x": 50,
-              "y": 28.06
+              "y": 23.4
             },
             "to": {
               "x": 50,
-              "y": 23.62
+              "y": 19.8
             }
           },
           {
@@ -540,11 +671,11 @@ const renderSpec = {
             "entityId": "app",
             "from": {
               "x": 50,
-              "y": 73.94
+              "y": 60.6
             },
             "to": {
               "x": 50,
-              "y": 51
+              "y": 42
             }
           },
           {
@@ -560,8 +691,27 @@ const renderSpec = {
             "connectionId": "c_app_db_req"
           }
         ],
-        "interactionDiffs": [],
-        "cameraDiffs": []
+        "interactionDiffs": [
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_app_db_req_fwd"
+          }
+        ],
+        "cameraDiffs": [
+          {
+            "type": "camera_changed",
+            "from": {
+              "mode": "focus",
+              "target": "app",
+              "zoom": 1.18
+            },
+            "to": {
+              "mode": "focus",
+              "target": "db",
+              "zoom": 1.12
+            }
+          }
+        ]
       },
       "hierarchyTransition": null,
       "plan": {
@@ -619,7 +769,24 @@ const renderSpec = {
             "connectionId": "c_app_db_req"
           }
         ],
-        "interactions": []
+        "interactions": [
+          {
+            "entityId": "app",
+            "elementIds": [
+              "app"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_app_db_req_fwd"
+          },
+          {
+            "entityId": "db",
+            "elementIds": [
+              "db"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_app_db_req_fwd"
+          }
+        ]
       },
       "animationPlan": {
         "entities": [
@@ -633,15 +800,15 @@ const renderSpec = {
           {
             "entityId": "app",
             "action": "move",
-            "delay": 0.68,
+            "delay": 0.6560000000000001,
             "duration": 0.95,
             "easing": "cubic-bezier(0.2,0,0,1)"
           },
           {
             "entityId": "db",
             "action": "add",
-            "delay": 1.9,
-            "duration": 1.05,
+            "delay": 0.37399999999999994,
+            "duration": 0.62,
             "easing": "cubic-bezier(0.2,0,0,1)",
             "scale": 1.2,
             "isPrimary": true
@@ -650,14 +817,21 @@ const renderSpec = {
         "connections": [
           {
             "connectionId": "c_app_db_req",
-            "delay": 3,
-            "duration": 0.8,
+            "delay": 0.504,
+            "duration": 0.42,
             "easing": "cubic-bezier(0.2,0,0,1)"
           }
         ],
         "camera": null
       },
-      "cameraPlan": null,
+      "cameraPlan": {
+        "targetId": "db",
+        "targetElementId": "db",
+        "zoom": 1.12,
+        "duration": 0.55,
+        "easing": "cubic-bezier(0.2,0,0,1)",
+        "motionType": "focus_primary"
+      },
       "sceneDiff": {
         "addedEntities": [
           {
@@ -669,7 +843,7 @@ const renderSpec = {
             "label": "Database",
             "layout": {
               "x": 50,
-              "y": 78.38
+              "y": 64.2
             }
           }
         ],
@@ -679,22 +853,22 @@ const renderSpec = {
             "id": "users",
             "from": {
               "x": 50,
-              "y": 28.06
+              "y": 23.4
             },
             "to": {
               "x": 50,
-              "y": 23.62
+              "y": 19.8
             }
           },
           {
             "id": "app",
             "from": {
               "x": 50,
-              "y": 73.94
+              "y": 60.6
             },
             "to": {
               "x": 50,
-              "y": 51
+              "y": 42
             }
           }
         ],
@@ -719,10 +893,29 @@ const renderSpec = {
           }
         ],
         "removedConnections": [],
-        "addedInteractions": [],
+        "addedInteractions": [
+          {
+            "id": "i_c_app_db_req_fwd",
+            "from": "app",
+            "to": "db",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
         "removedInteractions": [],
         "interactionIntensityChanged": [],
-        "cameraChanged": null
+        "cameraChanged": {
+          "from": {
+            "mode": "focus",
+            "target": "app",
+            "zoom": 1.18
+          },
+          "to": {
+            "mode": "focus",
+            "target": "db",
+            "zoom": 1.12
+          }
+        }
       }
     },
     {
@@ -730,6 +923,7 @@ const renderSpec = {
       "start": 12,
       "end": 18,
       "narration": "A Load Balancer sits between Users and the Server, but there is still only one Server behind it.",
+      "camera": "focus",
       "elements": [
         {
           "id": "users",
@@ -738,18 +932,18 @@ const renderSpec = {
           "label": "Users",
           "position": {
             "x": 50,
-            "y": 19.18
+            "y": 16.2
           },
           "visualStyle": {
             "size": 102.6,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 3.2031234756093934,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 19.266000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 31.919999999999998,
             "fontWeight": 600,
             "status": "normal"
@@ -762,19 +956,19 @@ const renderSpec = {
           "label": "Load Balancer",
           "position": {
             "x": 50,
-            "y": 40.39333333333333
+            "y": 33.4
           },
           "enter": "zoom_in",
           "visualStyle": {
             "size": 102.6,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 3.2031234756093934,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 19.266000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 31.919999999999998,
             "fontWeight": 600,
             "status": "normal"
@@ -787,18 +981,18 @@ const renderSpec = {
           "label": "Server",
           "position": {
             "x": 50,
-            "y": 61.60666666666666
+            "y": 50.599999999999994
           },
           "visualStyle": {
             "size": 102.6,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#EF4444",
             "strokeWidth": 3.2031234756093934,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#EF4444",
+            "glow": true,
+            "glowColor": "#EF4444",
+            "glowBlur": 25.193999999999996,
+            "textColor": "#E8F6FF",
             "fontSize": 31.919999999999998,
             "fontWeight": 600,
             "status": "overloaded"
@@ -811,18 +1005,18 @@ const renderSpec = {
           "label": "Database",
           "position": {
             "x": 50,
-            "y": 82.82
+            "y": 67.8
           },
           "visualStyle": {
             "size": 102.6,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 3.2031234756093934,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 19.266000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 31.919999999999998,
             "fontWeight": 600,
             "status": "normal"
@@ -839,7 +1033,7 @@ const renderSpec = {
           "label": "Users",
           "layout": {
             "x": 50,
-            "y": 19.18
+            "y": 16.2
           }
         },
         {
@@ -851,7 +1045,7 @@ const renderSpec = {
           "label": "Load Balancer",
           "layout": {
             "x": 50,
-            "y": 40.39333333333333
+            "y": 33.4
           }
         },
         {
@@ -863,7 +1057,7 @@ const renderSpec = {
           "label": "Server",
           "layout": {
             "x": 50,
-            "y": 61.60666666666666
+            "y": 50.599999999999994
           }
         },
         {
@@ -875,7 +1069,7 @@ const renderSpec = {
           "label": "Database",
           "layout": {
             "x": 50,
-            "y": 82.82
+            "y": 67.8
           }
         }
       ],
@@ -902,10 +1096,53 @@ const renderSpec = {
           "style": "solid"
         }
       ],
-      "interactions": [],
+      "interactions": [
+        {
+          "id": "i_c_users_lb_req_fwd",
+          "from": "users",
+          "to": "lb",
+          "type": "flow",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_lb_app_req_fwd",
+          "from": "lb",
+          "to": "app",
+          "type": "flow",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_app_db_req_fwd",
+          "from": "app",
+          "to": "db",
+          "type": "flow",
+          "intensity": "medium"
+        }
+      ],
       "sourceCamera": {
-        "mode": "wide",
-        "zoom": 1
+        "mode": "focus",
+        "target": "lb",
+        "zoom": 1.08
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "tight",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "neon",
+          "background_texture": "grid",
+          "glow_strength": "strong"
+        },
+        "motion": {
+          "entry_style": "elastic_pop",
+          "pacing": "reel_fast"
+        },
+        "flow": {
+          "renderer": "hybrid"
+        }
       },
       "source": {
         "entities": [
@@ -918,7 +1155,7 @@ const renderSpec = {
             "label": "Users",
             "layout": {
               "x": 50,
-              "y": 19.18
+              "y": 16.2
             }
           },
           {
@@ -930,7 +1167,7 @@ const renderSpec = {
             "label": "Load Balancer",
             "layout": {
               "x": 50,
-              "y": 40.39333333333333
+              "y": 33.4
             }
           },
           {
@@ -942,7 +1179,7 @@ const renderSpec = {
             "label": "Server",
             "layout": {
               "x": 50,
-              "y": 61.60666666666666
+              "y": 50.599999999999994
             }
           },
           {
@@ -954,7 +1191,7 @@ const renderSpec = {
             "label": "Database",
             "layout": {
               "x": 50,
-              "y": 82.82
+              "y": 67.8
             }
           }
         ],
@@ -981,10 +1218,33 @@ const renderSpec = {
             "style": "solid"
           }
         ],
-        "interactions": [],
+        "interactions": [
+          {
+            "id": "i_c_users_lb_req_fwd",
+            "from": "users",
+            "to": "lb",
+            "type": "flow",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_lb_app_req_fwd",
+            "from": "lb",
+            "to": "app",
+            "type": "flow",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_app_db_req_fwd",
+            "from": "app",
+            "to": "db",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
         "camera": {
-          "mode": "wide",
-          "zoom": 1
+          "mode": "focus",
+          "target": "lb",
+          "zoom": 1.08
         }
       },
       "motionPersonality": "CALM",
@@ -999,11 +1259,11 @@ const renderSpec = {
             "entityId": "users",
             "from": {
               "x": 50,
-              "y": 23.62
+              "y": 19.8
             },
             "to": {
               "x": 50,
-              "y": 19.18
+              "y": 16.2
             }
           },
           {
@@ -1011,11 +1271,11 @@ const renderSpec = {
             "entityId": "app",
             "from": {
               "x": 50,
-              "y": 51
+              "y": 42
             },
             "to": {
               "x": 50,
-              "y": 61.60666666666666
+              "y": 50.599999999999994
             }
           },
           {
@@ -1023,11 +1283,11 @@ const renderSpec = {
             "entityId": "db",
             "from": {
               "x": 50,
-              "y": 78.38
+              "y": 64.2
             },
             "to": {
               "x": 50,
-              "y": 82.82
+              "y": 67.8
             }
           },
           {
@@ -1057,8 +1317,35 @@ const renderSpec = {
             "connectionId": "c_users_app_req"
           }
         ],
-        "interactionDiffs": [],
-        "cameraDiffs": []
+        "interactionDiffs": [
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_users_lb_req_fwd"
+          },
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_lb_app_req_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_users_app_req_fwd"
+          }
+        ],
+        "cameraDiffs": [
+          {
+            "type": "camera_changed",
+            "from": {
+              "mode": "focus",
+              "target": "db",
+              "zoom": 1.12
+            },
+            "to": {
+              "mode": "focus",
+              "target": "lb",
+              "zoom": 1.08
+            }
+          }
+        ]
       },
       "hierarchyTransition": null,
       "plan": {
@@ -1134,7 +1421,35 @@ const renderSpec = {
             "cleanup": false
           }
         ],
-        "interactions": []
+        "interactions": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_app_req_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "lb",
+            "elementIds": [
+              "lb"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_lb_app_req_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "app",
+            "elementIds": [
+              "app"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_app_req_fwd",
+            "cleanup": false
+          }
+        ]
       },
       "animationPlan": {
         "entities": [
@@ -1148,22 +1463,22 @@ const renderSpec = {
           {
             "entityId": "app",
             "action": "move",
-            "delay": 0.68,
+            "delay": 0.6560000000000001,
             "duration": 0.95,
             "easing": "cubic-bezier(0.2,0,0,1)"
           },
           {
             "entityId": "db",
             "action": "move",
-            "delay": 0.7600000000000001,
+            "delay": 0.7120000000000001,
             "duration": 0.95,
             "easing": "cubic-bezier(0.2,0,0,1)"
           },
           {
             "entityId": "lb",
             "action": "add",
-            "delay": 1.9,
-            "duration": 1.05,
+            "delay": 0.37399999999999994,
+            "duration": 0.62,
             "easing": "cubic-bezier(0.2,0,0,1)",
             "scale": 1.2,
             "isPrimary": true
@@ -1172,26 +1487,33 @@ const renderSpec = {
         "connections": [
           {
             "connectionId": "c_users_lb_req",
-            "delay": 3,
-            "duration": 0.8,
+            "delay": 0.504,
+            "duration": 0.42,
             "easing": "cubic-bezier(0.2,0,0,1)"
           },
           {
             "connectionId": "c_lb_app_req",
-            "delay": 3.08,
-            "duration": 0.8,
+            "delay": 0.56,
+            "duration": 0.42,
             "easing": "cubic-bezier(0.2,0,0,1)"
           },
           {
             "connectionId": "c_users_app_req",
-            "delay": 3.16,
-            "duration": 0.8,
+            "delay": 0.616,
+            "duration": 0.42,
             "easing": "cubic-bezier(0.2,0,0,1)"
           }
         ],
         "camera": null
       },
-      "cameraPlan": null,
+      "cameraPlan": {
+        "targetId": "lb",
+        "targetElementId": "lb",
+        "zoom": 1.08,
+        "duration": 0.55,
+        "easing": "cubic-bezier(0.2,0,0,1)",
+        "motionType": "focus_primary"
+      },
       "sceneDiff": {
         "addedEntities": [
           {
@@ -1203,7 +1525,7 @@ const renderSpec = {
             "label": "Load Balancer",
             "layout": {
               "x": 50,
-              "y": 40.39333333333333
+              "y": 33.4
             }
           }
         ],
@@ -1213,33 +1535,33 @@ const renderSpec = {
             "id": "users",
             "from": {
               "x": 50,
-              "y": 23.62
+              "y": 19.8
             },
             "to": {
               "x": 50,
-              "y": 19.18
+              "y": 16.2
             }
           },
           {
             "id": "app",
             "from": {
               "x": 50,
-              "y": 51
+              "y": 42
             },
             "to": {
               "x": 50,
-              "y": 61.60666666666666
+              "y": 50.599999999999994
             }
           },
           {
             "id": "db",
             "from": {
               "x": 50,
-              "y": 78.38
+              "y": 64.2
             },
             "to": {
               "x": 50,
-              "y": 82.82
+              "y": 67.8
             }
           }
         ],
@@ -1288,10 +1610,44 @@ const renderSpec = {
             "style": "solid"
           }
         ],
-        "addedInteractions": [],
-        "removedInteractions": [],
+        "addedInteractions": [
+          {
+            "id": "i_c_users_lb_req_fwd",
+            "from": "users",
+            "to": "lb",
+            "type": "flow",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_lb_app_req_fwd",
+            "from": "lb",
+            "to": "app",
+            "type": "flow",
+            "intensity": "high"
+          }
+        ],
+        "removedInteractions": [
+          {
+            "id": "i_c_users_app_req_fwd",
+            "from": "users",
+            "to": "app",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
         "interactionIntensityChanged": [],
-        "cameraChanged": null
+        "cameraChanged": {
+          "from": {
+            "mode": "focus",
+            "target": "db",
+            "zoom": 1.12
+          },
+          "to": {
+            "mode": "focus",
+            "target": "lb",
+            "zoom": 1.08
+          }
+        }
       }
     },
     {
@@ -1299,6 +1655,7 @@ const renderSpec = {
       "start": 18,
       "end": 24,
       "narration": "The Load Balancer distributes Users across three Servers that all talk to the same Database.",
+      "camera": "focus",
       "elements": [
         {
           "id": "users",
@@ -1307,18 +1664,18 @@ const renderSpec = {
           "label": "Users",
           "position": {
             "x": 50,
-            "y": 19.18
+            "y": 16.2
           },
           "visualStyle": {
             "size": 81,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.846049894151541,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 15.210000000000003,
+            "textColor": "#E8F6FF",
             "fontSize": 25.2,
             "fontWeight": 600,
             "status": "normal"
@@ -1331,18 +1688,18 @@ const renderSpec = {
           "label": "Load Balancer",
           "position": {
             "x": 50,
-            "y": 40.39333333333333
+            "y": 33.4
           },
           "visualStyle": {
             "size": 81,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#34D399",
             "strokeWidth": 2.846049894151541,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#34D399",
+            "glow": true,
+            "glowColor": "#34D399",
+            "glowBlur": 15.210000000000003,
+            "textColor": "#E8F6FF",
             "fontSize": 25.2,
             "fontWeight": 600,
             "status": "active"
@@ -1354,19 +1711,19 @@ const renderSpec = {
           "sourceEntityId": "app",
           "position": {
             "x": 29.458333333333336,
-            "y": 61.60666666666666
+            "y": 50.599999999999994
           },
           "enter": "zoom_in",
           "visualStyle": {
             "size": 81,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.846049894151541,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 15.210000000000003,
+            "textColor": "#E8F6FF",
             "fontSize": 25.2,
             "fontWeight": 600,
             "status": "normal"
@@ -1379,18 +1736,18 @@ const renderSpec = {
           "label": "Server",
           "position": {
             "x": 50,
-            "y": 61.60666666666666
+            "y": 50.599999999999994
           },
           "visualStyle": {
             "size": 81,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.846049894151541,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 15.210000000000003,
+            "textColor": "#E8F6FF",
             "fontSize": 25.2,
             "fontWeight": 600,
             "status": "normal"
@@ -1402,19 +1759,19 @@ const renderSpec = {
           "sourceEntityId": "app",
           "position": {
             "x": 70.54166666666666,
-            "y": 61.60666666666666
+            "y": 50.599999999999994
           },
           "enter": "zoom_in",
           "visualStyle": {
             "size": 81,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.846049894151541,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 15.210000000000003,
+            "textColor": "#E8F6FF",
             "fontSize": 25.2,
             "fontWeight": 600,
             "status": "normal"
@@ -1427,18 +1784,18 @@ const renderSpec = {
           "label": "Database",
           "position": {
             "x": 50,
-            "y": 82.82
+            "y": 67.8
           },
           "visualStyle": {
             "size": 81,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.846049894151541,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 15.210000000000003,
+            "textColor": "#E8F6FF",
             "fontSize": 25.2,
             "fontWeight": 600,
             "status": "normal"
@@ -1455,7 +1812,7 @@ const renderSpec = {
           "label": "Users",
           "layout": {
             "x": 50,
-            "y": 19.18
+            "y": 16.2
           }
         },
         {
@@ -1467,7 +1824,7 @@ const renderSpec = {
           "label": "Load Balancer",
           "layout": {
             "x": 50,
-            "y": 40.39333333333333
+            "y": 33.4
           }
         },
         {
@@ -1479,7 +1836,7 @@ const renderSpec = {
           "label": "Server",
           "layout": {
             "x": 50,
-            "y": 61.60666666666666
+            "y": 50.599999999999994
           }
         },
         {
@@ -1491,7 +1848,7 @@ const renderSpec = {
           "label": "Database",
           "layout": {
             "x": 50,
-            "y": 82.82
+            "y": 67.8
           }
         }
       ],
@@ -1518,10 +1875,53 @@ const renderSpec = {
           "style": "solid"
         }
       ],
-      "interactions": [],
+      "interactions": [
+        {
+          "id": "i_c_users_lb_req_fwd",
+          "from": "users",
+          "to": "lb",
+          "type": "flow",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_lb_app_req_fwd",
+          "from": "lb",
+          "to": "app",
+          "type": "flow",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_app_db_req_fwd",
+          "from": "app",
+          "to": "db",
+          "type": "flow",
+          "intensity": "medium"
+        }
+      ],
       "sourceCamera": {
-        "mode": "wide",
-        "zoom": 1
+        "mode": "focus",
+        "target": "app",
+        "zoom": 1.08
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "tight",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "neon",
+          "background_texture": "grid",
+          "glow_strength": "strong"
+        },
+        "motion": {
+          "entry_style": "elastic_pop",
+          "pacing": "reel_fast"
+        },
+        "flow": {
+          "renderer": "hybrid"
+        }
       },
       "source": {
         "entities": [
@@ -1534,7 +1934,7 @@ const renderSpec = {
             "label": "Users",
             "layout": {
               "x": 50,
-              "y": 19.18
+              "y": 16.2
             }
           },
           {
@@ -1546,7 +1946,7 @@ const renderSpec = {
             "label": "Load Balancer",
             "layout": {
               "x": 50,
-              "y": 40.39333333333333
+              "y": 33.4
             }
           },
           {
@@ -1558,7 +1958,7 @@ const renderSpec = {
             "label": "Server",
             "layout": {
               "x": 50,
-              "y": 61.60666666666666
+              "y": 50.599999999999994
             }
           },
           {
@@ -1570,7 +1970,7 @@ const renderSpec = {
             "label": "Database",
             "layout": {
               "x": 50,
-              "y": 82.82
+              "y": 67.8
             }
           }
         ],
@@ -1597,10 +1997,33 @@ const renderSpec = {
             "style": "solid"
           }
         ],
-        "interactions": [],
+        "interactions": [
+          {
+            "id": "i_c_users_lb_req_fwd",
+            "from": "users",
+            "to": "lb",
+            "type": "flow",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_lb_app_req_fwd",
+            "from": "lb",
+            "to": "app",
+            "type": "flow",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_app_db_req_fwd",
+            "from": "app",
+            "to": "db",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
         "camera": {
-          "mode": "wide",
-          "zoom": 1
+          "mode": "focus",
+          "target": "app",
+          "zoom": 1.08
         }
       },
       "motionPersonality": "CALM",
@@ -1639,7 +2062,21 @@ const renderSpec = {
         ],
         "connectionDiffs": [],
         "interactionDiffs": [],
-        "cameraDiffs": []
+        "cameraDiffs": [
+          {
+            "type": "camera_changed",
+            "from": {
+              "mode": "focus",
+              "target": "lb",
+              "zoom": 1.08
+            },
+            "to": {
+              "mode": "focus",
+              "target": "app",
+              "zoom": 1.08
+            }
+          }
+        ]
       },
       "hierarchyTransition": null,
       "plan": {
@@ -1674,8 +2111,8 @@ const renderSpec = {
           {
             "entityId": "app",
             "action": "add",
-            "delay": 1.9,
-            "duration": 1.05,
+            "delay": 0.37399999999999994,
+            "duration": 0.62,
             "easing": "cubic-bezier(0.2,0,0,1)",
             "scale": 1.2,
             "isPrimary": true
@@ -1684,7 +2121,14 @@ const renderSpec = {
         "connections": [],
         "camera": null
       },
-      "cameraPlan": null,
+      "cameraPlan": {
+        "targetId": "app",
+        "targetElementId": "app",
+        "zoom": 1.08,
+        "duration": 0.55,
+        "easing": "cubic-bezier(0.2,0,0,1)",
+        "motionType": "focus_primary"
+      },
       "sceneDiff": {
         "addedEntities": [],
         "removedEntities": [],
@@ -1726,7 +2170,18 @@ const renderSpec = {
         "addedInteractions": [],
         "removedInteractions": [],
         "interactionIntensityChanged": [],
-        "cameraChanged": null
+        "cameraChanged": {
+          "from": {
+            "mode": "focus",
+            "target": "lb",
+            "zoom": 1.08
+          },
+          "to": {
+            "mode": "focus",
+            "target": "app",
+            "zoom": 1.08
+          }
+        }
       }
     },
     {
@@ -1734,6 +2189,7 @@ const renderSpec = {
       "start": 24,
       "end": 30,
       "narration": "Each Server checks a Cache before going to the Database for data.",
+      "camera": "focus",
       "elements": [
         {
           "id": "users",
@@ -1742,18 +2198,18 @@ const renderSpec = {
           "label": "Users",
           "position": {
             "x": 50,
-            "y": 14
+            "y": 12
           },
           "visualStyle": {
             "size": 72,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.6832815729997477,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 13.520000000000003,
+            "textColor": "#E8F6FF",
             "fontSize": 22.400000000000002,
             "fontWeight": 600,
             "status": "normal"
@@ -1766,18 +2222,18 @@ const renderSpec = {
           "label": "Load Balancer",
           "position": {
             "x": 50,
-            "y": 32.5
+            "y": 27
           },
           "visualStyle": {
             "size": 72,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.6832815729997477,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 13.520000000000003,
+            "textColor": "#E8F6FF",
             "fontSize": 22.400000000000002,
             "fontWeight": 600,
             "status": "normal"
@@ -1789,18 +2245,18 @@ const renderSpec = {
           "sourceEntityId": "app",
           "position": {
             "x": 31.74074074074074,
-            "y": 51
+            "y": 42
           },
           "visualStyle": {
             "size": 72,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.6832815729997477,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 13.520000000000003,
+            "textColor": "#E8F6FF",
             "fontSize": 22.400000000000002,
             "fontWeight": 600,
             "status": "normal"
@@ -1813,18 +2269,18 @@ const renderSpec = {
           "label": "Server",
           "position": {
             "x": 50,
-            "y": 51
+            "y": 42
           },
           "visualStyle": {
             "size": 72,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.6832815729997477,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 13.520000000000003,
+            "textColor": "#E8F6FF",
             "fontSize": 22.400000000000002,
             "fontWeight": 600,
             "status": "normal"
@@ -1836,18 +2292,18 @@ const renderSpec = {
           "sourceEntityId": "app",
           "position": {
             "x": 68.25925925925927,
-            "y": 51
+            "y": 42
           },
           "visualStyle": {
             "size": 72,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.6832815729997477,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 13.520000000000003,
+            "textColor": "#E8F6FF",
             "fontSize": 22.400000000000002,
             "fontWeight": 600,
             "status": "normal"
@@ -1860,19 +2316,19 @@ const renderSpec = {
           "label": "Cache",
           "position": {
             "x": 50,
-            "y": 69.5
+            "y": 57
           },
           "enter": "zoom_in",
           "visualStyle": {
             "size": 72,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#34D399",
             "strokeWidth": 2.6832815729997477,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#34D399",
+            "glow": true,
+            "glowColor": "#34D399",
+            "glowBlur": 13.520000000000003,
+            "textColor": "#E8F6FF",
             "fontSize": 22.400000000000002,
             "fontWeight": 600,
             "status": "active"
@@ -1885,18 +2341,18 @@ const renderSpec = {
           "label": "Database",
           "position": {
             "x": 50,
-            "y": 88
+            "y": 72
           },
           "visualStyle": {
             "size": 72,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.6832815729997477,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 13.520000000000003,
+            "textColor": "#E8F6FF",
             "fontSize": 22.400000000000002,
             "fontWeight": 600,
             "status": "normal"
@@ -1913,7 +2369,7 @@ const renderSpec = {
           "label": "Users",
           "layout": {
             "x": 50,
-            "y": 14
+            "y": 12
           }
         },
         {
@@ -1925,7 +2381,7 @@ const renderSpec = {
           "label": "Load Balancer",
           "layout": {
             "x": 50,
-            "y": 32.5
+            "y": 27
           }
         },
         {
@@ -1937,7 +2393,7 @@ const renderSpec = {
           "label": "Server",
           "layout": {
             "x": 50,
-            "y": 51
+            "y": 42
           }
         },
         {
@@ -1949,7 +2405,7 @@ const renderSpec = {
           "label": "Cache",
           "layout": {
             "x": 50,
-            "y": 69.5
+            "y": 57
           }
         },
         {
@@ -1961,7 +2417,7 @@ const renderSpec = {
           "label": "Database",
           "layout": {
             "x": 50,
-            "y": 88
+            "y": 72
           }
         }
       ],
@@ -1995,10 +2451,60 @@ const renderSpec = {
           "style": "solid"
         }
       ],
-      "interactions": [],
+      "interactions": [
+        {
+          "id": "i_c_users_lb_req_fwd",
+          "from": "users",
+          "to": "lb",
+          "type": "flow",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_lb_app_req_fwd",
+          "from": "lb",
+          "to": "app",
+          "type": "flow",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_app_cache_lookup_fwd",
+          "from": "app",
+          "to": "cache",
+          "type": "ping",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_app_db_req_fwd",
+          "from": "app",
+          "to": "db",
+          "type": "flow",
+          "intensity": "low"
+        }
+      ],
       "sourceCamera": {
-        "mode": "wide",
-        "zoom": 1
+        "mode": "focus",
+        "target": "cache",
+        "zoom": 1.04
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "tight",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "neon",
+          "background_texture": "grid",
+          "glow_strength": "strong"
+        },
+        "motion": {
+          "entry_style": "elastic_pop",
+          "pacing": "reel_fast"
+        },
+        "flow": {
+          "renderer": "hybrid"
+        }
       },
       "source": {
         "entities": [
@@ -2011,7 +2517,7 @@ const renderSpec = {
             "label": "Users",
             "layout": {
               "x": 50,
-              "y": 14
+              "y": 12
             }
           },
           {
@@ -2023,7 +2529,7 @@ const renderSpec = {
             "label": "Load Balancer",
             "layout": {
               "x": 50,
-              "y": 32.5
+              "y": 27
             }
           },
           {
@@ -2035,7 +2541,7 @@ const renderSpec = {
             "label": "Server",
             "layout": {
               "x": 50,
-              "y": 51
+              "y": 42
             }
           },
           {
@@ -2047,7 +2553,7 @@ const renderSpec = {
             "label": "Cache",
             "layout": {
               "x": 50,
-              "y": 69.5
+              "y": 57
             }
           },
           {
@@ -2059,7 +2565,7 @@ const renderSpec = {
             "label": "Database",
             "layout": {
               "x": 50,
-              "y": 88
+              "y": 72
             }
           }
         ],
@@ -2093,10 +2599,40 @@ const renderSpec = {
             "style": "solid"
           }
         ],
-        "interactions": [],
+        "interactions": [
+          {
+            "id": "i_c_users_lb_req_fwd",
+            "from": "users",
+            "to": "lb",
+            "type": "flow",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_lb_app_req_fwd",
+            "from": "lb",
+            "to": "app",
+            "type": "flow",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_app_cache_lookup_fwd",
+            "from": "app",
+            "to": "cache",
+            "type": "ping",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_app_db_req_fwd",
+            "from": "app",
+            "to": "db",
+            "type": "flow",
+            "intensity": "low"
+          }
+        ],
         "camera": {
-          "mode": "wide",
-          "zoom": 1
+          "mode": "focus",
+          "target": "cache",
+          "zoom": 1.04
         }
       },
       "motionPersonality": "CALM",
@@ -2111,11 +2647,11 @@ const renderSpec = {
             "entityId": "users",
             "from": {
               "x": 50,
-              "y": 19.18
+              "y": 16.2
             },
             "to": {
               "x": 50,
-              "y": 14
+              "y": 12
             }
           },
           {
@@ -2123,11 +2659,11 @@ const renderSpec = {
             "entityId": "lb",
             "from": {
               "x": 50,
-              "y": 40.39333333333333
+              "y": 33.4
             },
             "to": {
               "x": 50,
-              "y": 32.5
+              "y": 27
             }
           },
           {
@@ -2135,11 +2671,11 @@ const renderSpec = {
             "entityId": "app",
             "from": {
               "x": 50,
-              "y": 61.60666666666666
+              "y": 50.599999999999994
             },
             "to": {
               "x": 50,
-              "y": 51
+              "y": 42
             }
           },
           {
@@ -2147,11 +2683,11 @@ const renderSpec = {
             "entityId": "db",
             "from": {
               "x": 50,
-              "y": 82.82
+              "y": 67.8
             },
             "to": {
               "x": 50,
-              "y": 88
+              "y": 72
             }
           },
           {
@@ -2173,8 +2709,33 @@ const renderSpec = {
             "connectionId": "c_app_cache_lookup"
           }
         ],
-        "interactionDiffs": [],
-        "cameraDiffs": []
+        "interactionDiffs": [
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_app_cache_lookup_fwd"
+          },
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_app_db_req_fwd",
+            "from": "medium",
+            "to": "low"
+          }
+        ],
+        "cameraDiffs": [
+          {
+            "type": "camera_changed",
+            "from": {
+              "mode": "focus",
+              "target": "app",
+              "zoom": 1.08
+            },
+            "to": {
+              "mode": "focus",
+              "target": "cache",
+              "zoom": 1.04
+            }
+          }
+        ]
       },
       "hierarchyTransition": null,
       "plan": {
@@ -2249,7 +2810,35 @@ const renderSpec = {
             "connectionId": "c_app_cache_lookup"
           }
         ],
-        "interactions": []
+        "interactions": [
+          {
+            "entityId": "app",
+            "elementIds": [
+              "app_1",
+              "app",
+              "app_3"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_app_db_req_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "cache",
+            "elementIds": [
+              "cache"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_app_cache_lookup_fwd"
+          },
+          {
+            "entityId": "db",
+            "elementIds": [
+              "db"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_app_db_req_fwd"
+          }
+        ]
       },
       "animationPlan": {
         "entities": [
@@ -2263,29 +2852,29 @@ const renderSpec = {
           {
             "entityId": "lb",
             "action": "move",
-            "delay": 0.68,
+            "delay": 0.6560000000000001,
             "duration": 0.95,
             "easing": "cubic-bezier(0.2,0,0,1)"
           },
           {
             "entityId": "app",
             "action": "move",
-            "delay": 0.7600000000000001,
+            "delay": 0.7120000000000001,
             "duration": 0.95,
             "easing": "cubic-bezier(0.2,0,0,1)"
           },
           {
             "entityId": "db",
             "action": "move",
-            "delay": 0.8400000000000001,
+            "delay": 0.768,
             "duration": 0.95,
             "easing": "cubic-bezier(0.2,0,0,1)"
           },
           {
             "entityId": "cache",
             "action": "add",
-            "delay": 1.9,
-            "duration": 1.05,
+            "delay": 0.37399999999999994,
+            "duration": 0.62,
             "easing": "cubic-bezier(0.2,0,0,1)",
             "scale": 1.2,
             "isPrimary": true
@@ -2294,14 +2883,21 @@ const renderSpec = {
         "connections": [
           {
             "connectionId": "c_app_cache_lookup",
-            "delay": 3,
-            "duration": 0.8,
+            "delay": 0.504,
+            "duration": 0.42,
             "easing": "cubic-bezier(0.2,0,0,1)"
           }
         ],
         "camera": null
       },
-      "cameraPlan": null,
+      "cameraPlan": {
+        "targetId": "cache",
+        "targetElementId": "cache",
+        "zoom": 1.04,
+        "duration": 0.55,
+        "easing": "cubic-bezier(0.2,0,0,1)",
+        "motionType": "focus_primary"
+      },
       "sceneDiff": {
         "addedEntities": [
           {
@@ -2313,7 +2909,7 @@ const renderSpec = {
             "label": "Cache",
             "layout": {
               "x": 50,
-              "y": 69.5
+              "y": 57
             }
           }
         ],
@@ -2323,44 +2919,44 @@ const renderSpec = {
             "id": "users",
             "from": {
               "x": 50,
-              "y": 19.18
+              "y": 16.2
             },
             "to": {
               "x": 50,
-              "y": 14
+              "y": 12
             }
           },
           {
             "id": "lb",
             "from": {
               "x": 50,
-              "y": 40.39333333333333
+              "y": 33.4
             },
             "to": {
               "x": 50,
-              "y": 32.5
+              "y": 27
             }
           },
           {
             "id": "app",
             "from": {
               "x": 50,
-              "y": 61.60666666666666
+              "y": 50.599999999999994
             },
             "to": {
               "x": 50,
-              "y": 51
+              "y": 42
             }
           },
           {
             "id": "db",
             "from": {
               "x": 50,
-              "y": 82.82
+              "y": 67.8
             },
             "to": {
               "x": 50,
-              "y": 88
+              "y": 72
             }
           }
         ],
@@ -2394,10 +2990,35 @@ const renderSpec = {
           }
         ],
         "removedConnections": [],
-        "addedInteractions": [],
+        "addedInteractions": [
+          {
+            "id": "i_c_app_cache_lookup_fwd",
+            "from": "app",
+            "to": "cache",
+            "type": "ping",
+            "intensity": "high"
+          }
+        ],
         "removedInteractions": [],
-        "interactionIntensityChanged": [],
-        "cameraChanged": null
+        "interactionIntensityChanged": [
+          {
+            "id": "i_c_app_db_req_fwd",
+            "from": "medium",
+            "to": "low"
+          }
+        ],
+        "cameraChanged": {
+          "from": {
+            "mode": "focus",
+            "target": "app",
+            "zoom": 1.08
+          },
+          "to": {
+            "mode": "focus",
+            "target": "cache",
+            "zoom": 1.04
+          }
+        }
       }
     },
     {
@@ -2405,6 +3026,7 @@ const renderSpec = {
       "start": 30,
       "end": 36,
       "narration": "A CDN serves many requests directly, and the remaining traffic goes from Users to the Load Balancer and then to the Servers.",
+      "camera": "focus",
       "elements": [
         {
           "id": "users",
@@ -2413,18 +3035,18 @@ const renderSpec = {
           "label": "Users",
           "position": {
             "x": 50,
-            "y": 14
+            "y": 12
           },
           "visualStyle": {
             "size": 64.8,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.545584412271571,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 12.168000000000001,
+            "textColor": "#E8F6FF",
             "fontSize": 20.16,
             "fontWeight": 600,
             "status": "normal"
@@ -2437,19 +3059,19 @@ const renderSpec = {
           "label": "CDN",
           "position": {
             "x": 50,
-            "y": 28.8
+            "y": 24
           },
           "enter": "zoom_in",
           "visualStyle": {
             "size": 64.8,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#34D399",
             "strokeWidth": 2.545584412271571,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#34D399",
+            "glow": true,
+            "glowColor": "#34D399",
+            "glowBlur": 12.168000000000001,
+            "textColor": "#E8F6FF",
             "fontSize": 20.16,
             "fontWeight": 600,
             "status": "active"
@@ -2462,18 +3084,18 @@ const renderSpec = {
           "label": "Load Balancer",
           "position": {
             "x": 50,
-            "y": 43.6
+            "y": 36
           },
           "visualStyle": {
             "size": 64.8,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.545584412271571,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 12.168000000000001,
+            "textColor": "#E8F6FF",
             "fontSize": 20.16,
             "fontWeight": 600,
             "status": "normal"
@@ -2485,18 +3107,18 @@ const renderSpec = {
           "sourceEntityId": "app",
           "position": {
             "x": 33.56666666666667,
-            "y": 58.400000000000006
+            "y": 48
           },
           "visualStyle": {
             "size": 64.8,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.545584412271571,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 12.168000000000001,
+            "textColor": "#E8F6FF",
             "fontSize": 20.16,
             "fontWeight": 600,
             "status": "normal"
@@ -2509,18 +3131,18 @@ const renderSpec = {
           "label": "Server",
           "position": {
             "x": 50,
-            "y": 58.400000000000006
+            "y": 48
           },
           "visualStyle": {
             "size": 64.8,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.545584412271571,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 12.168000000000001,
+            "textColor": "#E8F6FF",
             "fontSize": 20.16,
             "fontWeight": 600,
             "status": "normal"
@@ -2532,18 +3154,18 @@ const renderSpec = {
           "sourceEntityId": "app",
           "position": {
             "x": 66.43333333333334,
-            "y": 58.400000000000006
+            "y": 48
           },
           "visualStyle": {
             "size": 64.8,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.545584412271571,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 12.168000000000001,
+            "textColor": "#E8F6FF",
             "fontSize": 20.16,
             "fontWeight": 600,
             "status": "normal"
@@ -2556,18 +3178,18 @@ const renderSpec = {
           "label": "Cache",
           "position": {
             "x": 50,
-            "y": 73.2
+            "y": 60
           },
           "visualStyle": {
             "size": 64.8,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.545584412271571,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 12.168000000000001,
+            "textColor": "#E8F6FF",
             "fontSize": 20.16,
             "fontWeight": 600,
             "status": "normal"
@@ -2580,18 +3202,18 @@ const renderSpec = {
           "label": "Database",
           "position": {
             "x": 50,
-            "y": 88
+            "y": 72
           },
           "visualStyle": {
             "size": 64.8,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.545584412271571,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 12.168000000000001,
+            "textColor": "#E8F6FF",
             "fontSize": 20.16,
             "fontWeight": 600,
             "status": "normal"
@@ -2608,7 +3230,7 @@ const renderSpec = {
           "label": "Users",
           "layout": {
             "x": 50,
-            "y": 14
+            "y": 12
           }
         },
         {
@@ -2620,7 +3242,7 @@ const renderSpec = {
           "label": "CDN",
           "layout": {
             "x": 50,
-            "y": 28.8
+            "y": 24
           }
         },
         {
@@ -2632,7 +3254,7 @@ const renderSpec = {
           "label": "Load Balancer",
           "layout": {
             "x": 50,
-            "y": 43.6
+            "y": 36
           }
         },
         {
@@ -2644,7 +3266,7 @@ const renderSpec = {
           "label": "Server",
           "layout": {
             "x": 50,
-            "y": 58.400000000000006
+            "y": 48
           }
         },
         {
@@ -2656,7 +3278,7 @@ const renderSpec = {
           "label": "Cache",
           "layout": {
             "x": 50,
-            "y": 73.2
+            "y": 60
           }
         },
         {
@@ -2668,7 +3290,7 @@ const renderSpec = {
           "label": "Database",
           "layout": {
             "x": 50,
-            "y": 88
+            "y": 72
           }
         }
       ],
@@ -2709,10 +3331,67 @@ const renderSpec = {
           "style": "solid"
         }
       ],
-      "interactions": [],
+      "interactions": [
+        {
+          "id": "i_c_users_cdn_fetch_fwd",
+          "from": "users",
+          "to": "cdn",
+          "type": "flow",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_users_lb_req_fwd",
+          "from": "users",
+          "to": "lb",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_lb_app_req_fwd",
+          "from": "lb",
+          "to": "app",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_app_cache_lookup_fwd",
+          "from": "app",
+          "to": "cache",
+          "type": "ping",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_app_db_req_fwd",
+          "from": "app",
+          "to": "db",
+          "type": "flow",
+          "intensity": "low"
+        }
+      ],
       "sourceCamera": {
-        "mode": "wide",
+        "mode": "focus",
+        "target": "cdn",
         "zoom": 1
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "tight",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "neon",
+          "background_texture": "grid",
+          "glow_strength": "strong"
+        },
+        "motion": {
+          "entry_style": "elastic_pop",
+          "pacing": "reel_fast"
+        },
+        "flow": {
+          "renderer": "hybrid"
+        }
       },
       "source": {
         "entities": [
@@ -2725,7 +3404,7 @@ const renderSpec = {
             "label": "Users",
             "layout": {
               "x": 50,
-              "y": 14
+              "y": 12
             }
           },
           {
@@ -2737,7 +3416,7 @@ const renderSpec = {
             "label": "CDN",
             "layout": {
               "x": 50,
-              "y": 28.8
+              "y": 24
             }
           },
           {
@@ -2749,7 +3428,7 @@ const renderSpec = {
             "label": "Load Balancer",
             "layout": {
               "x": 50,
-              "y": 43.6
+              "y": 36
             }
           },
           {
@@ -2761,7 +3440,7 @@ const renderSpec = {
             "label": "Server",
             "layout": {
               "x": 50,
-              "y": 58.400000000000006
+              "y": 48
             }
           },
           {
@@ -2773,7 +3452,7 @@ const renderSpec = {
             "label": "Cache",
             "layout": {
               "x": 50,
-              "y": 73.2
+              "y": 60
             }
           },
           {
@@ -2785,7 +3464,7 @@ const renderSpec = {
             "label": "Database",
             "layout": {
               "x": 50,
-              "y": 88
+              "y": 72
             }
           }
         ],
@@ -2826,9 +3505,46 @@ const renderSpec = {
             "style": "solid"
           }
         ],
-        "interactions": [],
+        "interactions": [
+          {
+            "id": "i_c_users_cdn_fetch_fwd",
+            "from": "users",
+            "to": "cdn",
+            "type": "flow",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_users_lb_req_fwd",
+            "from": "users",
+            "to": "lb",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_lb_app_req_fwd",
+            "from": "lb",
+            "to": "app",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_app_cache_lookup_fwd",
+            "from": "app",
+            "to": "cache",
+            "type": "ping",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_app_db_req_fwd",
+            "from": "app",
+            "to": "db",
+            "type": "flow",
+            "intensity": "low"
+          }
+        ],
         "camera": {
-          "mode": "wide",
+          "mode": "focus",
+          "target": "cdn",
           "zoom": 1
         }
       },
@@ -2844,11 +3560,11 @@ const renderSpec = {
             "entityId": "lb",
             "from": {
               "x": 50,
-              "y": 32.5
+              "y": 27
             },
             "to": {
               "x": 50,
-              "y": 43.6
+              "y": 36
             }
           },
           {
@@ -2856,11 +3572,11 @@ const renderSpec = {
             "entityId": "app",
             "from": {
               "x": 50,
-              "y": 51
+              "y": 42
             },
             "to": {
               "x": 50,
-              "y": 58.400000000000006
+              "y": 48
             }
           },
           {
@@ -2868,11 +3584,11 @@ const renderSpec = {
             "entityId": "cache",
             "from": {
               "x": 50,
-              "y": 69.5
+              "y": 57
             },
             "to": {
               "x": 50,
-              "y": 73.2
+              "y": 60
             }
           },
           {
@@ -2894,8 +3610,45 @@ const renderSpec = {
             "connectionId": "c_users_cdn_fetch"
           }
         ],
-        "interactionDiffs": [],
-        "cameraDiffs": []
+        "interactionDiffs": [
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_users_cdn_fetch_fwd"
+          },
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_users_lb_req_fwd",
+            "from": "high",
+            "to": "medium"
+          },
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_lb_app_req_fwd",
+            "from": "high",
+            "to": "medium"
+          },
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_app_cache_lookup_fwd",
+            "from": "high",
+            "to": "medium"
+          }
+        ],
+        "cameraDiffs": [
+          {
+            "type": "camera_changed",
+            "from": {
+              "mode": "focus",
+              "target": "cache",
+              "zoom": 1.04
+            },
+            "to": {
+              "mode": "focus",
+              "target": "cdn",
+              "zoom": 1
+            }
+          }
+        ]
       },
       "hierarchyTransition": null,
       "plan": {
@@ -2961,7 +3714,53 @@ const renderSpec = {
             "connectionId": "c_users_cdn_fetch"
           }
         ],
-        "interactions": []
+        "interactions": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_lb_req_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "cdn",
+            "elementIds": [
+              "cdn"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_cdn_fetch_fwd"
+          },
+          {
+            "entityId": "lb",
+            "elementIds": [
+              "lb"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_lb_app_req_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "app",
+            "elementIds": [
+              "app_1",
+              "app",
+              "app_3"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_app_cache_lookup_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "cache",
+            "elementIds": [
+              "cache"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_app_cache_lookup_fwd"
+          }
+        ]
       },
       "animationPlan": {
         "entities": [
@@ -2975,22 +3774,22 @@ const renderSpec = {
           {
             "entityId": "app",
             "action": "move",
-            "delay": 0.68,
+            "delay": 0.6560000000000001,
             "duration": 0.95,
             "easing": "cubic-bezier(0.2,0,0,1)"
           },
           {
             "entityId": "cache",
             "action": "move",
-            "delay": 0.7600000000000001,
+            "delay": 0.7120000000000001,
             "duration": 0.95,
             "easing": "cubic-bezier(0.2,0,0,1)"
           },
           {
             "entityId": "cdn",
             "action": "add",
-            "delay": 1.9,
-            "duration": 1.05,
+            "delay": 0.37399999999999994,
+            "duration": 0.62,
             "easing": "cubic-bezier(0.2,0,0,1)",
             "scale": 1.2,
             "isPrimary": true
@@ -2999,14 +3798,21 @@ const renderSpec = {
         "connections": [
           {
             "connectionId": "c_users_cdn_fetch",
-            "delay": 3,
-            "duration": 0.8,
+            "delay": 0.504,
+            "duration": 0.42,
             "easing": "cubic-bezier(0.2,0,0,1)"
           }
         ],
         "camera": null
       },
-      "cameraPlan": null,
+      "cameraPlan": {
+        "targetId": "cdn",
+        "targetElementId": "cdn",
+        "zoom": 1,
+        "duration": 0.55,
+        "easing": "cubic-bezier(0.2,0,0,1)",
+        "motionType": "focus_primary"
+      },
       "sceneDiff": {
         "addedEntities": [
           {
@@ -3018,7 +3824,7 @@ const renderSpec = {
             "label": "CDN",
             "layout": {
               "x": 50,
-              "y": 28.8
+              "y": 24
             }
           }
         ],
@@ -3028,33 +3834,33 @@ const renderSpec = {
             "id": "lb",
             "from": {
               "x": 50,
-              "y": 32.5
+              "y": 27
             },
             "to": {
               "x": 50,
-              "y": 43.6
+              "y": 36
             }
           },
           {
             "id": "app",
             "from": {
               "x": 50,
-              "y": 51
+              "y": 42
             },
             "to": {
               "x": 50,
-              "y": 58.400000000000006
+              "y": 48
             }
           },
           {
             "id": "cache",
             "from": {
               "x": 50,
-              "y": 69.5
+              "y": 57
             },
             "to": {
               "x": 50,
-              "y": 73.2
+              "y": 60
             }
           }
         ],
@@ -3083,10 +3889,45 @@ const renderSpec = {
           }
         ],
         "removedConnections": [],
-        "addedInteractions": [],
+        "addedInteractions": [
+          {
+            "id": "i_c_users_cdn_fetch_fwd",
+            "from": "users",
+            "to": "cdn",
+            "type": "flow",
+            "intensity": "high"
+          }
+        ],
         "removedInteractions": [],
-        "interactionIntensityChanged": [],
-        "cameraChanged": null
+        "interactionIntensityChanged": [
+          {
+            "id": "i_c_users_lb_req_fwd",
+            "from": "high",
+            "to": "medium"
+          },
+          {
+            "id": "i_c_lb_app_req_fwd",
+            "from": "high",
+            "to": "medium"
+          },
+          {
+            "id": "i_c_app_cache_lookup_fwd",
+            "from": "high",
+            "to": "medium"
+          }
+        ],
+        "cameraChanged": {
+          "from": {
+            "mode": "focus",
+            "target": "cache",
+            "zoom": 1.04
+          },
+          "to": {
+            "mode": "focus",
+            "target": "cdn",
+            "zoom": 1
+          }
+        }
       }
     },
     {
@@ -3094,6 +3935,7 @@ const renderSpec = {
       "start": 36,
       "end": 42,
       "narration": "Servers handle user requests quickly and push slow tasks into a Queue instead of doing them inline.",
+      "camera": "focus",
       "elements": [
         {
           "id": "users",
@@ -3102,18 +3944,18 @@ const renderSpec = {
           "label": "Users",
           "position": {
             "x": 50,
-            "y": 14
+            "y": 12
           },
           "visualStyle": {
             "size": 60.3,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.455605831561735,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 11.323,
+            "textColor": "#E8F6FF",
             "fontSize": 18.759999999999998,
             "fontWeight": 600,
             "status": "normal"
@@ -3126,18 +3968,18 @@ const renderSpec = {
           "label": "CDN",
           "position": {
             "x": 50,
-            "y": 26.333333333333336
+            "y": 22
           },
           "visualStyle": {
             "size": 60.3,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.455605831561735,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 11.323,
+            "textColor": "#E8F6FF",
             "fontSize": 18.759999999999998,
             "fontWeight": 600,
             "status": "normal"
@@ -3150,18 +3992,18 @@ const renderSpec = {
           "label": "Load Balancer",
           "position": {
             "x": 50,
-            "y": 38.66666666666667
+            "y": 32
           },
           "visualStyle": {
             "size": 60.3,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.455605831561735,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 11.323,
+            "textColor": "#E8F6FF",
             "fontSize": 18.759999999999998,
             "fontWeight": 600,
             "status": "normal"
@@ -3173,18 +4015,18 @@ const renderSpec = {
           "sourceEntityId": "app",
           "position": {
             "x": 34.70787037037037,
-            "y": 51
+            "y": 42
           },
           "visualStyle": {
             "size": 60.3,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#34D399",
             "strokeWidth": 2.455605831561735,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#34D399",
+            "glow": true,
+            "glowColor": "#34D399",
+            "glowBlur": 11.323,
+            "textColor": "#E8F6FF",
             "fontSize": 18.759999999999998,
             "fontWeight": 600,
             "status": "active"
@@ -3197,18 +4039,18 @@ const renderSpec = {
           "label": "Server",
           "position": {
             "x": 50,
-            "y": 51
+            "y": 42
           },
           "visualStyle": {
             "size": 60.3,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#34D399",
             "strokeWidth": 2.455605831561735,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#34D399",
+            "glow": true,
+            "glowColor": "#34D399",
+            "glowBlur": 11.323,
+            "textColor": "#E8F6FF",
             "fontSize": 18.759999999999998,
             "fontWeight": 600,
             "status": "active"
@@ -3220,18 +4062,18 @@ const renderSpec = {
           "sourceEntityId": "app",
           "position": {
             "x": 65.29212962962963,
-            "y": 51
+            "y": 42
           },
           "visualStyle": {
             "size": 60.3,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#34D399",
             "strokeWidth": 2.455605831561735,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#34D399",
+            "glow": true,
+            "glowColor": "#34D399",
+            "glowBlur": 11.323,
+            "textColor": "#E8F6FF",
             "fontSize": 18.759999999999998,
             "fontWeight": 600,
             "status": "active"
@@ -3244,19 +4086,19 @@ const renderSpec = {
           "label": "Queue",
           "position": {
             "x": 50,
-            "y": 63.333333333333336
+            "y": 52
           },
           "enter": "zoom_in",
           "visualStyle": {
             "size": 60.3,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#34D399",
             "strokeWidth": 2.455605831561735,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#34D399",
+            "glow": true,
+            "glowColor": "#34D399",
+            "glowBlur": 11.323,
+            "textColor": "#E8F6FF",
             "fontSize": 18.759999999999998,
             "fontWeight": 600,
             "status": "active"
@@ -3269,18 +4111,18 @@ const renderSpec = {
           "label": "Cache",
           "position": {
             "x": 50,
-            "y": 75.66666666666667
+            "y": 62
           },
           "visualStyle": {
             "size": 60.3,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.455605831561735,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 11.323,
+            "textColor": "#E8F6FF",
             "fontSize": 18.759999999999998,
             "fontWeight": 600,
             "status": "normal"
@@ -3293,18 +4135,18 @@ const renderSpec = {
           "label": "Database",
           "position": {
             "x": 50,
-            "y": 88
+            "y": 72
           },
           "visualStyle": {
             "size": 60.3,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.455605831561735,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 11.323,
+            "textColor": "#E8F6FF",
             "fontSize": 18.759999999999998,
             "fontWeight": 600,
             "status": "normal"
@@ -3321,7 +4163,7 @@ const renderSpec = {
           "label": "Users",
           "layout": {
             "x": 50,
-            "y": 14
+            "y": 12
           }
         },
         {
@@ -3333,7 +4175,7 @@ const renderSpec = {
           "label": "CDN",
           "layout": {
             "x": 50,
-            "y": 26.333333333333336
+            "y": 22
           }
         },
         {
@@ -3345,7 +4187,7 @@ const renderSpec = {
           "label": "Load Balancer",
           "layout": {
             "x": 50,
-            "y": 38.66666666666667
+            "y": 32
           }
         },
         {
@@ -3357,7 +4199,7 @@ const renderSpec = {
           "label": "Server",
           "layout": {
             "x": 50,
-            "y": 51
+            "y": 42
           }
         },
         {
@@ -3369,7 +4211,7 @@ const renderSpec = {
           "label": "Queue",
           "layout": {
             "x": 50,
-            "y": 63.333333333333336
+            "y": 52
           }
         },
         {
@@ -3381,7 +4223,7 @@ const renderSpec = {
           "label": "Cache",
           "layout": {
             "x": 50,
-            "y": 75.66666666666667
+            "y": 62
           }
         },
         {
@@ -3393,7 +4235,7 @@ const renderSpec = {
           "label": "Database",
           "layout": {
             "x": 50,
-            "y": 88
+            "y": 72
           }
         }
       ],
@@ -3441,10 +4283,74 @@ const renderSpec = {
           "style": "solid"
         }
       ],
-      "interactions": [],
+      "interactions": [
+        {
+          "id": "i_c_users_cdn_fetch_fwd",
+          "from": "users",
+          "to": "cdn",
+          "type": "flow",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_users_lb_req_fwd",
+          "from": "users",
+          "to": "lb",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_lb_app_req_fwd",
+          "from": "lb",
+          "to": "app",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_app_queue_dispatch_fwd",
+          "from": "app",
+          "to": "queue",
+          "type": "broadcast",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_app_cache_lookup_fwd",
+          "from": "app",
+          "to": "cache",
+          "type": "ping",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_app_db_req_fwd",
+          "from": "app",
+          "to": "db",
+          "type": "flow",
+          "intensity": "low"
+        }
+      ],
       "sourceCamera": {
-        "mode": "wide",
+        "mode": "focus",
+        "target": "queue",
         "zoom": 1
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "tight",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "neon",
+          "background_texture": "grid",
+          "glow_strength": "strong"
+        },
+        "motion": {
+          "entry_style": "elastic_pop",
+          "pacing": "reel_fast"
+        },
+        "flow": {
+          "renderer": "hybrid"
+        }
       },
       "source": {
         "entities": [
@@ -3457,7 +4363,7 @@ const renderSpec = {
             "label": "Users",
             "layout": {
               "x": 50,
-              "y": 14
+              "y": 12
             }
           },
           {
@@ -3469,7 +4375,7 @@ const renderSpec = {
             "label": "CDN",
             "layout": {
               "x": 50,
-              "y": 26.333333333333336
+              "y": 22
             }
           },
           {
@@ -3481,7 +4387,7 @@ const renderSpec = {
             "label": "Load Balancer",
             "layout": {
               "x": 50,
-              "y": 38.66666666666667
+              "y": 32
             }
           },
           {
@@ -3493,7 +4399,7 @@ const renderSpec = {
             "label": "Server",
             "layout": {
               "x": 50,
-              "y": 51
+              "y": 42
             }
           },
           {
@@ -3505,7 +4411,7 @@ const renderSpec = {
             "label": "Queue",
             "layout": {
               "x": 50,
-              "y": 63.333333333333336
+              "y": 52
             }
           },
           {
@@ -3517,7 +4423,7 @@ const renderSpec = {
             "label": "Cache",
             "layout": {
               "x": 50,
-              "y": 75.66666666666667
+              "y": 62
             }
           },
           {
@@ -3529,7 +4435,7 @@ const renderSpec = {
             "label": "Database",
             "layout": {
               "x": 50,
-              "y": 88
+              "y": 72
             }
           }
         ],
@@ -3577,9 +4483,53 @@ const renderSpec = {
             "style": "solid"
           }
         ],
-        "interactions": [],
+        "interactions": [
+          {
+            "id": "i_c_users_cdn_fetch_fwd",
+            "from": "users",
+            "to": "cdn",
+            "type": "flow",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_users_lb_req_fwd",
+            "from": "users",
+            "to": "lb",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_lb_app_req_fwd",
+            "from": "lb",
+            "to": "app",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_app_queue_dispatch_fwd",
+            "from": "app",
+            "to": "queue",
+            "type": "broadcast",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_app_cache_lookup_fwd",
+            "from": "app",
+            "to": "cache",
+            "type": "ping",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_app_db_req_fwd",
+            "from": "app",
+            "to": "db",
+            "type": "flow",
+            "intensity": "low"
+          }
+        ],
         "camera": {
-          "mode": "wide",
+          "mode": "focus",
+          "target": "queue",
           "zoom": 1
         }
       },
@@ -3595,11 +4545,11 @@ const renderSpec = {
             "entityId": "cdn",
             "from": {
               "x": 50,
-              "y": 28.8
+              "y": 24
             },
             "to": {
               "x": 50,
-              "y": 26.333333333333336
+              "y": 22
             }
           },
           {
@@ -3607,11 +4557,11 @@ const renderSpec = {
             "entityId": "lb",
             "from": {
               "x": 50,
-              "y": 43.6
+              "y": 36
             },
             "to": {
               "x": 50,
-              "y": 38.66666666666667
+              "y": 32
             }
           },
           {
@@ -3619,11 +4569,11 @@ const renderSpec = {
             "entityId": "app",
             "from": {
               "x": 50,
-              "y": 58.400000000000006
+              "y": 48
             },
             "to": {
               "x": 50,
-              "y": 51
+              "y": 42
             }
           },
           {
@@ -3631,11 +4581,11 @@ const renderSpec = {
             "entityId": "cache",
             "from": {
               "x": 50,
-              "y": 73.2
+              "y": 60
             },
             "to": {
               "x": 50,
-              "y": 75.66666666666667
+              "y": 62
             }
           },
           {
@@ -3663,8 +4613,27 @@ const renderSpec = {
             "connectionId": "c_app_queue_dispatch"
           }
         ],
-        "interactionDiffs": [],
-        "cameraDiffs": []
+        "interactionDiffs": [
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_app_queue_dispatch_fwd"
+          }
+        ],
+        "cameraDiffs": [
+          {
+            "type": "camera_changed",
+            "from": {
+              "mode": "focus",
+              "target": "cdn",
+              "zoom": 1
+            },
+            "to": {
+              "mode": "focus",
+              "target": "queue",
+              "zoom": 1
+            }
+          }
+        ]
       },
       "hierarchyTransition": null,
       "plan": {
@@ -3739,7 +4708,26 @@ const renderSpec = {
             "connectionId": "c_app_queue_dispatch"
           }
         ],
-        "interactions": []
+        "interactions": [
+          {
+            "entityId": "app",
+            "elementIds": [
+              "app_1",
+              "app",
+              "app_3"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_app_queue_dispatch_fwd"
+          },
+          {
+            "entityId": "queue",
+            "elementIds": [
+              "queue"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_app_queue_dispatch_fwd"
+          }
+        ]
       },
       "animationPlan": {
         "entities": [
@@ -3753,29 +4741,29 @@ const renderSpec = {
           {
             "entityId": "lb",
             "action": "move",
-            "delay": 0.68,
+            "delay": 0.6560000000000001,
             "duration": 0.95,
             "easing": "cubic-bezier(0.2,0,0,1)"
           },
           {
             "entityId": "app",
             "action": "move",
-            "delay": 0.7600000000000001,
+            "delay": 0.7120000000000001,
             "duration": 0.95,
             "easing": "cubic-bezier(0.2,0,0,1)"
           },
           {
             "entityId": "cache",
             "action": "move",
-            "delay": 0.8400000000000001,
+            "delay": 0.768,
             "duration": 0.95,
             "easing": "cubic-bezier(0.2,0,0,1)"
           },
           {
             "entityId": "queue",
             "action": "add",
-            "delay": 1.9,
-            "duration": 1.05,
+            "delay": 0.37399999999999994,
+            "duration": 0.62,
             "easing": "cubic-bezier(0.2,0,0,1)",
             "scale": 1.2,
             "isPrimary": true
@@ -3784,14 +4772,21 @@ const renderSpec = {
         "connections": [
           {
             "connectionId": "c_app_queue_dispatch",
-            "delay": 3,
-            "duration": 0.8,
+            "delay": 0.504,
+            "duration": 0.42,
             "easing": "cubic-bezier(0.2,0,0,1)"
           }
         ],
         "camera": null
       },
-      "cameraPlan": null,
+      "cameraPlan": {
+        "targetId": "queue",
+        "targetElementId": "queue",
+        "zoom": 1,
+        "duration": 0.55,
+        "easing": "cubic-bezier(0.2,0,0,1)",
+        "motionType": "focus_primary"
+      },
       "sceneDiff": {
         "addedEntities": [
           {
@@ -3803,7 +4798,7 @@ const renderSpec = {
             "label": "Queue",
             "layout": {
               "x": 50,
-              "y": 63.333333333333336
+              "y": 52
             }
           }
         ],
@@ -3813,44 +4808,44 @@ const renderSpec = {
             "id": "cdn",
             "from": {
               "x": 50,
-              "y": 28.8
+              "y": 24
             },
             "to": {
               "x": 50,
-              "y": 26.333333333333336
+              "y": 22
             }
           },
           {
             "id": "lb",
             "from": {
               "x": 50,
-              "y": 43.6
+              "y": 36
             },
             "to": {
               "x": 50,
-              "y": 38.66666666666667
+              "y": 32
             }
           },
           {
             "id": "app",
             "from": {
               "x": 50,
-              "y": 58.400000000000006
+              "y": 48
             },
             "to": {
               "x": 50,
-              "y": 51
+              "y": 42
             }
           },
           {
             "id": "cache",
             "from": {
               "x": 50,
-              "y": 73.2
+              "y": 60
             },
             "to": {
               "x": 50,
-              "y": 75.66666666666667
+              "y": 62
             }
           }
         ],
@@ -3888,10 +4883,29 @@ const renderSpec = {
           }
         ],
         "removedConnections": [],
-        "addedInteractions": [],
+        "addedInteractions": [
+          {
+            "id": "i_c_app_queue_dispatch_fwd",
+            "from": "app",
+            "to": "queue",
+            "type": "broadcast",
+            "intensity": "medium"
+          }
+        ],
         "removedInteractions": [],
         "interactionIntensityChanged": [],
-        "cameraChanged": null
+        "cameraChanged": {
+          "from": {
+            "mode": "focus",
+            "target": "cdn",
+            "zoom": 1
+          },
+          "to": {
+            "mode": "focus",
+            "target": "queue",
+            "zoom": 1
+          }
+        }
       }
     },
     {
@@ -3899,6 +4913,7 @@ const renderSpec = {
       "start": 42,
       "end": 48,
       "narration": "Workers pull jobs from the Queue and update the Database while Servers stay focused on fast responses.",
+      "camera": "focus",
       "elements": [
         {
           "id": "users",
@@ -3907,18 +4922,18 @@ const renderSpec = {
           "label": "Users",
           "position": {
             "x": 50,
-            "y": 14
+            "y": 12
           },
           "visualStyle": {
             "size": 55.8,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.3622023622035435,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 10.478000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 17.36,
             "fontWeight": 600,
             "status": "normal"
@@ -3931,18 +4946,18 @@ const renderSpec = {
           "label": "CDN",
           "position": {
             "x": 50,
-            "y": 24.57142857142857
+            "y": 20.57142857142857
           },
           "visualStyle": {
             "size": 55.8,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.3622023622035435,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 10.478000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 17.36,
             "fontWeight": 600,
             "status": "normal"
@@ -3955,18 +4970,18 @@ const renderSpec = {
           "label": "Load Balancer",
           "position": {
             "x": 50,
-            "y": 35.14285714285714
+            "y": 29.142857142857142
           },
           "visualStyle": {
             "size": 55.8,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.3622023622035435,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 10.478000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 17.36,
             "fontWeight": 600,
             "status": "normal"
@@ -3978,18 +4993,18 @@ const renderSpec = {
           "sourceEntityId": "app",
           "position": {
             "x": 35.849074074074075,
-            "y": 45.714285714285715
+            "y": 37.714285714285715
           },
           "visualStyle": {
             "size": 55.8,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.3622023622035435,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 10.478000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 17.36,
             "fontWeight": 600,
             "status": "normal"
@@ -4002,18 +5017,18 @@ const renderSpec = {
           "label": "Server",
           "position": {
             "x": 50,
-            "y": 45.714285714285715
+            "y": 37.714285714285715
           },
           "visualStyle": {
             "size": 55.8,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.3622023622035435,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 10.478000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 17.36,
             "fontWeight": 600,
             "status": "normal"
@@ -4025,18 +5040,18 @@ const renderSpec = {
           "sourceEntityId": "app",
           "position": {
             "x": 64.15092592592592,
-            "y": 45.714285714285715
+            "y": 37.714285714285715
           },
           "visualStyle": {
             "size": 55.8,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.3622023622035435,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 10.478000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 17.36,
             "fontWeight": 600,
             "status": "normal"
@@ -4049,18 +5064,18 @@ const renderSpec = {
           "label": "Queue",
           "position": {
             "x": 50,
-            "y": 56.285714285714285
+            "y": 46.285714285714285
           },
           "visualStyle": {
             "size": 55.8,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#34D399",
             "strokeWidth": 2.3622023622035435,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#34D399",
+            "glow": true,
+            "glowColor": "#34D399",
+            "glowBlur": 10.478000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 17.36,
             "fontWeight": 600,
             "status": "active"
@@ -4073,19 +5088,19 @@ const renderSpec = {
           "label": "Worker",
           "position": {
             "x": 50,
-            "y": 66.85714285714286
+            "y": 54.857142857142854
           },
           "enter": "zoom_in",
           "visualStyle": {
             "size": 55.8,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#34D399",
             "strokeWidth": 2.3622023622035435,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#34D399",
+            "glow": true,
+            "glowColor": "#34D399",
+            "glowBlur": 10.478000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 17.36,
             "fontWeight": 600,
             "status": "active"
@@ -4098,18 +5113,18 @@ const renderSpec = {
           "label": "Cache",
           "position": {
             "x": 50,
-            "y": 77.42857142857143
+            "y": 63.42857142857143
           },
           "visualStyle": {
             "size": 55.8,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.3622023622035435,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 10.478000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 17.36,
             "fontWeight": 600,
             "status": "normal"
@@ -4122,18 +5137,18 @@ const renderSpec = {
           "label": "Database",
           "position": {
             "x": 50,
-            "y": 88
+            "y": 72
           },
           "visualStyle": {
             "size": 55.8,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.3622023622035435,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 10.478000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 17.36,
             "fontWeight": 600,
             "status": "normal"
@@ -4150,7 +5165,7 @@ const renderSpec = {
           "label": "Users",
           "layout": {
             "x": 50,
-            "y": 14
+            "y": 12
           }
         },
         {
@@ -4162,7 +5177,7 @@ const renderSpec = {
           "label": "CDN",
           "layout": {
             "x": 50,
-            "y": 24.57142857142857
+            "y": 20.57142857142857
           }
         },
         {
@@ -4174,7 +5189,7 @@ const renderSpec = {
           "label": "Load Balancer",
           "layout": {
             "x": 50,
-            "y": 35.14285714285714
+            "y": 29.142857142857142
           }
         },
         {
@@ -4186,7 +5201,7 @@ const renderSpec = {
           "label": "Server",
           "layout": {
             "x": 50,
-            "y": 45.714285714285715
+            "y": 37.714285714285715
           }
         },
         {
@@ -4198,7 +5213,7 @@ const renderSpec = {
           "label": "Queue",
           "layout": {
             "x": 50,
-            "y": 56.285714285714285
+            "y": 46.285714285714285
           }
         },
         {
@@ -4210,7 +5225,7 @@ const renderSpec = {
           "label": "Worker",
           "layout": {
             "x": 50,
-            "y": 66.85714285714286
+            "y": 54.857142857142854
           }
         },
         {
@@ -4222,7 +5237,7 @@ const renderSpec = {
           "label": "Cache",
           "layout": {
             "x": 50,
-            "y": 77.42857142857143
+            "y": 63.42857142857143
           }
         },
         {
@@ -4234,7 +5249,7 @@ const renderSpec = {
           "label": "Database",
           "layout": {
             "x": 50,
-            "y": 88
+            "y": 72
           }
         }
       ],
@@ -4289,10 +5304,81 @@ const renderSpec = {
           "style": "solid"
         }
       ],
-      "interactions": [],
+      "interactions": [
+        {
+          "id": "i_c_users_cdn_fetch_fwd",
+          "from": "users",
+          "to": "cdn",
+          "type": "flow",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_users_lb_req_fwd",
+          "from": "users",
+          "to": "lb",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_lb_app_req_fwd",
+          "from": "lb",
+          "to": "app",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_app_queue_dispatch_fwd",
+          "from": "app",
+          "to": "queue",
+          "type": "broadcast",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_queue_worker_dispatch_fwd",
+          "from": "queue",
+          "to": "worker",
+          "type": "broadcast",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_worker_db_commit_fwd",
+          "from": "worker",
+          "to": "db",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_app_cache_lookup_fwd",
+          "from": "app",
+          "to": "cache",
+          "type": "ping",
+          "intensity": "medium"
+        }
+      ],
       "sourceCamera": {
-        "mode": "wide",
+        "mode": "focus",
+        "target": "worker",
         "zoom": 1
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "tight",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "neon",
+          "background_texture": "grid",
+          "glow_strength": "strong"
+        },
+        "motion": {
+          "entry_style": "elastic_pop",
+          "pacing": "reel_fast"
+        },
+        "flow": {
+          "renderer": "hybrid"
+        }
       },
       "source": {
         "entities": [
@@ -4305,7 +5391,7 @@ const renderSpec = {
             "label": "Users",
             "layout": {
               "x": 50,
-              "y": 14
+              "y": 12
             }
           },
           {
@@ -4317,7 +5403,7 @@ const renderSpec = {
             "label": "CDN",
             "layout": {
               "x": 50,
-              "y": 24.57142857142857
+              "y": 20.57142857142857
             }
           },
           {
@@ -4329,7 +5415,7 @@ const renderSpec = {
             "label": "Load Balancer",
             "layout": {
               "x": 50,
-              "y": 35.14285714285714
+              "y": 29.142857142857142
             }
           },
           {
@@ -4341,7 +5427,7 @@ const renderSpec = {
             "label": "Server",
             "layout": {
               "x": 50,
-              "y": 45.714285714285715
+              "y": 37.714285714285715
             }
           },
           {
@@ -4353,7 +5439,7 @@ const renderSpec = {
             "label": "Queue",
             "layout": {
               "x": 50,
-              "y": 56.285714285714285
+              "y": 46.285714285714285
             }
           },
           {
@@ -4365,7 +5451,7 @@ const renderSpec = {
             "label": "Worker",
             "layout": {
               "x": 50,
-              "y": 66.85714285714286
+              "y": 54.857142857142854
             }
           },
           {
@@ -4377,7 +5463,7 @@ const renderSpec = {
             "label": "Cache",
             "layout": {
               "x": 50,
-              "y": 77.42857142857143
+              "y": 63.42857142857143
             }
           },
           {
@@ -4389,7 +5475,7 @@ const renderSpec = {
             "label": "Database",
             "layout": {
               "x": 50,
-              "y": 88
+              "y": 72
             }
           }
         ],
@@ -4444,9 +5530,60 @@ const renderSpec = {
             "style": "solid"
           }
         ],
-        "interactions": [],
+        "interactions": [
+          {
+            "id": "i_c_users_cdn_fetch_fwd",
+            "from": "users",
+            "to": "cdn",
+            "type": "flow",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_users_lb_req_fwd",
+            "from": "users",
+            "to": "lb",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_lb_app_req_fwd",
+            "from": "lb",
+            "to": "app",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_app_queue_dispatch_fwd",
+            "from": "app",
+            "to": "queue",
+            "type": "broadcast",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_queue_worker_dispatch_fwd",
+            "from": "queue",
+            "to": "worker",
+            "type": "broadcast",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_worker_db_commit_fwd",
+            "from": "worker",
+            "to": "db",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_app_cache_lookup_fwd",
+            "from": "app",
+            "to": "cache",
+            "type": "ping",
+            "intensity": "medium"
+          }
+        ],
         "camera": {
-          "mode": "wide",
+          "mode": "focus",
+          "target": "worker",
           "zoom": 1
         }
       },
@@ -4462,11 +5599,11 @@ const renderSpec = {
             "entityId": "cdn",
             "from": {
               "x": 50,
-              "y": 26.333333333333336
+              "y": 22
             },
             "to": {
               "x": 50,
-              "y": 24.57142857142857
+              "y": 20.57142857142857
             }
           },
           {
@@ -4474,11 +5611,11 @@ const renderSpec = {
             "entityId": "lb",
             "from": {
               "x": 50,
-              "y": 38.66666666666667
+              "y": 32
             },
             "to": {
               "x": 50,
-              "y": 35.14285714285714
+              "y": 29.142857142857142
             }
           },
           {
@@ -4486,11 +5623,11 @@ const renderSpec = {
             "entityId": "app",
             "from": {
               "x": 50,
-              "y": 51
+              "y": 42
             },
             "to": {
               "x": 50,
-              "y": 45.714285714285715
+              "y": 37.714285714285715
             }
           },
           {
@@ -4498,11 +5635,11 @@ const renderSpec = {
             "entityId": "queue",
             "from": {
               "x": 50,
-              "y": 63.333333333333336
+              "y": 52
             },
             "to": {
               "x": 50,
-              "y": 56.285714285714285
+              "y": 46.285714285714285
             }
           },
           {
@@ -4510,11 +5647,11 @@ const renderSpec = {
             "entityId": "cache",
             "from": {
               "x": 50,
-              "y": 75.66666666666667
+              "y": 62
             },
             "to": {
               "x": 50,
-              "y": 77.42857142857143
+              "y": 63.42857142857143
             }
           },
           {
@@ -4544,8 +5681,35 @@ const renderSpec = {
             "connectionId": "c_app_db_req"
           }
         ],
-        "interactionDiffs": [],
-        "cameraDiffs": []
+        "interactionDiffs": [
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_queue_worker_dispatch_fwd"
+          },
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_worker_db_commit_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_app_db_req_fwd"
+          }
+        ],
+        "cameraDiffs": [
+          {
+            "type": "camera_changed",
+            "from": {
+              "mode": "focus",
+              "target": "queue",
+              "zoom": 1
+            },
+            "to": {
+              "mode": "focus",
+              "target": "worker",
+              "zoom": 1
+            }
+          }
+        ]
       },
       "hierarchyTransition": null,
       "plan": {
@@ -4645,7 +5809,44 @@ const renderSpec = {
             "connectionId": "c_app_db_req"
           }
         ],
-        "interactions": []
+        "interactions": [
+          {
+            "entityId": "queue",
+            "elementIds": [
+              "queue"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_queue_worker_dispatch_fwd"
+          },
+          {
+            "entityId": "worker",
+            "elementIds": [
+              "worker"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_worker_db_commit_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "db",
+            "elementIds": [
+              "db"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_app_db_req_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "app",
+            "elementIds": [
+              "app_1",
+              "app",
+              "app_3"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_app_db_req_fwd"
+          }
+        ]
       },
       "animationPlan": {
         "entities": [
@@ -4659,36 +5860,36 @@ const renderSpec = {
           {
             "entityId": "lb",
             "action": "move",
-            "delay": 0.68,
+            "delay": 0.6560000000000001,
             "duration": 0.95,
             "easing": "cubic-bezier(0.2,0,0,1)"
           },
           {
             "entityId": "app",
             "action": "move",
-            "delay": 0.7600000000000001,
+            "delay": 0.7120000000000001,
             "duration": 0.95,
             "easing": "cubic-bezier(0.2,0,0,1)"
           },
           {
             "entityId": "queue",
             "action": "move",
-            "delay": 0.8400000000000001,
+            "delay": 0.768,
             "duration": 0.95,
             "easing": "cubic-bezier(0.2,0,0,1)"
           },
           {
             "entityId": "cache",
             "action": "move",
-            "delay": 0.9200000000000002,
+            "delay": 0.8240000000000001,
             "duration": 0.95,
             "easing": "cubic-bezier(0.2,0,0,1)"
           },
           {
             "entityId": "worker",
             "action": "add",
-            "delay": 1.9,
-            "duration": 1.05,
+            "delay": 0.37399999999999994,
+            "duration": 0.62,
             "easing": "cubic-bezier(0.2,0,0,1)",
             "scale": 1.2,
             "isPrimary": true
@@ -4697,26 +5898,33 @@ const renderSpec = {
         "connections": [
           {
             "connectionId": "c_queue_worker_dispatch",
-            "delay": 3,
-            "duration": 0.8,
+            "delay": 0.504,
+            "duration": 0.42,
             "easing": "cubic-bezier(0.2,0,0,1)"
           },
           {
             "connectionId": "c_worker_db_commit",
-            "delay": 3.08,
-            "duration": 0.8,
+            "delay": 0.56,
+            "duration": 0.42,
             "easing": "cubic-bezier(0.2,0,0,1)"
           },
           {
             "connectionId": "c_app_db_req",
-            "delay": 3.16,
-            "duration": 0.8,
+            "delay": 0.616,
+            "duration": 0.42,
             "easing": "cubic-bezier(0.2,0,0,1)"
           }
         ],
         "camera": null
       },
-      "cameraPlan": null,
+      "cameraPlan": {
+        "targetId": "worker",
+        "targetElementId": "worker",
+        "zoom": 1,
+        "duration": 0.55,
+        "easing": "cubic-bezier(0.2,0,0,1)",
+        "motionType": "focus_primary"
+      },
       "sceneDiff": {
         "addedEntities": [
           {
@@ -4728,7 +5936,7 @@ const renderSpec = {
             "label": "Worker",
             "layout": {
               "x": 50,
-              "y": 66.85714285714286
+              "y": 54.857142857142854
             }
           }
         ],
@@ -4738,55 +5946,55 @@ const renderSpec = {
             "id": "cdn",
             "from": {
               "x": 50,
-              "y": 26.333333333333336
+              "y": 22
             },
             "to": {
               "x": 50,
-              "y": 24.57142857142857
+              "y": 20.57142857142857
             }
           },
           {
             "id": "lb",
             "from": {
               "x": 50,
-              "y": 38.66666666666667
+              "y": 32
             },
             "to": {
               "x": 50,
-              "y": 35.14285714285714
+              "y": 29.142857142857142
             }
           },
           {
             "id": "app",
             "from": {
               "x": 50,
-              "y": 51
+              "y": 42
             },
             "to": {
               "x": 50,
-              "y": 45.714285714285715
+              "y": 37.714285714285715
             }
           },
           {
             "id": "queue",
             "from": {
               "x": 50,
-              "y": 63.333333333333336
+              "y": 52
             },
             "to": {
               "x": 50,
-              "y": 56.285714285714285
+              "y": 46.285714285714285
             }
           },
           {
             "id": "cache",
             "from": {
               "x": 50,
-              "y": 75.66666666666667
+              "y": 62
             },
             "to": {
               "x": 50,
-              "y": 77.42857142857143
+              "y": 63.42857142857143
             }
           }
         ],
@@ -4835,10 +6043,44 @@ const renderSpec = {
             "style": "solid"
           }
         ],
-        "addedInteractions": [],
-        "removedInteractions": [],
+        "addedInteractions": [
+          {
+            "id": "i_c_queue_worker_dispatch_fwd",
+            "from": "queue",
+            "to": "worker",
+            "type": "broadcast",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_worker_db_commit_fwd",
+            "from": "worker",
+            "to": "db",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
+        "removedInteractions": [
+          {
+            "id": "i_c_app_db_req_fwd",
+            "from": "app",
+            "to": "db",
+            "type": "flow",
+            "intensity": "low"
+          }
+        ],
         "interactionIntensityChanged": [],
-        "cameraChanged": null
+        "cameraChanged": {
+          "from": {
+            "mode": "focus",
+            "target": "queue",
+            "zoom": 1
+          },
+          "to": {
+            "mode": "focus",
+            "target": "worker",
+            "zoom": 1
+          }
+        }
       }
     },
     {
@@ -4846,6 +6088,7 @@ const renderSpec = {
       "start": 48,
       "end": 54,
       "narration": "Servers and Workers write to a primary Database and read from a second Database replica to spread load.",
+      "camera": "focus",
       "elements": [
         {
           "id": "users",
@@ -4854,18 +6097,18 @@ const renderSpec = {
           "label": "Users",
           "position": {
             "x": 50,
-            "y": 14
+            "y": 12
           },
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.264950330581225,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 9.633000000000001,
+            "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "normal"
@@ -4878,18 +6121,18 @@ const renderSpec = {
           "label": "CDN",
           "position": {
             "x": 50,
-            "y": 24.57142857142857
+            "y": 20.57142857142857
           },
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.264950330581225,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 9.633000000000001,
+            "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "normal"
@@ -4902,18 +6145,18 @@ const renderSpec = {
           "label": "Load Balancer",
           "position": {
             "x": 50,
-            "y": 35.14285714285714
+            "y": 29.142857142857142
           },
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.264950330581225,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 9.633000000000001,
+            "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "normal"
@@ -4925,18 +6168,18 @@ const renderSpec = {
           "sourceEntityId": "app",
           "position": {
             "x": 36.99027777777778,
-            "y": 45.714285714285715
+            "y": 37.714285714285715
           },
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.264950330581225,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 9.633000000000001,
+            "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "normal"
@@ -4949,18 +6192,18 @@ const renderSpec = {
           "label": "Server",
           "position": {
             "x": 50,
-            "y": 45.714285714285715
+            "y": 37.714285714285715
           },
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.264950330581225,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 9.633000000000001,
+            "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "normal"
@@ -4972,18 +6215,18 @@ const renderSpec = {
           "sourceEntityId": "app",
           "position": {
             "x": 63.00972222222222,
-            "y": 45.714285714285715
+            "y": 37.714285714285715
           },
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.264950330581225,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 9.633000000000001,
+            "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "normal"
@@ -4996,18 +6239,18 @@ const renderSpec = {
           "label": "Queue",
           "position": {
             "x": 50,
-            "y": 56.285714285714285
+            "y": 46.285714285714285
           },
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.264950330581225,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 9.633000000000001,
+            "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "normal"
@@ -5020,18 +6263,18 @@ const renderSpec = {
           "label": "Worker",
           "position": {
             "x": 50,
-            "y": 66.85714285714286
+            "y": 54.857142857142854
           },
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.264950330581225,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 9.633000000000001,
+            "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "normal"
@@ -5044,18 +6287,18 @@ const renderSpec = {
           "label": "Cache",
           "position": {
             "x": 50,
-            "y": 77.42857142857143
+            "y": 63.42857142857143
           },
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.264950330581225,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 9.633000000000001,
+            "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "normal"
@@ -5068,18 +6311,18 @@ const renderSpec = {
           "label": "Database",
           "position": {
             "x": 50,
-            "y": 85
+            "y": 69
           },
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#34D399",
             "strokeWidth": 2.264950330581225,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#34D399",
+            "glow": true,
+            "glowColor": "#34D399",
+            "glowBlur": 9.633000000000001,
+            "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "active"
@@ -5091,19 +6334,19 @@ const renderSpec = {
           "sourceEntityId": "db",
           "position": {
             "x": 50,
-            "y": 91
+            "y": 75
           },
           "enter": "zoom_in",
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#34D399",
             "strokeWidth": 2.264950330581225,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#34D399",
+            "glow": true,
+            "glowColor": "#34D399",
+            "glowBlur": 9.633000000000001,
+            "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "active"
@@ -5120,7 +6363,7 @@ const renderSpec = {
           "label": "Users",
           "layout": {
             "x": 50,
-            "y": 14
+            "y": 12
           }
         },
         {
@@ -5132,7 +6375,7 @@ const renderSpec = {
           "label": "CDN",
           "layout": {
             "x": 50,
-            "y": 24.57142857142857
+            "y": 20.57142857142857
           }
         },
         {
@@ -5144,7 +6387,7 @@ const renderSpec = {
           "label": "Load Balancer",
           "layout": {
             "x": 50,
-            "y": 35.14285714285714
+            "y": 29.142857142857142
           }
         },
         {
@@ -5156,7 +6399,7 @@ const renderSpec = {
           "label": "Server",
           "layout": {
             "x": 50,
-            "y": 45.714285714285715
+            "y": 37.714285714285715
           }
         },
         {
@@ -5168,7 +6411,7 @@ const renderSpec = {
           "label": "Queue",
           "layout": {
             "x": 50,
-            "y": 56.285714285714285
+            "y": 46.285714285714285
           }
         },
         {
@@ -5180,7 +6423,7 @@ const renderSpec = {
           "label": "Worker",
           "layout": {
             "x": 50,
-            "y": 66.85714285714286
+            "y": 54.857142857142854
           }
         },
         {
@@ -5192,7 +6435,7 @@ const renderSpec = {
           "label": "Cache",
           "layout": {
             "x": 50,
-            "y": 77.42857142857143
+            "y": 63.42857142857143
           }
         },
         {
@@ -5204,7 +6447,7 @@ const renderSpec = {
           "label": "Database",
           "layout": {
             "x": 50,
-            "y": 88
+            "y": 72
           }
         }
       ],
@@ -5259,10 +6502,81 @@ const renderSpec = {
           "style": "solid"
         }
       ],
-      "interactions": [],
+      "interactions": [
+        {
+          "id": "i_c_users_cdn_fetch_fwd",
+          "from": "users",
+          "to": "cdn",
+          "type": "flow",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_users_lb_req_fwd",
+          "from": "users",
+          "to": "lb",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_lb_app_req_fwd",
+          "from": "lb",
+          "to": "app",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_app_cache_lookup_fwd",
+          "from": "app",
+          "to": "cache",
+          "type": "ping",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_app_db_req_fwd",
+          "from": "app",
+          "to": "db",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_queue_worker_dispatch_fwd",
+          "from": "queue",
+          "to": "worker",
+          "type": "broadcast",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_worker_db_commit_fwd",
+          "from": "worker",
+          "to": "db",
+          "type": "flow",
+          "intensity": "medium"
+        }
+      ],
       "sourceCamera": {
-        "mode": "wide",
+        "mode": "focus",
+        "target": "db",
         "zoom": 1
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "tight",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "neon",
+          "background_texture": "grid",
+          "glow_strength": "strong"
+        },
+        "motion": {
+          "entry_style": "elastic_pop",
+          "pacing": "reel_fast"
+        },
+        "flow": {
+          "renderer": "hybrid"
+        }
       },
       "source": {
         "entities": [
@@ -5275,7 +6589,7 @@ const renderSpec = {
             "label": "Users",
             "layout": {
               "x": 50,
-              "y": 14
+              "y": 12
             }
           },
           {
@@ -5287,7 +6601,7 @@ const renderSpec = {
             "label": "CDN",
             "layout": {
               "x": 50,
-              "y": 24.57142857142857
+              "y": 20.57142857142857
             }
           },
           {
@@ -5299,7 +6613,7 @@ const renderSpec = {
             "label": "Load Balancer",
             "layout": {
               "x": 50,
-              "y": 35.14285714285714
+              "y": 29.142857142857142
             }
           },
           {
@@ -5311,7 +6625,7 @@ const renderSpec = {
             "label": "Server",
             "layout": {
               "x": 50,
-              "y": 45.714285714285715
+              "y": 37.714285714285715
             }
           },
           {
@@ -5323,7 +6637,7 @@ const renderSpec = {
             "label": "Queue",
             "layout": {
               "x": 50,
-              "y": 56.285714285714285
+              "y": 46.285714285714285
             }
           },
           {
@@ -5335,7 +6649,7 @@ const renderSpec = {
             "label": "Worker",
             "layout": {
               "x": 50,
-              "y": 66.85714285714286
+              "y": 54.857142857142854
             }
           },
           {
@@ -5347,7 +6661,7 @@ const renderSpec = {
             "label": "Cache",
             "layout": {
               "x": 50,
-              "y": 77.42857142857143
+              "y": 63.42857142857143
             }
           },
           {
@@ -5359,7 +6673,7 @@ const renderSpec = {
             "label": "Database",
             "layout": {
               "x": 50,
-              "y": 88
+              "y": 72
             }
           }
         ],
@@ -5414,9 +6728,60 @@ const renderSpec = {
             "style": "solid"
           }
         ],
-        "interactions": [],
+        "interactions": [
+          {
+            "id": "i_c_users_cdn_fetch_fwd",
+            "from": "users",
+            "to": "cdn",
+            "type": "flow",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_users_lb_req_fwd",
+            "from": "users",
+            "to": "lb",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_lb_app_req_fwd",
+            "from": "lb",
+            "to": "app",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_app_cache_lookup_fwd",
+            "from": "app",
+            "to": "cache",
+            "type": "ping",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_app_db_req_fwd",
+            "from": "app",
+            "to": "db",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_queue_worker_dispatch_fwd",
+            "from": "queue",
+            "to": "worker",
+            "type": "broadcast",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_worker_db_commit_fwd",
+            "from": "worker",
+            "to": "db",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
         "camera": {
-          "mode": "wide",
+          "mode": "focus",
+          "target": "db",
           "zoom": 1
         }
       },
@@ -5470,8 +6835,31 @@ const renderSpec = {
             "connectionId": "c_app_queue_dispatch"
           }
         ],
-        "interactionDiffs": [],
-        "cameraDiffs": []
+        "interactionDiffs": [
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_app_db_req_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_app_queue_dispatch_fwd"
+          }
+        ],
+        "cameraDiffs": [
+          {
+            "type": "camera_changed",
+            "from": {
+              "mode": "focus",
+              "target": "worker",
+              "zoom": 1
+            },
+            "to": {
+              "mode": "focus",
+              "target": "db",
+              "zoom": 1
+            }
+          }
+        ]
       },
       "hierarchyTransition": null,
       "plan": {
@@ -5527,15 +6915,44 @@ const renderSpec = {
             "connectionId": "c_app_queue_dispatch"
           }
         ],
-        "interactions": []
+        "interactions": [
+          {
+            "entityId": "app",
+            "elementIds": [
+              "app_1",
+              "app",
+              "app_3"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_app_queue_dispatch_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "db",
+            "elementIds": [
+              "db",
+              "db_2"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_app_db_req_fwd"
+          },
+          {
+            "entityId": "queue",
+            "elementIds": [
+              "queue"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_app_queue_dispatch_fwd"
+          }
+        ]
       },
       "animationPlan": {
         "entities": [
           {
             "entityId": "db",
             "action": "add",
-            "delay": 1.9,
-            "duration": 1.05,
+            "delay": 0.37399999999999994,
+            "duration": 0.62,
             "easing": "cubic-bezier(0.2,0,0,1)",
             "scale": 1.2,
             "isPrimary": true
@@ -5544,20 +6961,27 @@ const renderSpec = {
         "connections": [
           {
             "connectionId": "c_app_db_req",
-            "delay": 3,
-            "duration": 0.8,
+            "delay": 0.504,
+            "duration": 0.42,
             "easing": "cubic-bezier(0.2,0,0,1)"
           },
           {
             "connectionId": "c_app_queue_dispatch",
-            "delay": 3.08,
-            "duration": 0.8,
+            "delay": 0.56,
+            "duration": 0.42,
             "easing": "cubic-bezier(0.2,0,0,1)"
           }
         ],
         "camera": null
       },
-      "cameraPlan": null,
+      "cameraPlan": {
+        "targetId": "db",
+        "targetElementId": "db",
+        "zoom": 1,
+        "duration": 0.55,
+        "easing": "cubic-bezier(0.2,0,0,1)",
+        "motionType": "focus_primary"
+      },
       "sceneDiff": {
         "addedEntities": [],
         "removedEntities": [],
@@ -5621,10 +7045,37 @@ const renderSpec = {
             "style": "solid"
           }
         ],
-        "addedInteractions": [],
-        "removedInteractions": [],
+        "addedInteractions": [
+          {
+            "id": "i_c_app_db_req_fwd",
+            "from": "app",
+            "to": "db",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
+        "removedInteractions": [
+          {
+            "id": "i_c_app_queue_dispatch_fwd",
+            "from": "app",
+            "to": "queue",
+            "type": "broadcast",
+            "intensity": "medium"
+          }
+        ],
         "interactionIntensityChanged": [],
-        "cameraChanged": null
+        "cameraChanged": {
+          "from": {
+            "mode": "focus",
+            "target": "worker",
+            "zoom": 1
+          },
+          "to": {
+            "mode": "focus",
+            "target": "db",
+            "zoom": 1
+          }
+        }
       }
     },
     {
@@ -5632,6 +7083,7 @@ const renderSpec = {
       "start": 54,
       "end": 60,
       "narration": "The final stack shows Users hitting a CDN, then a Load Balancer, then multiple Servers using a Cache, with a Queue and multiple Workers feeding updates into replicated Databases.",
+      "camera": "wide",
       "elements": [
         {
           "id": "users",
@@ -5640,18 +7092,18 @@ const renderSpec = {
           "label": "Users",
           "position": {
             "x": 50,
-            "y": 14
+            "y": 12
           },
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#34D399",
             "strokeWidth": 2.244994432064365,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#34D399",
+            "glow": true,
+            "glowColor": "#34D399",
+            "glowBlur": 9.464000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "active"
@@ -5664,18 +7116,18 @@ const renderSpec = {
           "label": "CDN",
           "position": {
             "x": 50,
-            "y": 24.57142857142857
+            "y": 20.57142857142857
           },
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.244994432064365,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 9.464000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "normal"
@@ -5688,18 +7140,18 @@ const renderSpec = {
           "label": "Load Balancer",
           "position": {
             "x": 50,
-            "y": 35.14285714285714
+            "y": 29.142857142857142
           },
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.244994432064365,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 9.464000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "normal"
@@ -5711,18 +7163,18 @@ const renderSpec = {
           "sourceEntityId": "app",
           "position": {
             "x": 37.21851851851852,
-            "y": 45.714285714285715
+            "y": 37.714285714285715
           },
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.244994432064365,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 9.464000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "normal"
@@ -5735,18 +7187,18 @@ const renderSpec = {
           "label": "Server",
           "position": {
             "x": 50,
-            "y": 45.714285714285715
+            "y": 37.714285714285715
           },
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.244994432064365,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 9.464000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "normal"
@@ -5758,18 +7210,18 @@ const renderSpec = {
           "sourceEntityId": "app",
           "position": {
             "x": 62.78148148148148,
-            "y": 45.714285714285715
+            "y": 37.714285714285715
           },
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.244994432064365,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 9.464000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "normal"
@@ -5782,18 +7234,18 @@ const renderSpec = {
           "label": "Cache",
           "position": {
             "x": 50,
-            "y": 56.285714285714285
+            "y": 46.285714285714285
           },
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.244994432064365,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 9.464000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "normal"
@@ -5806,18 +7258,18 @@ const renderSpec = {
           "label": "Queue",
           "position": {
             "x": 50,
-            "y": 66.85714285714286
+            "y": 54.857142857142854
           },
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.244994432064365,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 9.464000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "normal"
@@ -5829,19 +7281,19 @@ const renderSpec = {
           "sourceEntityId": "worker",
           "position": {
             "x": 38,
-            "y": 77.42857142857143
+            "y": 63.42857142857143
           },
           "enter": "zoom_in",
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.244994432064365,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 9.464000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "normal"
@@ -5854,18 +7306,18 @@ const renderSpec = {
           "label": "Worker",
           "position": {
             "x": 50,
-            "y": 77.42857142857143
+            "y": 63.42857142857143
           },
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.244994432064365,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 9.464000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "normal"
@@ -5877,19 +7329,19 @@ const renderSpec = {
           "sourceEntityId": "worker",
           "position": {
             "x": 62,
-            "y": 77.42857142857143
+            "y": 63.42857142857143
           },
           "enter": "zoom_in",
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.244994432064365,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 9.464000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "normal"
@@ -5902,18 +7354,18 @@ const renderSpec = {
           "label": "Database",
           "position": {
             "x": 50,
-            "y": 85
+            "y": 69
           },
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.244994432064365,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 9.464000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "normal"
@@ -5925,18 +7377,18 @@ const renderSpec = {
           "sourceEntityId": "db",
           "position": {
             "x": 50,
-            "y": 91
+            "y": 75
           },
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#4F8CFF",
+            "color": "#2A4B88",
             "strokeWidth": 2.244994432064365,
-            "strokeColor": "#94A3B8",
-            "glow": false,
-            "glowColor": "#4F8CFF",
-            "glowBlur": 0,
-            "textColor": "#E6EDF3",
+            "strokeColor": "#00FFFF",
+            "glow": true,
+            "glowColor": "#00FFFF",
+            "glowBlur": 9.464000000000002,
+            "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "normal"
@@ -5953,7 +7405,7 @@ const renderSpec = {
           "label": "Users",
           "layout": {
             "x": 50,
-            "y": 14
+            "y": 12
           }
         },
         {
@@ -5965,7 +7417,7 @@ const renderSpec = {
           "label": "CDN",
           "layout": {
             "x": 50,
-            "y": 24.57142857142857
+            "y": 20.57142857142857
           }
         },
         {
@@ -5977,7 +7429,7 @@ const renderSpec = {
           "label": "Load Balancer",
           "layout": {
             "x": 50,
-            "y": 35.14285714285714
+            "y": 29.142857142857142
           }
         },
         {
@@ -5989,7 +7441,7 @@ const renderSpec = {
           "label": "Server",
           "layout": {
             "x": 50,
-            "y": 45.714285714285715
+            "y": 37.714285714285715
           }
         },
         {
@@ -6001,7 +7453,7 @@ const renderSpec = {
           "label": "Cache",
           "layout": {
             "x": 50,
-            "y": 56.285714285714285
+            "y": 46.285714285714285
           }
         },
         {
@@ -6013,7 +7465,7 @@ const renderSpec = {
           "label": "Queue",
           "layout": {
             "x": 50,
-            "y": 66.85714285714286
+            "y": 54.857142857142854
           }
         },
         {
@@ -6025,7 +7477,7 @@ const renderSpec = {
           "label": "Worker",
           "layout": {
             "x": 50,
-            "y": 77.42857142857143
+            "y": 63.42857142857143
           }
         },
         {
@@ -6037,7 +7489,7 @@ const renderSpec = {
           "label": "Database",
           "layout": {
             "x": 50,
-            "y": 88
+            "y": 72
           }
         }
       ],
@@ -6092,10 +7544,80 @@ const renderSpec = {
           "style": "solid"
         }
       ],
-      "interactions": [],
+      "interactions": [
+        {
+          "id": "i_c_users_cdn_fetch_fwd",
+          "from": "users",
+          "to": "cdn",
+          "type": "flow",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_users_lb_req_fwd",
+          "from": "users",
+          "to": "lb",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_lb_app_req_fwd",
+          "from": "lb",
+          "to": "app",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_app_cache_lookup_fwd",
+          "from": "app",
+          "to": "cache",
+          "type": "ping",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_app_queue_dispatch_fwd",
+          "from": "app",
+          "to": "queue",
+          "type": "broadcast",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_queue_worker_dispatch_fwd",
+          "from": "queue",
+          "to": "worker",
+          "type": "broadcast",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_worker_db_commit_fwd",
+          "from": "worker",
+          "to": "db",
+          "type": "flow",
+          "intensity": "medium"
+        }
+      ],
       "sourceCamera": {
         "mode": "wide",
         "zoom": 1
+      },
+      "directives": {
+        "camera": {
+          "mode": "wide_recap",
+          "zoom": "wide",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "neon",
+          "background_texture": "grid",
+          "glow_strength": "strong"
+        },
+        "motion": {
+          "entry_style": "elastic_pop",
+          "pacing": "reel_fast"
+        },
+        "flow": {
+          "renderer": "hybrid"
+        }
       },
       "source": {
         "entities": [
@@ -6108,7 +7630,7 @@ const renderSpec = {
             "label": "Users",
             "layout": {
               "x": 50,
-              "y": 14
+              "y": 12
             }
           },
           {
@@ -6120,7 +7642,7 @@ const renderSpec = {
             "label": "CDN",
             "layout": {
               "x": 50,
-              "y": 24.57142857142857
+              "y": 20.57142857142857
             }
           },
           {
@@ -6132,7 +7654,7 @@ const renderSpec = {
             "label": "Load Balancer",
             "layout": {
               "x": 50,
-              "y": 35.14285714285714
+              "y": 29.142857142857142
             }
           },
           {
@@ -6144,7 +7666,7 @@ const renderSpec = {
             "label": "Server",
             "layout": {
               "x": 50,
-              "y": 45.714285714285715
+              "y": 37.714285714285715
             }
           },
           {
@@ -6156,7 +7678,7 @@ const renderSpec = {
             "label": "Cache",
             "layout": {
               "x": 50,
-              "y": 56.285714285714285
+              "y": 46.285714285714285
             }
           },
           {
@@ -6168,7 +7690,7 @@ const renderSpec = {
             "label": "Queue",
             "layout": {
               "x": 50,
-              "y": 66.85714285714286
+              "y": 54.857142857142854
             }
           },
           {
@@ -6180,7 +7702,7 @@ const renderSpec = {
             "label": "Worker",
             "layout": {
               "x": 50,
-              "y": 77.42857142857143
+              "y": 63.42857142857143
             }
           },
           {
@@ -6192,7 +7714,7 @@ const renderSpec = {
             "label": "Database",
             "layout": {
               "x": 50,
-              "y": 88
+              "y": 72
             }
           }
         ],
@@ -6247,7 +7769,57 @@ const renderSpec = {
             "style": "solid"
           }
         ],
-        "interactions": [],
+        "interactions": [
+          {
+            "id": "i_c_users_cdn_fetch_fwd",
+            "from": "users",
+            "to": "cdn",
+            "type": "flow",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_users_lb_req_fwd",
+            "from": "users",
+            "to": "lb",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_lb_app_req_fwd",
+            "from": "lb",
+            "to": "app",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_app_cache_lookup_fwd",
+            "from": "app",
+            "to": "cache",
+            "type": "ping",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_app_queue_dispatch_fwd",
+            "from": "app",
+            "to": "queue",
+            "type": "broadcast",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_queue_worker_dispatch_fwd",
+            "from": "queue",
+            "to": "worker",
+            "type": "broadcast",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_worker_db_commit_fwd",
+            "from": "worker",
+            "to": "db",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
         "camera": {
           "mode": "wide",
           "zoom": 1
@@ -6261,11 +7833,11 @@ const renderSpec = {
             "entityId": "cache",
             "from": {
               "x": 50,
-              "y": 77.42857142857143
+              "y": 63.42857142857143
             },
             "to": {
               "x": 50,
-              "y": 56.285714285714285
+              "y": 46.285714285714285
             }
           },
           {
@@ -6273,11 +7845,11 @@ const renderSpec = {
             "entityId": "queue",
             "from": {
               "x": 50,
-              "y": 56.285714285714285
+              "y": 46.285714285714285
             },
             "to": {
               "x": 50,
-              "y": 66.85714285714286
+              "y": 54.857142857142854
             }
           },
           {
@@ -6285,11 +7857,11 @@ const renderSpec = {
             "entityId": "worker",
             "from": {
               "x": 50,
-              "y": 66.85714285714286
+              "y": 54.857142857142854
             },
             "to": {
               "x": 50,
-              "y": 77.42857142857143
+              "y": 63.42857142857143
             }
           },
           {
@@ -6333,8 +7905,30 @@ const renderSpec = {
             "connectionId": "c_app_db_req"
           }
         ],
-        "interactionDiffs": [],
-        "cameraDiffs": []
+        "interactionDiffs": [
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_app_queue_dispatch_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_app_db_req_fwd"
+          }
+        ],
+        "cameraDiffs": [
+          {
+            "type": "camera_changed",
+            "from": {
+              "mode": "focus",
+              "target": "db",
+              "zoom": 1
+            },
+            "to": {
+              "mode": "wide",
+              "zoom": 1
+            }
+          }
+        ]
       },
       "hierarchyTransition": null,
       "plan": {
@@ -6422,7 +8016,36 @@ const renderSpec = {
             "connectionId": "c_app_db_req"
           }
         ],
-        "interactions": []
+        "interactions": [
+          {
+            "entityId": "app",
+            "elementIds": [
+              "app_1",
+              "app",
+              "app_3"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_app_db_req_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "queue",
+            "elementIds": [
+              "queue"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_app_queue_dispatch_fwd"
+          },
+          {
+            "entityId": "db",
+            "elementIds": [
+              "db",
+              "db_2"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_app_db_req_fwd"
+          }
+        ]
       },
       "animationPlan": {
         "entities": [
@@ -6436,22 +8059,22 @@ const renderSpec = {
           {
             "entityId": "queue",
             "action": "move",
-            "delay": 0.68,
+            "delay": 0.6560000000000001,
             "duration": 0.95,
             "easing": "cubic-bezier(0.2,0,0,1)"
           },
           {
             "entityId": "worker",
             "action": "move",
-            "delay": 0.7600000000000001,
+            "delay": 0.7120000000000001,
             "duration": 0.95,
             "easing": "cubic-bezier(0.2,0,0,1)"
           },
           {
             "entityId": "lb",
             "action": "add",
-            "delay": 1.9,
-            "duration": 1.05,
+            "delay": 0.37399999999999994,
+            "duration": 0.62,
             "easing": "cubic-bezier(0.2,0,0,1)",
             "scale": 1.2,
             "isPrimary": true
@@ -6460,20 +8083,25 @@ const renderSpec = {
         "connections": [
           {
             "connectionId": "c_app_queue_dispatch",
-            "delay": 3,
-            "duration": 0.8,
+            "delay": 0.504,
+            "duration": 0.42,
             "easing": "cubic-bezier(0.2,0,0,1)"
           },
           {
             "connectionId": "c_app_db_req",
-            "delay": 3.08,
-            "duration": 0.8,
+            "delay": 0.56,
+            "duration": 0.42,
             "easing": "cubic-bezier(0.2,0,0,1)"
           }
         ],
         "camera": null
       },
-      "cameraPlan": null,
+      "cameraPlan": {
+        "zoom": 1,
+        "duration": 0.45,
+        "easing": "cubic-bezier(0.2,0,0,1)",
+        "motionType": "expand_architecture"
+      },
       "sceneDiff": {
         "addedEntities": [],
         "removedEntities": [],
@@ -6482,33 +8110,33 @@ const renderSpec = {
             "id": "cache",
             "from": {
               "x": 50,
-              "y": 77.42857142857143
+              "y": 63.42857142857143
             },
             "to": {
               "x": 50,
-              "y": 56.285714285714285
+              "y": 46.285714285714285
             }
           },
           {
             "id": "queue",
             "from": {
               "x": 50,
-              "y": 56.285714285714285
+              "y": 46.285714285714285
             },
             "to": {
               "x": 50,
-              "y": 66.85714285714286
+              "y": 54.857142857142854
             }
           },
           {
             "id": "worker",
             "from": {
               "x": 50,
-              "y": 66.85714285714286
+              "y": 54.857142857142854
             },
             "to": {
               "x": 50,
-              "y": 77.42857142857143
+              "y": 63.42857142857143
             }
           }
         ],
@@ -6572,10 +8200,36 @@ const renderSpec = {
             "style": "solid"
           }
         ],
-        "addedInteractions": [],
-        "removedInteractions": [],
+        "addedInteractions": [
+          {
+            "id": "i_c_app_queue_dispatch_fwd",
+            "from": "app",
+            "to": "queue",
+            "type": "broadcast",
+            "intensity": "medium"
+          }
+        ],
+        "removedInteractions": [
+          {
+            "id": "i_c_app_db_req_fwd",
+            "from": "app",
+            "to": "db",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
         "interactionIntensityChanged": [],
-        "cameraChanged": null
+        "cameraChanged": {
+          "from": {
+            "mode": "focus",
+            "target": "db",
+            "zoom": 1
+          },
+          "to": {
+            "mode": "wide",
+            "zoom": 1
+          }
+        }
       }
     }
   ]
@@ -6585,6 +8239,36 @@ const TIMELINE_EPSILON = 0.001;
 export default makeScene2D(function* (view) {
   const caption = createRef<Txt>();
   view.fill(StyleTokens.colors.background);
+  const world = new Node({zIndex: 0});
+  view.add(world);
+  const gridLayer = new Node({
+    opacity: 0.05,
+    zIndex: -200,
+  });
+  const gridSpacing = 140;
+
+  for (let x = -540; x <= 540; x += gridSpacing) {
+    gridLayer.add(
+      new Line({
+        points: [[x, -960], [x, 960]],
+        stroke: '#3B4252',
+        lineWidth: 1,
+        opacity: 0.45,
+      }),
+    );
+  }
+
+  for (let y = -960; y <= 960; y += gridSpacing) {
+    gridLayer.add(
+      new Line({
+        points: [[-540, y], [540, y]],
+        stroke: '#303646',
+        lineWidth: 1,
+        opacity: 0.35,
+      }),
+    );
+  }
+  view.add(gridLayer);
 
   view.add(
     <Txt
@@ -6606,27 +8290,41 @@ export default makeScene2D(function* (view) {
     caption: caption(),
     logger,
   });
-  sceneState.camera.originX = view.x();
-  sceneState.camera.originY = view.y();
+  sceneState.camera.originX = world.x();
+  sceneState.camera.originY = world.y();
   sceneState.camera.x = sceneState.camera.originX;
   sceneState.camera.y = sceneState.camera.originY;
+  const sceneThread = (function* sceneLoopThread() {
+    for (const scene of renderSpec.scenes) {
+      const sceneDuration = scene.end - scene.start;
 
-  for (const scene of renderSpec.scenes) {
-    const sceneDuration = scene.end - scene.start;
+      if (sceneDuration <= 0) {
+        throw new Error(`Invalid scene duration: ${scene.id}`);
+      }
 
-    if (sceneDuration <= 0) {
-      throw new Error(`Invalid scene duration: ${scene.id}`);
+      validateSceneForRuntime(scene, logger);
+
+      yield* waitUntil(timeline, scene.start, logger);
+      yield* executeScene(world, scene, sceneState);
+      advanceTimeline(timeline, sceneState.lastExecutionDuration);
+      yield* waitUntil(timeline, scene.end, logger);
+
+      sceneState.sceneIndex += 1;
     }
+  })();
 
-    validateSceneForRuntime(scene, logger);
+  const backgroundDriftThread = (function* backgroundDrift() {
+    const cycle = 8;
+    let elapsed = 0;
 
-    yield* waitUntil(timeline, scene.start, logger);
-    yield* executeScene(view, scene, sceneState);
-    advanceTimeline(timeline, sceneState.lastExecutionDuration);
-    yield* waitUntil(timeline, scene.end, logger);
+    while (elapsed < renderSpec.duration) {
+      const step = Math.min(cycle, renderSpec.duration - elapsed);
+      yield* gridLayer.y(14, step / 2).to(0, step / 2);
+      elapsed += step;
+    }
+  })();
 
-    sceneState.sceneIndex += 1;
-  }
+  yield* all(sceneThread, backgroundDriftThread);
 
   if (Math.abs(timeline.current - renderSpec.duration) > TIMELINE_EPSILON) {
     logger.warn('Timeline mismatch', {

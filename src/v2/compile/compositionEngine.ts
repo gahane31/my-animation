@@ -125,6 +125,7 @@ const buildCompositionScene = (scene: TopologyScene): CompositionScene => {
     operations: scene.operations,
     transition: scene.transition,
     cameraIntent: scene.camera_intent ?? 'focus',
+    directives: scene.directives,
     complexity_budget: budget,
   };
 };

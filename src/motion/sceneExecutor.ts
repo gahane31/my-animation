@@ -4,6 +4,7 @@ import {
   easeInCubic,
   easeInOutCubic,
   easeOutCubic,
+  linear,
   type TimingFunction,
   type ThreadGenerator,
   waitFor,
@@ -282,7 +283,7 @@ const resolveElementSourceId = (
   return spec.sourceEntityId ?? spec.id;
 };
 
-const COMPONENT_CONNECTION_BOUNDS: Record<ComponentType, {width: number; height: number}> = {
+const COMPONENT_CONNECTION_BOUNDS: Partial<Record<ComponentType, {width: number; height: number}>> = {
   [ComponentType.UsersCluster]: {width: 188, height: 96},
   [ComponentType.Server]: {width: 170, height: 128},
   [ComponentType.LoadBalancer]: {width: 176, height: 176},
@@ -299,7 +300,7 @@ const resolveAnchorSize = (
   const styleSize = element?.visualStyle?.size ?? StyleTokens.sizes.medium;
   const scale = styleSize / StyleTokens.sizes.medium;
   const base = element
-    ? COMPONENT_CONNECTION_BOUNDS[element.type]
+    ? COMPONENT_CONNECTION_BOUNDS[element.type] ?? {width: 160, height: 116}
     : {width: 140, height: 100};
 
   return {
@@ -342,6 +343,61 @@ const collectEntityAnchors = (
   }
 
   return preferredByEntityId;
+};
+
+const collectSceneContentBounds = (
+  lifecycleResults: LifecycleResult[],
+  sceneElementById: Map<string, MotionElementSpec>,
+): {minX: number; maxX: number; minY: number; maxY: number} | undefined => {
+  if (lifecycleResults.length === 0) {
+    return undefined;
+  }
+
+  let minX = Number.POSITIVE_INFINITY;
+  let maxX = Number.NEGATIVE_INFINITY;
+  let minY = Number.POSITIVE_INFINITY;
+  let maxY = Number.NEGATIVE_INFINITY;
+
+  for (const lifecycleResult of lifecycleResults) {
+    const element = sceneElementById.get(lifecycleResult.elementState.id);
+    const size = resolveAnchorSize(element);
+    const labelPadding = element?.label ? 26 : 16;
+    const x = lifecycleResult.targetPosition.x;
+    const y = lifecycleResult.targetPosition.y;
+    minX = Math.min(minX, x - size.halfWidth);
+    maxX = Math.max(maxX, x + size.halfWidth);
+    minY = Math.min(minY, y - size.halfHeight);
+    maxY = Math.max(maxY, y + size.halfHeight + labelPadding);
+  }
+
+  return {minX, maxX, minY, maxY};
+};
+
+const resolveLineDashPattern = (style?: 'solid' | 'dashed' | 'dotted'): number[] => {
+  switch (style) {
+    case 'dashed':
+      return [12, 10];
+    case 'dotted':
+      return [4, 9];
+    default:
+      return [];
+  }
+};
+
+const findLbSpinnerNode = (root: Node): Node | undefined => {
+  const tagged = root as Node & {lbSpinnerTag?: boolean};
+  if (tagged.lbSpinnerTag) {
+    return root;
+  }
+
+  for (const child of root.children()) {
+    const nested = findLbSpinnerNode(child);
+    if (nested) {
+      return nested;
+    }
+  }
+
+  return undefined;
 };
 
 interface ConnectionSyncStats {
@@ -390,10 +446,13 @@ const syncSceneConnections = (
     }
 
     const style = resolveConnectionStyle(connection);
+    const bidirectional = connection.direction === 'bidirectional';
     const existingNode = state.connections.get(connection.id);
 
     if (!existingNode) {
-      const line = createConnection(fromAnchor, toAnchor, style, baseLaneOffset);
+      const line = createConnection(fromAnchor, toAnchor, style, bidirectional, baseLaneOffset);
+      line.lineDash(resolveLineDashPattern(connection.style));
+      line.lineDashOffset(0);
       line.opacity(0);
       view.add(line);
       state.connections.set(connection.id, line);
@@ -401,7 +460,9 @@ const syncSceneConnections = (
       continue;
     }
 
-    updateConnection(existingNode, fromAnchor, toAnchor, style, baseLaneOffset);
+    updateConnection(existingNode, fromAnchor, toAnchor, style, bidirectional, baseLaneOffset);
+    existingNode.lineDash(resolveLineDashPattern(connection.style));
+    existingNode.lineDashOffset(0);
     updated += 1;
   }
 
@@ -891,6 +952,255 @@ const executeEffectsPhase = (
   };
 };
 
+const executeInteractionFlowsPhase = (
+  scene: MotionSceneSpec,
+  sceneDuration: number,
+  state: SceneState,
+  connectionTimingById: Map<string, ConnectionTimingPlan>,
+): PhaseExecutionPlan => {
+  const connections = scene.connections ?? scene.source?.connections ?? [];
+  if (connections.length === 0) {
+    return {duration: 0};
+  }
+
+  const connectionById = new Map(connections.map((connection) => [connection.id, connection]));
+  const interactions = scene.interactions ?? scene.source?.interactions ?? [];
+  const directionalConnectionIds = new Map<string, string>();
+  const undirectedConnectionIds = new Map<string, string>();
+  const toUndirectedKey = (from: string, to: string): string =>
+    [from, to].sort((left, right) => left.localeCompare(right)).join('<->');
+
+  for (const connection of connectionById.values()) {
+    directionalConnectionIds.set(`${connection.from}->${connection.to}`, connection.id);
+    undirectedConnectionIds.set(toUndirectedKey(connection.from, connection.to), connection.id);
+    if (connection.direction === 'bidirectional') {
+      directionalConnectionIds.set(`${connection.to}->${connection.from}`, connection.id);
+    }
+  }
+
+  const flowTargets = new Map<
+    string,
+    {
+      directionMultiplier: number;
+      flowStyle: ReturnType<typeof resolveFlowStyle>;
+      interactionType: 'flow' | 'burst' | 'broadcast' | 'ping';
+    }
+  >();
+
+  for (const interaction of interactions) {
+    const connectionId =
+      directionalConnectionIds.get(`${interaction.from}->${interaction.to}`) ??
+      undirectedConnectionIds.get(toUndirectedKey(interaction.from, interaction.to));
+    if (!connectionId) {
+      continue;
+    }
+
+    const connection = connectionById.get(connectionId);
+    if (!connection) {
+      continue;
+    }
+
+    const existingTarget = flowTargets.get(connectionId);
+    const resolvedStyle = resolveFlowStyle(interaction);
+    let directionMultiplier = -1;
+    if (interaction.from === connection.to && interaction.to === connection.from) {
+      directionMultiplier = 1;
+    }
+
+    if (!existingTarget) {
+      flowTargets.set(connectionId, {
+        directionMultiplier,
+        flowStyle: resolvedStyle,
+        interactionType: interaction.type,
+      });
+      continue;
+    }
+
+    if (connection.direction === 'bidirectional') {
+      flowTargets.set(connectionId, {
+        directionMultiplier: 1,
+        flowStyle: resolvedStyle,
+        interactionType: interaction.type,
+      });
+    }
+  }
+
+  for (const connection of connectionById.values()) {
+    if (flowTargets.has(connection.id)) {
+      continue;
+    }
+    const line = state.connections.get(connection.id);
+    if (!line) {
+      continue;
+    }
+    line.lineDash(resolveLineDashPattern(connection.style));
+    line.lineDashOffset(0);
+  }
+
+  if (flowTargets.size === 0) {
+    return {duration: 0};
+  }
+
+  const additionTimings = (scene.animationPlan?.entities ?? []).filter(
+    (timing) => timing.action === 'add',
+  );
+  const additionRevealByEntityId = new Map(
+    additionTimings.map((timing) => [timing.entityId, timing.delay + timing.duration * 0.55]),
+  );
+  const resolveEntityRevealTime = (entityId: string): number =>
+    additionRevealByEntityId.get(entityId) ?? 0;
+
+  const streamEndPadding = Math.min(0.02, sceneDuration * 0.015);
+  const addedConnectionDiffs = (scene.diff?.connectionDiffs ?? []).filter(
+    (diff) => diff.type === 'connection_added',
+  );
+  const addedConnectionIndexById = new Map(
+    addedConnectionDiffs.map((diff, index) => [diff.connectionId, index]),
+  );
+
+  const threads: ThreadGenerator[] = [];
+  let maxEnd = 0;
+  const flowRenderer = scene.directives?.flow.renderer ?? 'hybrid';
+
+  const resolveConnectionVisibleTime = (connectionId: string): number => {
+    const diffIndex = addedConnectionIndexById.get(connectionId);
+    if (diffIndex === undefined) {
+      return 0;
+    }
+
+    const timing =
+      connectionTimingById.get(connectionId) ?? fallbackConnectionTiming(sceneDuration, diffIndex);
+
+    const connectionReveal = timing.delay + Math.max(0.03, timing.duration * 0.2);
+    const connection = connectionById.get(connectionId);
+    const fromReveal = connection ? resolveEntityRevealTime(connection.from) : 0;
+    const toReveal = connection ? resolveEntityRevealTime(connection.to) : 0;
+
+    return Math.max(connectionReveal, fromReveal, toReveal);
+  };
+
+  [...flowTargets.entries()].forEach(([connectionId, target], index) => {
+    const connection = connectionById.get(connectionId);
+    const line = state.connections.get(connectionId);
+    if (!connection || !line) {
+      return;
+    }
+
+    const flowStyle = target.flowStyle;
+    const flowMode = target.interactionType;
+    const flowSpeedBoost =
+      flowMode === 'burst'
+        ? 1.25
+        : flowMode === 'broadcast'
+          ? 1.08
+          : flowMode === 'ping'
+            ? 1.35
+            : 1;
+    const flowSpeed = Math.max(0.45, flowStyle.speed * flowSpeedBoost);
+    const dashLength =
+      flowRenderer === 'packets'
+        ? 3
+        : flowRenderer === 'dashed'
+          ? 18
+          :
+      flowMode === 'broadcast'
+        ? 12
+        : connection.direction === 'bidirectional'
+          ? 10
+          : 14;
+    const gapLength =
+      flowRenderer === 'packets'
+        ? 14
+        : flowRenderer === 'dashed'
+          ? 9
+          :
+      flowMode === 'burst'
+        ? 7
+        : connection.direction === 'bidirectional'
+          ? 8
+          : 10;
+    const dashPattern = [dashLength, gapLength];
+    line.lineDash(dashPattern);
+    line.lineDashOffset(0);
+
+    const connectionVisibleTime = resolveConnectionVisibleTime(connectionId);
+    const baseDelay = Math.min(0.1, sceneDuration * 0.04) + index * 0.006;
+    const delay = Math.max(baseDelay, connectionVisibleTime + 0.008);
+    const streamDuration = Math.max(0.24, sceneDuration - delay - streamEndPadding);
+    const introDuration = Math.min(0.08, streamDuration * 0.12);
+    const activeDuration = Math.max(0.14, streamDuration - introDuration);
+    maxEnd = Math.max(maxEnd, delay + introDuration + activeDuration);
+
+    const baseStroke = line.stroke();
+    const baseWidth = line.lineWidth();
+    const linePulseWidth =
+      baseWidth +
+      (flowMode === 'burst'
+        ? Math.max(1.4, flowStyle.particleSize * 0.28)
+        : Math.max(0.8, flowStyle.particleSize * 0.18));
+    const dashTravel = Math.max(90, Math.min(680, activeDuration * 260 * flowSpeed));
+    const timingFunction = resolveTimingFunction(MotionTokens.easing.enter);
+
+    const thread = createDelayedThread(
+      delay,
+      (function* interactionFlowThread() {
+        line.lineDash(dashPattern);
+        line.lineDashOffset(0);
+
+        yield* all(
+          line.stroke(flowStyle.color, introDuration, timingFunction),
+          line.lineWidth(linePulseWidth, introDuration, timingFunction),
+          line.opacity(1, introDuration, timingFunction),
+        );
+
+        if (flowMode === 'ping') {
+          const pingHalf = Math.max(0.08, activeDuration / 2);
+          yield* line
+            .lineDashOffset(-dashTravel, pingHalf, linear)
+            .to(0, pingHalf, linear);
+        } else if (connection.direction === 'bidirectional') {
+          const swingAmplitude = Math.max(42, dashTravel * 0.2);
+          const cycleDuration = Math.max(0.14, 0.3 / flowSpeed);
+          let elapsed = 0;
+          let sign = -1;
+
+          while (elapsed + cycleDuration <= activeDuration) {
+            const halfCycle = cycleDuration / 2;
+            yield* line
+              .lineDashOffset(sign * swingAmplitude, halfCycle, linear)
+              .to(-sign * swingAmplitude, halfCycle, linear);
+            elapsed += cycleDuration;
+            sign *= -1;
+          }
+
+          const remaining = activeDuration - elapsed;
+          if (remaining > 0.01) {
+            yield* line.lineDashOffset(swingAmplitude * sign, remaining, linear);
+          }
+        } else {
+          yield* line.lineDashOffset(
+            target.directionMultiplier * dashTravel,
+            activeDuration,
+            linear,
+          );
+        }
+
+        yield* all(
+          line.stroke(baseStroke, Math.min(0.06, activeDuration * 0.15), timingFunction),
+          line.lineWidth(baseWidth, Math.min(0.06, activeDuration * 0.15), timingFunction),
+        );
+      })(),
+    );
+
+    threads.push(thread);
+  });
+
+  return {
+    thread: toThread(threads),
+    duration: maxEnd,
+  };
+};
+
 const executeLegacyScene = (
   scene: MotionSceneSpec,
   lifecycleResults: LifecycleResult[],
@@ -1061,15 +1371,31 @@ const executePlanDrivenScene = (
         }
         break;
       case 'interactions':
-        phasePlan = executeEffectsPhase(
-          intents,
-          'interactions',
-          sceneDuration,
-          lifecycleById,
-          sceneState,
-          connectionTimingById,
-          scene,
-        );
+        {
+          const interactionEffects = executeEffectsPhase(
+            intents,
+            'interactions',
+            sceneDuration,
+            lifecycleById,
+            sceneState,
+            connectionTimingById,
+            scene,
+          );
+          const interactionFlows = executeInteractionFlowsPhase(
+            scene,
+            sceneDuration,
+            sceneState,
+            connectionTimingById,
+          );
+          phasePlan = {
+            thread: toThread(
+              [interactionEffects.thread, interactionFlows.thread].filter(
+                (thread): thread is ThreadGenerator => thread !== undefined,
+              ),
+            ),
+            duration: Math.max(interactionEffects.duration, interactionFlows.duration),
+          };
+        }
         break;
       default:
         phasePlan = {duration: 0};
@@ -1160,6 +1486,52 @@ const executeStatusEffects = (
   };
 };
 
+const executeAmbientComponentMotion = (
+  sceneDuration: number,
+  lifecycleResults: LifecycleResult[],
+  sceneElementById: Map<string, MotionElementSpec>,
+): PhaseExecutionPlan => {
+  const threads: ThreadGenerator[] = [];
+
+  for (const lifecycleResult of lifecycleResults) {
+    const elementSpec = sceneElementById.get(lifecycleResult.elementState.id);
+    if (!elementSpec) {
+      continue;
+    }
+
+    if (elementSpec.type === ComponentType.LoadBalancer) {
+      const spinnerNode = findLbSpinnerNode(lifecycleResult.node);
+      if (!spinnerNode) {
+        continue;
+      }
+
+      const rotationPerSecond = 160;
+      const cycleDuration = 0.36;
+      threads.push((function* lbSpinnerThread() {
+        let elapsed = 0;
+        let currentRotation = spinnerNode.rotation();
+
+        while (elapsed + cycleDuration <= sceneDuration) {
+          currentRotation += rotationPerSecond * cycleDuration;
+          yield* spinnerNode.rotation(currentRotation, cycleDuration, linear);
+          elapsed += cycleDuration;
+        }
+
+        const remaining = sceneDuration - elapsed;
+        if (remaining > 0.01) {
+          currentRotation += rotationPerSecond * remaining;
+          yield* spinnerNode.rotation(currentRotation, remaining, linear);
+        }
+      })());
+    }
+  }
+
+  return {
+    thread: toThread(threads),
+    duration: threads.length > 0 ? sceneDuration : 0,
+  };
+};
+
 const resolveCameraTiming = (
   scene: MotionSceneSpec,
   sceneDuration: number,
@@ -1176,6 +1548,23 @@ const resolveCameraTiming = (
     return null;
   }
 
+  const directiveCameraMode = scene.directives?.camera.mode;
+  if (directiveCameraMode === 'follow_action' || directiveCameraMode === 'wide_recap') {
+    const immediateDuration = Math.max(
+      0.08,
+      Math.min(
+        0.24,
+        scene.cameraPlan.duration,
+        Math.max(0.12, sceneDuration * 0.18),
+      ),
+    );
+
+    return {
+      delay: 0,
+      duration: immediateDuration,
+    };
+  }
+
   const cameraPhase = getScenePhases(sceneDuration).camera;
   const phaseDuration = Math.max(0.1, cameraPhase.end - cameraPhase.start);
 
@@ -1189,12 +1578,20 @@ const resolveSceneCameraAction = (
   scene: MotionSceneSpec,
   hasCameraTiming: boolean,
 ): CameraActionType | undefined => {
+  const directiveCameraMode = scene.directives?.camera.mode;
+  const hasExplicitDirectiveCamera =
+    directiveCameraMode === 'follow_action' || directiveCameraMode === 'wide_recap';
+
   if (scene.cameraPlan) {
     if (scene.cameraPlan.motionType === 'expand_architecture') {
       return CameraActionType.Wide;
     }
 
     return CameraActionType.Focus;
+  }
+
+  if (scene.camera && hasExplicitDirectiveCamera) {
+    return scene.camera;
   }
 
   if (!hasCameraTiming) {
@@ -1389,6 +1786,11 @@ export function* executeScene(
     sceneElementById,
     sceneDuration,
   );
+  const ambientExecution = executeAmbientComponentMotion(
+    sceneDuration,
+    lifecycleResults,
+    sceneElementById,
+  );
 
   const motionExecution = scene.plan
     ? executePlanDrivenScene(scene, lifecycleResults, state, sceneDuration)
@@ -1396,6 +1798,9 @@ export function* executeScene(
 
   const cameraTiming = resolveCameraTiming(scene, sceneDuration);
   const cameraAction = resolveSceneCameraAction(scene, cameraTiming !== null);
+  const directiveCameraMode = scene.directives?.camera.mode;
+  const isFollowOrRecapCamera =
+    directiveCameraMode === 'follow_action' || directiveCameraMode === 'wide_recap';
   const shouldRunCamera = Boolean(cameraAction) || Boolean(scene.cameraPlan);
   const focusTarget = shouldRunCamera
     ? resolveCameraFocusTarget(
@@ -1406,6 +1811,7 @@ export function* executeScene(
       firstNewElement,
     )
     : undefined;
+  const sceneContentBounds = collectSceneContentBounds(lifecycleResults, sceneElementById);
   const cameraExecution = shouldRunCamera
     ? createCameraPlan({
       view,
@@ -1414,8 +1820,13 @@ export function* executeScene(
       durationOverride: cameraTiming?.duration,
       action: cameraAction,
       focusTarget,
+      activeZone: scene.directives?.camera.active_zone ?? 'upper_third',
+      reserveBottomPercent: scene.directives?.camera.reserve_bottom_percent ?? 25,
       zoomOverride: scene.cameraPlan?.zoom,
       easingOverride: scene.cameraPlan?.easing,
+      allowDrift: !isFollowOrRecapCamera,
+      lockXAxis: isFollowOrRecapCamera,
+      contentBounds: sceneContentBounds,
       logger: state.logger,
     })
     : null;
@@ -1436,6 +1847,9 @@ export function* executeScene(
   if (statusExecution.thread) {
     threads.push(statusExecution.thread);
   }
+  if (ambientExecution.thread) {
+    threads.push(ambientExecution.thread);
+  }
   if (motionExecution.thread) {
     threads.push(motionExecution.thread);
   }
@@ -1451,6 +1865,7 @@ export function* executeScene(
     captionExecution.duration,
     hierarchyExecution.duration,
     statusExecution.duration,
+    ambientExecution.duration,
     motionExecution.duration,
     cameraDuration,
   );
