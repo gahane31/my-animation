@@ -1,12 +1,26 @@
-import {createDirectorAgent, type DirectorAgent} from '../agents/directorAgent.js';
-import {createMotionCanvasAgent, type MotionCanvasAgent} from '../agents/motionCanvasAgent.js';
-import {createScriptAgent, type ScriptAgent} from '../agents/scriptAgent.js';
-import {createStoryPlannerAgent, type StoryPlannerAgent} from '../agents/storyPlannerAgent.js';
+import {createDesignDirector, type DesignDirector} from '../agents/designDirector.js';
+import {
+  createMomentDirectorAgent,
+  type MomentDirectorAgent,
+} from '../agents/momentDirectorAgent.js';
+import {
+  createMotionCanvasAgent,
+  type MotionCanvasAgent,
+} from '../agents/motionCanvasAgent.js';
+import {applyAttentionHook} from '../design/hookEngine.js';
+import {applyNarrativePacing, buildPacingDiffs} from '../design/pacingEngine.js';
+import {selectPersonality} from '../design/personalitySelector.js';
+import {
+  createStoryPlannerAgent,
+  type StoryPlannerAgent,
+} from '../agents/storyPlannerAgent.js';
+import {PIPELINE_DEFAULTS} from '../config/constants.js';
 import {createOpenAIClient, type LLMClient} from '../llm/openaiClient.js';
 import {createStructuredOutputHelper} from '../llm/structuredOutput.js';
 import {createRenderer, type Renderer} from '../motion/renderer.js';
-import {PIPELINE_DEFAULTS} from '../config/constants.js';
-import {writeJsonArtifact} from './artifacts.js';
+import {collectMomentVisualActivityWarnings} from '../schema/moment.schema.js';
+import {createArtifactRunContext, writeJsonArtifact} from './artifacts.js';
+import {buildIncrementalScenes} from './stateBuilder.js';
 import {createConsoleLogger, type Logger} from './logger.js';
 
 export interface GenerateVideoInput {
@@ -15,6 +29,8 @@ export interface GenerateVideoInput {
   duration: number;
   outputPath?: string;
   storyPlanOutputPath?: string;
+  momentsOutputPath?: string;
+  // Backward-compatible alias for older CLI flag.
   llmVideoSpecOutputPath?: string;
   model?: string;
   temperature?: number;
@@ -25,10 +41,8 @@ export interface GenerateVideoDependencies {
   logger?: Logger;
   llmClient?: LLMClient;
   storyPlannerAgent?: StoryPlannerAgent;
-  videoDirectorAgent?: ScriptAgent;
-  // Backward compatibility alias.
-  scriptAgent?: ScriptAgent;
-  directorAgent?: DirectorAgent;
+  momentDirectorAgent?: MomentDirectorAgent;
+  designDirector?: DesignDirector;
   motionCanvasAgent?: MotionCanvasAgent;
   renderer?: Renderer;
 }
@@ -45,15 +59,23 @@ export const generateVideo = async (
     duration: input.duration,
   });
 
+  const artifactRunContext = await createArtifactRunContext({
+    pipeline: 'v1',
+    logger,
+  });
+
   const llmClient = dependencies.llmClient ?? createOpenAIClient({logger});
   const structuredOutputHelper = createStructuredOutputHelper({llmClient, logger});
+
   const storyPlannerAgent =
     dependencies.storyPlannerAgent ?? createStoryPlannerAgent({structuredOutputHelper, logger});
-  const videoDirectorAgent =
-    dependencies.videoDirectorAgent ??
-    dependencies.scriptAgent ??
-    createScriptAgent({structuredOutputHelper, logger});
-  const directorAgent = dependencies.directorAgent ?? createDirectorAgent({logger});
+  const momentDirectorAgent =
+    dependencies.momentDirectorAgent ??
+    createMomentDirectorAgent({
+      structuredOutputHelper,
+      logger,
+    });
+  const designDirector = dependencies.designDirector ?? createDesignDirector({logger});
   const motionCanvasAgent = dependencies.motionCanvasAgent ?? createMotionCanvasAgent({logger});
   const renderer = dependencies.renderer ?? createRenderer({logger});
 
@@ -69,14 +91,22 @@ export const generateVideo = async (
       seed: input.seed,
     },
   );
+
   const storyPlanOutputPath = await writeJsonArtifact({
     outputPath: input.storyPlanOutputPath ?? PIPELINE_DEFAULTS.storyPlanPath,
     label: 'story_plan',
     value: storyPlan,
     logger,
+    runContext: artifactRunContext,
+  });
+  const personality = selectPersonality(storyPlan);
+
+  logger.info('Pipeline: motion personality selected', {
+    personality,
+    tone: storyPlan.tone,
   });
 
-  const llmVideoSpec = await videoDirectorAgent.generate(
+  const momentsVideo = await momentDirectorAgent.generate(
     {
       storyPlan,
     },
@@ -86,15 +116,85 @@ export const generateVideo = async (
       seed: input.seed,
     },
   );
-  const llmVideoSpecOutputPath = await writeJsonArtifact({
-    outputPath: input.llmVideoSpecOutputPath ?? PIPELINE_DEFAULTS.llmVideoSpecPath,
-    label: 'llm_video_spec',
-    value: llmVideoSpec,
+
+  const momentsOutputPath = await writeJsonArtifact({
+    outputPath:
+      input.momentsOutputPath ??
+      input.llmVideoSpecOutputPath ??
+      PIPELINE_DEFAULTS.momentsPath,
+    label: 'moments_video',
+    value: momentsVideo,
     logger,
+    runContext: artifactRunContext,
+  });
+  await writeJsonArtifact({
+    outputPath: PIPELINE_DEFAULTS.momentsDebugPath,
+    label: 'moments_debug',
+    value: momentsVideo,
+    logger,
+    runContext: artifactRunContext,
   });
 
-  const refinedVideoSpec = directorAgent.refine(llmVideoSpec);
-  const renderSpec = motionCanvasAgent.buildRenderSpec(refinedVideoSpec);
+  const hookedMoments = applyAttentionHook(momentsVideo.moments, storyPlan);
+  const hookedMomentsVideo = {
+    ...momentsVideo,
+    moments: hookedMoments,
+  };
+
+  logger.info('Pipeline: attention hook applied', {
+    firstMomentId: hookedMoments[0]?.id,
+    firstMomentDuration:
+      hookedMoments[0] ? hookedMoments[0].end - hookedMoments[0].start : undefined,
+    isHook: hookedMoments[0]?.isHook ?? false,
+  });
+
+  const pacingDiffs = buildPacingDiffs(hookedMomentsVideo.moments);
+  const pacedMoments = applyNarrativePacing(hookedMomentsVideo.moments, pacingDiffs, storyPlan);
+  const pacedMomentsVideo = {
+    ...hookedMomentsVideo,
+    moments: pacedMoments,
+  };
+
+  logger.info('Pipeline: narrative pacing applied', {
+    moments: pacedMoments.length,
+    minSceneDuration: Math.min(...pacedMoments.map((moment) => moment.end - moment.start)),
+    maxSceneDuration: Math.max(...pacedMoments.map((moment) => moment.end - moment.start)),
+  });
+
+  const incrementalScenes = buildIncrementalScenes(pacedMomentsVideo.moments, {logger});
+  const incrementalMomentsVideo = {
+    ...pacedMomentsVideo,
+    moments: incrementalScenes,
+  };
+  await writeJsonArtifact({
+    outputPath: PIPELINE_DEFAULTS.scenesIncrementalPath,
+    label: 'scenes_incremental',
+    value: incrementalScenes,
+    logger,
+    runContext: artifactRunContext,
+  });
+
+  const activityWarnings = collectMomentVisualActivityWarnings(incrementalMomentsVideo);
+  for (const warning of activityWarnings) {
+    logger.warn('Pipeline: low visual activity warning', {...warning});
+  }
+
+  const designedMoments = designDirector.refineMoments(incrementalMomentsVideo);
+  await writeJsonArtifact({
+    outputPath: PIPELINE_DEFAULTS.momentsAfterLayoutPath,
+    label: 'moments_after_layout',
+    value: designedMoments,
+    logger,
+    runContext: artifactRunContext,
+  });
+  const renderSpec = motionCanvasAgent.buildRenderSpec(designedMoments, {personality});
+  await writeJsonArtifact({
+    outputPath: PIPELINE_DEFAULTS.renderSpecDebugPath,
+    label: 'render_spec_debug',
+    value: renderSpec,
+    logger,
+    runContext: artifactRunContext,
+  });
 
   // TODO: Add voiceover generation (TTS) based on scene narration.
   // TODO: Auto-adjust scene timing from narration duration.
@@ -108,7 +208,9 @@ export const generateVideo = async (
   logger.info('Pipeline complete', {
     outputPath,
     storyPlanOutputPath,
-    llmVideoSpecOutputPath,
+    momentsOutputPath,
+    artifactRunDirectory: artifactRunContext.runDirectory,
+    artifactRunId: artifactRunContext.runId,
     totalScenes: renderSpec.scenes.length,
     duration: renderSpec.duration,
   });

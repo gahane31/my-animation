@@ -129,15 +129,6 @@ export const videoSpecSchema = z
           path: ['scenes'],
         });
       }
-
-      const visualGap = current.start - previous.start;
-      if (visualGap > VIDEO_LIMITS.maxVisualIdleSeconds) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: `Visual changes must occur at least every ${VIDEO_LIMITS.maxVisualIdleSeconds}s`,
-          path: ['scenes'],
-        });
-      }
     }
 
     const firstScene = sortedScenes[0];
@@ -237,7 +228,7 @@ export const videoSpecResponseFormat = {
             end: {
               type: 'number',
               minimum: 0,
-              description: 'Scene end in seconds. Must be > start and scene duration <= 6.',
+              description: 'Scene end in seconds. Must be > start and scene duration <= 8.',
             },
             narration: {type: 'string', minLength: 1},
             title: nullableStringJsonSchema,

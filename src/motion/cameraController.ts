@@ -1,8 +1,15 @@
 import type {Node} from '@motion-canvas/2d';
-import {all, easeInOutCubic, type ThreadGenerator} from '@motion-canvas/core';
+import {
+  all,
+  easeInCubic,
+  easeInOutCubic,
+  easeOutCubic,
+  type ThreadGenerator,
+  type TimingFunction,
+} from '@motion-canvas/core';
 import {CameraActionType} from '../schema/visualGrammar.js';
 import type {CameraState, RuntimeLogger} from './types.js';
-import {REEL_SAFE_OFFSET_Y, type PixelPosition} from './positioning.js';
+import type {PixelPosition} from './positioning.js';
 
 const DEFAULT_CAMERA_DURATION = 1;
 const MIN_CAMERA_DURATION = 0.8;
@@ -15,6 +22,30 @@ const SUBTLE_DRIFT_DISTANCE = 45;
 
 const clamp = (value: number, min: number, max: number): number => Math.min(max, Math.max(min, value));
 
+const resolveTimingFunction = (easing?: string): TimingFunction => {
+  if (!easing) {
+    return easeInOutCubic;
+  }
+
+  if (easing.includes('0.4,0,0.2,1')) {
+    return easeOutCubic;
+  }
+
+  if (easing.includes('0.16,1,0.3,1')) {
+    return easeOutCubic;
+  }
+
+  if (easing.includes('0.4,0,1,1')) {
+    return easeInCubic;
+  }
+
+  if (easing.includes('0,0,0.2,1')) {
+    return easeOutCubic;
+  }
+
+  return easeInOutCubic;
+};
+
 export interface CameraPlan {
   thread: ThreadGenerator;
   duration: number;
@@ -25,8 +56,11 @@ export interface CameraPlanInput {
   view: Node;
   cameraState: CameraState;
   sceneDuration: number;
+  durationOverride?: number;
   action?: CameraActionType;
   focusTarget?: PixelPosition;
+  zoomOverride?: number;
+  easingOverride?: string;
   logger: RuntimeLogger;
 }
 
@@ -37,14 +71,14 @@ const resolveDuration = (sceneDuration: number): number => {
 
 const getFocusTargetCoordinates = (focusTarget?: PixelPosition): PixelPosition => {
   if (!focusTarget) {
-    return {x: 0, y: REEL_SAFE_OFFSET_Y};
+    return {x: 0, y: 0};
   }
 
   // Invert target position because moving the camera node shifts scene space.
-  // Keep focus around reel-safe center instead of exact frame center.
+  // Safe offset is already applied in normalized node positions.
   return {
     x: -focusTarget.x,
-    y: REEL_SAFE_OFFSET_Y - focusTarget.y,
+    y: -focusTarget.y,
   };
 };
 
@@ -54,6 +88,8 @@ const createCameraTransition = (
   action: CameraActionType,
   duration: number,
   focusTarget: PixelPosition,
+  timingFunction: TimingFunction,
+  zoomOverride?: number,
 ): ThreadGenerator => {
   let targetScale = cameraState.scale;
   let targetX = cameraState.x;
@@ -65,8 +101,8 @@ const createCameraTransition = (
       break;
     case CameraActionType.ZoomOut:
       targetScale = ZOOM_OUT_SCALE;
-      targetX = 0;
-      targetY = REEL_SAFE_OFFSET_Y;
+      targetX = cameraState.originX;
+      targetY = cameraState.originY;
       break;
     case CameraActionType.PanUp:
       targetY -= PAN_DISTANCE;
@@ -76,16 +112,20 @@ const createCameraTransition = (
       break;
     case CameraActionType.Focus:
       targetScale = FOCUS_SCALE;
-      targetX = focusTarget.x;
-      targetY = focusTarget.y;
+      targetX = cameraState.originX + focusTarget.x;
+      targetY = cameraState.originY + focusTarget.y;
       break;
     case CameraActionType.Wide:
       targetScale = ZOOM_OUT_SCALE;
-      targetX = 0;
-      targetY = REEL_SAFE_OFFSET_Y;
+      targetX = cameraState.originX;
+      targetY = cameraState.originY;
       break;
     default:
       break;
+  }
+
+  if (typeof zoomOverride === 'number') {
+    targetScale = zoomOverride;
   }
 
   cameraState.scale = targetScale;
@@ -93,9 +133,9 @@ const createCameraTransition = (
   cameraState.y = targetY;
 
   return all(
-    view.scale(targetScale, duration, easeInOutCubic),
-    view.x(targetX, duration, easeInOutCubic),
-    view.y(targetY, duration, easeInOutCubic),
+    view.scale(targetScale, duration, timingFunction),
+    view.x(targetX, duration, timingFunction),
+    view.y(targetY, duration, timingFunction),
   );
 };
 
@@ -126,31 +166,25 @@ export const createCameraPlan = ({
   view,
   cameraState,
   sceneDuration,
+  durationOverride,
   action,
   focusTarget,
+  zoomOverride,
+  easingOverride,
   logger,
 }: CameraPlanInput): CameraPlan | null => {
-  const resolvedAction = action ?? (focusTarget ? CameraActionType.Focus : undefined);
+  const resolvedAction = action;
   const targetCoordinates = getFocusTargetCoordinates(focusTarget);
-  const baseDuration = resolveDuration(sceneDuration);
-
-  const driftPlan = createSubtleDrift(view, cameraState, sceneDuration);
-
-  if (!resolvedAction && !driftPlan) {
-    cameraState.lastAction = undefined;
-    cameraState.actionStreak = 0;
-    return null;
-  }
-
-  if (!resolvedAction && driftPlan) {
-    cameraState.lastAction = undefined;
-    cameraState.actionStreak = 0;
-    return driftPlan;
-  }
+  const baseDuration = durationOverride ?? resolveDuration(sceneDuration);
+  const timingFunction = resolveTimingFunction(easingOverride);
 
   if (!resolvedAction) {
+    cameraState.lastAction = undefined;
+    cameraState.actionStreak = 0;
     return null;
   }
+
+  const driftPlan = createSubtleDrift(view, cameraState, sceneDuration);
 
   if (cameraState.lastAction === resolvedAction) {
     cameraState.actionStreak += 1;
@@ -174,6 +208,8 @@ export const createCameraPlan = ({
     resolvedAction,
     baseDuration,
     targetCoordinates,
+    timingFunction,
+    zoomOverride,
   );
 
   if (!driftPlan) {

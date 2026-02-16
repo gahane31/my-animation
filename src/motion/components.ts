@@ -1,210 +1,441 @@
 import {Circle, Layout, Line, Node, Rect, Txt} from '@motion-canvas/2d';
-import type {Position} from '../schema/videoSpec.schema.js';
+import {StyleTokens} from '../config/styleTokens.js';
+import type {EntityVisualStyle} from '../design/styleResolver.js';
 import {ComponentType} from '../schema/visualGrammar.js';
 
 export interface ComponentFactoryInput {
   id: string;
-  position: Position;
+  position: {x: number; y: number};
+  label?: string;
+  style?: EntityVisualStyle;
 }
 
 export type ComponentFactory = (input: ComponentFactoryInput) => Node;
 
-const createLabel = (text: string, y: number): Txt =>
+const DEFAULT_STYLE: EntityVisualStyle = {
+  size: StyleTokens.sizes.medium,
+  opacity: StyleTokens.opacity.secondary,
+  color: StyleTokens.colors.states.normal,
+  strokeWidth: StyleTokens.stroke.normal,
+  strokeColor: StyleTokens.colors.connection,
+  glow: false,
+  glowColor: StyleTokens.effects.glowColor,
+  glowBlur: StyleTokens.effects.glowBlur,
+  textColor: StyleTokens.colors.text,
+  fontSize: StyleTokens.text.fontSizeSecondary,
+  fontWeight: StyleTokens.text.fontWeight,
+  status: 'normal',
+};
+
+const NO_SHADOW_COLOR = StyleTokens.colors.background;
+
+const resolveStyle = (style?: EntityVisualStyle): EntityVisualStyle =>
+  style ? {...DEFAULT_STYLE, ...style} : {...DEFAULT_STYLE};
+
+const scaleByStyle = (value: number, style: EntityVisualStyle): number =>
+  value * (style.size / StyleTokens.sizes.medium);
+
+const createLabel = (text: string, y: number, style: EntityVisualStyle): Txt =>
   new Txt({
     text,
     y,
-    fill: '#e2e8f0',
-    fontFamily: 'JetBrains Mono',
-    fontSize: 26,
+    fill: style.textColor,
+    fontFamily: StyleTokens.text.fontFamily,
+    fontSize: Math.max(16, style.fontSize - 4),
+    fontWeight: style.fontWeight,
   });
 
-export const createUsers = ({id, position}: ComponentFactoryInput): Node => {
+const findLastTextNode = (node: Node): Txt | undefined => {
+  let result: Txt | undefined;
+
+  if (node instanceof Txt) {
+    result = node;
+  }
+
+  for (const child of node.children()) {
+    const nestedResult = findLastTextNode(child);
+    if (nestedResult) {
+      result = nestedResult;
+    }
+  }
+
+  return result;
+};
+
+const createCard = (
+  input: ComponentFactoryInput,
+  options: {
+    label: string;
+    width: number;
+    height: number;
+    radius: number;
+    rotation?: number;
+    labelOffset?: number;
+  },
+): Rect => {
+  const style = resolveStyle(input.style);
+  const width = scaleByStyle(options.width, style);
+  const height = scaleByStyle(options.height, style);
+  const labelOffset = options.labelOffset ?? 22;
+
+  const node = new Rect({
+    x: input.position.x,
+    y: input.position.y,
+    width,
+    height,
+    radius: scaleByStyle(options.radius, style),
+    rotation: options.rotation ?? 0,
+    lineWidth: style.strokeWidth,
+    stroke: style.strokeColor,
+    fill: style.color,
+    opacity: style.opacity,
+    shadowColor: style.glow ? style.glowColor : NO_SHADOW_COLOR,
+    shadowBlur: style.glow ? style.glowBlur : 0,
+    children: [
+      createLabel(options.label, height / 2 + scaleByStyle(labelOffset, style), style),
+    ],
+  });
+
+  return node;
+};
+
+export const applyComponentVisualStyle = (node: Node, styleInput?: EntityVisualStyle): void => {
+  const style = resolveStyle(styleInput);
+
+  node.opacity(style.opacity);
+  node.shadowColor(style.glow ? style.glowColor : NO_SHADOW_COLOR);
+  node.shadowBlur(style.glow ? style.glowBlur : 0);
+
+  if (node instanceof Rect || node instanceof Circle) {
+    node.fill(style.color);
+    node.stroke(style.strokeColor);
+    node.lineWidth(style.strokeWidth);
+  }
+
+  if (node instanceof Line) {
+    node.stroke(style.strokeColor);
+    node.lineWidth(Math.max(StyleTokens.stroke.thin, style.strokeWidth - 1));
+  }
+
+  if (node instanceof Txt) {
+    node.fill(style.textColor);
+    node.fontFamily(StyleTokens.text.fontFamily);
+    node.fontSize(Math.max(16, style.fontSize - 4));
+    node.fontWeight(style.fontWeight);
+  }
+
+  for (const child of node.children()) {
+    applyComponentVisualStyle(child, style);
+  }
+};
+
+export const applyComponentLabel = (node: Node, label?: string): void => {
+  if (!label) {
+    return;
+  }
+
+  const labelNode = findLastTextNode(node);
+  if (!labelNode) {
+    return;
+  }
+
+  labelNode.text(label);
+};
+
+export const createUsers = (input: ComponentFactoryInput): Node => {
+  const style = resolveStyle(input.style);
+  const avatarSize = scaleByStyle(26, style);
   const cluster = new Layout({
-    x: position.x,
-    y: position.y,
+    x: input.position.x,
+    y: input.position.y,
     layout: true,
     direction: 'row',
-    gap: 16,
+    gap: scaleByStyle(12, style),
+    opacity: style.opacity,
   });
 
   for (let index = 0; index < 3; index += 1) {
-    const avatar = new Circle({
-      width: 52,
-      height: 52,
-      fill: '#3b82f6',
-      stroke: '#bfdbfe',
-      lineWidth: 3,
-      children: [
-        new Txt({
-          text: 'U',
-          fill: '#f8fafc',
-          fontFamily: 'JetBrains Mono',
-          fontSize: 20,
-        }),
-      ],
+    const user = new Layout({
+      layout: true,
+      direction: 'column',
+      alignItems: 'center',
+      gap: scaleByStyle(3, style),
     });
+    user.add(
+      new Circle({
+        width: avatarSize * 0.75,
+        height: avatarSize * 0.75,
+        fill: style.color,
+      }),
+    );
+    user.add(
+      new Rect({
+        width: avatarSize * 0.9,
+        height: avatarSize * 0.55,
+        radius: scaleByStyle(8, style),
+        fill: style.color,
+      }),
+    );
 
-    cluster.add(avatar);
+    cluster.add(
+      new Rect({
+        width: avatarSize * 1.5,
+        height: avatarSize * 1.5,
+        radius: scaleByStyle(14, style),
+        lineWidth: style.strokeWidth,
+        stroke: style.strokeColor,
+        fill: StyleTokens.colors.background,
+        children: [user],
+      }),
+    );
   }
 
-  cluster.add(createLabel('Users', 64));
+  cluster.add(createLabel(input.label ?? 'Users', scaleByStyle(50, style), style));
+  cluster.shadowColor(style.glow ? style.glowColor : NO_SHADOW_COLOR);
+  cluster.shadowBlur(style.glow ? style.glowBlur : 0);
+
   return cluster;
 };
 
-export const createServer = ({id, position}: ComponentFactoryInput): Node =>
-  new Rect({
-    x: position.x,
-    y: position.y,
+export const createServer = (input: ComponentFactoryInput): Node => {
+  const style = resolveStyle(input.style);
+  const node = createCard(input, {
+    label: input.label ?? 'Server',
     width: 170,
-    height: 210,
+    height: 128,
     radius: 14,
-    fill: '#0f172a',
-    stroke: '#334155',
-    lineWidth: 4,
-    children: [
-      new Rect({width: 120, height: 8, y: -52, fill: '#1e293b'}),
-      new Rect({width: 120, height: 8, y: -28, fill: '#1e293b'}),
-      new Circle({width: 12, height: 12, x: -32, y: 58, fill: '#22c55e'}),
-      new Circle({width: 12, height: 12, x: 0, y: 58, fill: '#22c55e'}),
-      new Circle({width: 12, height: 12, x: 32, y: 58, fill: '#ef4444'}),
-      createLabel('Server', 112),
-    ],
   });
+  const rackWidth = scaleByStyle(120, style);
+  const rackHeight = scaleByStyle(16, style);
+  const rackGap = scaleByStyle(10, style);
 
-export const createLoadBalancer = ({id, position}: ComponentFactoryInput): Node =>
-  new Rect({
-    x: position.x,
-    y: position.y,
-    width: 120,
-    height: 120,
-    rotation: 45,
-    radius: 12,
-    fill: '#1d4ed8',
-    stroke: '#93c5fd',
-    lineWidth: 4,
-    children: [
-      new Txt({
-        text: 'LB',
-        fill: '#f8fafc',
-        rotation: -45,
-        fontFamily: 'JetBrains Mono',
-        fontSize: 30,
+  for (let index = 0; index < 3; index += 1) {
+    const y = scaleByStyle(-24, style) + index * (rackHeight + rackGap);
+    node.add(
+      new Rect({
+        width: rackWidth,
+        height: rackHeight,
+        y,
+        radius: scaleByStyle(5, style),
+        lineWidth: Math.max(1, style.strokeWidth - 1),
+        stroke: style.strokeColor,
+        fill: StyleTokens.colors.background,
       }),
-      createLabel('Load Balancer', 104),
-    ],
-  });
-
-export const createDatabase = ({id, position}: ComponentFactoryInput): Node =>
-  new Rect({
-    x: position.x,
-    y: position.y,
-    width: 180,
-    height: 190,
-    radius: 72,
-    fill: '#111827',
-    stroke: '#cbd5e1',
-    lineWidth: 4,
-    children: [
-      new Rect({width: 180, height: 26, y: -54, radius: 72, stroke: '#cbd5e1', lineWidth: 3}),
-      new Rect({width: 180, height: 26, y: -10, radius: 72, stroke: '#cbd5e1', lineWidth: 3}),
-      new Rect({width: 180, height: 26, y: 34, radius: 72, stroke: '#cbd5e1', lineWidth: 3}),
-      createLabel('Database', 114),
-    ],
-  });
-
-export const createCache = ({id, position}: ComponentFactoryInput): Node =>
-  new Rect({
-    x: position.x,
-    y: position.y,
-    width: 150,
-    height: 120,
-    radius: 12,
-    fill: '#f59e0b',
-    stroke: '#fef3c7',
-    lineWidth: 4,
-    children: [
-      new Txt({
-        text: 'CACHE',
-        fill: '#0f172a',
-        fontFamily: 'JetBrains Mono',
-        fontSize: 28,
+    );
+    node.add(
+      new Circle({
+        width: scaleByStyle(8, style),
+        height: scaleByStyle(8, style),
+        x: rackWidth * 0.44,
+        y,
+        fill: style.textColor,
       }),
-      createLabel('Cache', 92),
+    );
+  }
+
+  return node;
+};
+
+export const createLoadBalancer = (input: ComponentFactoryInput): Node => {
+  const style = resolveStyle(input.style);
+  const node = createCard(input, {
+    label: input.label ?? 'Load Balancer',
+    width: 156,
+    height: 116,
+    radius: 14,
+  });
+  const coreRadius = scaleByStyle(14, style);
+  const branchOffsetX = scaleByStyle(42, style);
+  const branchOffsetY = scaleByStyle(22, style);
+
+  node.add(
+    new Line({
+      points: [
+        [-branchOffsetX, 0],
+        [0, 0],
+        [branchOffsetX, -branchOffsetY],
+      ],
+      stroke: style.strokeColor,
+      lineWidth: Math.max(2, style.strokeWidth - 1),
+    }),
+  );
+  node.add(
+    new Line({
+      points: [
+        [0, 0],
+        [branchOffsetX, 0],
+      ],
+      stroke: style.strokeColor,
+      lineWidth: Math.max(2, style.strokeWidth - 1),
+    }),
+  );
+  node.add(
+    new Line({
+      points: [
+        [0, 0],
+        [branchOffsetX, branchOffsetY],
+      ],
+      stroke: style.strokeColor,
+      lineWidth: Math.max(2, style.strokeWidth - 1),
+    }),
+  );
+
+  node.add(
+    new Circle({
+      width: coreRadius * 2,
+      height: coreRadius * 2,
+      fill: StyleTokens.colors.background,
+      stroke: style.strokeColor,
+      lineWidth: Math.max(2, style.strokeWidth - 1),
+    }),
+  );
+
+  return node;
+};
+
+export const createDatabase = (input: ComponentFactoryInput): Node => {
+  const style = resolveStyle(input.style);
+  const width = scaleByStyle(170, style);
+  const height = scaleByStyle(130, style);
+  const topHeight = scaleByStyle(26, style);
+
+  return new Layout({
+    x: input.position.x,
+    y: input.position.y,
+    opacity: style.opacity,
+    shadowColor: style.glow ? style.glowColor : NO_SHADOW_COLOR,
+    shadowBlur: style.glow ? style.glowBlur : 0,
+    children: [
+      new Rect({
+        width,
+        height,
+        y: scaleByStyle(8, style),
+        fill: style.color,
+        stroke: style.strokeColor,
+        lineWidth: style.strokeWidth,
+      }),
+      new Circle({
+        width,
+        height: topHeight,
+        y: -height / 2 + scaleByStyle(8, style),
+        fill: style.color,
+        stroke: style.strokeColor,
+        lineWidth: style.strokeWidth,
+      }),
+      new Circle({
+        width,
+        height: topHeight,
+        y: height / 2 + scaleByStyle(8, style),
+        fill: style.color,
+        stroke: style.strokeColor,
+        lineWidth: style.strokeWidth,
+      }),
+      createLabel(input.label ?? 'Database', height / 2 + scaleByStyle(34, style), style),
     ],
   });
+};
 
-export const createQueue = ({id, position}: ComponentFactoryInput): Node => {
+export const createCache = (input: ComponentFactoryInput): Node => {
+  const style = resolveStyle(input.style);
+  const node = createCard(input, {
+    label: input.label ?? 'Cache',
+    width: 160,
+    height: 116,
+    radius: 12,
+  });
+
+  const barWidth = scaleByStyle(100, style);
+  const barHeight = scaleByStyle(11, style);
+  const gap = scaleByStyle(6, style);
+  for (let index = 0; index < 3; index += 1) {
+    node.add(
+      new Rect({
+        width: barWidth,
+        height: barHeight,
+        y: scaleByStyle(-18, style) + index * (barHeight + gap),
+        radius: scaleByStyle(4, style),
+        fill: StyleTokens.colors.background,
+        stroke: style.strokeColor,
+        lineWidth: Math.max(1, style.strokeWidth - 1),
+      }),
+    );
+  }
+
+  return node;
+};
+
+export const createQueue = (input: ComponentFactoryInput): Node => {
+  const style = resolveStyle(input.style);
+  const width = scaleByStyle(148, style);
+  const barHeight = scaleByStyle(16, style);
   const queue = new Layout({
-    x: position.x,
-    y: position.y,
+    x: input.position.x,
+    y: input.position.y,
     layout: true,
     direction: 'column',
-    gap: 10,
+    gap: scaleByStyle(8, style),
+    opacity: style.opacity,
+    shadowColor: style.glow ? style.glowColor : NO_SHADOW_COLOR,
+    shadowBlur: style.glow ? style.glowBlur : 0,
   });
 
   for (let index = 0; index < 4; index += 1) {
     queue.add(
       new Rect({
-        width: 150,
-        height: 20,
-        radius: 6,
-        fill: '#7c3aed',
-        stroke: '#ddd6fe',
-        lineWidth: 2,
+        width,
+        height: barHeight,
+        radius: scaleByStyle(6, style),
+        fill: style.color,
+        stroke: style.strokeColor,
+        lineWidth: Math.max(StyleTokens.stroke.thin, style.strokeWidth - 1),
       }),
     );
   }
 
-  queue.add(createLabel('Queue', 72));
+  queue.add(createLabel(input.label ?? 'Queue', scaleByStyle(40, style), style));
   return queue;
 };
 
-export const createCdn = ({id, position}: ComponentFactoryInput): Node =>
-  new Layout({
-    x: position.x,
-    y: position.y,
+export const createCdn = (input: ComponentFactoryInput): Node => {
+  const style = resolveStyle(input.style);
+  const size = scaleByStyle(62, style);
+  const node = new Layout({
+    x: input.position.x,
+    y: input.position.y,
+    opacity: style.opacity,
+    shadowColor: style.glow ? style.glowColor : NO_SHADOW_COLOR,
+    shadowBlur: style.glow ? style.glowBlur : 0,
     children: [
-      new Circle({width: 70, height: 70, x: -36, y: 0, fill: '#38bdf8'}),
-      new Circle({width: 92, height: 92, x: 10, y: -6, fill: '#0ea5e9'}),
-      new Circle({width: 62, height: 62, x: 52, y: 4, fill: '#0284c7'}),
-      new Txt({
-        text: 'CDN',
-        y: 2,
-        fill: '#f8fafc',
-        fontFamily: 'JetBrains Mono',
-        fontSize: 30,
+      new Circle({width: size, height: size, x: -size * 0.4, fill: style.color}),
+      new Circle({
+        width: size * 1.2,
+        height: size * 1.2,
+        x: size * 0.2,
+        y: -size * 0.08,
+        fill: style.color,
       }),
-      createLabel('CDN', 86),
+      new Circle({width: size * 0.9, height: size * 0.9, x: size * 0.72, fill: style.color}),
+      new Circle({
+        width: size * 0.62,
+        height: size * 0.62,
+        y: size * 0.08,
+        fill: StyleTokens.colors.background,
+        stroke: style.strokeColor,
+        lineWidth: Math.max(1, style.strokeWidth - 1),
+      }),
+      createLabel(input.label ?? 'CDN', scaleByStyle(62, style), style),
     ],
   });
 
-export const createWorker = ({id, position}: ComponentFactoryInput): Node =>
-  new Rect({
-    x: position.x,
-    y: position.y,
-    width: 150,
-    height: 150,
-    radius: 12,
-    fill: '#16a34a',
-    stroke: '#bbf7d0',
-    lineWidth: 4,
-    children: [
-      new Txt({
-        text: 'W',
-        fill: '#052e16',
-        fontFamily: 'JetBrains Mono',
-        fontSize: 56,
-      }),
-      new Line({
-        lineWidth: 3,
-        stroke: '#dcfce7',
-        points: [
-          [-40, 26],
-          [40, 26],
-        ],
-      }),
-      createLabel('Worker', 98),
-    ],
+  return node;
+};
+
+export const createWorker = (input: ComponentFactoryInput): Node =>
+  createCard(input, {
+    label: input.label ?? 'Worker',
+    width: 136,
+    height: 136,
+    radius: 14,
   });
 
 export const componentFactoryMap: Record<ComponentType, ComponentFactory> = {
@@ -218,5 +449,10 @@ export const componentFactoryMap: Record<ComponentType, ComponentFactory> = {
   [ComponentType.Worker]: createWorker,
 };
 
-export const createComponentNode = (type: ComponentType, input: ComponentFactoryInput): Node =>
-  componentFactoryMap[type](input);
+export const createComponentNode = (type: ComponentType, input: ComponentFactoryInput): Node => {
+  const node = componentFactoryMap[type](input);
+  if (input.style) {
+    applyComponentVisualStyle(node, input.style);
+  }
+  return node;
+};

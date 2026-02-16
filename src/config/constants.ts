@@ -1,6 +1,8 @@
 export const VIDEO_LIMITS = {
   maxDurationSeconds: 90,
-  maxSceneDurationSeconds: 6,
+  maxSceneDurationSeconds: 8,
+  maxStructuralIdleSeconds: 6,
+  // Backward-compatible alias for legacy modules.
   maxVisualIdleSeconds: 6,
   firstMotionDeadlineSeconds: 1,
 } as const;
@@ -15,6 +17,12 @@ export const LLM_DEFAULTS = {
 export const PIPELINE_DEFAULTS = {
   generatedScenePath: 'src/scenes/generatedPipelineScene.tsx',
   storyPlanPath: 'output/storyplan.llm.json',
+  momentsPath: 'output/moments.llm.json',
+  momentsDebugPath: 'output/moments.debug.json',
+  scenesIncrementalPath: 'output/scenes.incremental.json',
+  momentsAfterLayoutPath: 'output/moments.afterLayout.json',
+  renderSpecDebugPath: 'output/renderspec.debug.json',
+  // Backward compatibility for older pipeline outputs.
   llmVideoSpecPath: 'output/videospec.llm.json',
   sceneName: 'generatedPipelineScene',
   minimumSceneDurationSeconds: 1,

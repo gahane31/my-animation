@@ -1,0 +1,15 @@
+{
+  "actors": [
+    { "id": "users",  "label": "Users",    "icon": "material-symbols:group",      "x": 0,    "y": -900 },
+    { "id": "cdn",    "label": "CDN",      "icon": "material-symbols:globe",      "x": -300, "y": -500 },
+    { "id": "lb",     "label": "LB",       "icon": "material-symbols:balance",    "x": 0,    "y": -400 },
+    { "id": "app1",   "label": "App 1",    "icon": "material-symbols:dns",        "x": 0,    "y": 0 },
+    { "id": "app2",   "label": "App 2",    "icon": "material-symbols:dns",        "x": -250, "y": 0 },
+    { "id": "app3",   "label": "App 3",    "icon": "material-symbols:dns",        "x": 250,  "y": 0 },
+    { "id": "cache",  "label": "Redis",    "icon": "material-symbols:bolt",       "x": 350,  "y": -300 },
+    { "id": "db",     "label": "Primary",  "icon": "material-symbols:database",   "x": 0,    "y": 500 },
+    { "id": "queue",  "label": "Queue",    "icon": "material-symbols:layers",     "x": -350, "y": 250 },
+    { "id": "worker", "label": "Worker",   "icon": "material-symbols:settings",   "x": -350, "y": 500 },
+    { "id": "shards", "label": "Shards",   "icon": "material-symbols:grid-view",  "x": 350,  "y": 600 }
+  ]
+}

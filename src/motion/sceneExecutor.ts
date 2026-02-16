@@ -1,22 +1,55 @@
-import type {Node, Txt} from '@motion-canvas/2d';
-import {all, easeInOutCubic, type ThreadGenerator} from '@motion-canvas/core';
+import {Circle, Rect, type Node, type Txt} from '@motion-canvas/2d';
 import {
+  all,
+  easeInCubic,
+  easeInOutCubic,
+  easeOutCubic,
+  type TimingFunction,
+  type ThreadGenerator,
+  waitFor,
+} from '@motion-canvas/core';
+import {HierarchyTokens} from '../config/hierarchyTokens.js';
+import {MotionTokens} from '../config/motionTokens.js';
+import {StyleTokens} from '../config/styleTokens.js';
+import {VIDEO_LIMITS} from '../config/constants.js';
+import {
+  resolveConnectionStyle,
+  resolveFlowStyle,
+} from '../design/styleResolver.js';
+import {AnimationType, CameraActionType, ComponentType} from '../schema/visualGrammar.js';
+import {
+  applyShake,
   applyFadeIn,
   getAnimationDuration,
   runElementAnimation,
+  runElementAnimationTimed,
 } from './animations.js';
+import {
+  createConnection,
+  updateConnection,
+  type ConnectionAnchor,
+} from './connectionRenderer.js';
 import {createCameraPlan} from './cameraController.js';
-import {ensureElementLifecycle} from './lifecycle.js';
-import {REEL_SAFE_OFFSET_Y} from './positioning.js';
+import {ensureElementLifecycle, type LifecycleResult} from './lifecycle.js';
+import type {PixelPosition} from './positioning.js';
+import {
+  getScenePhases,
+  type ConnectionTimingPlan,
+  type EntityTimingAction,
+  type EntityTimingPlan,
+} from './timingPlanner.js';
 import type {
+  ElementAnimationIntent,
   MotionElementSpec,
   MotionSceneSpec,
   RuntimeLogger,
+  SceneAnimationPhase,
   SceneState,
 } from './types.js';
 
 const MIN_SCENE_DURATION = 1.5;
-const MAX_SCENE_DURATION = 6;
+const MAX_SCENE_DURATION = VIDEO_LIMITS.maxSceneDurationSeconds;
+const CAPTIONS_ENABLED = false;
 const CAPTION_FADE_OUT_DURATION = 0.12;
 const CAPTION_TEXT_DURATION = 0.3;
 const CAPTION_FADE_IN_DURATION = 0.2;
@@ -24,6 +57,7 @@ const CAPTION_FADE_IN_DURATION = 0.2;
 const CAPTION_TOTAL_DURATION =
   CAPTION_FADE_OUT_DURATION + CAPTION_TEXT_DURATION + CAPTION_FADE_IN_DURATION;
 const DEFAULT_ENTRY_FADE_DURATION = 0.35;
+const DEFAULT_REMOVAL_DURATION = 0.3;
 const MAX_RECOMMENDED_SCENE_ELEMENTS = 6;
 
 const formatMetadata = (metadata?: Record<string, unknown>): string => {
@@ -51,18 +85,40 @@ export interface CreateSceneStateInput {
 export const createSceneState = ({caption, logger}: CreateSceneStateInput): SceneState => ({
   caption,
   elements: new Map(),
+  connections: new Map(),
   camera: {
+    originX: 0,
+    originY: 0,
     x: 0,
-    y: REEL_SAFE_OFFSET_Y,
+    y: 0,
     scale: 1,
     actionStreak: 0,
   },
   sceneIndex: 0,
+  lastExecutionDuration: 0,
   logger: logger ?? createRuntimeLogger(),
 });
 
+const hasPlanMotion = (scene: MotionSceneSpec): boolean => {
+  const plan = scene.plan;
+
+  if (!plan) {
+    return false;
+  }
+
+  return (
+    plan.removals.length > 0 ||
+    plan.moves.length > 0 ||
+    plan.additions.length > 0 ||
+    plan.connections.length > 0 ||
+    plan.interactions.length > 0 ||
+    plan.cameraAction !== undefined ||
+    (scene.cameraPlan !== undefined && scene.cameraPlan !== null)
+  );
+};
+
 const hasMotionEvent = (scene: MotionSceneSpec): boolean => {
-  if (scene.camera) {
+  if (scene.camera || hasPlanMotion(scene) || Boolean(scene.hierarchyTransition)) {
     return true;
   }
 
@@ -71,6 +127,13 @@ const hasMotionEvent = (scene: MotionSceneSpec): boolean => {
     return element.enter !== undefined || element.exit !== undefined || effectsCount > 0;
   });
 };
+
+const hasAmbientVisualActivity = (scene: MotionSceneSpec): boolean =>
+  (scene.interactions?.length ?? scene.source?.interactions?.length ?? 0) > 0 ||
+  scene.sourceCamera !== undefined;
+
+const hasVisualActivitySignal = (scene: MotionSceneSpec): boolean =>
+  hasMotionEvent(scene) || hasAmbientVisualActivity(scene);
 
 export const validateSceneForRuntime = (scene: MotionSceneSpec, logger: RuntimeLogger): void => {
   const duration = scene.end - scene.start;
@@ -97,6 +160,14 @@ export const validateSceneForRuntime = (scene: MotionSceneSpec, logger: RuntimeL
     });
   }
 
+  if (duration > VIDEO_LIMITS.maxStructuralIdleSeconds && !hasVisualActivitySignal(scene)) {
+    logger.warn('Long low-activity scene detected', {
+      sceneId: scene.id,
+      duration,
+      maxStructuralIdleSeconds: VIDEO_LIMITS.maxStructuralIdleSeconds,
+    });
+  }
+
   if (scene.elements.length > MAX_RECOMMENDED_SCENE_ELEMENTS) {
     logger.warn('High element density', {
       scene: scene.id,
@@ -111,97 +182,720 @@ const hasExplicitElementMotion = (element: MotionElementSpec): boolean =>
   element.exit !== undefined ||
   (element.effects?.length ?? 0) > 0;
 
-const getElementSequenceDuration = (
-  element: MotionElementSpec,
-  repositionDuration: number,
-  isNew: boolean,
-): number => {
-  const enterDuration = element.enter
-    ? getAnimationDuration(element.enter)
-    : isNew
-      ? DEFAULT_ENTRY_FADE_DURATION
-      : 0;
-  const effectsDuration = (element.effects ?? []).reduce(
-    (total, effect) => total + getAnimationDuration(effect),
-    0,
-  );
-  const exitDuration = element.exit ? getAnimationDuration(element.exit) : 0;
+const createCaptionTransition = (caption: Txt, text: string): PhaseExecutionPlan => {
+  if (!CAPTIONS_ENABLED || text.trim().length === 0) {
+    return {duration: 0};
+  }
 
-  return repositionDuration + enterDuration + effectsDuration + exitDuration;
+  return {
+    duration: CAPTION_TOTAL_DURATION,
+    thread: (function* captionThread() {
+      yield* caption.opacity(0, CAPTION_FADE_OUT_DURATION, easeInOutCubic);
+      yield* caption.text(text, CAPTION_TEXT_DURATION);
+      yield* caption.opacity(1, CAPTION_FADE_IN_DURATION, easeInOutCubic);
+    })(),
+  };
 };
 
-const createElementSequence = (
-  node: Node,
-  element: MotionElementSpec,
-  isNew: boolean,
-  repositionThread?: ThreadGenerator,
-): ThreadGenerator =>
-  (function* elementSequenceThread() {
-    if (repositionThread) {
-      yield* repositionThread;
+const toLifecycleMap = (results: LifecycleResult[]): Map<string, LifecycleResult> =>
+  new Map(results.map((result) => [result.elementState.id, result]));
+
+const toElementSpecMap = (elements: MotionElementSpec[]): Map<string, MotionElementSpec> =>
+  new Map(elements.map((element) => [element.id, element]));
+
+const getIntentBucket = (
+  scene: MotionSceneSpec,
+  phase: SceneAnimationPhase,
+): ElementAnimationIntent[] => {
+  const plan = scene.plan;
+
+  if (!plan) {
+    return [];
+  }
+
+  switch (phase) {
+    case 'removals':
+      return plan.removals;
+    case 'moves':
+      return plan.moves;
+    case 'additions':
+      return plan.additions;
+    case 'connections':
+      return plan.connections;
+    case 'interactions':
+      return plan.interactions;
+    case 'camera':
+      return [];
+    default:
+      return [];
+  }
+};
+
+interface PhaseExecutionPlan {
+  thread?: ThreadGenerator;
+  duration: number;
+}
+
+const toThread = (threads: ThreadGenerator[]): ThreadGenerator | undefined =>
+  threads.length > 0 ? all(...threads) : undefined;
+
+const timingKey = (entityId: string, action: EntityTimingAction): string => `${entityId}|${action}`;
+
+const resolveTimingFunction = (easing: string): TimingFunction => {
+  if (easing.includes('0.4,0,0.2,1')) {
+    return easeOutCubic;
+  }
+
+  if (easing.includes('0.16,1,0.3,1')) {
+    return easeOutCubic;
+  }
+
+  if (easing === MotionTokens.easing.exit) {
+    return easeInCubic;
+  }
+
+  if (easing === MotionTokens.easing.enter) {
+    return easeOutCubic;
+  }
+
+  return easeInOutCubic;
+};
+
+const createDelayedThread = (delay: number, thread: ThreadGenerator): ThreadGenerator =>
+  (function* delayedThread() {
+    if (delay > 0) {
+      yield* waitFor(delay);
     }
 
-    if (element.enter) {
-      yield* runElementAnimation(node, element.enter);
-    } else if (isNew) {
-      // Default motion to avoid static entry frames.
-      yield* applyFadeIn(node);
-    }
-
-    for (const effect of element.effects ?? []) {
-      yield* runElementAnimation(node, effect);
-    }
-
-    if (element.exit) {
-      yield* runElementAnimation(node, element.exit);
-    }
+    yield* thread;
   })();
 
-const createCaptionTransition = (caption: Txt, text: string): ThreadGenerator =>
-  (function* captionThread() {
-    yield* caption.opacity(0, CAPTION_FADE_OUT_DURATION, easeInOutCubic);
-    yield* caption.text(text, CAPTION_TEXT_DURATION);
-    yield* caption.opacity(1, CAPTION_FADE_IN_DURATION, easeInOutCubic);
-  })();
+const resolveElementSourceId = (
+  sceneElementById: Map<string, MotionElementSpec>,
+  elementId: string,
+): string => {
+  const spec = sceneElementById.get(elementId);
+  if (!spec) {
+    return elementId;
+  }
 
-export function* executeScene(
+  return spec.sourceEntityId ?? spec.id;
+};
+
+const COMPONENT_CONNECTION_BOUNDS: Record<ComponentType, {width: number; height: number}> = {
+  [ComponentType.UsersCluster]: {width: 188, height: 96},
+  [ComponentType.Server]: {width: 170, height: 128},
+  [ComponentType.LoadBalancer]: {width: 176, height: 176},
+  [ComponentType.Database]: {width: 170, height: 144},
+  [ComponentType.Cache]: {width: 160, height: 116},
+  [ComponentType.Queue]: {width: 148, height: 120},
+  [ComponentType.Cdn]: {width: 170, height: 130},
+  [ComponentType.Worker]: {width: 136, height: 136},
+};
+
+const resolveAnchorSize = (
+  element: MotionElementSpec | undefined,
+): {halfWidth: number; halfHeight: number} => {
+  const styleSize = element?.visualStyle?.size ?? StyleTokens.sizes.medium;
+  const scale = styleSize / StyleTokens.sizes.medium;
+  const base = element
+    ? COMPONENT_CONNECTION_BOUNDS[element.type]
+    : {width: 140, height: 100};
+
+  return {
+    halfWidth: Math.max(28, (base.width * scale) / 2),
+    halfHeight: Math.max(20, (base.height * scale) / 2),
+  };
+};
+
+const collectEntityAnchors = (
+  lifecycleResults: LifecycleResult[],
+  sceneElementById: Map<string, MotionElementSpec>,
+): Map<string, ConnectionAnchor> => {
+  const preferredByEntityId = new Map<string, ConnectionAnchor>();
+  const fallbackByEntityId = new Map<string, ConnectionAnchor>();
+
+  for (const lifecycleResult of lifecycleResults) {
+    const sourceEntityId = resolveElementSourceId(sceneElementById, lifecycleResult.elementState.id);
+    const element = sceneElementById.get(lifecycleResult.elementState.id);
+    const size = resolveAnchorSize(element);
+    const anchor: ConnectionAnchor = {
+      position: lifecycleResult.targetPosition,
+      halfWidth: size.halfWidth,
+      halfHeight: size.halfHeight,
+    };
+
+    if (lifecycleResult.elementState.id === sourceEntityId) {
+      preferredByEntityId.set(sourceEntityId, anchor);
+      continue;
+    }
+
+    if (!fallbackByEntityId.has(sourceEntityId)) {
+      fallbackByEntityId.set(sourceEntityId, anchor);
+    }
+  }
+
+  for (const [sourceEntityId, fallbackAnchor] of fallbackByEntityId.entries()) {
+    if (!preferredByEntityId.has(sourceEntityId)) {
+      preferredByEntityId.set(sourceEntityId, fallbackAnchor);
+    }
+  }
+
+  return preferredByEntityId;
+};
+
+interface ConnectionSyncStats {
+  added: number;
+  updated: number;
+  removed: number;
+  retainedForRemoval: number;
+}
+
+const syncSceneConnections = (
   view: Node,
   scene: MotionSceneSpec,
   state: SceneState,
-): ThreadGenerator {
-  const sceneDuration = Math.max(0, scene.end - scene.start);
-  state.logger.info('Scene start', {
-    scene: scene.id,
-    duration: sceneDuration,
-    elements: scene.elements.length,
+  entityAnchorsById: Map<string, ConnectionAnchor>,
+  connectionIdsRetainedForRemoval: ReadonlySet<string>,
+): ConnectionSyncStats => {
+  const desiredConnections = scene.connections ?? scene.source?.connections ?? [];
+  const desiredIds = new Set<string>();
+  let added = 0;
+  let updated = 0;
+  let removed = 0;
+  let retainedForRemoval = 0;
+
+  for (const connection of desiredConnections) {
+    desiredIds.add(connection.id);
+    const fromAnchor = entityAnchorsById.get(connection.from);
+    const toAnchor = entityAnchorsById.get(connection.to);
+    const baseLaneOffset = 0;
+
+    if (!fromAnchor || !toAnchor) {
+      state.logger.warn('Connection skipped', {
+        scene: scene.id,
+        connectionId: connection.id,
+        from: connection.from,
+        to: connection.to,
+        reason: 'Missing entity position',
+      });
+
+      const existingNode = state.connections.get(connection.id);
+      if (existingNode) {
+        existingNode.remove();
+        state.connections.delete(connection.id);
+        removed += 1;
+      }
+      continue;
+    }
+
+    const style = resolveConnectionStyle(connection);
+    const existingNode = state.connections.get(connection.id);
+
+    if (!existingNode) {
+      const line = createConnection(fromAnchor, toAnchor, style, baseLaneOffset);
+      line.opacity(0);
+      view.add(line);
+      state.connections.set(connection.id, line);
+      added += 1;
+      continue;
+    }
+
+    updateConnection(existingNode, fromAnchor, toAnchor, style, baseLaneOffset);
+    updated += 1;
+  }
+
+  for (const [connectionId, line] of state.connections.entries()) {
+    if (desiredIds.has(connectionId)) {
+      continue;
+    }
+
+    if (connectionIdsRetainedForRemoval.has(connectionId)) {
+      retainedForRemoval += 1;
+      continue;
+    }
+
+    line.remove();
+    state.connections.delete(connectionId);
+    removed += 1;
+  }
+
+  return {added, updated, removed, retainedForRemoval};
+};
+
+const executeHierarchyStyling = (
+  scene: MotionSceneSpec,
+  sceneDuration: number,
+  lifecycleResults: LifecycleResult[],
+  sceneElementById: Map<string, MotionElementSpec>,
+): PhaseExecutionPlan => {
+  const hierarchy = scene.hierarchy;
+  if (!hierarchy) {
+    return {duration: 0};
+  }
+
+  const phases = getScenePhases(sceneDuration);
+  const baseDelay = scene.hierarchyTransition ? phases.enter.start : 0;
+  const transitionDuration = HierarchyTokens.transition.duration;
+  const timingFunction = resolveTimingFunction(MotionTokens.easing.standard);
+  const threads: ThreadGenerator[] = [];
+  let maxEnd = 0;
+
+  for (const lifecycle of lifecycleResults) {
+    const sourceId = resolveElementSourceId(sceneElementById, lifecycle.elementState.id);
+    const hierarchyStyle = hierarchy.entityStyles[sourceId];
+    if (!hierarchyStyle) {
+      continue;
+    }
+    const elementStyle = sceneElementById.get(lifecycle.elementState.id)?.visualStyle;
+    const targetOpacity =
+      elementStyle?.opacity !== undefined
+        ? Math.min(hierarchyStyle.opacity, elementStyle.opacity)
+        : hierarchyStyle.opacity;
+
+    let delay = baseDelay;
+    if (scene.hierarchyTransition?.from === sourceId) {
+      delay = baseDelay;
+    } else if (scene.hierarchyTransition?.to === sourceId) {
+      delay = baseDelay + 0.05;
+    }
+
+    maxEnd = Math.max(maxEnd, delay + transitionDuration);
+
+    const thread = createDelayedThread(
+      delay,
+      (function* hierarchyStyleThread() {
+        yield* all(
+          lifecycle.node.scale(hierarchyStyle.scale, transitionDuration, timingFunction),
+          lifecycle.node.opacity(targetOpacity, transitionDuration, timingFunction),
+        );
+
+        if (scene.hierarchyTransition?.to === sourceId && hierarchyStyle.glow) {
+          yield* lifecycle.node
+            .scale(hierarchyStyle.scale * 1.05, transitionDuration * 0.35, timingFunction)
+            .to(hierarchyStyle.scale, transitionDuration * 0.35, timingFunction);
+        }
+      })(),
+    );
+
+    threads.push(thread);
+  }
+
+  return {
+    thread: toThread(threads),
+    duration: maxEnd,
+  };
+};
+
+const runTimedEffects = (
+  node: Node,
+  effects: MotionElementSpec['effects'],
+  duration: number,
+  easing: string,
+): ThreadGenerator =>
+  (function* timedEffectsThread() {
+    if (!effects || effects.length === 0) {
+      return;
+    }
+
+    const perEffectDuration = Math.max(0.1, duration / effects.length);
+    const timingFunction = resolveTimingFunction(easing);
+
+    for (const effect of effects) {
+      yield* runElementAnimationTimed(node, effect, {
+        duration: perEffectDuration,
+        timingFunction,
+      });
+    }
+  })();
+
+const withFallbackEntityTiming = (
+  timing: EntityTimingPlan | undefined,
+  fallbackDelay: number,
+  fallbackDuration: number,
+  fallbackEasing: string,
+  entityId: string,
+  action: EntityTimingAction,
+): EntityTimingPlan => ({
+  entityId,
+  action,
+  delay: timing?.delay ?? fallbackDelay,
+  duration: timing?.duration ?? fallbackDuration,
+  easing: timing?.easing ?? fallbackEasing,
+  scale: timing?.scale,
+  isPrimary: timing?.isPrimary,
+});
+
+const executeRemovalsPhase = (
+  intents: ElementAnimationIntent[],
+  sceneDuration: number,
+  state: SceneState,
+  entityTimingByKey: Map<string, EntityTimingPlan>,
+): PhaseExecutionPlan => {
+  const phase = getScenePhases(sceneDuration).exit;
+  const fallbackDuration = Math.max(DEFAULT_REMOVAL_DURATION, phase.end - phase.start);
+  const threads: ThreadGenerator[] = [];
+  let maxEnd = 0;
+
+  intents.forEach((intent, index) => {
+    const timing = withFallbackEntityTiming(
+      entityTimingByKey.get(timingKey(intent.entityId, 'remove')),
+      phase.start + index * MotionTokens.stagger,
+      fallbackDuration,
+      MotionTokens.easing.exit,
+      intent.entityId,
+      'remove',
+    );
+    const timingFunction = resolveTimingFunction(timing.easing);
+    const exitAnimation = intent.exit;
+
+    intent.elementIds.forEach((elementId, elementIndex) => {
+      const elementState = state.elements.get(elementId);
+      if (!elementState) {
+        return;
+      }
+
+      const localDelay = timing.delay + elementIndex * (MotionTokens.stagger / 2);
+      maxEnd = Math.max(maxEnd, localDelay + timing.duration);
+
+      const thread = createDelayedThread(
+        localDelay,
+        (function* removalThread() {
+          if (exitAnimation) {
+            yield* runElementAnimationTimed(elementState.node, exitAnimation, {
+              duration: timing.duration,
+              timingFunction,
+            });
+          } else {
+            yield* elementState.node.opacity(0, timing.duration, timingFunction);
+          }
+
+          if (intent.cleanup) {
+            elementState.node.remove();
+            state.elements.delete(elementId);
+          }
+        })(),
+      );
+
+      threads.push(thread);
+    });
   });
 
-  const captionText = scene.title ?? scene.narration;
-  const captionThread = createCaptionTransition(state.caption, captionText);
+  return {
+    thread: toThread(threads),
+    duration: maxEnd,
+  };
+};
 
-  const lifecycleResults = scene.elements.map((element) =>
-    ensureElementLifecycle(
-      {
-        view,
-        elements: state.elements,
-        sceneIndex: state.sceneIndex,
-        logger: state.logger,
-      },
-      element,
-    ),
+const executeMovesPhase = (
+  intents: ElementAnimationIntent[],
+  sceneDuration: number,
+  lifecycleById: Map<string, LifecycleResult>,
+  entityTimingByKey: Map<string, EntityTimingPlan>,
+): PhaseExecutionPlan => {
+  const phase = getScenePhases(sceneDuration).move;
+  const fallbackDuration = Math.max(0.2, phase.end - phase.start);
+  const threads: ThreadGenerator[] = [];
+  let maxEnd = 0;
+
+  intents.forEach((intent, index) => {
+    const timing = withFallbackEntityTiming(
+      entityTimingByKey.get(timingKey(intent.entityId, 'move')),
+      phase.start + index * MotionTokens.stagger,
+      fallbackDuration,
+      MotionTokens.easing.standard,
+      intent.entityId,
+      'move',
+    );
+    const timingFunction = resolveTimingFunction(timing.easing);
+
+    intent.elementIds.forEach((elementId, elementIndex) => {
+      const lifecycle = lifecycleById.get(elementId);
+      if (!lifecycle || !lifecycle.hasPositionChange) {
+        return;
+      }
+
+      const localDelay = timing.delay + elementIndex * (MotionTokens.stagger / 2);
+      maxEnd = Math.max(maxEnd, localDelay + timing.duration);
+
+      const thread = createDelayedThread(
+        localDelay,
+        (function* moveThread() {
+          yield* all(
+            lifecycle.node.x(lifecycle.targetPosition.x, timing.duration, timingFunction),
+            lifecycle.node.y(lifecycle.targetPosition.y, timing.duration, timingFunction),
+          );
+
+          if (intent.effects && intent.effects.length > 0) {
+            yield* runTimedEffects(lifecycle.node, intent.effects, timing.duration * 0.4, timing.easing);
+          }
+        })(),
+      );
+
+      threads.push(thread);
+    });
+  });
+
+  return {
+    thread: toThread(threads),
+    duration: maxEnd,
+  };
+};
+
+const executeAdditionsPhase = (
+  intents: ElementAnimationIntent[],
+  sceneDuration: number,
+  lifecycleById: Map<string, LifecycleResult>,
+  sceneElementById: Map<string, MotionElementSpec>,
+  entityTimingByKey: Map<string, EntityTimingPlan>,
+): PhaseExecutionPlan => {
+  const phase = getScenePhases(sceneDuration).enter;
+  const fallbackDuration = Math.max(DEFAULT_ENTRY_FADE_DURATION, phase.end - phase.start);
+  const threads: ThreadGenerator[] = [];
+  let maxEnd = 0;
+
+  intents.forEach((intent, index) => {
+    const timing = withFallbackEntityTiming(
+      entityTimingByKey.get(timingKey(intent.entityId, 'add')),
+      phase.start + index * Math.max(0.05, MotionTokens.stagger),
+      fallbackDuration,
+      MotionTokens.easing.enter,
+      intent.entityId,
+      'add',
+    );
+    const timingFunction = resolveTimingFunction(timing.easing);
+
+    intent.elementIds.forEach((elementId, elementIndex) => {
+      const lifecycle = lifecycleById.get(elementId);
+      if (!lifecycle) {
+        return;
+      }
+
+      const elementSpec = sceneElementById.get(elementId);
+      const localDelay = timing.delay + elementIndex * (MotionTokens.stagger / 2);
+      maxEnd = Math.max(maxEnd, localDelay + timing.duration);
+
+      const thread = createDelayedThread(
+        localDelay,
+        (function* additionThread() {
+          const entryAnimation = intent.enter ?? elementSpec?.enter;
+
+          if (entryAnimation) {
+            yield* runElementAnimationTimed(lifecycle.node, entryAnimation, {
+              duration: timing.duration,
+              timingFunction,
+              scaleTarget: timing.scale,
+            });
+          } else if (lifecycle.isNew) {
+            yield* applyFadeIn(lifecycle.node);
+          }
+
+          const mergedEffects = [...(intent.effects ?? []), ...(elementSpec?.effects ?? [])];
+          const dedupedEffects = [...new Set(mergedEffects)];
+          if (dedupedEffects.length > 0) {
+            yield* runTimedEffects(lifecycle.node, dedupedEffects, timing.duration * 0.7, timing.easing);
+          }
+        })(),
+      );
+
+      threads.push(thread);
+    });
+  });
+
+  return {
+    thread: toThread(threads),
+    duration: maxEnd,
+  };
+};
+
+const fallbackConnectionTiming = (
+  sceneDuration: number,
+  index: number,
+): ConnectionTimingPlan => {
+  const phase = getScenePhases(sceneDuration).connect;
+  return {
+    connectionId: `fallback_${index}`,
+    delay: phase.start + index * MotionTokens.stagger,
+    duration: Math.max(0.15, phase.end - phase.start),
+    easing: MotionTokens.easing.enter,
+  };
+};
+
+const executeConnectionLineTransitions = (
+  scene: MotionSceneSpec,
+  sceneDuration: number,
+  state: SceneState,
+  connectionTimingById: Map<string, ConnectionTimingPlan>,
+): PhaseExecutionPlan => {
+  const connectionDiffs = scene.diff?.connectionDiffs ?? [];
+  if (connectionDiffs.length === 0) {
+    return {duration: 0};
+  }
+
+  const threads: ThreadGenerator[] = [];
+  let maxEnd = 0;
+
+  connectionDiffs.forEach((diff, index) => {
+    const line = state.connections.get(diff.connectionId);
+    if (!line) {
+      return;
+    }
+
+    const timing = connectionTimingById.get(diff.connectionId) ?? fallbackConnectionTiming(sceneDuration, index);
+    const timingFunction = resolveTimingFunction(timing.easing);
+    maxEnd = Math.max(maxEnd, timing.delay + timing.duration);
+
+    if (diff.type === 'connection_added') {
+      line.opacity(0);
+      threads.push(
+        createDelayedThread(
+          timing.delay,
+          (function* connectionAddedThread() {
+            yield* line.opacity(0.9, timing.duration, timingFunction);
+          })(),
+        ),
+      );
+      return;
+    }
+
+    threads.push(
+      createDelayedThread(
+        timing.delay,
+        (function* connectionRemovedThread() {
+          yield* line.opacity(0, timing.duration, timingFunction);
+          line.remove();
+          state.connections.delete(diff.connectionId);
+        })(),
+      ),
+    );
+  });
+
+  return {
+    thread: toThread(threads),
+    duration: maxEnd,
+  };
+};
+
+const executeEffectsPhase = (
+  intents: ElementAnimationIntent[],
+  phaseType: 'connections' | 'interactions',
+  sceneDuration: number,
+  lifecycleById: Map<string, LifecycleResult>,
+  state: SceneState,
+  connectionTimingById: Map<string, ConnectionTimingPlan>,
+  scene: MotionSceneSpec,
+): PhaseExecutionPlan => {
+  const threads: ThreadGenerator[] = [];
+  let maxEnd = 0;
+  const connectionById = new Map(
+    (scene.connections ?? scene.source?.connections ?? []).map((connection) => [
+      connection.id,
+      connection,
+    ]),
+  );
+  const interactionById = new Map(
+    (scene.interactions ?? scene.source?.interactions ?? []).map((interaction) => [
+      interaction.id,
+      interaction,
+    ]),
   );
 
-  const firstNewElement = lifecycleResults.find((result) => result.isNew);
+  intents.forEach((intent, index) => {
+    const connectionTiming = intent.connectionId
+      ? connectionTimingById.get(intent.connectionId)
+      : undefined;
+    const timing =
+      phaseType === 'connections'
+        ? connectionTiming ?? fallbackConnectionTiming(sceneDuration, index)
+        : fallbackConnectionTiming(sceneDuration, index);
+    const timingFunction = resolveTimingFunction(timing.easing);
+    const connectionStyle =
+      phaseType === 'connections' && intent.connectionId
+        ? resolveConnectionStyle(connectionById.get(intent.connectionId) ?? {
+            id: intent.connectionId,
+            from: intent.entityId,
+            to: intent.entityId,
+          })
+        : undefined;
+    const flowStyle =
+      phaseType === 'interactions' && intent.interactionId
+        ? resolveFlowStyle(interactionById.get(intent.interactionId) ?? {
+            id: intent.interactionId,
+            from: intent.entityId,
+            to: intent.entityId,
+            type: 'flow',
+          })
+        : undefined;
 
-  const cameraPlan = createCameraPlan({
-    view,
-    cameraState: state.camera,
-    sceneDuration,
-    action: scene.camera,
-    focusTarget: firstNewElement?.targetPosition,
-    logger: state.logger,
+    const effects = intent.effects ?? [];
+    if (effects.length === 0) {
+      return;
+    }
+
+    intent.elementIds.forEach((elementId, elementIndex) => {
+      const lifecycle = lifecycleById.get(elementId);
+      const node = lifecycle?.node ?? state.elements.get(elementId)?.node;
+
+      if (!node) {
+        return;
+      }
+
+      const localDelay = timing.delay + elementIndex * (MotionTokens.stagger / 2);
+      maxEnd = Math.max(maxEnd, localDelay + timing.duration);
+
+      const thread = createDelayedThread(
+        localDelay,
+        (function* effectThread() {
+          const speedFactor = flowStyle?.speed ?? 1;
+          const lineFactor = connectionStyle ? Math.max(1, connectionStyle.width / 3) : 1;
+          const perEffectDuration = Math.max(
+            0.1,
+            (timing.duration * lineFactor) / effects.length / speedFactor,
+          );
+
+          if (flowStyle) {
+            const targetBlur = flowStyle.particleSize * 1.4;
+            yield* all(
+              node.shadowColor(flowStyle.color, Math.min(0.15, perEffectDuration), timingFunction),
+              node.shadowBlur(targetBlur, Math.min(0.15, perEffectDuration), timingFunction),
+            );
+          }
+
+          for (const effect of effects) {
+            yield* runElementAnimationTimed(node, effect, {
+              duration: perEffectDuration,
+              timingFunction,
+            });
+          }
+
+          if (flowStyle) {
+            yield* all(
+              node.shadowColor(
+                StyleTokens.colors.background,
+                Math.min(0.15, perEffectDuration),
+                timingFunction,
+              ),
+              node.shadowBlur(0, Math.min(0.15, perEffectDuration), timingFunction),
+            );
+          }
+        })(),
+      );
+
+      threads.push(thread);
+    });
   });
 
+  return {
+    thread: toThread(threads),
+    duration: maxEnd,
+  };
+};
+
+const executeLegacyScene = (
+  scene: MotionSceneSpec,
+  lifecycleResults: LifecycleResult[],
+  sceneState: SceneState,
+): PhaseExecutionPlan => {
   const elementPlans = scene.elements.map((element, index) => {
     const lifecycleResult = lifecycleResults[index];
     if (!lifecycleResult) {
@@ -217,7 +911,7 @@ export function* executeScene(
       lifecycleResult.elementState.unchangedStreak += 1;
 
       if (lifecycleResult.elementState.unchangedStreak > 3) {
-        state.logger.warn('Element repetition detected', {
+        sceneState.logger.warn('Element repetition detected', {
           scene: scene.id,
           elementId: element.id,
           consecutiveScenes: lifecycleResult.elementState.unchangedStreak,
@@ -229,48 +923,543 @@ export function* executeScene(
 
     lifecycleResult.elementState.unchangedStreak = 0;
 
+    const thread = (function* legacyElementThread() {
+      if (lifecycleResult.repositionThread) {
+        yield* lifecycleResult.repositionThread;
+      }
+
+      if (element.enter) {
+        yield* runElementAnimation(lifecycleResult.node, element.enter);
+      } else if (lifecycleResult.isNew) {
+        yield* applyFadeIn(lifecycleResult.node);
+      }
+
+      for (const effect of element.effects ?? []) {
+        yield* runElementAnimation(lifecycleResult.node, effect);
+      }
+
+      if (element.exit) {
+        yield* runElementAnimation(lifecycleResult.node, element.exit);
+      }
+    })();
+
+    const duration =
+      (element.enter
+        ? getAnimationDuration(element.enter)
+        : lifecycleResult.isNew
+          ? DEFAULT_ENTRY_FADE_DURATION
+          : 0) +
+      (element.effects ?? []).reduce((total, effect) => total + getAnimationDuration(effect), 0) +
+      (element.exit ? getAnimationDuration(element.exit) : 0) +
+      lifecycleResult.repositionDuration;
+
     return {
-      thread: createElementSequence(
-        lifecycleResult.node,
-        element,
-        lifecycleResult.isNew,
-        lifecycleResult.repositionThread,
-      ),
-      duration: getElementSequenceDuration(
-        element,
-        lifecycleResult.repositionDuration,
-        lifecycleResult.isNew,
-      ),
+      thread,
+      duration,
     };
   });
 
-  const activeElementPlans = elementPlans.filter((plan): plan is NonNullable<typeof plan> => Boolean(plan));
-  const elementThreads = activeElementPlans.map((plan) => plan.thread);
-  const elementDuration = elementPlans.reduce(
-    (maxDuration, plan) => Math.max(maxDuration, plan?.duration ?? 0),
+  const activeElementPlans = elementPlans.filter(
+    (plan): plan is NonNullable<typeof plan> => Boolean(plan),
+  );
+
+  const duration = activeElementPlans.reduce(
+    (maxDuration, plan) => Math.max(maxDuration, plan.duration),
     0,
   );
 
-  const executionThreads: ThreadGenerator[] = [captionThread, ...elementThreads];
-  if (cameraPlan) {
-    executionThreads.push(cameraPlan.thread);
+  return {
+    thread:
+      activeElementPlans.length > 0
+        ? all(...activeElementPlans.map((plan) => plan.thread))
+        : undefined,
+    duration,
+  };
+};
+
+const executePlanDrivenScene = (
+  scene: MotionSceneSpec,
+  lifecycleResults: LifecycleResult[],
+  sceneState: SceneState,
+  sceneDuration: number,
+): PhaseExecutionPlan => {
+  const lifecycleById = toLifecycleMap(lifecycleResults);
+  const sceneElementById = toElementSpecMap(scene.elements);
+
+  const entityTimingByKey = new Map<string, EntityTimingPlan>(
+    (scene.animationPlan?.entities ?? []).map((timing) => [
+      timingKey(timing.entityId, timing.action),
+      timing,
+    ]),
+  );
+
+  const connectionTimingById = new Map<string, ConnectionTimingPlan>(
+    (scene.animationPlan?.connections ?? []).map((timing) => [timing.connectionId, timing]),
+  );
+
+  const phasePlans: PhaseExecutionPlan[] = [];
+
+  for (const phase of scene.plan?.phaseOrder ?? []) {
+    if (phase === 'camera') {
+      continue;
+    }
+
+    const intents = getIntentBucket(scene, phase);
+
+    let phasePlan: PhaseExecutionPlan;
+    switch (phase) {
+      case 'removals':
+        phasePlan = executeRemovalsPhase(
+          intents,
+          sceneDuration,
+          sceneState,
+          entityTimingByKey,
+        );
+        break;
+      case 'moves':
+        phasePlan = executeMovesPhase(
+          intents,
+          sceneDuration,
+          lifecycleById,
+          entityTimingByKey,
+        );
+        break;
+      case 'additions':
+        phasePlan = executeAdditionsPhase(
+          intents,
+          sceneDuration,
+          lifecycleById,
+          sceneElementById,
+          entityTimingByKey,
+        );
+        break;
+      case 'connections':
+        {
+          const connectionTransitions = executeConnectionLineTransitions(
+            scene,
+            sceneDuration,
+            sceneState,
+            connectionTimingById,
+          );
+          const connectionEffects = executeEffectsPhase(
+            intents,
+            'connections',
+            sceneDuration,
+            lifecycleById,
+            sceneState,
+            connectionTimingById,
+            scene,
+          );
+          phasePlan = {
+            thread: toThread(
+              [connectionTransitions.thread, connectionEffects.thread].filter(
+                (thread): thread is ThreadGenerator => thread !== undefined,
+              ),
+            ),
+            duration: Math.max(connectionTransitions.duration, connectionEffects.duration),
+          };
+        }
+        break;
+      case 'interactions':
+        phasePlan = executeEffectsPhase(
+          intents,
+          'interactions',
+          sceneDuration,
+          lifecycleById,
+          sceneState,
+          connectionTimingById,
+          scene,
+        );
+        break;
+      default:
+        phasePlan = {duration: 0};
+        break;
+    }
+
+    phasePlans.push(phasePlan);
   }
 
-  if (executionThreads.length > 0) {
-    // Parallel across elements; each element remains sequential internally.
-    yield* all(...executionThreads);
+  return {
+    thread: toThread(phasePlans.flatMap((plan) => (plan.thread ? [plan.thread] : []))),
+    duration: phasePlans.reduce((maxDuration, plan) => Math.max(maxDuration, plan.duration), 0),
+  };
+};
+
+const executeStatusEffects = (
+  scene: MotionSceneSpec,
+  lifecycleResults: LifecycleResult[],
+  sceneElementById: Map<string, MotionElementSpec>,
+  sceneDuration: number,
+): PhaseExecutionPlan => {
+  const phases = getScenePhases(sceneDuration);
+  const threads: ThreadGenerator[] = [];
+  let maxEnd = 0;
+
+  lifecycleResults.forEach((lifecycleResult, index) => {
+    const elementSpec = sceneElementById.get(lifecycleResult.elementState.id);
+    const style = elementSpec?.visualStyle;
+    if (!style) {
+      return;
+    }
+
+    const status = style.status;
+    const baseDelay =
+      status === 'down' || status === 'error' ? phases.connect.start : phases.enter.start;
+    const localDelay = baseDelay + index * 0.02;
+    const duration = Math.max(0.18, Math.min(0.45, phases.connect.end - phases.connect.start));
+    const timingFunction = resolveTimingFunction(MotionTokens.easing.standard);
+    const node = lifecycleResult.node;
+
+    maxEnd = Math.max(maxEnd, localDelay + duration);
+    const thread = createDelayedThread(
+      localDelay,
+      (function* statusThread() {
+        if (node instanceof Rect || node instanceof Circle) {
+          yield* all(
+            node.fill(style.color, duration * 0.6, timingFunction),
+            node.stroke(style.strokeColor, duration * 0.6, timingFunction),
+            node.lineWidth(style.strokeWidth, duration * 0.6, timingFunction),
+          );
+        }
+
+        yield* node.opacity(style.opacity, duration * 0.4, timingFunction);
+
+        switch (status) {
+          case 'active':
+            yield* runElementAnimationTimed(node, AnimationType.Focus, {
+              duration: duration * 0.9,
+              timingFunction,
+            });
+            break;
+          case 'overloaded':
+            yield* applyShake(node, {
+              duration: duration,
+              intensity: 10,
+            });
+            break;
+          case 'error':
+            yield* node
+              .opacity(Math.max(0.4, style.opacity * 0.7), duration / 2, timingFunction)
+              .to(style.opacity, duration / 2, timingFunction);
+            break;
+          case 'down':
+            yield* node.opacity(StyleTokens.opacity.dim, duration, timingFunction);
+            break;
+          default:
+            break;
+        }
+      })(),
+    );
+
+    threads.push(thread);
+  });
+
+  return {
+    thread: toThread(threads),
+    duration: maxEnd,
+  };
+};
+
+const resolveCameraTiming = (
+  scene: MotionSceneSpec,
+  sceneDuration: number,
+): {delay: number; duration: number} | null => {
+  const plannedTiming = scene.animationPlan?.camera;
+  if (plannedTiming) {
+    return {
+      delay: plannedTiming.delay,
+      duration: plannedTiming.duration,
+    };
+  }
+
+  if (!scene.cameraPlan) {
+    return null;
+  }
+
+  const cameraPhase = getScenePhases(sceneDuration).camera;
+  const phaseDuration = Math.max(0.1, cameraPhase.end - cameraPhase.start);
+
+  return {
+    delay: cameraPhase.start,
+    duration: Math.min(phaseDuration, scene.cameraPlan.duration),
+  };
+};
+
+const resolveSceneCameraAction = (
+  scene: MotionSceneSpec,
+  hasCameraTiming: boolean,
+): CameraActionType | undefined => {
+  if (scene.cameraPlan) {
+    if (scene.cameraPlan.motionType === 'expand_architecture') {
+      return CameraActionType.Wide;
+    }
+
+    return CameraActionType.Focus;
+  }
+
+  if (!hasCameraTiming) {
+    return undefined;
+  }
+
+  return scene.plan?.cameraAction ?? scene.camera;
+};
+
+const resolveCameraFocusTarget = (
+  scene: MotionSceneSpec,
+  lifecycleResults: LifecycleResult[],
+  sceneElementById: Map<string, MotionElementSpec>,
+  primaryElement: LifecycleResult | undefined,
+  firstNewElement: LifecycleResult | undefined,
+): PixelPosition | undefined => {
+  if (scene.cameraPlan?.targetElementId) {
+    const targetLifecycle = lifecycleResults.find(
+      (result) => result.elementState.id === scene.cameraPlan?.targetElementId,
+    );
+    if (targetLifecycle) {
+      return targetLifecycle.targetPosition;
+    }
+  }
+
+  if (scene.cameraPlan?.targetId) {
+    const targetLifecycle = lifecycleResults.find((result) => {
+      const sourceId = resolveElementSourceId(sceneElementById, result.elementState.id);
+      return sourceId === scene.cameraPlan?.targetId;
+    });
+
+    if (targetLifecycle) {
+      return targetLifecycle.targetPosition;
+    }
+  }
+
+  return primaryElement?.targetPosition ?? firstNewElement?.targetPosition;
+};
+
+function* executeStaticScene(
+  view: Node,
+  scene: MotionSceneSpec,
+  state: SceneState,
+): ThreadGenerator {
+  state.camera.x = state.camera.originX;
+  state.camera.y = state.camera.originY;
+  state.camera.scale = 1;
+  view.x(state.camera.originX);
+  view.y(state.camera.originY);
+  view.scale(1);
+
+  const captionText = scene.title ?? scene.narration;
+  const captionExecution = createCaptionTransition(state.caption, captionText);
+  if (captionExecution.thread) {
+    yield* captionExecution.thread;
+  }
+
+  const desiredElementIds = new Set(scene.elements.map((element) => element.id));
+  for (const [elementId, elementState] of state.elements.entries()) {
+    if (desiredElementIds.has(elementId)) {
+      continue;
+    }
+    elementState.node.remove();
+    state.elements.delete(elementId);
+  }
+
+  const lifecycleResults = scene.elements.map((element) =>
+    ensureElementLifecycle(
+      {
+        view,
+        elements: state.elements,
+        sceneIndex: state.sceneIndex,
+        logger: state.logger,
+      },
+      element,
+    ),
+  );
+  const sceneElementById = toElementSpecMap(scene.elements);
+
+  for (const lifecycle of lifecycleResults) {
+    lifecycle.node.x(lifecycle.targetPosition.x);
+    lifecycle.node.y(lifecycle.targetPosition.y);
+    const visualStyle = sceneElementById.get(lifecycle.elementState.id)?.visualStyle;
+    lifecycle.node.opacity(visualStyle?.opacity ?? 1);
+    lifecycle.elementState.position = lifecycle.targetPosition;
+    lifecycle.elementState.unchangedStreak = 0;
+  }
+
+  const entityAnchorsById = collectEntityAnchors(lifecycleResults, sceneElementById);
+  const connectionSync = syncSceneConnections(
+    view,
+    scene,
+    state,
+    entityAnchorsById,
+    new Set<string>(),
+  );
+
+  for (const line of state.connections.values()) {
+    line.opacity(0.9);
+  }
+
+  if (connectionSync.added > 0 || connectionSync.updated > 0 || connectionSync.removed > 0) {
+    state.logger.info('Connections synchronized', {
+      scene: scene.id,
+      added: connectionSync.added,
+      updated: connectionSync.updated,
+      removed: connectionSync.removed,
+      retainedForRemoval: connectionSync.retainedForRemoval,
+      total: state.connections.size,
+    });
+  }
+
+  state.lastExecutionDuration = captionExecution.duration;
+}
+
+export function* executeScene(
+  view: Node,
+  scene: MotionSceneSpec,
+  state: SceneState,
+): ThreadGenerator {
+  const sceneDuration = Math.max(0, scene.end - scene.start);
+  state.logger.info('Scene start', {
+    scene: scene.id,
+    duration: sceneDuration,
+    elements: scene.elements.length,
+    hasDiff: scene.diff !== undefined,
+  });
+
+  if (scene.staticScene) {
+    yield* executeStaticScene(view, scene, state);
+    state.logger.info('Scene end', {
+      scene: scene.id,
+      consumedTime: state.lastExecutionDuration,
+      staticScene: true,
+    });
+    return;
+  }
+
+  const captionText = scene.title ?? scene.narration;
+  const captionExecution = createCaptionTransition(state.caption, captionText);
+
+  const lifecycleResults = scene.elements.map((element) =>
+    ensureElementLifecycle(
+      {
+        view,
+        elements: state.elements,
+        sceneIndex: state.sceneIndex,
+        logger: state.logger,
+      },
+      element,
+    ),
+  );
+  const sceneElementById = toElementSpecMap(scene.elements);
+  const entityAnchorsById = collectEntityAnchors(lifecycleResults, sceneElementById);
+  const connectionIdsRetainedForRemoval = scene.plan
+    ? new Set(
+        (scene.diff?.connectionDiffs ?? [])
+          .filter((diff) => diff.type === 'connection_removed')
+          .map((diff) => diff.connectionId),
+      )
+    : new Set<string>();
+  const connectionSync = syncSceneConnections(
+    view,
+    scene,
+    state,
+    entityAnchorsById,
+    connectionIdsRetainedForRemoval,
+  );
+
+  if (connectionSync.added > 0 || connectionSync.updated > 0 || connectionSync.removed > 0) {
+    state.logger.info('Connections synchronized', {
+      scene: scene.id,
+      added: connectionSync.added,
+      updated: connectionSync.updated,
+      removed: connectionSync.removed,
+      retainedForRemoval: connectionSync.retainedForRemoval,
+      total: state.connections.size,
+    });
+  }
+
+  const primaryElement = lifecycleResults[0];
+  const firstNewElement = lifecycleResults.find((result) => result.isNew);
+  const hierarchyExecution = executeHierarchyStyling(
+    scene,
+    sceneDuration,
+    lifecycleResults,
+    sceneElementById,
+  );
+  const statusExecution = executeStatusEffects(
+    scene,
+    lifecycleResults,
+    sceneElementById,
+    sceneDuration,
+  );
+
+  const motionExecution = scene.plan
+    ? executePlanDrivenScene(scene, lifecycleResults, state, sceneDuration)
+    : executeLegacyScene(scene, lifecycleResults, state);
+
+  const cameraTiming = resolveCameraTiming(scene, sceneDuration);
+  const cameraAction = resolveSceneCameraAction(scene, cameraTiming !== null);
+  const shouldRunCamera = Boolean(cameraAction) || Boolean(scene.cameraPlan);
+  const focusTarget = shouldRunCamera
+    ? resolveCameraFocusTarget(
+      scene,
+      lifecycleResults,
+      sceneElementById,
+      primaryElement,
+      firstNewElement,
+    )
+    : undefined;
+  const cameraExecution = shouldRunCamera
+    ? createCameraPlan({
+      view,
+      cameraState: state.camera,
+      sceneDuration: sceneDuration,
+      durationOverride: cameraTiming?.duration,
+      action: cameraAction,
+      focusTarget,
+      zoomOverride: scene.cameraPlan?.zoom,
+      easingOverride: scene.cameraPlan?.easing,
+      logger: state.logger,
+    })
+    : null;
+
+  const cameraDelay = cameraTiming?.delay ?? 0;
+  const cameraThread = cameraExecution
+    ? createDelayedThread(cameraDelay, cameraExecution.thread)
+    : undefined;
+  const cameraDuration = cameraExecution ? cameraDelay + cameraExecution.duration : 0;
+
+  const threads: ThreadGenerator[] = [];
+  if (captionExecution.thread) {
+    threads.push(captionExecution.thread);
+  }
+  if (hierarchyExecution.thread) {
+    threads.push(hierarchyExecution.thread);
+  }
+  if (statusExecution.thread) {
+    threads.push(statusExecution.thread);
+  }
+  if (motionExecution.thread) {
+    threads.push(motionExecution.thread);
+  }
+  if (cameraThread) {
+    threads.push(cameraThread);
+  }
+
+  if (threads.length > 0) {
+    yield* all(...threads);
   }
 
   const consumedTime = Math.max(
-    CAPTION_TOTAL_DURATION,
-    elementDuration,
-    cameraPlan?.duration ?? 0,
+    captionExecution.duration,
+    hierarchyExecution.duration,
+    statusExecution.duration,
+    motionExecution.duration,
+    cameraDuration,
   );
 
   state.logger.info('Scene end', {
     scene: scene.id,
     consumedTime,
   });
+  state.lastExecutionDuration = consumedTime;
 
   // TODO: Voice sync: drive transition durations from narration/audio timing.
   // TODO: Auto scene compression when scene execution exceeds budget.

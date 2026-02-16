@@ -1,8 +1,8 @@
 export const CANVAS_WIDTH = 1080;
 export const CANVAS_HEIGHT = 1920;
-export const REEL_SAFE_OFFSET_Y = -100;
-export const REEL_SAFE_MIN_Y = -700;
-export const REEL_SAFE_MAX_Y = 600;
+export const REEL_SAFE_OFFSET_Y = 0;
+export const REEL_SAFE_MIN_Y = -840;
+export const REEL_SAFE_MAX_Y = 840;
 
 export interface PixelPosition {
   x: number;

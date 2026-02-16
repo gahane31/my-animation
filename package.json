@@ -3,9 +3,11 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p tsconfig.build.json",
     "start": "node dist/index.js",
     "generate": "npm run build && node dist/cli/generate.js",
+    "generate:v2": "npm run build && node dist/cli/generate.js --pipeline v2",
+    "generate:v2:local": "npm run build && node dist/cli/generate.js --pipeline v2 --topology-input output/v2/topology.manual.json --animate --stable-layout",
     "studio": "vite"
   },
   "dependencies": {
@@ -20,11 +22,10 @@
     "@motion-canvas/ui": "^3.17.2",
     "@motion-canvas/vite-plugin": "^3.17.2",
     "@types/node": "^22.12.0",
+    "@types/react": "^19.2.13",
     "ts-node": "^10.9.2",
     "typescript": "^5.2.2",
     "vite": "^4.0.0"
   },
-  
   "type": "module"
-
 }

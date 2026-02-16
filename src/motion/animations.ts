@@ -5,6 +5,7 @@ import {
   easeOutBack,
   easeOutCubic,
   linear,
+  type TimingFunction,
   type ThreadGenerator,
 } from '@motion-canvas/core';
 import {AnimationType, CameraActionType} from '../schema/visualGrammar.js';
@@ -41,6 +42,12 @@ const getSlideOffset = (direction: SlideDirection): {x: number; y: number} => {
 
 export const getAnimationDuration = (animation: AnimationType): number =>
   ANIMATION_DURATION_MAP[animation] ?? 0.45;
+
+export interface TimedAnimationOptions {
+  duration: number;
+  timingFunction: TimingFunction;
+  scaleTarget?: number;
+}
 
 export function* applyFadeIn(node: Node, duration = DEFAULT_FADE_IN_DURATION): ThreadGenerator {
   const currentOpacity = node.opacity();
@@ -172,6 +179,58 @@ export function* runElementAnimation(node: Node, animation: AnimationType): Thre
       break;
     default:
       yield* applyFadeIn(node);
+      break;
+  }
+}
+
+export function* runElementAnimationTimed(
+  node: Node,
+  animation: AnimationType,
+  options: TimedAnimationOptions,
+): ThreadGenerator {
+  const duration = Math.max(0.1, options.duration);
+  const timing = options.timingFunction;
+
+  switch (animation) {
+    case AnimationType.ZoomIn: {
+      const targetScale = options.scaleTarget ?? 1;
+      node.scale(0.84);
+      node.opacity(Math.min(node.opacity(), 0.2));
+      yield* all(
+        node.scale(targetScale, duration, timing),
+        node.opacity(1, duration * 0.85, timing),
+      );
+      break;
+    }
+    case AnimationType.ZoomOut: {
+      node.scale(1.08);
+      yield* all(
+        node.scale(1, duration, timing),
+        node.opacity(1, duration * 0.85, timing),
+      );
+      break;
+    }
+    case AnimationType.PanDown: {
+      const startY = node.y();
+      yield* node.y(startY + 48, duration / 2, timing).to(startY, duration / 2, timing);
+      break;
+    }
+    case AnimationType.PanUp: {
+      const startY = node.y();
+      yield* node.y(startY - 48, duration / 2, timing).to(startY, duration / 2, timing);
+      break;
+    }
+    case AnimationType.Focus: {
+      const scaleTarget = options.scaleTarget ?? 1.12;
+      yield* node.scale(scaleTarget, duration / 2, timing).to(1, duration / 2, timing);
+      break;
+    }
+    case AnimationType.Wide: {
+      yield* node.scale(0.92, duration / 2, timing).to(1, duration / 2, timing);
+      break;
+    }
+    default:
+      yield* node.opacity(1, duration, timing);
       break;
   }
 }

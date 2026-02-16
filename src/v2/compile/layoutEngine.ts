@@ -1,0 +1,121 @@
+import {COMPONENT_CATALOG} from '../catalog/componentCatalog.js';
+import {
+  laidOutPlanSchema,
+  type CompositionPlan,
+  type CompositionScene,
+  type LaidOutPlan,
+  type LaidOutScene,
+} from '../schema/compiledPlan.schema.js';
+
+interface Position {
+  x: number;
+  y: number;
+}
+
+const CANVAS_WIDTH = 1080;
+const CANVAS_HEIGHT = 1920;
+
+const STACK_CENTER_X = 50;
+const STACK_TOP_Y = 14;
+const STACK_BOTTOM_Y = 88;
+
+const clamp = (value: number, min: number, max: number): number =>
+  Math.min(max, Math.max(min, value));
+
+const normalizeDimension = (value: number, axis: 'x' | 'y'): number =>
+  axis === 'x' ? (value / CANVAS_WIDTH) * 100 : (value / CANVAS_HEIGHT) * 100;
+
+const resolveChainPosition = (
+  index: number,
+  total: number,
+  minY: number,
+  maxY: number,
+): Position => {
+  if (total <= 1) {
+    return {x: STACK_CENTER_X, y: (minY + maxY) / 2};
+  }
+
+  const step = (maxY - minY) / Math.max(1, total - 1);
+  return {
+    x: STACK_CENTER_X,
+    y: minY + step * index,
+  };
+};
+
+const resolveVerticalBounds = (scene: CompositionScene): {minY: number; maxY: number} => {
+  const maxHalfHeight = scene.visibleEntities.reduce((largestHalfHeight, entity) => {
+    const definition = COMPONENT_CATALOG[entity.type];
+    const height = definition?.dimensions.height ?? 120;
+    const halfHeight = normalizeDimension(height, 'y') / 2;
+    return Math.max(largestHalfHeight, halfHeight);
+  }, 0);
+
+  const boundedTop = Math.max(STACK_TOP_Y, maxHalfHeight);
+  const boundedBottom = Math.min(STACK_BOTTOM_Y, 100 - maxHalfHeight);
+
+  if (boundedTop >= boundedBottom) {
+    const mid = (STACK_TOP_Y + STACK_BOTTOM_Y) / 2;
+    return {
+      minY: clamp(mid - 10, 0, 100),
+      maxY: clamp(mid + 10, 0, 100),
+    };
+  }
+
+  const entityCount = scene.visibleEntities.length;
+  const span = boundedBottom - boundedTop;
+  const spanFactor =
+    entityCount <= 2
+      ? 0.62
+      : entityCount === 3
+        ? 0.74
+        : entityCount === 4
+          ? 0.86
+          : 1;
+  const adjustedSpan = span * spanFactor;
+  const centerY = (boundedTop + boundedBottom) / 2;
+  const adjustedTop = clamp(centerY - adjustedSpan / 2, boundedTop, boundedBottom);
+  const adjustedBottom = clamp(centerY + adjustedSpan / 2, boundedTop, boundedBottom);
+
+  return {
+    minY: adjustedTop,
+    maxY: adjustedBottom,
+  };
+};
+
+const placeScene = (scene: CompositionScene): LaidOutScene => {
+  const orderedEntities = [...scene.visibleEntities];
+  const {minY, maxY} = resolveVerticalBounds(scene);
+  const orderedIndexById = new Map(
+    orderedEntities.map((entity, index) => [entity.id, index]),
+  );
+
+  const laidOutEntities = orderedEntities.map((entity) => {
+    const componentDefinition = COMPONENT_CATALOG[entity.type];
+    const entityIndex = orderedIndexById.get(entity.id) ?? 0;
+    const resolved = resolveChainPosition(entityIndex, orderedEntities.length, minY, maxY);
+
+    return {
+      ...entity,
+      x: resolved.x,
+      y: resolved.y,
+      width: componentDefinition.dimensions.width,
+      height: componentDefinition.dimensions.height,
+    };
+  });
+
+  return {
+    ...scene,
+    laidOutEntities,
+  };
+};
+
+export const layoutCompositionPlan = (compositionPlan: CompositionPlan): LaidOutPlan => {
+  const scenes = compositionPlan.scenes
+    .sort((left, right) => left.start - right.start)
+    .map((scene) => placeScene(scene));
+
+  return laidOutPlanSchema.parse({
+    duration: compositionPlan.duration,
+    scenes,
+  });
+};

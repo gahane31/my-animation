@@ -56,8 +56,9 @@ Beat mapping rules:
 --------------------------------------------------
 TIMING RULES (STRICT)
 --------------------------------------------------
-- Scene duration must satisfy: 0 < (end - start) <= 6
-- Difference between consecutive scene starts must be <= 4
+- Scene duration must satisfy: 0 < (end - start) <= 8
+- Avoid static periods longer than 6 seconds.
+- Scene holds up to 6 seconds are acceptable when there is active interaction flow, camera movement, or clear primary emphasis.
 - First scene must start at 0
 - First scene must include visible motion
 - Scene timings must be sorted ascending

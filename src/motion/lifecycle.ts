@@ -1,6 +1,11 @@
 import type {Node} from '@motion-canvas/2d';
 import {all, easeInOutCubic, type ThreadGenerator} from '@motion-canvas/core';
-import {createComponentNode} from './components.js';
+import {
+  applyComponentLabel,
+  applyComponentVisualStyle,
+  createComponentNode,
+} from './components.js';
+import {StyleTokens} from '../config/styleTokens.js';
 import {hasPositionDelta, normalizePosition, type PixelPosition} from './positioning.js';
 import type {ElementState, MotionElementSpec, RuntimeLogger} from './types.js';
 
@@ -33,17 +38,23 @@ const createRepositionThread = (
     node.y(targetPosition.y, duration, easeInOutCubic),
   );
 
+const resolveStyleSize = (element: MotionElementSpec): number =>
+  element.visualStyle?.size ?? StyleTokens.sizes.medium;
+
 export const ensureElementLifecycle = (
   context: LifecycleContext,
   element: MotionElementSpec,
 ): LifecycleResult => {
   const targetPosition = normalizePosition(element.position.x, element.position.y);
+  const targetStyleSize = resolveStyleSize(element);
   const existing = context.elements.get(element.id);
 
   if (!existing) {
     const node = createComponentNode(element.type, {
       id: element.id,
       position: targetPosition,
+      label: element.label,
+      style: element.visualStyle,
     });
 
     node.opacity(0);
@@ -51,6 +62,8 @@ export const ensureElementLifecycle = (
 
     const elementState: ElementState = {
       id: element.id,
+      type: element.type,
+      styleSize: targetStyleSize,
       node,
       position: targetPosition,
       unchangedStreak: 0,
@@ -70,7 +83,32 @@ export const ensureElementLifecycle = (
     };
   }
 
+  const requiresNodeRebuild =
+    existing.type !== element.type || Math.abs(existing.styleSize - targetStyleSize) > 0.5;
+
+  if (requiresNodeRebuild) {
+    const rebuiltNode = createComponentNode(element.type, {
+      id: element.id,
+      position: targetPosition,
+      label: element.label,
+      style: element.visualStyle,
+    });
+
+    rebuiltNode.opacity(existing.node.opacity());
+    existing.node.remove();
+    context.view.add(rebuiltNode);
+
+    existing.node = rebuiltNode;
+    existing.type = element.type;
+    existing.styleSize = targetStyleSize;
+    existing.position = targetPosition;
+  }
+
   const requiresMove = hasPositionDelta(existing.position, targetPosition);
+  if (element.visualStyle) {
+    applyComponentVisualStyle(existing.node, element.visualStyle);
+  }
+  applyComponentLabel(existing.node, element.label);
 
   existing.lastSeenSceneIndex = context.sceneIndex;
 

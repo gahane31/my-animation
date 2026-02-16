@@ -1,0 +1,37 @@
+[
+  {
+    "id": "1_hook",
+    "narration": "Your app crashes at 1 Million users.",
+    "camera": { "x": 0, "y": 0, "zoom": 1.2 },
+    "setup": { "visible": ["users", "app1"] },
+    "actions": [
+      { "type": "traffic", "from": "users", "to": "app1", "style": "burst", "color": "#FF4444" },
+      { "type": "error", "target": "app1" }
+    ]
+  },
+  {
+    "id": "2_lb_fix",
+    "narration": "Add a Load Balancer to split traffic.",
+    "camera": { "x": 0, "y": -150, "zoom": 1 },
+    "setup": { "visible": ["users", "lb", "app1", "app2", "app3"] },
+    "actions": [
+      { "type": "reset", "target": "app1" },
+      { "type": "highlight", "target": "lb" },
+      { "type": "traffic", "from": "users", "to": "lb", "style": "high" },
+      { "type": "traffic", "from": "lb", "to": "app1", "style": "medium" },
+      { "type": "traffic", "from": "lb", "to": "app2", "style": "medium" },
+      { "type": "traffic", "from": "lb", "to": "app3", "style": "medium" }
+    ]
+  },
+  {
+    "id": "3_db_bottleneck",
+    "narration": "Now the Database is the bottleneck.",
+    "camera": { "x": 0, "y": 150, "zoom": 1.2 },
+    "setup": { "visible": ["app1", "app2", "app3", "db"] },
+    "actions": [
+      { "type": "traffic", "from": "app1", "to": "db", "style": "high" },
+      { "type": "traffic", "from": "app2", "to": "db", "style": "high" },
+      { "type": "error", "target": "db" }
+    ]
+  }
+]

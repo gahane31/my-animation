@@ -8,39 +8,39 @@ import type {MotionRenderSpec} from './types.js';
 const buildSceneSource = (renderSpec: MotionRenderSpec): string => {
   const renderSpecLiteral = JSON.stringify(renderSpec, null, 2);
 
-  return `import {makeScene2D, Txt} from '@motion-canvas/2d';
+  return `/** @jsxImportSource @motion-canvas/2d/lib */
+import {makeScene2D, Txt} from '@motion-canvas/2d';
 import {createRef} from '@motion-canvas/core';
+import {StyleTokens} from '../config/styleTokens.js';
 import {
   createRuntimeLogger,
   createSceneState,
   executeScene,
   validateSceneForRuntime,
 } from '../motion/sceneExecutor.js';
-import {REEL_SAFE_OFFSET_Y} from '../motion/positioning.js';
 import {advanceTimeline, createTimelineState, waitUntil} from '../motion/timeline.js';
 import type {MotionRenderSpec} from '../motion/types.js';
 
-const renderSpec: MotionRenderSpec = ${renderSpecLiteral};
+const renderSpec = ${renderSpecLiteral} as unknown as MotionRenderSpec;
 const TIMELINE_EPSILON = 0.001;
 
 export default makeScene2D(function* (view) {
   const caption = createRef<Txt>();
+  view.fill(StyleTokens.colors.background);
 
   view.add(
     <Txt
       ref={caption}
       y={-420}
-      fill={'#e2e8f0'}
-      fontFamily={'JetBrains Mono'}
-      fontSize={36}
+      fill={StyleTokens.colors.text}
+      fontFamily={StyleTokens.text.fontFamily}
+      fontSize={StyleTokens.text.fontSizeSecondary}
+      fontWeight={StyleTokens.text.fontWeight}
       opacity={0}
       maxWidth={1500}
       textAlign={'center'}
     />,
   );
-
-  view.x(0);
-  view.y(REEL_SAFE_OFFSET_Y);
 
   const logger = createRuntimeLogger('runtime');
   const timeline = createTimelineState(0);
@@ -48,6 +48,10 @@ export default makeScene2D(function* (view) {
     caption: caption(),
     logger,
   });
+  sceneState.camera.originX = view.x();
+  sceneState.camera.originY = view.y();
+  sceneState.camera.x = sceneState.camera.originX;
+  sceneState.camera.y = sceneState.camera.originY;
 
   for (const scene of renderSpec.scenes) {
     const sceneDuration = scene.end - scene.start;
@@ -60,7 +64,8 @@ export default makeScene2D(function* (view) {
 
     yield* waitUntil(timeline, scene.start, logger);
     yield* executeScene(view, scene, sceneState);
-    advanceTimeline(timeline, sceneDuration);
+    advanceTimeline(timeline, sceneState.lastExecutionDuration);
+    yield* waitUntil(timeline, scene.end, logger);
 
     sceneState.sceneIndex += 1;
   }
