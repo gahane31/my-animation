@@ -425,7 +425,7 @@ const attachDiffAndPlan = (
     const entityStyleById = new Map(
       currentMoment.entities.map((entity) => [
         entity.id,
-        resolveEntityStyle(entity, hierarchy),
+        resolveEntityStyle(entity, hierarchy, currentMoment.directives?.visual),
       ]),
     );
 
@@ -508,6 +508,7 @@ const attachDiffAndPlan = (
           primaryId: null,
           entityStyles: {},
         },
+        currentMoment.directives?.visual,
       ),
     ]),
   );

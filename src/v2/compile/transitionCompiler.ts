@@ -171,7 +171,7 @@ const toInteractions = (
       continue;
     }
 
-    const connectionType = connection.connection_type ?? 'static';
+    const connectionType = connection.connection_type ?? 'flowing';
     if (connectionType === 'static') {
       continue;
     }

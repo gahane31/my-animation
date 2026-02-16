@@ -9,7 +9,7 @@ const buildSceneSource = (renderSpec: MotionRenderSpec): string => {
   const renderSpecLiteral = JSON.stringify(renderSpec, null, 2);
 
   return `/** @jsxImportSource @motion-canvas/2d/lib */
-import {Line, Node, makeScene2D, Txt} from '@motion-canvas/2d';
+import {Line, Node, Rect, makeScene2D, Txt} from '@motion-canvas/2d';
 import {all, createRef} from '@motion-canvas/core';
 import {StyleTokens} from '../config/styleTokens.js';
 import {
@@ -23,10 +23,42 @@ import type {MotionRenderSpec} from '../motion/types.js';
 
 const renderSpec = ${renderSpecLiteral} as unknown as MotionRenderSpec;
 const TIMELINE_EPSILON = 0.001;
+const DEFAULT_VISUAL_DIRECTIVES = {
+  theme: 'neon',
+  background_texture: 'grid',
+  glow_strength: 'strong',
+} as const;
+
+const resolveVisualDirectives = (scene: MotionRenderSpec['scenes'][number]) =>
+  scene.directives?.visual ?? DEFAULT_VISUAL_DIRECTIVES;
+
+const resolveBackdropColor = (theme: 'default' | 'neon'): string =>
+  theme === 'default' ? '#070B12' : StyleTokens.colors.background;
+
+const resolveGridOpacity = (
+  visual: typeof DEFAULT_VISUAL_DIRECTIVES,
+): number => {
+  if (visual.background_texture === 'none') {
+    return 0;
+  }
+
+  if (visual.theme === 'default') {
+    return visual.glow_strength === 'soft' ? 0.026 : 0.036;
+  }
+
+  return visual.glow_strength === 'soft' ? 0.04 : 0.056;
+};
 
 export default makeScene2D(function* (view) {
   const caption = createRef<Txt>();
   view.fill(StyleTokens.colors.background);
+  const backdrop = new Rect({
+    width: 1080,
+    height: 1920,
+    fill: StyleTokens.colors.background,
+    zIndex: -300,
+  });
+  view.add(backdrop);
   const world = new Node({zIndex: 0});
   view.add(world);
   const gridLayer = new Node({
@@ -93,6 +125,11 @@ export default makeScene2D(function* (view) {
       validateSceneForRuntime(scene, logger);
 
       yield* waitUntil(timeline, scene.start, logger);
+      const visual = resolveVisualDirectives(scene);
+      yield* all(
+        backdrop.fill(resolveBackdropColor(visual.theme), 0.12),
+        gridLayer.opacity(resolveGridOpacity(visual), 0.12),
+      );
       yield* executeScene(world, scene, sceneState);
       advanceTimeline(timeline, sceneState.lastExecutionDuration);
       yield* waitUntil(timeline, scene.end, logger);
@@ -107,7 +144,11 @@ export default makeScene2D(function* (view) {
 
     while (elapsed < renderSpec.duration) {
       const step = Math.min(cycle, renderSpec.duration - elapsed);
-      yield* gridLayer.y(14, step / 2).to(0, step / 2);
+      if (gridLayer.opacity() > 0.001) {
+        yield* gridLayer.y(14, step / 2).to(0, step / 2);
+      } else {
+        yield* gridLayer.y(0, step);
+      }
       elapsed += step;
     }
   })();

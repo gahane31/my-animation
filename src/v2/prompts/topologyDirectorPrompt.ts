@@ -30,7 +30,7 @@ export const buildTopologyDirectorPrompt = ({
   return `You are a technical video topology director.
 
 Task:
-Convert StoryIntent into a deterministic static SceneTopology plan.
+Convert StoryIntent into a deterministic SceneTopology plan for dynamic, readable reels.
 
 StoryIntent (source of truth):
 ${storyIntentJson}
@@ -58,6 +58,10 @@ Rules:
     - "static": line only, no flow particles.
     - "flowing": one-way flow from from -> to.
     - "both_ways": flow in both directions.
+11.2 For visually engaging reels, avoid fully static scenes:
+    - In scenes with connections, at least one key path should be "flowing" or "both_ways".
+    - Prefer "flowing" for request/service paths.
+    - Use "both_ways" for cache lookups or ping-like exchanges.
 12. Respect required_component_types and transition_goal from StoryIntent:
     - Do not add unrelated entities.
     - Keep progression mostly additive unless StoryIntent explicitly teaches removal.
@@ -87,14 +91,32 @@ Rules:
     - If provided, use only allowed operation types:
       add_entity, remove_entity, insert_between, reroute_connection,
       scale_entity, change_status, emphasize_entity, de_emphasize_entity, reveal_group.
-19. IMPORTANT: Output must be valid against strict schema:
+19. Scene-to-scene deltas must be explicit:
+    - If a component is added/inserted/scaled/status-changed, reflect that in operations[].
+    - If an entity is newly inserted between two entities, prefer transition.type = "insert_between".
+    - If a single new entity is introduced, prefer transition.type = "add_entity".
+20. IMPORTANT: Output must be valid against strict schema:
     - No unknown fields.
-    - No null values (omit optional fields instead of null).
-    - Every object must follow required keys exactly.
-20. Respect per-scene complexity limits from StoryIntent exactly.
-21. Entities and connections must use only supported enums listed below.
-22. Do not infer hidden architecture. If not explicitly in StoryIntent, do not invent it.
-23. Keep output deterministic and reusable across reruns.
+    - Use every required key exactly as defined.
+    - For nullable required keys, use null when not applicable.
+    - Do NOT omit required keys.
+    - This includes required nullable fields such as focus_entity_id, transition, camera_intent,
+      label/count/importance/status on entities, intensity on connections, and
+      newFromId/newToId for reroute_connection operations.
+21. Respect per-scene complexity limits from StoryIntent exactly.
+22. Entities and connections must use only supported enums listed below.
+23. Do not infer hidden architecture. If not explicitly in StoryIntent, do not invent it.
+24. Keep output deterministic and reusable across reruns.
+25. Pattern guidance (use when semantically appropriate):
+    - request/service_call/auth_request -> pattern "steady", intensity "medium"
+    - async_event/queue_dispatch/replication -> pattern "broadcast"
+    - failover/retry -> pattern "burst"
+    - health_check/trace/cache_lookup -> pattern "ping" or "steady"
+26. Motion readability guidance:
+    - scenes with transition_goal that inserts/adds components should usually include transition object
+      and non-static connection_type on the main path.
+27. Keep scenes visually alive but clear: avoid setting all connections to "static" unless StoryIntent
+    explicitly asks for an idle/static comparison frame.
 
 Canonical entity ids (preferred):
 - users (users_cluster)
@@ -169,7 +191,8 @@ Operation object contracts:
 - add_entity: {type, entityId}
 - remove_entity: {type, entityId}
 - insert_between: {type, entityId, fromId, toId}
-- reroute_connection: {type, connectionId, newFromId?, newToId?}
+- reroute_connection: {type, connectionId, newFromId, newToId}
+- reroute_connection note: newFromId/newToId keys are required for this operation and can be string or null.
 - scale_entity: {type, entityId, toCount}
 - change_status: {type, entityId, toStatus}
 - emphasize_entity: {type, entityId}
@@ -198,6 +221,7 @@ FORMAT EXAMPLE ONLY (DO NOT COPY THIS LITERALLY):
         {"id": "c_users_app_req", "from": "users", "to": "app", "kind": "request", "pattern": "steady", "intensity": "medium", "connection_type": "flowing"}
       ],
       "operations": [],
+      "transition": null,
       "complexity_budget": {
         "max_visible_components": 2,
         "max_visible_connections": 1,
@@ -240,6 +264,7 @@ Return strict JSON with fields:
     - intensity
     - connection_type ("static" | "flowing" | "both_ways")
   - operations[]
+  - transition (object or null)
   - complexity_budget
   - camera_intent ("wide" | "focus" | "introduce" | "steady")
   - directives

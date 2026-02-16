@@ -1,5 +1,5 @@
 /** @jsxImportSource @motion-canvas/2d/lib */
-import {Line, Node, makeScene2D, Txt} from '@motion-canvas/2d';
+import {Line, Node, Rect, makeScene2D, Txt} from '@motion-canvas/2d';
 import {all, createRef} from '@motion-canvas/core';
 import {StyleTokens} from '../config/styleTokens.js';
 import {
@@ -15,391 +15,11 @@ const renderSpec = {
   "duration": 60,
   "scenes": [
     {
-      "id": "scene_01",
+      "id": "s1",
       "start": 0,
       "end": 6,
-      "narration": "A single Users cluster sends requests to one Server.",
-      "camera": "focus",
-      "elements": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "sourceEntityId": "users",
-          "label": "Users",
-          "position": {
-            "x": 50,
-            "y": 23.4
-          },
-          "enter": "zoom_in",
-          "visualStyle": {
-            "size": 130.5,
-            "opacity": 1,
-            "color": "#2A4B88",
-            "strokeWidth": 3.612478373637689,
-            "strokeColor": "#00FFFF",
-            "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 24.505000000000003,
-            "textColor": "#E8F6FF",
-            "fontSize": 40.6,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app",
-          "type": "server",
-          "sourceEntityId": "app",
-          "label": "Server",
-          "position": {
-            "x": 50,
-            "y": 60.6
-          },
-          "enter": "zoom_in",
-          "visualStyle": {
-            "size": 130.5,
-            "opacity": 1,
-            "color": "#2A4B88",
-            "strokeWidth": 3.612478373637689,
-            "strokeColor": "#00FFFF",
-            "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 24.505000000000003,
-            "textColor": "#E8F6FF",
-            "fontSize": 40.6,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        }
-      ],
-      "entities": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Users",
-          "layout": {
-            "x": 50,
-            "y": 23.4
-          }
-        },
-        {
-          "id": "app",
-          "type": "server",
-          "count": 1,
-          "importance": "primary",
-          "status": "normal",
-          "label": "Server",
-          "layout": {
-            "x": 50,
-            "y": 60.6
-          }
-        }
-      ],
-      "connections": [
-        {
-          "id": "c_users_app_req",
-          "from": "users",
-          "to": "app",
-          "direction": "one_way",
-          "style": "solid"
-        }
-      ],
-      "interactions": [
-        {
-          "id": "i_c_users_app_req_fwd",
-          "from": "users",
-          "to": "app",
-          "type": "flow",
-          "intensity": "medium"
-        }
-      ],
-      "sourceCamera": {
-        "mode": "focus",
-        "target": "app",
-        "zoom": 1.18
-      },
-      "directives": {
-        "camera": {
-          "mode": "follow_action",
-          "zoom": "tight",
-          "active_zone": "upper_third",
-          "reserve_bottom_percent": 25
-        },
-        "visual": {
-          "theme": "neon",
-          "background_texture": "grid",
-          "glow_strength": "strong"
-        },
-        "motion": {
-          "entry_style": "elastic_pop",
-          "pacing": "reel_fast"
-        },
-        "flow": {
-          "renderer": "hybrid"
-        }
-      },
-      "source": {
-        "entities": [
-          {
-            "id": "users",
-            "type": "users_cluster",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Users",
-            "layout": {
-              "x": 50,
-              "y": 23.4
-            }
-          },
-          {
-            "id": "app",
-            "type": "server",
-            "count": 1,
-            "importance": "primary",
-            "status": "normal",
-            "label": "Server",
-            "layout": {
-              "x": 50,
-              "y": 60.6
-            }
-          }
-        ],
-        "connections": [
-          {
-            "id": "c_users_app_req",
-            "from": "users",
-            "to": "app",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "interactions": [
-          {
-            "id": "i_c_users_app_req_fwd",
-            "from": "users",
-            "to": "app",
-            "type": "flow",
-            "intensity": "medium"
-          }
-        ],
-        "camera": {
-          "mode": "focus",
-          "target": "app",
-          "zoom": 1.18
-        }
-      },
-      "motionPersonality": "CALM",
-      "diff": {
-        "entityDiffs": [
-          {
-            "type": "entity_added",
-            "entityId": "users"
-          },
-          {
-            "type": "entity_added",
-            "entityId": "app"
-          }
-        ],
-        "connectionDiffs": [
-          {
-            "type": "connection_added",
-            "connectionId": "c_users_app_req"
-          }
-        ],
-        "interactionDiffs": [
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_users_app_req_fwd"
-          }
-        ],
-        "cameraDiffs": [
-          {
-            "type": "camera_changed",
-            "from": null,
-            "to": {
-              "mode": "focus",
-              "target": "app",
-              "zoom": 1.18
-            }
-          }
-        ]
-      },
-      "hierarchyTransition": null,
-      "plan": {
-        "phaseOrder": [
-          "removals",
-          "moves",
-          "additions",
-          "connections",
-          "interactions",
-          "camera"
-        ],
-        "removals": [],
-        "moves": [],
-        "additions": [
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "add",
-            "enter": "zoom_in"
-          },
-          {
-            "entityId": "app",
-            "elementIds": [
-              "app"
-            ],
-            "action": "add",
-            "enter": "zoom_in"
-          }
-        ],
-        "connections": [
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "connect",
-            "connectionId": "c_users_app_req"
-          },
-          {
-            "entityId": "app",
-            "elementIds": [
-              "app"
-            ],
-            "action": "connect",
-            "connectionId": "c_users_app_req"
-          }
-        ],
-        "interactions": [
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_users_app_req_fwd"
-          },
-          {
-            "entityId": "app",
-            "elementIds": [
-              "app"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_users_app_req_fwd"
-          }
-        ]
-      },
-      "animationPlan": {
-        "entities": [
-          {
-            "entityId": "users",
-            "action": "add",
-            "delay": 0.32399999999999995,
-            "duration": 0.54,
-            "easing": "cubic-bezier(0.2,0,0,1)",
-            "isPrimary": false
-          },
-          {
-            "entityId": "app",
-            "action": "add",
-            "delay": 0.40399999999999997,
-            "duration": 0.62,
-            "easing": "cubic-bezier(0.2,0,0,1)",
-            "scale": 1.2,
-            "isPrimary": true
-          }
-        ],
-        "connections": [
-          {
-            "connectionId": "c_users_app_req",
-            "delay": 0.504,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          }
-        ],
-        "camera": null
-      },
-      "cameraPlan": {
-        "targetId": "app",
-        "targetElementId": "app",
-        "zoom": 1.18,
-        "duration": 0.55,
-        "easing": "cubic-bezier(0.2,0,0,1)",
-        "motionType": "focus_primary"
-      },
-      "sceneDiff": {
-        "addedEntities": [
-          {
-            "id": "users",
-            "type": "users_cluster",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Users",
-            "layout": {
-              "x": 50,
-              "y": 23.4
-            }
-          },
-          {
-            "id": "app",
-            "type": "server",
-            "count": 1,
-            "importance": "primary",
-            "status": "normal",
-            "label": "Server",
-            "layout": {
-              "x": 50,
-              "y": 60.6
-            }
-          }
-        ],
-        "removedEntities": [],
-        "movedEntities": [],
-        "updatedEntities": [],
-        "addedConnections": [
-          {
-            "id": "c_users_app_req",
-            "from": "users",
-            "to": "app",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "removedConnections": [],
-        "addedInteractions": [
-          {
-            "id": "i_c_users_app_req_fwd",
-            "from": "users",
-            "to": "app",
-            "type": "flow",
-            "intensity": "medium"
-          }
-        ],
-        "removedInteractions": [],
-        "interactionIntensityChanged": [],
-        "cameraChanged": {
-          "from": null,
-          "to": {
-            "mode": "focus",
-            "target": "app",
-            "zoom": 1.18
-          }
-        }
-      }
-    },
-    {
-      "id": "scene_02",
-      "start": 6,
-      "end": 12,
-      "narration": "Users go to the Server, and the Server reads and writes to a single Database.",
-      "camera": "focus",
+      "narration": "Users send steady requests to one Server, and that Server reads and writes to one Database.",
+      "camera": "wide",
       "elements": [
         {
           "id": "users",
@@ -410,15 +30,16 @@ const renderSpec = {
             "x": 50,
             "y": 19.8
           },
+          "effects": [],
           "visualStyle": {
             "size": 115.2,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 3.394112549695428,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 21.632,
+            "glowColor": "#93C5FD",
+            "glowBlur": 11.248640000000004,
             "textColor": "#E8F6FF",
             "fontSize": 35.84,
             "fontWeight": 600,
@@ -434,15 +55,16 @@ const renderSpec = {
             "x": 50,
             "y": 42
           },
+          "effects": [],
           "visualStyle": {
             "size": 115.2,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 3.394112549695428,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 21.632,
+            "glowColor": "#93C5FD",
+            "glowBlur": 11.248640000000004,
             "textColor": "#E8F6FF",
             "fontSize": 35.84,
             "fontWeight": 600,
@@ -458,16 +80,16 @@ const renderSpec = {
             "x": 50,
             "y": 64.2
           },
-          "enter": "zoom_in",
+          "effects": [],
           "visualStyle": {
             "size": 115.2,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 3.394112549695428,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 21.632,
+            "glowColor": "#93C5FD",
+            "glowBlur": 11.248640000000004,
             "textColor": "#E8F6FF",
             "fontSize": 35.84,
             "fontWeight": 600,
@@ -492,7 +114,7 @@ const renderSpec = {
           "id": "app",
           "type": "server",
           "count": 1,
-          "importance": "secondary",
+          "importance": "primary",
           "status": "normal",
           "label": "Server",
           "layout": {
@@ -504,7 +126,7 @@ const renderSpec = {
           "id": "db",
           "type": "database",
           "count": 1,
-          "importance": "primary",
+          "importance": "secondary",
           "status": "normal",
           "label": "Database",
           "layout": {
@@ -522,10 +144,10 @@ const renderSpec = {
           "style": "solid"
         },
         {
-          "id": "c_app_db_req",
+          "id": "c_app_db_call",
           "from": "app",
           "to": "db",
-          "direction": "one_way",
+          "direction": "bidirectional",
           "style": "solid"
         }
       ],
@@ -538,29 +160,36 @@ const renderSpec = {
           "intensity": "medium"
         },
         {
-          "id": "i_c_app_db_req_fwd",
+          "id": "i_c_app_db_call_fwd",
           "from": "app",
           "to": "db",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_app_db_call_rev",
+          "from": "db",
+          "to": "app",
           "type": "flow",
           "intensity": "medium"
         }
       ],
       "sourceCamera": {
         "mode": "focus",
-        "target": "db",
-        "zoom": 1.12
+        "target": "app",
+        "zoom": 1.1
       },
       "directives": {
         "camera": {
           "mode": "follow_action",
-          "zoom": "tight",
+          "zoom": "medium",
           "active_zone": "upper_third",
           "reserve_bottom_percent": 25
         },
         "visual": {
-          "theme": "neon",
+          "theme": "default",
           "background_texture": "grid",
-          "glow_strength": "strong"
+          "glow_strength": "soft"
         },
         "motion": {
           "entry_style": "elastic_pop",
@@ -588,7 +217,7 @@ const renderSpec = {
             "id": "app",
             "type": "server",
             "count": 1,
-            "importance": "secondary",
+            "importance": "primary",
             "status": "normal",
             "label": "Server",
             "layout": {
@@ -600,7 +229,7 @@ const renderSpec = {
             "id": "db",
             "type": "database",
             "count": 1,
-            "importance": "primary",
+            "importance": "secondary",
             "status": "normal",
             "label": "Database",
             "layout": {
@@ -618,10 +247,10 @@ const renderSpec = {
             "style": "solid"
           },
           {
-            "id": "c_app_db_req",
+            "id": "c_app_db_call",
             "from": "app",
             "to": "db",
-            "direction": "one_way",
+            "direction": "bidirectional",
             "style": "solid"
           }
         ],
@@ -634,211 +263,132 @@ const renderSpec = {
             "intensity": "medium"
           },
           {
-            "id": "i_c_app_db_req_fwd",
+            "id": "i_c_app_db_call_fwd",
             "from": "app",
             "to": "db",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_app_db_call_rev",
+            "from": "db",
+            "to": "app",
             "type": "flow",
             "intensity": "medium"
           }
         ],
         "camera": {
           "mode": "focus",
-          "target": "db",
-          "zoom": 1.12
+          "target": "app",
+          "zoom": 1.1
         }
       },
+      "staticScene": true,
       "motionPersonality": "CALM",
       "diff": {
         "entityDiffs": [
           {
             "type": "entity_added",
+            "entityId": "users"
+          },
+          {
+            "type": "entity_added",
+            "entityId": "app"
+          },
+          {
+            "type": "entity_added",
             "entityId": "db"
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "users",
-            "from": {
-              "x": 50,
-              "y": 23.4
-            },
-            "to": {
-              "x": 50,
-              "y": 19.8
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "app",
-            "from": {
-              "x": 50,
-              "y": 60.6
-            },
-            "to": {
-              "x": 50,
-              "y": 42
-            }
-          },
-          {
-            "type": "entity_importance_changed",
-            "entityId": "app",
-            "from": "primary",
-            "to": "secondary"
           }
         ],
         "connectionDiffs": [
           {
             "type": "connection_added",
-            "connectionId": "c_app_db_req"
+            "connectionId": "c_users_app_req"
+          },
+          {
+            "type": "connection_added",
+            "connectionId": "c_app_db_call"
           }
         ],
         "interactionDiffs": [
           {
             "type": "interaction_added",
-            "interactionId": "i_c_app_db_req_fwd"
+            "interactionId": "i_c_users_app_req_fwd"
+          },
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_app_db_call_fwd"
+          },
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_app_db_call_rev"
           }
         ],
         "cameraDiffs": [
           {
             "type": "camera_changed",
-            "from": {
-              "mode": "focus",
-              "target": "app",
-              "zoom": 1.18
-            },
+            "from": null,
             "to": {
               "mode": "focus",
-              "target": "db",
-              "zoom": 1.12
+              "target": "app",
+              "zoom": 1.1
             }
           }
         ]
       },
-      "hierarchyTransition": null,
-      "plan": {
-        "phaseOrder": [
-          "removals",
-          "moves",
-          "additions",
-          "connections",
-          "interactions",
-          "camera"
-        ],
-        "removals": [],
-        "moves": [
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "move"
+      "hierarchy": {
+        "primaryId": "app",
+        "entityStyles": {
+          "users": {
+            "scale": 1,
+            "opacity": 0.4,
+            "glow": false
           },
-          {
-            "entityId": "app",
-            "elementIds": [
-              "app"
-            ],
-            "action": "move"
-          }
-        ],
-        "additions": [
-          {
-            "entityId": "db",
-            "elementIds": [
-              "db"
-            ],
-            "action": "add",
-            "enter": "zoom_in",
-            "cleanup": false
-          }
-        ],
-        "connections": [
-          {
-            "entityId": "app",
-            "elementIds": [
-              "app"
-            ],
-            "action": "connect",
-            "connectionId": "c_app_db_req"
-          },
-          {
-            "entityId": "db",
-            "elementIds": [
-              "db"
-            ],
-            "action": "connect",
-            "connectionId": "c_app_db_req"
-          }
-        ],
-        "interactions": [
-          {
-            "entityId": "app",
-            "elementIds": [
-              "app"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_app_db_req_fwd"
-          },
-          {
-            "entityId": "db",
-            "elementIds": [
-              "db"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_app_db_req_fwd"
-          }
-        ]
-      },
-      "animationPlan": {
-        "entities": [
-          {
-            "entityId": "users",
-            "action": "move",
-            "delay": 0.6000000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "app",
-            "action": "move",
-            "delay": 0.6560000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "db",
-            "action": "add",
-            "delay": 0.37399999999999994,
-            "duration": 0.62,
-            "easing": "cubic-bezier(0.2,0,0,1)",
+          "app": {
             "scale": 1.2,
-            "isPrimary": true
+            "opacity": 1,
+            "glow": true
+          },
+          "db": {
+            "scale": 1,
+            "opacity": 0.4,
+            "glow": false
           }
-        ],
-        "connections": [
-          {
-            "connectionId": "c_app_db_req",
-            "delay": 0.504,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          }
-        ],
-        "camera": null
+        }
       },
-      "cameraPlan": {
-        "targetId": "db",
-        "targetElementId": "db",
-        "zoom": 1.12,
-        "duration": 0.55,
-        "easing": "cubic-bezier(0.2,0,0,1)",
-        "motionType": "focus_primary"
-      },
+      "hierarchyTransition": null,
+      "cameraPlan": null,
       "sceneDiff": {
         "addedEntities": [
+          {
+            "id": "users",
+            "type": "users_cluster",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Users",
+            "layout": {
+              "x": 50,
+              "y": 19.8
+            }
+          },
+          {
+            "id": "app",
+            "type": "server",
+            "count": 1,
+            "importance": "primary",
+            "status": "normal",
+            "label": "Server",
+            "layout": {
+              "x": 50,
+              "y": 42
+            }
+          },
           {
             "id": "db",
             "type": "database",
             "count": 1,
-            "importance": "primary",
+            "importance": "secondary",
             "status": "normal",
             "label": "Database",
             "layout": {
@@ -848,56 +398,44 @@ const renderSpec = {
           }
         ],
         "removedEntities": [],
-        "movedEntities": [
-          {
-            "id": "users",
-            "from": {
-              "x": 50,
-              "y": 23.4
-            },
-            "to": {
-              "x": 50,
-              "y": 19.8
-            }
-          },
-          {
-            "id": "app",
-            "from": {
-              "x": 50,
-              "y": 60.6
-            },
-            "to": {
-              "x": 50,
-              "y": 42
-            }
-          }
-        ],
-        "updatedEntities": [
-          {
-            "id": "app",
-            "changes": {
-              "importance": {
-                "from": "primary",
-                "to": "secondary"
-              }
-            }
-          }
-        ],
+        "movedEntities": [],
+        "updatedEntities": [],
         "addedConnections": [
           {
-            "id": "c_app_db_req",
+            "id": "c_users_app_req",
+            "from": "users",
+            "to": "app",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_app_db_call",
             "from": "app",
             "to": "db",
-            "direction": "one_way",
+            "direction": "bidirectional",
             "style": "solid"
           }
         ],
         "removedConnections": [],
         "addedInteractions": [
           {
-            "id": "i_c_app_db_req_fwd",
+            "id": "i_c_users_app_req_fwd",
+            "from": "users",
+            "to": "app",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_app_db_call_fwd",
             "from": "app",
             "to": "db",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_app_db_call_rev",
+            "from": "db",
+            "to": "app",
             "type": "flow",
             "intensity": "medium"
           }
@@ -905,25 +443,403 @@ const renderSpec = {
         "removedInteractions": [],
         "interactionIntensityChanged": [],
         "cameraChanged": {
+          "from": null,
+          "to": {
+            "mode": "focus",
+            "target": "app",
+            "zoom": 1.1
+          }
+        }
+      }
+    },
+    {
+      "id": "s2",
+      "start": 6,
+      "end": 12,
+      "narration": "The same Users now create heavier traffic, and the single Server is in overload while requests pile up before reaching the Database.",
+      "camera": "wide",
+      "elements": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "sourceEntityId": "users",
+          "label": "Users",
+          "position": {
+            "x": 50,
+            "y": 19.8
+          },
+          "effects": [],
+          "visualStyle": {
+            "size": 115.2,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 3.394112549695428,
+            "strokeColor": "#34D399",
+            "glow": true,
+            "glowColor": "#34D399",
+            "glowBlur": 21.632,
+            "textColor": "#E8F6FF",
+            "fontSize": 35.84,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "app",
+          "type": "server",
+          "sourceEntityId": "app",
+          "label": "Server",
+          "position": {
+            "x": 50,
+            "y": 42
+          },
+          "effects": [],
+          "visualStyle": {
+            "size": 115.2,
+            "opacity": 1,
+            "color": "#EF4444",
+            "strokeWidth": 3.394112549695428,
+            "strokeColor": "#EF4444",
+            "glow": true,
+            "glowColor": "#EF4444",
+            "glowBlur": 28.287999999999997,
+            "textColor": "#E8F6FF",
+            "fontSize": 35.84,
+            "fontWeight": 600,
+            "status": "overloaded"
+          }
+        },
+        {
+          "id": "db",
+          "type": "database",
+          "sourceEntityId": "db",
+          "label": "Database",
+          "position": {
+            "x": 50,
+            "y": 64.2
+          },
+          "effects": [],
+          "visualStyle": {
+            "size": 115.2,
+            "opacity": 1,
+            "color": "#345F9F",
+            "strokeWidth": 3.394112549695428,
+            "strokeColor": "#8AA4C8",
+            "glow": true,
+            "glowColor": "#93C5FD",
+            "glowBlur": 21.632,
+            "textColor": "#E8F6FF",
+            "fontSize": 35.84,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        }
+      ],
+      "entities": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Users",
+          "layout": {
+            "x": 50,
+            "y": 19.8
+          }
+        },
+        {
+          "id": "app",
+          "type": "server",
+          "count": 1,
+          "importance": "primary",
+          "status": "overloaded",
+          "label": "Server",
+          "layout": {
+            "x": 50,
+            "y": 42
+          }
+        },
+        {
+          "id": "db",
+          "type": "database",
+          "count": 1,
+          "importance": "secondary",
+          "status": "normal",
+          "label": "Database",
+          "layout": {
+            "x": 50,
+            "y": 64.2
+          }
+        }
+      ],
+      "connections": [
+        {
+          "id": "c_users_app_req",
+          "from": "users",
+          "to": "app",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_app_db_call",
+          "from": "app",
+          "to": "db",
+          "direction": "bidirectional",
+          "style": "solid"
+        }
+      ],
+      "interactions": [
+        {
+          "id": "i_c_users_app_req_fwd",
+          "from": "users",
+          "to": "app",
+          "type": "flow",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_app_db_call_fwd",
+          "from": "app",
+          "to": "db",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_app_db_call_rev",
+          "from": "db",
+          "to": "app",
+          "type": "flow",
+          "intensity": "medium"
+        }
+      ],
+      "sourceCamera": {
+        "mode": "focus",
+        "target": "app",
+        "zoom": 1.12
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "tight",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "default",
+          "background_texture": "grid",
+          "glow_strength": "strong"
+        },
+        "motion": {
+          "entry_style": "drop_bounce",
+          "pacing": "reel_fast"
+        },
+        "flow": {
+          "renderer": "packets"
+        }
+      },
+      "source": {
+        "entities": [
+          {
+            "id": "users",
+            "type": "users_cluster",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Users",
+            "layout": {
+              "x": 50,
+              "y": 19.8
+            }
+          },
+          {
+            "id": "app",
+            "type": "server",
+            "count": 1,
+            "importance": "primary",
+            "status": "overloaded",
+            "label": "Server",
+            "layout": {
+              "x": 50,
+              "y": 42
+            }
+          },
+          {
+            "id": "db",
+            "type": "database",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Database",
+            "layout": {
+              "x": 50,
+              "y": 64.2
+            }
+          }
+        ],
+        "connections": [
+          {
+            "id": "c_users_app_req",
+            "from": "users",
+            "to": "app",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_app_db_call",
+            "from": "app",
+            "to": "db",
+            "direction": "bidirectional",
+            "style": "solid"
+          }
+        ],
+        "interactions": [
+          {
+            "id": "i_c_users_app_req_fwd",
+            "from": "users",
+            "to": "app",
+            "type": "flow",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_app_db_call_fwd",
+            "from": "app",
+            "to": "db",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_app_db_call_rev",
+            "from": "db",
+            "to": "app",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
+        "camera": {
+          "mode": "focus",
+          "target": "app",
+          "zoom": 1.12
+        }
+      },
+      "staticScene": true,
+      "motionPersonality": "CALM",
+      "diff": {
+        "entityDiffs": [
+          {
+            "type": "entity_status_changed",
+            "entityId": "users",
+            "from": "normal",
+            "to": "active"
+          },
+          {
+            "type": "entity_status_changed",
+            "entityId": "app",
+            "from": "normal",
+            "to": "overloaded"
+          }
+        ],
+        "connectionDiffs": [],
+        "interactionDiffs": [
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_users_app_req_fwd",
+            "from": "medium",
+            "to": "high"
+          }
+        ],
+        "cameraDiffs": [
+          {
+            "type": "camera_changed",
+            "from": {
+              "mode": "focus",
+              "target": "app",
+              "zoom": 1.1
+            },
+            "to": {
+              "mode": "focus",
+              "target": "app",
+              "zoom": 1.12
+            }
+          }
+        ]
+      },
+      "hierarchy": {
+        "primaryId": "app",
+        "entityStyles": {
+          "users": {
+            "scale": 1,
+            "opacity": 0.4,
+            "glow": false
+          },
+          "app": {
+            "scale": 1.2,
+            "opacity": 1,
+            "glow": true
+          },
+          "db": {
+            "scale": 1,
+            "opacity": 0.4,
+            "glow": false
+          }
+        }
+      },
+      "hierarchyTransition": null,
+      "cameraPlan": null,
+      "sceneDiff": {
+        "addedEntities": [],
+        "removedEntities": [],
+        "movedEntities": [],
+        "updatedEntities": [
+          {
+            "id": "users",
+            "changes": {
+              "status": {
+                "from": "normal",
+                "to": "active"
+              }
+            }
+          },
+          {
+            "id": "app",
+            "changes": {
+              "status": {
+                "from": "normal",
+                "to": "overloaded"
+              }
+            }
+          }
+        ],
+        "addedConnections": [],
+        "removedConnections": [],
+        "addedInteractions": [],
+        "removedInteractions": [],
+        "interactionIntensityChanged": [
+          {
+            "id": "i_c_users_app_req_fwd",
+            "from": "medium",
+            "to": "high"
+          }
+        ],
+        "cameraChanged": {
           "from": {
             "mode": "focus",
             "target": "app",
-            "zoom": 1.18
+            "zoom": 1.1
           },
           "to": {
             "mode": "focus",
-            "target": "db",
+            "target": "app",
             "zoom": 1.12
           }
         }
       }
     },
     {
-      "id": "scene_03",
+      "id": "s3",
       "start": 12,
       "end": 18,
-      "narration": "A Load Balancer sits between Users and the Server, but there is still only one Server behind it.",
-      "camera": "focus",
+      "narration": "A Load Balancer is inserted so user requests hit the Load Balancer first and then flow down to the Server and Database.",
+      "camera": "wide",
       "elements": [
         {
           "id": "users",
@@ -934,15 +850,16 @@ const renderSpec = {
             "x": 50,
             "y": 16.2
           },
+          "effects": [],
           "visualStyle": {
             "size": 102.6,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 3.2031234756093934,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 19.266000000000002,
+            "glowColor": "#93C5FD",
+            "glowBlur": 10.018320000000001,
             "textColor": "#E8F6FF",
             "fontSize": 31.919999999999998,
             "fontWeight": 600,
@@ -958,16 +875,16 @@ const renderSpec = {
             "x": 50,
             "y": 33.4
           },
-          "enter": "zoom_in",
+          "effects": [],
           "visualStyle": {
             "size": 102.6,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 3.2031234756093934,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 19.266000000000002,
+            "glowColor": "#93C5FD",
+            "glowBlur": 10.018320000000001,
             "textColor": "#E8F6FF",
             "fontSize": 31.919999999999998,
             "fontWeight": 600,
@@ -983,19 +900,20 @@ const renderSpec = {
             "x": 50,
             "y": 50.599999999999994
           },
+          "effects": [],
           "visualStyle": {
             "size": 102.6,
             "opacity": 1,
-            "color": "#EF4444",
+            "color": "#345F9F",
             "strokeWidth": 3.2031234756093934,
-            "strokeColor": "#EF4444",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#EF4444",
-            "glowBlur": 25.193999999999996,
+            "glowColor": "#93C5FD",
+            "glowBlur": 10.018320000000001,
             "textColor": "#E8F6FF",
             "fontSize": 31.919999999999998,
             "fontWeight": 600,
-            "status": "overloaded"
+            "status": "normal"
           }
         },
         {
@@ -1007,15 +925,16 @@ const renderSpec = {
             "x": 50,
             "y": 67.8
           },
+          "effects": [],
           "visualStyle": {
             "size": 102.6,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 3.2031234756093934,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 19.266000000000002,
+            "glowColor": "#93C5FD",
+            "glowBlur": 10.018320000000001,
             "textColor": "#E8F6FF",
             "fontSize": 31.919999999999998,
             "fontWeight": 600,
@@ -1053,7 +972,7 @@ const renderSpec = {
           "type": "server",
           "count": 1,
           "importance": "secondary",
-          "status": "overloaded",
+          "status": "normal",
           "label": "Server",
           "layout": {
             "x": 50,
@@ -1089,10 +1008,10 @@ const renderSpec = {
           "style": "solid"
         },
         {
-          "id": "c_app_db_req",
+          "id": "c_app_db_call",
           "from": "app",
           "to": "db",
-          "direction": "one_way",
+          "direction": "bidirectional",
           "style": "solid"
         }
       ],
@@ -1102,19 +1021,26 @@ const renderSpec = {
           "from": "users",
           "to": "lb",
           "type": "flow",
-          "intensity": "high"
+          "intensity": "medium"
         },
         {
           "id": "i_c_lb_app_req_fwd",
           "from": "lb",
           "to": "app",
           "type": "flow",
-          "intensity": "high"
+          "intensity": "medium"
         },
         {
-          "id": "i_c_app_db_req_fwd",
+          "id": "i_c_app_db_call_fwd",
           "from": "app",
           "to": "db",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_app_db_call_rev",
+          "from": "db",
+          "to": "app",
           "type": "flow",
           "intensity": "medium"
         }
@@ -1127,18 +1053,18 @@ const renderSpec = {
       "directives": {
         "camera": {
           "mode": "follow_action",
-          "zoom": "tight",
+          "zoom": "medium",
           "active_zone": "upper_third",
           "reserve_bottom_percent": 25
         },
         "visual": {
-          "theme": "neon",
+          "theme": "default",
           "background_texture": "grid",
-          "glow_strength": "strong"
+          "glow_strength": "soft"
         },
         "motion": {
           "entry_style": "elastic_pop",
-          "pacing": "reel_fast"
+          "pacing": "balanced"
         },
         "flow": {
           "renderer": "hybrid"
@@ -1175,7 +1101,7 @@ const renderSpec = {
             "type": "server",
             "count": 1,
             "importance": "secondary",
-            "status": "overloaded",
+            "status": "normal",
             "label": "Server",
             "layout": {
               "x": 50,
@@ -1211,10 +1137,10 @@ const renderSpec = {
             "style": "solid"
           },
           {
-            "id": "c_app_db_req",
+            "id": "c_app_db_call",
             "from": "app",
             "to": "db",
-            "direction": "one_way",
+            "direction": "bidirectional",
             "style": "solid"
           }
         ],
@@ -1224,19 +1150,26 @@ const renderSpec = {
             "from": "users",
             "to": "lb",
             "type": "flow",
-            "intensity": "high"
+            "intensity": "medium"
           },
           {
             "id": "i_c_lb_app_req_fwd",
             "from": "lb",
             "to": "app",
             "type": "flow",
-            "intensity": "high"
+            "intensity": "medium"
           },
           {
-            "id": "i_c_app_db_req_fwd",
+            "id": "i_c_app_db_call_fwd",
             "from": "app",
             "to": "db",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_app_db_call_rev",
+            "from": "db",
+            "to": "app",
             "type": "flow",
             "intensity": "medium"
           }
@@ -1247,6 +1180,7 @@ const renderSpec = {
           "zoom": 1.08
         }
       },
+      "staticScene": true,
       "motionPersonality": "CALM",
       "diff": {
         "entityDiffs": [
@@ -1292,13 +1226,19 @@ const renderSpec = {
           },
           {
             "type": "entity_status_changed",
+            "entityId": "users",
+            "from": "active",
+            "to": "normal"
+          },
+          {
+            "type": "entity_status_changed",
             "entityId": "app",
-            "from": "normal",
-            "to": "overloaded"
+            "from": "overloaded",
+            "to": "normal"
           },
           {
             "type": "entity_importance_changed",
-            "entityId": "db",
+            "entityId": "app",
             "from": "primary",
             "to": "secondary"
           }
@@ -1336,7 +1276,7 @@ const renderSpec = {
             "type": "camera_changed",
             "from": {
               "mode": "focus",
-              "target": "db",
+              "target": "app",
               "zoom": 1.12
             },
             "to": {
@@ -1347,173 +1287,33 @@ const renderSpec = {
           }
         ]
       },
-      "hierarchyTransition": null,
-      "plan": {
-        "phaseOrder": [
-          "removals",
-          "moves",
-          "additions",
-          "connections",
-          "interactions",
-          "camera"
-        ],
-        "removals": [],
-        "moves": [
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "move"
+      "hierarchy": {
+        "primaryId": "lb",
+        "entityStyles": {
+          "users": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
           },
-          {
-            "entityId": "app",
-            "elementIds": [
-              "app"
-            ],
-            "action": "move"
-          },
-          {
-            "entityId": "db",
-            "elementIds": [
-              "db"
-            ],
-            "action": "move"
-          }
-        ],
-        "additions": [
-          {
-            "entityId": "lb",
-            "elementIds": [
-              "lb"
-            ],
-            "action": "add",
-            "enter": "zoom_in",
-            "cleanup": false
-          }
-        ],
-        "connections": [
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "connect",
-            "connectionId": "c_users_app_req",
-            "cleanup": false
-          },
-          {
-            "entityId": "lb",
-            "elementIds": [
-              "lb"
-            ],
-            "action": "connect",
-            "connectionId": "c_lb_app_req",
-            "cleanup": false
-          },
-          {
-            "entityId": "app",
-            "elementIds": [
-              "app"
-            ],
-            "action": "connect",
-            "connectionId": "c_users_app_req",
-            "cleanup": false
-          }
-        ],
-        "interactions": [
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_users_app_req_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "lb",
-            "elementIds": [
-              "lb"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_lb_app_req_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "app",
-            "elementIds": [
-              "app"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_users_app_req_fwd",
-            "cleanup": false
-          }
-        ]
-      },
-      "animationPlan": {
-        "entities": [
-          {
-            "entityId": "users",
-            "action": "move",
-            "delay": 0.6000000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "app",
-            "action": "move",
-            "delay": 0.6560000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "db",
-            "action": "move",
-            "delay": 0.7120000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "lb",
-            "action": "add",
-            "delay": 0.37399999999999994,
-            "duration": 0.62,
-            "easing": "cubic-bezier(0.2,0,0,1)",
+          "lb": {
             "scale": 1.2,
-            "isPrimary": true
-          }
-        ],
-        "connections": [
-          {
-            "connectionId": "c_users_lb_req",
-            "delay": 0.504,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
+            "opacity": 1,
+            "glow": true
           },
-          {
-            "connectionId": "c_lb_app_req",
-            "delay": 0.56,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
+          "app": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
           },
-          {
-            "connectionId": "c_users_app_req",
-            "delay": 0.616,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
+          "db": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
           }
-        ],
-        "camera": null
+        }
       },
-      "cameraPlan": {
-        "targetId": "lb",
-        "targetElementId": "lb",
-        "zoom": 1.08,
-        "duration": 0.55,
-        "easing": "cubic-bezier(0.2,0,0,1)",
-        "motionType": "focus_primary"
-      },
+      "hierarchyTransition": null,
+      "cameraPlan": null,
       "sceneDiff": {
         "addedEntities": [
           {
@@ -1567,17 +1367,21 @@ const renderSpec = {
         ],
         "updatedEntities": [
           {
-            "id": "app",
+            "id": "users",
             "changes": {
               "status": {
-                "from": "normal",
-                "to": "overloaded"
+                "from": "active",
+                "to": "normal"
               }
             }
           },
           {
-            "id": "db",
+            "id": "app",
             "changes": {
+              "status": {
+                "from": "overloaded",
+                "to": "normal"
+              },
               "importance": {
                 "from": "primary",
                 "to": "secondary"
@@ -1616,14 +1420,14 @@ const renderSpec = {
             "from": "users",
             "to": "lb",
             "type": "flow",
-            "intensity": "high"
+            "intensity": "medium"
           },
           {
             "id": "i_c_lb_app_req_fwd",
             "from": "lb",
             "to": "app",
             "type": "flow",
-            "intensity": "high"
+            "intensity": "medium"
           }
         ],
         "removedInteractions": [
@@ -1632,14 +1436,14 @@ const renderSpec = {
             "from": "users",
             "to": "app",
             "type": "flow",
-            "intensity": "medium"
+            "intensity": "high"
           }
         ],
         "interactionIntensityChanged": [],
         "cameraChanged": {
           "from": {
             "mode": "focus",
-            "target": "db",
+            "target": "app",
             "zoom": 1.12
           },
           "to": {
@@ -1651,11 +1455,11 @@ const renderSpec = {
       }
     },
     {
-      "id": "scene_04",
+      "id": "s4",
       "start": 18,
       "end": 24,
-      "narration": "The Load Balancer distributes Users across three Servers that all talk to the same Database.",
-      "camera": "focus",
+      "narration": "The Load Balancer fans out steady requests across multiple Server instances, and each Server still talks to the same Database.",
+      "camera": "wide",
       "elements": [
         {
           "id": "users",
@@ -1666,15 +1470,16 @@ const renderSpec = {
             "x": 50,
             "y": 16.2
           },
+          "effects": [],
           "visualStyle": {
             "size": 81,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.846049894151541,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 15.210000000000003,
+            "glowColor": "#93C5FD",
+            "glowBlur": 7.909200000000002,
             "textColor": "#E8F6FF",
             "fontSize": 25.2,
             "fontWeight": 600,
@@ -1690,19 +1495,20 @@ const renderSpec = {
             "x": 50,
             "y": 33.4
           },
+          "effects": [],
           "visualStyle": {
             "size": 81,
             "opacity": 1,
-            "color": "#34D399",
+            "color": "#345F9F",
             "strokeWidth": 2.846049894151541,
-            "strokeColor": "#34D399",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#34D399",
-            "glowBlur": 15.210000000000003,
+            "glowColor": "#93C5FD",
+            "glowBlur": 7.909200000000002,
             "textColor": "#E8F6FF",
             "fontSize": 25.2,
             "fontWeight": 600,
-            "status": "active"
+            "status": "normal"
           }
         },
         {
@@ -1713,16 +1519,16 @@ const renderSpec = {
             "x": 29.458333333333336,
             "y": 50.599999999999994
           },
-          "enter": "zoom_in",
+          "effects": [],
           "visualStyle": {
             "size": 81,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.846049894151541,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 15.210000000000003,
+            "glowColor": "#93C5FD",
+            "glowBlur": 7.909200000000002,
             "textColor": "#E8F6FF",
             "fontSize": 25.2,
             "fontWeight": 600,
@@ -1738,15 +1544,16 @@ const renderSpec = {
             "x": 50,
             "y": 50.599999999999994
           },
+          "effects": [],
           "visualStyle": {
             "size": 81,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.846049894151541,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 15.210000000000003,
+            "glowColor": "#93C5FD",
+            "glowBlur": 7.909200000000002,
             "textColor": "#E8F6FF",
             "fontSize": 25.2,
             "fontWeight": 600,
@@ -1761,16 +1568,16 @@ const renderSpec = {
             "x": 70.54166666666666,
             "y": 50.599999999999994
           },
-          "enter": "zoom_in",
+          "effects": [],
           "visualStyle": {
             "size": 81,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.846049894151541,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 15.210000000000003,
+            "glowColor": "#93C5FD",
+            "glowBlur": 7.909200000000002,
             "textColor": "#E8F6FF",
             "fontSize": 25.2,
             "fontWeight": 600,
@@ -1786,15 +1593,16 @@ const renderSpec = {
             "x": 50,
             "y": 67.8
           },
+          "effects": [],
           "visualStyle": {
             "size": 81,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.846049894151541,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 15.210000000000003,
+            "glowColor": "#93C5FD",
+            "glowBlur": 7.909200000000002,
             "textColor": "#E8F6FF",
             "fontSize": 25.2,
             "fontWeight": 600,
@@ -1819,8 +1627,8 @@ const renderSpec = {
           "id": "lb",
           "type": "load_balancer",
           "count": 1,
-          "importance": "secondary",
-          "status": "active",
+          "importance": "primary",
+          "status": "normal",
           "label": "Load Balancer",
           "layout": {
             "x": 50,
@@ -1831,7 +1639,7 @@ const renderSpec = {
           "id": "app",
           "type": "server",
           "count": 3,
-          "importance": "primary",
+          "importance": "secondary",
           "status": "normal",
           "label": "Server",
           "layout": {
@@ -1868,10 +1676,10 @@ const renderSpec = {
           "style": "solid"
         },
         {
-          "id": "c_app_db_req",
+          "id": "c_app_db_call",
           "from": "app",
           "to": "db",
-          "direction": "one_way",
+          "direction": "bidirectional",
           "style": "solid"
         }
       ],
@@ -1881,46 +1689,53 @@ const renderSpec = {
           "from": "users",
           "to": "lb",
           "type": "flow",
-          "intensity": "high"
+          "intensity": "medium"
         },
         {
           "id": "i_c_lb_app_req_fwd",
           "from": "lb",
           "to": "app",
           "type": "flow",
-          "intensity": "high"
+          "intensity": "medium"
         },
         {
-          "id": "i_c_app_db_req_fwd",
+          "id": "i_c_app_db_call_fwd",
           "from": "app",
           "to": "db",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_app_db_call_rev",
+          "from": "db",
+          "to": "app",
           "type": "flow",
           "intensity": "medium"
         }
       ],
       "sourceCamera": {
         "mode": "focus",
-        "target": "app",
-        "zoom": 1.08
+        "target": "lb",
+        "zoom": 1
       },
       "directives": {
         "camera": {
           "mode": "follow_action",
-          "zoom": "tight",
+          "zoom": "wide",
           "active_zone": "upper_third",
           "reserve_bottom_percent": 25
         },
         "visual": {
-          "theme": "neon",
+          "theme": "default",
           "background_texture": "grid",
-          "glow_strength": "strong"
+          "glow_strength": "soft"
         },
         "motion": {
-          "entry_style": "elastic_pop",
-          "pacing": "reel_fast"
+          "entry_style": "drop_bounce",
+          "pacing": "balanced"
         },
         "flow": {
-          "renderer": "hybrid"
+          "renderer": "packets"
         }
       },
       "source": {
@@ -1941,8 +1756,8 @@ const renderSpec = {
             "id": "lb",
             "type": "load_balancer",
             "count": 1,
-            "importance": "secondary",
-            "status": "active",
+            "importance": "primary",
+            "status": "normal",
             "label": "Load Balancer",
             "layout": {
               "x": 50,
@@ -1953,7 +1768,7 @@ const renderSpec = {
             "id": "app",
             "type": "server",
             "count": 3,
-            "importance": "primary",
+            "importance": "secondary",
             "status": "normal",
             "label": "Server",
             "layout": {
@@ -1990,10 +1805,494 @@ const renderSpec = {
             "style": "solid"
           },
           {
-            "id": "c_app_db_req",
+            "id": "c_app_db_call",
             "from": "app",
             "to": "db",
+            "direction": "bidirectional",
+            "style": "solid"
+          }
+        ],
+        "interactions": [
+          {
+            "id": "i_c_users_lb_req_fwd",
+            "from": "users",
+            "to": "lb",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_lb_app_req_fwd",
+            "from": "lb",
+            "to": "app",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_app_db_call_fwd",
+            "from": "app",
+            "to": "db",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_app_db_call_rev",
+            "from": "db",
+            "to": "app",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
+        "camera": {
+          "mode": "focus",
+          "target": "lb",
+          "zoom": 1
+        }
+      },
+      "staticScene": true,
+      "motionPersonality": "CALM",
+      "diff": {
+        "entityDiffs": [
+          {
+            "type": "entity_count_changed",
+            "entityId": "app",
+            "from": 1,
+            "to": 3
+          }
+        ],
+        "connectionDiffs": [],
+        "interactionDiffs": [],
+        "cameraDiffs": [
+          {
+            "type": "camera_changed",
+            "from": {
+              "mode": "focus",
+              "target": "lb",
+              "zoom": 1.08
+            },
+            "to": {
+              "mode": "focus",
+              "target": "lb",
+              "zoom": 1
+            }
+          }
+        ]
+      },
+      "hierarchy": {
+        "primaryId": "lb",
+        "entityStyles": {
+          "users": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
+          },
+          "lb": {
+            "scale": 1.2,
+            "opacity": 1,
+            "glow": true
+          },
+          "app": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
+          },
+          "db": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
+          }
+        }
+      },
+      "hierarchyTransition": null,
+      "cameraPlan": null,
+      "sceneDiff": {
+        "addedEntities": [],
+        "removedEntities": [],
+        "movedEntities": [],
+        "updatedEntities": [
+          {
+            "id": "app",
+            "changes": {
+              "count": {
+                "from": 1,
+                "to": 3
+              }
+            }
+          }
+        ],
+        "addedConnections": [],
+        "removedConnections": [],
+        "addedInteractions": [],
+        "removedInteractions": [],
+        "interactionIntensityChanged": [],
+        "cameraChanged": {
+          "from": {
+            "mode": "focus",
+            "target": "lb",
+            "zoom": 1.08
+          },
+          "to": {
+            "mode": "focus",
+            "target": "lb",
+            "zoom": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "s5",
+      "start": 24,
+      "end": 30,
+      "narration": "With more Servers, the Database becomes the hot spot and is in overload because too many reads and writes converge on it.",
+      "camera": "wide",
+      "elements": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "sourceEntityId": "users",
+          "label": "Users",
+          "position": {
+            "x": 50,
+            "y": 16.2
+          },
+          "effects": [],
+          "visualStyle": {
+            "size": 81,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.846049894151541,
+            "strokeColor": "#34D399",
+            "glow": true,
+            "glowColor": "#34D399",
+            "glowBlur": 15.210000000000003,
+            "textColor": "#E8F6FF",
+            "fontSize": 25.2,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "lb",
+          "type": "load_balancer",
+          "sourceEntityId": "lb",
+          "label": "Load Balancer",
+          "position": {
+            "x": 50,
+            "y": 33.4
+          },
+          "effects": [],
+          "visualStyle": {
+            "size": 81,
+            "opacity": 1,
+            "color": "#345F9F",
+            "strokeWidth": 2.846049894151541,
+            "strokeColor": "#8AA4C8",
+            "glow": true,
+            "glowColor": "#93C5FD",
+            "glowBlur": 15.210000000000003,
+            "textColor": "#E8F6FF",
+            "fontSize": 25.2,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        },
+        {
+          "id": "app_1",
+          "type": "server",
+          "sourceEntityId": "app",
+          "position": {
+            "x": 29.458333333333336,
+            "y": 50.599999999999994
+          },
+          "effects": [],
+          "visualStyle": {
+            "size": 81,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.846049894151541,
+            "strokeColor": "#34D399",
+            "glow": true,
+            "glowColor": "#34D399",
+            "glowBlur": 15.210000000000003,
+            "textColor": "#E8F6FF",
+            "fontSize": 25.2,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "app",
+          "type": "server",
+          "sourceEntityId": "app",
+          "label": "Server",
+          "position": {
+            "x": 50,
+            "y": 50.599999999999994
+          },
+          "effects": [],
+          "visualStyle": {
+            "size": 81,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.846049894151541,
+            "strokeColor": "#34D399",
+            "glow": true,
+            "glowColor": "#34D399",
+            "glowBlur": 15.210000000000003,
+            "textColor": "#E8F6FF",
+            "fontSize": 25.2,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "app_3",
+          "type": "server",
+          "sourceEntityId": "app",
+          "position": {
+            "x": 70.54166666666666,
+            "y": 50.599999999999994
+          },
+          "effects": [],
+          "visualStyle": {
+            "size": 81,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.846049894151541,
+            "strokeColor": "#34D399",
+            "glow": true,
+            "glowColor": "#34D399",
+            "glowBlur": 15.210000000000003,
+            "textColor": "#E8F6FF",
+            "fontSize": 25.2,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "db",
+          "type": "database",
+          "sourceEntityId": "db",
+          "label": "Database",
+          "position": {
+            "x": 50,
+            "y": 67.8
+          },
+          "effects": [],
+          "visualStyle": {
+            "size": 81,
+            "opacity": 1,
+            "color": "#EF4444",
+            "strokeWidth": 2.846049894151541,
+            "strokeColor": "#EF4444",
+            "glow": true,
+            "glowColor": "#EF4444",
+            "glowBlur": 19.889999999999997,
+            "textColor": "#E8F6FF",
+            "fontSize": 25.2,
+            "fontWeight": 600,
+            "status": "overloaded"
+          }
+        }
+      ],
+      "entities": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Users",
+          "layout": {
+            "x": 50,
+            "y": 16.2
+          }
+        },
+        {
+          "id": "lb",
+          "type": "load_balancer",
+          "count": 1,
+          "importance": "secondary",
+          "status": "normal",
+          "label": "Load Balancer",
+          "layout": {
+            "x": 50,
+            "y": 33.4
+          }
+        },
+        {
+          "id": "app",
+          "type": "server",
+          "count": 3,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Server",
+          "layout": {
+            "x": 50,
+            "y": 50.599999999999994
+          }
+        },
+        {
+          "id": "db",
+          "type": "database",
+          "count": 1,
+          "importance": "primary",
+          "status": "overloaded",
+          "label": "Database",
+          "layout": {
+            "x": 50,
+            "y": 67.8
+          }
+        }
+      ],
+      "connections": [
+        {
+          "id": "c_users_lb_req",
+          "from": "users",
+          "to": "lb",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_lb_app_req",
+          "from": "lb",
+          "to": "app",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_app_db_call",
+          "from": "app",
+          "to": "db",
+          "direction": "bidirectional",
+          "style": "solid"
+        }
+      ],
+      "interactions": [
+        {
+          "id": "i_c_users_lb_req_fwd",
+          "from": "users",
+          "to": "lb",
+          "type": "flow",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_lb_app_req_fwd",
+          "from": "lb",
+          "to": "app",
+          "type": "flow",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_app_db_call_fwd",
+          "from": "app",
+          "to": "db",
+          "type": "flow",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_app_db_call_rev",
+          "from": "db",
+          "to": "app",
+          "type": "flow",
+          "intensity": "high"
+        }
+      ],
+      "sourceCamera": {
+        "mode": "focus",
+        "target": "db",
+        "zoom": 1.08
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "tight",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "default",
+          "background_texture": "grid",
+          "glow_strength": "strong"
+        },
+        "motion": {
+          "entry_style": "drop_bounce",
+          "pacing": "reel_fast"
+        },
+        "flow": {
+          "renderer": "packets"
+        }
+      },
+      "source": {
+        "entities": [
+          {
+            "id": "users",
+            "type": "users_cluster",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Users",
+            "layout": {
+              "x": 50,
+              "y": 16.2
+            }
+          },
+          {
+            "id": "lb",
+            "type": "load_balancer",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Load Balancer",
+            "layout": {
+              "x": 50,
+              "y": 33.4
+            }
+          },
+          {
+            "id": "app",
+            "type": "server",
+            "count": 3,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Server",
+            "layout": {
+              "x": 50,
+              "y": 50.599999999999994
+            }
+          },
+          {
+            "id": "db",
+            "type": "database",
+            "count": 1,
+            "importance": "primary",
+            "status": "overloaded",
+            "label": "Database",
+            "layout": {
+              "x": 50,
+              "y": 67.8
+            }
+          }
+        ],
+        "connections": [
+          {
+            "id": "c_users_lb_req",
+            "from": "users",
+            "to": "lb",
             "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_lb_app_req",
+            "from": "lb",
+            "to": "app",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_app_db_call",
+            "from": "app",
+            "to": "db",
+            "direction": "bidirectional",
             "style": "solid"
           }
         ],
@@ -2013,25 +2312,33 @@ const renderSpec = {
             "intensity": "high"
           },
           {
-            "id": "i_c_app_db_req_fwd",
+            "id": "i_c_app_db_call_fwd",
             "from": "app",
             "to": "db",
             "type": "flow",
-            "intensity": "medium"
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_app_db_call_rev",
+            "from": "db",
+            "to": "app",
+            "type": "flow",
+            "intensity": "high"
           }
         ],
         "camera": {
           "mode": "focus",
-          "target": "app",
+          "target": "db",
           "zoom": 1.08
         }
       },
+      "staticScene": true,
       "motionPersonality": "CALM",
       "diff": {
         "entityDiffs": [
           {
             "type": "entity_status_changed",
-            "entityId": "lb",
+            "entityId": "users",
             "from": "normal",
             "to": "active"
           },
@@ -2042,105 +2349,111 @@ const renderSpec = {
             "to": "secondary"
           },
           {
-            "type": "entity_count_changed",
+            "type": "entity_status_changed",
             "entityId": "app",
-            "from": 1,
-            "to": 3
+            "from": "normal",
+            "to": "active"
           },
           {
             "type": "entity_status_changed",
-            "entityId": "app",
-            "from": "overloaded",
-            "to": "normal"
+            "entityId": "db",
+            "from": "normal",
+            "to": "overloaded"
           },
           {
             "type": "entity_importance_changed",
-            "entityId": "app",
+            "entityId": "db",
             "from": "secondary",
             "to": "primary"
           }
         ],
         "connectionDiffs": [],
-        "interactionDiffs": [],
+        "interactionDiffs": [
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_users_lb_req_fwd",
+            "from": "medium",
+            "to": "high"
+          },
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_lb_app_req_fwd",
+            "from": "medium",
+            "to": "high"
+          },
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_app_db_call_fwd",
+            "from": "medium",
+            "to": "high"
+          },
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_app_db_call_rev",
+            "from": "medium",
+            "to": "high"
+          }
+        ],
         "cameraDiffs": [
           {
             "type": "camera_changed",
             "from": {
               "mode": "focus",
               "target": "lb",
-              "zoom": 1.08
+              "zoom": 1
             },
             "to": {
               "mode": "focus",
-              "target": "app",
+              "target": "db",
               "zoom": 1.08
             }
           }
         ]
       },
-      "hierarchyTransition": null,
-      "plan": {
-        "phaseOrder": [
-          "removals",
-          "moves",
-          "additions",
-          "connections",
-          "interactions",
-          "camera"
-        ],
-        "removals": [],
-        "moves": [],
-        "additions": [
-          {
-            "entityId": "app",
-            "elementIds": [
-              "app_1",
-              "app",
-              "app_3"
-            ],
-            "action": "add",
-            "enter": "zoom_in",
-            "cleanup": false
-          }
-        ],
-        "connections": [],
-        "interactions": []
-      },
-      "animationPlan": {
-        "entities": [
-          {
-            "entityId": "app",
-            "action": "add",
-            "delay": 0.37399999999999994,
-            "duration": 0.62,
-            "easing": "cubic-bezier(0.2,0,0,1)",
+      "hierarchy": {
+        "primaryId": "db",
+        "entityStyles": {
+          "users": {
+            "scale": 1,
+            "opacity": 0.4,
+            "glow": false
+          },
+          "lb": {
+            "scale": 1,
+            "opacity": 0.4,
+            "glow": false
+          },
+          "app": {
+            "scale": 1,
+            "opacity": 0.4,
+            "glow": false
+          },
+          "db": {
             "scale": 1.2,
-            "isPrimary": true
+            "opacity": 1,
+            "glow": true
           }
-        ],
-        "connections": [],
-        "camera": null
+        }
       },
-      "cameraPlan": {
-        "targetId": "app",
-        "targetElementId": "app",
-        "zoom": 1.08,
-        "duration": 0.55,
-        "easing": "cubic-bezier(0.2,0,0,1)",
-        "motionType": "focus_primary"
-      },
+      "hierarchyTransition": null,
+      "cameraPlan": null,
       "sceneDiff": {
         "addedEntities": [],
         "removedEntities": [],
         "movedEntities": [],
         "updatedEntities": [
           {
-            "id": "lb",
+            "id": "users",
             "changes": {
               "status": {
                 "from": "normal",
                 "to": "active"
-              },
+              }
+            }
+          },
+          {
+            "id": "lb",
+            "changes": {
               "importance": {
                 "from": "primary",
                 "to": "secondary"
@@ -2151,12 +2464,17 @@ const renderSpec = {
             "id": "app",
             "changes": {
               "status": {
-                "from": "overloaded",
-                "to": "normal"
-              },
-              "count": {
-                "from": 1,
-                "to": 3
+                "from": "normal",
+                "to": "active"
+              }
+            }
+          },
+          {
+            "id": "db",
+            "changes": {
+              "status": {
+                "from": "normal",
+                "to": "overloaded"
               },
               "importance": {
                 "from": "secondary",
@@ -2169,27 +2487,48 @@ const renderSpec = {
         "removedConnections": [],
         "addedInteractions": [],
         "removedInteractions": [],
-        "interactionIntensityChanged": [],
+        "interactionIntensityChanged": [
+          {
+            "id": "i_c_users_lb_req_fwd",
+            "from": "medium",
+            "to": "high"
+          },
+          {
+            "id": "i_c_lb_app_req_fwd",
+            "from": "medium",
+            "to": "high"
+          },
+          {
+            "id": "i_c_app_db_call_fwd",
+            "from": "medium",
+            "to": "high"
+          },
+          {
+            "id": "i_c_app_db_call_rev",
+            "from": "medium",
+            "to": "high"
+          }
+        ],
         "cameraChanged": {
           "from": {
             "mode": "focus",
             "target": "lb",
-            "zoom": 1.08
+            "zoom": 1
           },
           "to": {
             "mode": "focus",
-            "target": "app",
+            "target": "db",
             "zoom": 1.08
           }
         }
       }
     },
     {
-      "id": "scene_05",
-      "start": 24,
-      "end": 30,
-      "narration": "Each Server checks a Cache before going to the Database for data.",
-      "camera": "focus",
+      "id": "s6",
+      "start": 30,
+      "end": 36,
+      "narration": "A Cache is added between the Servers and the Database so many requests do a cache_lookup and return quickly without hitting the Database.",
+      "camera": "wide",
       "elements": [
         {
           "id": "users",
@@ -2200,15 +2539,16 @@ const renderSpec = {
             "x": 50,
             "y": 12
           },
+          "effects": [],
           "visualStyle": {
             "size": 72,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.6832815729997477,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 13.520000000000003,
+            "glowColor": "#93C5FD",
+            "glowBlur": 7.030400000000002,
             "textColor": "#E8F6FF",
             "fontSize": 22.400000000000002,
             "fontWeight": 600,
@@ -2224,15 +2564,16 @@ const renderSpec = {
             "x": 50,
             "y": 27
           },
+          "effects": [],
           "visualStyle": {
             "size": 72,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.6832815729997477,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 13.520000000000003,
+            "glowColor": "#93C5FD",
+            "glowBlur": 7.030400000000002,
             "textColor": "#E8F6FF",
             "fontSize": 22.400000000000002,
             "fontWeight": 600,
@@ -2247,15 +2588,16 @@ const renderSpec = {
             "x": 31.74074074074074,
             "y": 42
           },
+          "effects": [],
           "visualStyle": {
             "size": 72,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.6832815729997477,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 13.520000000000003,
+            "glowColor": "#93C5FD",
+            "glowBlur": 7.030400000000002,
             "textColor": "#E8F6FF",
             "fontSize": 22.400000000000002,
             "fontWeight": 600,
@@ -2271,15 +2613,16 @@ const renderSpec = {
             "x": 50,
             "y": 42
           },
+          "effects": [],
           "visualStyle": {
             "size": 72,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.6832815729997477,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 13.520000000000003,
+            "glowColor": "#93C5FD",
+            "glowBlur": 7.030400000000002,
             "textColor": "#E8F6FF",
             "fontSize": 22.400000000000002,
             "fontWeight": 600,
@@ -2294,15 +2637,16 @@ const renderSpec = {
             "x": 68.25925925925927,
             "y": 42
           },
+          "effects": [],
           "visualStyle": {
             "size": 72,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.6832815729997477,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 13.520000000000003,
+            "glowColor": "#93C5FD",
+            "glowBlur": 7.030400000000002,
             "textColor": "#E8F6FF",
             "fontSize": 22.400000000000002,
             "fontWeight": 600,
@@ -2318,20 +2662,20 @@ const renderSpec = {
             "x": 50,
             "y": 57
           },
-          "enter": "zoom_in",
+          "effects": [],
           "visualStyle": {
             "size": 72,
             "opacity": 1,
-            "color": "#34D399",
+            "color": "#345F9F",
             "strokeWidth": 2.6832815729997477,
-            "strokeColor": "#34D399",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#34D399",
-            "glowBlur": 13.520000000000003,
+            "glowColor": "#93C5FD",
+            "glowBlur": 7.030400000000002,
             "textColor": "#E8F6FF",
             "fontSize": 22.400000000000002,
             "fontWeight": 600,
-            "status": "active"
+            "status": "normal"
           }
         },
         {
@@ -2343,15 +2687,16 @@ const renderSpec = {
             "x": 50,
             "y": 72
           },
+          "effects": [],
           "visualStyle": {
             "size": 72,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.6832815729997477,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 13.520000000000003,
+            "glowColor": "#93C5FD",
+            "glowBlur": 7.030400000000002,
             "textColor": "#E8F6FF",
             "fontSize": 22.400000000000002,
             "fontWeight": 600,
@@ -2401,7 +2746,7 @@ const renderSpec = {
           "type": "cache",
           "count": 1,
           "importance": "primary",
-          "status": "active",
+          "status": "normal",
           "label": "Cache",
           "layout": {
             "x": 50,
@@ -2440,12 +2785,12 @@ const renderSpec = {
           "id": "c_app_cache_lookup",
           "from": "app",
           "to": "cache",
-          "direction": "one_way",
+          "direction": "bidirectional",
           "style": "solid"
         },
         {
-          "id": "c_app_db_req",
-          "from": "app",
+          "id": "c_cache_db_call",
+          "from": "cache",
           "to": "db",
           "direction": "one_way",
           "style": "solid"
@@ -2457,14 +2802,14 @@ const renderSpec = {
           "from": "users",
           "to": "lb",
           "type": "flow",
-          "intensity": "high"
+          "intensity": "medium"
         },
         {
           "id": "i_c_lb_app_req_fwd",
           "from": "lb",
           "to": "app",
           "type": "flow",
-          "intensity": "high"
+          "intensity": "medium"
         },
         {
           "id": "i_c_app_cache_lookup_fwd",
@@ -2474,8 +2819,15 @@ const renderSpec = {
           "intensity": "high"
         },
         {
-          "id": "i_c_app_db_req_fwd",
-          "from": "app",
+          "id": "i_c_app_cache_lookup_rev",
+          "from": "cache",
+          "to": "app",
+          "type": "ping",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_cache_db_call_fwd",
+          "from": "cache",
           "to": "db",
           "type": "flow",
           "intensity": "low"
@@ -2489,18 +2841,18 @@ const renderSpec = {
       "directives": {
         "camera": {
           "mode": "follow_action",
-          "zoom": "tight",
+          "zoom": "medium",
           "active_zone": "upper_third",
           "reserve_bottom_percent": 25
         },
         "visual": {
-          "theme": "neon",
+          "theme": "default",
           "background_texture": "grid",
-          "glow_strength": "strong"
+          "glow_strength": "soft"
         },
         "motion": {
           "entry_style": "elastic_pop",
-          "pacing": "reel_fast"
+          "pacing": "balanced"
         },
         "flow": {
           "renderer": "hybrid"
@@ -2549,7 +2901,7 @@ const renderSpec = {
             "type": "cache",
             "count": 1,
             "importance": "primary",
-            "status": "active",
+            "status": "normal",
             "label": "Cache",
             "layout": {
               "x": 50,
@@ -2588,12 +2940,12 @@ const renderSpec = {
             "id": "c_app_cache_lookup",
             "from": "app",
             "to": "cache",
-            "direction": "one_way",
+            "direction": "bidirectional",
             "style": "solid"
           },
           {
-            "id": "c_app_db_req",
-            "from": "app",
+            "id": "c_cache_db_call",
+            "from": "cache",
             "to": "db",
             "direction": "one_way",
             "style": "solid"
@@ -2605,14 +2957,14 @@ const renderSpec = {
             "from": "users",
             "to": "lb",
             "type": "flow",
-            "intensity": "high"
+            "intensity": "medium"
           },
           {
             "id": "i_c_lb_app_req_fwd",
             "from": "lb",
             "to": "app",
             "type": "flow",
-            "intensity": "high"
+            "intensity": "medium"
           },
           {
             "id": "i_c_app_cache_lookup_fwd",
@@ -2622,8 +2974,15 @@ const renderSpec = {
             "intensity": "high"
           },
           {
-            "id": "i_c_app_db_req_fwd",
-            "from": "app",
+            "id": "i_c_app_cache_lookup_rev",
+            "from": "cache",
+            "to": "app",
+            "type": "ping",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_cache_db_call_fwd",
+            "from": "cache",
             "to": "db",
             "type": "flow",
             "intensity": "low"
@@ -2635,6 +2994,7 @@ const renderSpec = {
           "zoom": 1.04
         }
       },
+      "staticScene": true,
       "motionPersonality": "CALM",
       "diff": {
         "entityDiffs": [
@@ -2692,13 +3052,25 @@ const renderSpec = {
           },
           {
             "type": "entity_status_changed",
-            "entityId": "lb",
+            "entityId": "users",
             "from": "active",
             "to": "normal"
           },
           {
-            "type": "entity_importance_changed",
+            "type": "entity_status_changed",
             "entityId": "app",
+            "from": "active",
+            "to": "normal"
+          },
+          {
+            "type": "entity_status_changed",
+            "entityId": "db",
+            "from": "overloaded",
+            "to": "normal"
+          },
+          {
+            "type": "entity_importance_changed",
+            "entityId": "db",
             "from": "primary",
             "to": "secondary"
           }
@@ -2707,6 +3079,14 @@ const renderSpec = {
           {
             "type": "connection_added",
             "connectionId": "c_app_cache_lookup"
+          },
+          {
+            "type": "connection_added",
+            "connectionId": "c_cache_db_call"
+          },
+          {
+            "type": "connection_removed",
+            "connectionId": "c_app_db_call"
           }
         ],
         "interactionDiffs": [
@@ -2715,10 +3095,32 @@ const renderSpec = {
             "interactionId": "i_c_app_cache_lookup_fwd"
           },
           {
+            "type": "interaction_added",
+            "interactionId": "i_c_app_cache_lookup_rev"
+          },
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_cache_db_call_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_app_db_call_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_app_db_call_rev"
+          },
+          {
             "type": "interaction_intensity_changed",
-            "interactionId": "i_c_app_db_req_fwd",
-            "from": "medium",
-            "to": "low"
+            "interactionId": "i_c_users_lb_req_fwd",
+            "from": "high",
+            "to": "medium"
+          },
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_lb_app_req_fwd",
+            "from": "high",
+            "to": "medium"
           }
         ],
         "cameraDiffs": [
@@ -2726,7 +3128,7 @@ const renderSpec = {
             "type": "camera_changed",
             "from": {
               "mode": "focus",
-              "target": "app",
+              "target": "db",
               "zoom": 1.08
             },
             "to": {
@@ -2737,167 +3139,38 @@ const renderSpec = {
           }
         ]
       },
-      "hierarchyTransition": null,
-      "plan": {
-        "phaseOrder": [
-          "removals",
-          "moves",
-          "additions",
-          "connections",
-          "interactions",
-          "camera"
-        ],
-        "removals": [],
-        "moves": [
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "move"
+      "hierarchy": {
+        "primaryId": "cache",
+        "entityStyles": {
+          "users": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
           },
-          {
-            "entityId": "lb",
-            "elementIds": [
-              "lb"
-            ],
-            "action": "move"
+          "lb": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
           },
-          {
-            "entityId": "app",
-            "elementIds": [
-              "app_1",
-              "app",
-              "app_3"
-            ],
-            "action": "move"
+          "app": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
           },
-          {
-            "entityId": "db",
-            "elementIds": [
-              "db"
-            ],
-            "action": "move"
-          }
-        ],
-        "additions": [
-          {
-            "entityId": "cache",
-            "elementIds": [
-              "cache"
-            ],
-            "action": "add",
-            "enter": "zoom_in"
-          }
-        ],
-        "connections": [
-          {
-            "entityId": "app",
-            "elementIds": [
-              "app_1",
-              "app",
-              "app_3"
-            ],
-            "action": "connect",
-            "connectionId": "c_app_cache_lookup"
-          },
-          {
-            "entityId": "cache",
-            "elementIds": [
-              "cache"
-            ],
-            "action": "connect",
-            "connectionId": "c_app_cache_lookup"
-          }
-        ],
-        "interactions": [
-          {
-            "entityId": "app",
-            "elementIds": [
-              "app_1",
-              "app",
-              "app_3"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_app_db_req_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "cache",
-            "elementIds": [
-              "cache"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_app_cache_lookup_fwd"
-          },
-          {
-            "entityId": "db",
-            "elementIds": [
-              "db"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_app_db_req_fwd"
-          }
-        ]
-      },
-      "animationPlan": {
-        "entities": [
-          {
-            "entityId": "users",
-            "action": "move",
-            "delay": 0.6000000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "lb",
-            "action": "move",
-            "delay": 0.6560000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "app",
-            "action": "move",
-            "delay": 0.7120000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "db",
-            "action": "move",
-            "delay": 0.768,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "cache",
-            "action": "add",
-            "delay": 0.37399999999999994,
-            "duration": 0.62,
-            "easing": "cubic-bezier(0.2,0,0,1)",
+          "cache": {
             "scale": 1.2,
-            "isPrimary": true
+            "opacity": 1,
+            "glow": true
+          },
+          "db": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
           }
-        ],
-        "connections": [
-          {
-            "connectionId": "c_app_cache_lookup",
-            "delay": 0.504,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          }
-        ],
-        "camera": null
+        }
       },
-      "cameraPlan": {
-        "targetId": "cache",
-        "targetElementId": "cache",
-        "zoom": 1.04,
-        "duration": 0.55,
-        "easing": "cubic-bezier(0.2,0,0,1)",
-        "motionType": "focus_primary"
-      },
+      "hierarchyTransition": null,
+      "cameraPlan": null,
       "sceneDiff": {
         "addedEntities": [
           {
@@ -2905,7 +3178,7 @@ const renderSpec = {
             "type": "cache",
             "count": 1,
             "importance": "primary",
-            "status": "active",
+            "status": "normal",
             "label": "Cache",
             "layout": {
               "x": 50,
@@ -2962,7 +3235,7 @@ const renderSpec = {
         ],
         "updatedEntities": [
           {
-            "id": "lb",
+            "id": "users",
             "changes": {
               "status": {
                 "from": "active",
@@ -2973,6 +3246,19 @@ const renderSpec = {
           {
             "id": "app",
             "changes": {
+              "status": {
+                "from": "active",
+                "to": "normal"
+              }
+            }
+          },
+          {
+            "id": "db",
+            "changes": {
+              "status": {
+                "from": "overloaded",
+                "to": "normal"
+              },
               "importance": {
                 "from": "primary",
                 "to": "secondary"
@@ -2985,11 +3271,26 @@ const renderSpec = {
             "id": "c_app_cache_lookup",
             "from": "app",
             "to": "cache",
+            "direction": "bidirectional",
+            "style": "solid"
+          },
+          {
+            "id": "c_cache_db_call",
+            "from": "cache",
+            "to": "db",
             "direction": "one_way",
             "style": "solid"
           }
         ],
-        "removedConnections": [],
+        "removedConnections": [
+          {
+            "id": "c_app_db_call",
+            "from": "app",
+            "to": "db",
+            "direction": "bidirectional",
+            "style": "solid"
+          }
+        ],
         "addedInteractions": [
           {
             "id": "i_c_app_cache_lookup_fwd",
@@ -2997,20 +3298,54 @@ const renderSpec = {
             "to": "cache",
             "type": "ping",
             "intensity": "high"
+          },
+          {
+            "id": "i_c_app_cache_lookup_rev",
+            "from": "cache",
+            "to": "app",
+            "type": "ping",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_cache_db_call_fwd",
+            "from": "cache",
+            "to": "db",
+            "type": "flow",
+            "intensity": "low"
           }
         ],
-        "removedInteractions": [],
+        "removedInteractions": [
+          {
+            "id": "i_c_app_db_call_fwd",
+            "from": "app",
+            "to": "db",
+            "type": "flow",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_app_db_call_rev",
+            "from": "db",
+            "to": "app",
+            "type": "flow",
+            "intensity": "high"
+          }
+        ],
         "interactionIntensityChanged": [
           {
-            "id": "i_c_app_db_req_fwd",
-            "from": "medium",
-            "to": "low"
+            "id": "i_c_users_lb_req_fwd",
+            "from": "high",
+            "to": "medium"
+          },
+          {
+            "id": "i_c_lb_app_req_fwd",
+            "from": "high",
+            "to": "medium"
           }
         ],
         "cameraChanged": {
           "from": {
             "mode": "focus",
-            "target": "app",
+            "target": "db",
             "zoom": 1.08
           },
           "to": {
@@ -3022,11 +3357,11 @@ const renderSpec = {
       }
     },
     {
-      "id": "scene_06",
-      "start": 30,
-      "end": 36,
-      "narration": "A CDN serves many requests directly, and the remaining traffic goes from Users to the Load Balancer and then to the Servers.",
-      "camera": "focus",
+      "id": "s7",
+      "start": 36,
+      "end": 42,
+      "narration": "A Read Replica is added so Servers can send read traffic to the Read Replica while writes still go to the Primary Database.",
+      "camera": "wide",
       "elements": [
         {
           "id": "users",
@@ -3037,44 +3372,20 @@ const renderSpec = {
             "x": 50,
             "y": 12
           },
+          "effects": [],
           "visualStyle": {
             "size": 64.8,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.545584412271571,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 12.168000000000001,
+            "glowColor": "#93C5FD",
+            "glowBlur": 6.327360000000001,
             "textColor": "#E8F6FF",
             "fontSize": 20.16,
             "fontWeight": 600,
             "status": "normal"
-          }
-        },
-        {
-          "id": "cdn",
-          "type": "cdn",
-          "sourceEntityId": "cdn",
-          "label": "CDN",
-          "position": {
-            "x": 50,
-            "y": 24
-          },
-          "enter": "zoom_in",
-          "visualStyle": {
-            "size": 64.8,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.545584412271571,
-            "strokeColor": "#34D399",
-            "glow": true,
-            "glowColor": "#34D399",
-            "glowBlur": 12.168000000000001,
-            "textColor": "#E8F6FF",
-            "fontSize": 20.16,
-            "fontWeight": 600,
-            "status": "active"
           }
         },
         {
@@ -3084,17 +3395,18 @@ const renderSpec = {
           "label": "Load Balancer",
           "position": {
             "x": 50,
-            "y": 36
+            "y": 24
           },
+          "effects": [],
           "visualStyle": {
             "size": 64.8,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.545584412271571,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 12.168000000000001,
+            "glowColor": "#93C5FD",
+            "glowBlur": 6.327360000000001,
             "textColor": "#E8F6FF",
             "fontSize": 20.16,
             "fontWeight": 600,
@@ -3107,17 +3419,18 @@ const renderSpec = {
           "sourceEntityId": "app",
           "position": {
             "x": 33.56666666666667,
-            "y": 48
+            "y": 36
           },
+          "effects": [],
           "visualStyle": {
             "size": 64.8,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.545584412271571,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 12.168000000000001,
+            "glowColor": "#93C5FD",
+            "glowBlur": 6.327360000000001,
             "textColor": "#E8F6FF",
             "fontSize": 20.16,
             "fontWeight": 600,
@@ -3131,17 +3444,18 @@ const renderSpec = {
           "label": "Server",
           "position": {
             "x": 50,
-            "y": 48
+            "y": 36
           },
+          "effects": [],
           "visualStyle": {
             "size": 64.8,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.545584412271571,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 12.168000000000001,
+            "glowColor": "#93C5FD",
+            "glowBlur": 6.327360000000001,
             "textColor": "#E8F6FF",
             "fontSize": 20.16,
             "fontWeight": 600,
@@ -3154,17 +3468,18 @@ const renderSpec = {
           "sourceEntityId": "app",
           "position": {
             "x": 66.43333333333334,
-            "y": 48
+            "y": 36
           },
+          "effects": [],
           "visualStyle": {
             "size": 64.8,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.545584412271571,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 12.168000000000001,
+            "glowColor": "#93C5FD",
+            "glowBlur": 6.327360000000001,
             "textColor": "#E8F6FF",
             "fontSize": 20.16,
             "fontWeight": 600,
@@ -3178,17 +3493,18 @@ const renderSpec = {
           "label": "Cache",
           "position": {
             "x": 50,
-            "y": 60
+            "y": 48
           },
+          "effects": [],
           "visualStyle": {
             "size": 64.8,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.545584412271571,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 12.168000000000001,
+            "glowColor": "#93C5FD",
+            "glowBlur": 6.327360000000001,
             "textColor": "#E8F6FF",
             "fontSize": 20.16,
             "fontWeight": 600,
@@ -3196,23 +3512,49 @@ const renderSpec = {
           }
         },
         {
-          "id": "db",
-          "type": "database",
-          "sourceEntityId": "db",
-          "label": "Database",
+          "id": "db_primary",
+          "type": "primary_database",
+          "sourceEntityId": "db_primary",
+          "label": "Primary Database",
+          "position": {
+            "x": 50,
+            "y": 60
+          },
+          "effects": [],
+          "visualStyle": {
+            "size": 64.8,
+            "opacity": 1,
+            "color": "#345F9F",
+            "strokeWidth": 2.545584412271571,
+            "strokeColor": "#8AA4C8",
+            "glow": true,
+            "glowColor": "#93C5FD",
+            "glowBlur": 6.327360000000001,
+            "textColor": "#E8F6FF",
+            "fontSize": 20.16,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        },
+        {
+          "id": "db_replica",
+          "type": "read_replica",
+          "sourceEntityId": "db_replica",
+          "label": "Read Replica",
           "position": {
             "x": 50,
             "y": 72
           },
+          "effects": [],
           "visualStyle": {
             "size": 64.8,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.545584412271571,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 12.168000000000001,
+            "glowColor": "#93C5FD",
+            "glowBlur": 6.327360000000001,
             "textColor": "#E8F6FF",
             "fontSize": 20.16,
             "fontWeight": 600,
@@ -3234,18 +3576,6 @@ const renderSpec = {
           }
         },
         {
-          "id": "cdn",
-          "type": "cdn",
-          "count": 1,
-          "importance": "primary",
-          "status": "active",
-          "label": "CDN",
-          "layout": {
-            "x": 50,
-            "y": 24
-          }
-        },
-        {
           "id": "lb",
           "type": "load_balancer",
           "count": 1,
@@ -3254,7 +3584,7 @@ const renderSpec = {
           "label": "Load Balancer",
           "layout": {
             "x": 50,
-            "y": 36
+            "y": 24
           }
         },
         {
@@ -3266,7 +3596,7 @@ const renderSpec = {
           "label": "Server",
           "layout": {
             "x": 50,
-            "y": 48
+            "y": 36
           }
         },
         {
@@ -3278,16 +3608,28 @@ const renderSpec = {
           "label": "Cache",
           "layout": {
             "x": 50,
+            "y": 48
+          }
+        },
+        {
+          "id": "db_primary",
+          "type": "primary_database",
+          "count": 1,
+          "importance": "primary",
+          "status": "normal",
+          "label": "Primary Database",
+          "layout": {
+            "x": 50,
             "y": 60
           }
         },
         {
-          "id": "db",
-          "type": "database",
+          "id": "db_replica",
+          "type": "read_replica",
           "count": 1,
           "importance": "secondary",
           "status": "normal",
-          "label": "Database",
+          "label": "Read Replica",
           "layout": {
             "x": 50,
             "y": 72
@@ -3295,13 +3637,6 @@ const renderSpec = {
         }
       ],
       "connections": [
-        {
-          "id": "c_users_cdn_fetch",
-          "from": "users",
-          "to": "cdn",
-          "direction": "one_way",
-          "style": "solid"
-        },
         {
           "id": "c_users_lb_req",
           "from": "users",
@@ -3320,25 +3655,32 @@ const renderSpec = {
           "id": "c_app_cache_lookup",
           "from": "app",
           "to": "cache",
+          "direction": "bidirectional",
+          "style": "solid"
+        },
+        {
+          "id": "c_cache_db_replica_read",
+          "from": "cache",
+          "to": "db_replica",
           "direction": "one_way",
           "style": "solid"
         },
         {
-          "id": "c_app_db_req",
-          "from": "app",
-          "to": "db",
+          "id": "c_cache_db_primary_write",
+          "from": "cache",
+          "to": "db_primary",
           "direction": "one_way",
           "style": "solid"
+        },
+        {
+          "id": "c_db_primary_replication",
+          "from": "db_primary",
+          "to": "db_replica",
+          "direction": "one_way",
+          "style": "dashed"
         }
       ],
       "interactions": [
-        {
-          "id": "i_c_users_cdn_fetch_fwd",
-          "from": "users",
-          "to": "cdn",
-          "type": "flow",
-          "intensity": "high"
-        },
         {
           "id": "i_c_users_lb_req_fwd",
           "from": "users",
@@ -3358,36 +3700,57 @@ const renderSpec = {
           "from": "app",
           "to": "cache",
           "type": "ping",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_app_cache_lookup_rev",
+          "from": "cache",
+          "to": "app",
+          "type": "ping",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_cache_db_replica_read_fwd",
+          "from": "cache",
+          "to": "db_replica",
+          "type": "flow",
           "intensity": "medium"
         },
         {
-          "id": "i_c_app_db_req_fwd",
-          "from": "app",
-          "to": "db",
+          "id": "i_c_cache_db_primary_write_fwd",
+          "from": "cache",
+          "to": "db_primary",
           "type": "flow",
-          "intensity": "low"
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_db_primary_replication_fwd",
+          "from": "db_primary",
+          "to": "db_replica",
+          "type": "broadcast",
+          "intensity": "medium"
         }
       ],
       "sourceCamera": {
         "mode": "focus",
-        "target": "cdn",
+        "target": "db_primary",
         "zoom": 1
       },
       "directives": {
         "camera": {
           "mode": "follow_action",
-          "zoom": "tight",
+          "zoom": "wide",
           "active_zone": "upper_third",
           "reserve_bottom_percent": 25
         },
         "visual": {
-          "theme": "neon",
+          "theme": "default",
           "background_texture": "grid",
-          "glow_strength": "strong"
+          "glow_strength": "soft"
         },
         "motion": {
           "entry_style": "elastic_pop",
-          "pacing": "reel_fast"
+          "pacing": "balanced"
         },
         "flow": {
           "renderer": "hybrid"
@@ -3408,18 +3771,6 @@ const renderSpec = {
             }
           },
           {
-            "id": "cdn",
-            "type": "cdn",
-            "count": 1,
-            "importance": "primary",
-            "status": "active",
-            "label": "CDN",
-            "layout": {
-              "x": 50,
-              "y": 24
-            }
-          },
-          {
             "id": "lb",
             "type": "load_balancer",
             "count": 1,
@@ -3428,7 +3779,7 @@ const renderSpec = {
             "label": "Load Balancer",
             "layout": {
               "x": 50,
-              "y": 36
+              "y": 24
             }
           },
           {
@@ -3440,7 +3791,7 @@ const renderSpec = {
             "label": "Server",
             "layout": {
               "x": 50,
-              "y": 48
+              "y": 36
             }
           },
           {
@@ -3452,16 +3803,28 @@ const renderSpec = {
             "label": "Cache",
             "layout": {
               "x": 50,
+              "y": 48
+            }
+          },
+          {
+            "id": "db_primary",
+            "type": "primary_database",
+            "count": 1,
+            "importance": "primary",
+            "status": "normal",
+            "label": "Primary Database",
+            "layout": {
+              "x": 50,
               "y": 60
             }
           },
           {
-            "id": "db",
-            "type": "database",
+            "id": "db_replica",
+            "type": "read_replica",
             "count": 1,
             "importance": "secondary",
             "status": "normal",
-            "label": "Database",
+            "label": "Read Replica",
             "layout": {
               "x": 50,
               "y": 72
@@ -3469,13 +3832,6 @@ const renderSpec = {
           }
         ],
         "connections": [
-          {
-            "id": "c_users_cdn_fetch",
-            "from": "users",
-            "to": "cdn",
-            "direction": "one_way",
-            "style": "solid"
-          },
           {
             "id": "c_users_lb_req",
             "from": "users",
@@ -3494,25 +3850,32 @@ const renderSpec = {
             "id": "c_app_cache_lookup",
             "from": "app",
             "to": "cache",
+            "direction": "bidirectional",
+            "style": "solid"
+          },
+          {
+            "id": "c_cache_db_replica_read",
+            "from": "cache",
+            "to": "db_replica",
             "direction": "one_way",
             "style": "solid"
           },
           {
-            "id": "c_app_db_req",
-            "from": "app",
-            "to": "db",
+            "id": "c_cache_db_primary_write",
+            "from": "cache",
+            "to": "db_primary",
             "direction": "one_way",
             "style": "solid"
+          },
+          {
+            "id": "c_db_primary_replication",
+            "from": "db_primary",
+            "to": "db_replica",
+            "direction": "one_way",
+            "style": "dashed"
           }
         ],
         "interactions": [
-          {
-            "id": "i_c_users_cdn_fetch_fwd",
-            "from": "users",
-            "to": "cdn",
-            "type": "flow",
-            "intensity": "high"
-          },
           {
             "id": "i_c_users_lb_req_fwd",
             "from": "users",
@@ -3532,28 +3895,58 @@ const renderSpec = {
             "from": "app",
             "to": "cache",
             "type": "ping",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_app_cache_lookup_rev",
+            "from": "cache",
+            "to": "app",
+            "type": "ping",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_cache_db_replica_read_fwd",
+            "from": "cache",
+            "to": "db_replica",
+            "type": "flow",
             "intensity": "medium"
           },
           {
-            "id": "i_c_app_db_req_fwd",
-            "from": "app",
-            "to": "db",
+            "id": "i_c_cache_db_primary_write_fwd",
+            "from": "cache",
+            "to": "db_primary",
             "type": "flow",
-            "intensity": "low"
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_db_primary_replication_fwd",
+            "from": "db_primary",
+            "to": "db_replica",
+            "type": "broadcast",
+            "intensity": "medium"
           }
         ],
         "camera": {
           "mode": "focus",
-          "target": "cdn",
+          "target": "db_primary",
           "zoom": 1
         }
       },
+      "staticScene": true,
       "motionPersonality": "CALM",
       "diff": {
         "entityDiffs": [
           {
             "type": "entity_added",
-            "entityId": "cdn"
+            "entityId": "db_primary"
+          },
+          {
+            "type": "entity_added",
+            "entityId": "db_replica"
+          },
+          {
+            "type": "entity_removed",
+            "entityId": "db"
           },
           {
             "type": "entity_moved",
@@ -3564,7 +3957,7 @@ const renderSpec = {
             },
             "to": {
               "x": 50,
-              "y": 36
+              "y": 24
             }
           },
           {
@@ -3576,7 +3969,7 @@ const renderSpec = {
             },
             "to": {
               "x": 50,
-              "y": 48
+              "y": 36
             }
           },
           {
@@ -3588,14 +3981,8 @@ const renderSpec = {
             },
             "to": {
               "x": 50,
-              "y": 60
+              "y": 48
             }
-          },
-          {
-            "type": "entity_status_changed",
-            "entityId": "cache",
-            "from": "active",
-            "to": "normal"
           },
           {
             "type": "entity_importance_changed",
@@ -3607,31 +3994,37 @@ const renderSpec = {
         "connectionDiffs": [
           {
             "type": "connection_added",
-            "connectionId": "c_users_cdn_fetch"
+            "connectionId": "c_cache_db_replica_read"
+          },
+          {
+            "type": "connection_added",
+            "connectionId": "c_cache_db_primary_write"
+          },
+          {
+            "type": "connection_added",
+            "connectionId": "c_db_primary_replication"
+          },
+          {
+            "type": "connection_removed",
+            "connectionId": "c_cache_db_call"
           }
         ],
         "interactionDiffs": [
           {
             "type": "interaction_added",
-            "interactionId": "i_c_users_cdn_fetch_fwd"
+            "interactionId": "i_c_cache_db_replica_read_fwd"
           },
           {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_users_lb_req_fwd",
-            "from": "high",
-            "to": "medium"
+            "type": "interaction_added",
+            "interactionId": "i_c_cache_db_primary_write_fwd"
           },
           {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_lb_app_req_fwd",
-            "from": "high",
-            "to": "medium"
+            "type": "interaction_added",
+            "interactionId": "i_c_db_primary_replication_fwd"
           },
           {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_app_cache_lookup_fwd",
-            "from": "high",
-            "to": "medium"
+            "type": "interaction_removed",
+            "interactionId": "i_c_cache_db_call_fwd"
           }
         ],
         "cameraDiffs": [
@@ -3644,191 +4037,90 @@ const renderSpec = {
             },
             "to": {
               "mode": "focus",
-              "target": "cdn",
+              "target": "db_primary",
               "zoom": 1
             }
           }
         ]
       },
-      "hierarchyTransition": null,
-      "plan": {
-        "phaseOrder": [
-          "removals",
-          "moves",
-          "additions",
-          "connections",
-          "interactions",
-          "camera"
-        ],
-        "removals": [],
-        "moves": [
-          {
-            "entityId": "lb",
-            "elementIds": [
-              "lb"
-            ],
-            "action": "move"
+      "hierarchy": {
+        "primaryId": "db_primary",
+        "entityStyles": {
+          "users": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
           },
-          {
-            "entityId": "app",
-            "elementIds": [
-              "app_1",
-              "app",
-              "app_3"
-            ],
-            "action": "move"
+          "lb": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
           },
-          {
-            "entityId": "cache",
-            "elementIds": [
-              "cache"
-            ],
-            "action": "move"
-          }
-        ],
-        "additions": [
-          {
-            "entityId": "cdn",
-            "elementIds": [
-              "cdn"
-            ],
-            "action": "add",
-            "enter": "zoom_in"
-          }
-        ],
-        "connections": [
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "connect",
-            "connectionId": "c_users_cdn_fetch"
+          "app": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
           },
-          {
-            "entityId": "cdn",
-            "elementIds": [
-              "cdn"
-            ],
-            "action": "connect",
-            "connectionId": "c_users_cdn_fetch"
-          }
-        ],
-        "interactions": [
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_users_lb_req_fwd",
-            "cleanup": false
+          "cache": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
           },
-          {
-            "entityId": "cdn",
-            "elementIds": [
-              "cdn"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_users_cdn_fetch_fwd"
-          },
-          {
-            "entityId": "lb",
-            "elementIds": [
-              "lb"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_lb_app_req_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "app",
-            "elementIds": [
-              "app_1",
-              "app",
-              "app_3"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_app_cache_lookup_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "cache",
-            "elementIds": [
-              "cache"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_app_cache_lookup_fwd"
-          }
-        ]
-      },
-      "animationPlan": {
-        "entities": [
-          {
-            "entityId": "lb",
-            "action": "move",
-            "delay": 0.6000000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "app",
-            "action": "move",
-            "delay": 0.6560000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "cache",
-            "action": "move",
-            "delay": 0.7120000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "cdn",
-            "action": "add",
-            "delay": 0.37399999999999994,
-            "duration": 0.62,
-            "easing": "cubic-bezier(0.2,0,0,1)",
+          "db_primary": {
             "scale": 1.2,
-            "isPrimary": true
+            "opacity": 1,
+            "glow": true
+          },
+          "db_replica": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
           }
-        ],
-        "connections": [
-          {
-            "connectionId": "c_users_cdn_fetch",
-            "delay": 0.504,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          }
-        ],
-        "camera": null
+        }
       },
-      "cameraPlan": {
-        "targetId": "cdn",
-        "targetElementId": "cdn",
-        "zoom": 1,
-        "duration": 0.55,
-        "easing": "cubic-bezier(0.2,0,0,1)",
-        "motionType": "focus_primary"
-      },
+      "hierarchyTransition": null,
+      "cameraPlan": null,
       "sceneDiff": {
         "addedEntities": [
           {
-            "id": "cdn",
-            "type": "cdn",
+            "id": "db_primary",
+            "type": "primary_database",
             "count": 1,
             "importance": "primary",
-            "status": "active",
-            "label": "CDN",
+            "status": "normal",
+            "label": "Primary Database",
             "layout": {
               "x": 50,
-              "y": 24
+              "y": 60
+            }
+          },
+          {
+            "id": "db_replica",
+            "type": "read_replica",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Read Replica",
+            "layout": {
+              "x": 50,
+              "y": 72
             }
           }
         ],
-        "removedEntities": [],
+        "removedEntities": [
+          {
+            "id": "db",
+            "type": "database",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Database",
+            "layout": {
+              "x": 50,
+              "y": 72
+            }
+          }
+        ],
         "movedEntities": [
           {
             "id": "lb",
@@ -3838,7 +4130,7 @@ const renderSpec = {
             },
             "to": {
               "x": 50,
-              "y": 36
+              "y": 24
             }
           },
           {
@@ -3849,7 +4141,7 @@ const renderSpec = {
             },
             "to": {
               "x": 50,
-              "y": 48
+              "y": 36
             }
           },
           {
@@ -3860,7 +4152,7 @@ const renderSpec = {
             },
             "to": {
               "x": 50,
-              "y": 60
+              "y": 48
             }
           }
         ],
@@ -3868,10 +4160,6 @@ const renderSpec = {
           {
             "id": "cache",
             "changes": {
-              "status": {
-                "from": "active",
-                "to": "normal"
-              },
               "importance": {
                 "from": "primary",
                 "to": "secondary"
@@ -3881,41 +4169,69 @@ const renderSpec = {
         ],
         "addedConnections": [
           {
-            "id": "c_users_cdn_fetch",
-            "from": "users",
-            "to": "cdn",
+            "id": "c_cache_db_replica_read",
+            "from": "cache",
+            "to": "db_replica",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_cache_db_primary_write",
+            "from": "cache",
+            "to": "db_primary",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_db_primary_replication",
+            "from": "db_primary",
+            "to": "db_replica",
+            "direction": "one_way",
+            "style": "dashed"
+          }
+        ],
+        "removedConnections": [
+          {
+            "id": "c_cache_db_call",
+            "from": "cache",
+            "to": "db",
             "direction": "one_way",
             "style": "solid"
           }
         ],
-        "removedConnections": [],
         "addedInteractions": [
           {
-            "id": "i_c_users_cdn_fetch_fwd",
-            "from": "users",
-            "to": "cdn",
+            "id": "i_c_cache_db_replica_read_fwd",
+            "from": "cache",
+            "to": "db_replica",
             "type": "flow",
-            "intensity": "high"
-          }
-        ],
-        "removedInteractions": [],
-        "interactionIntensityChanged": [
-          {
-            "id": "i_c_users_lb_req_fwd",
-            "from": "high",
-            "to": "medium"
+            "intensity": "medium"
           },
           {
-            "id": "i_c_lb_app_req_fwd",
-            "from": "high",
-            "to": "medium"
+            "id": "i_c_cache_db_primary_write_fwd",
+            "from": "cache",
+            "to": "db_primary",
+            "type": "flow",
+            "intensity": "medium"
           },
           {
-            "id": "i_c_app_cache_lookup_fwd",
-            "from": "high",
-            "to": "medium"
+            "id": "i_c_db_primary_replication_fwd",
+            "from": "db_primary",
+            "to": "db_replica",
+            "type": "broadcast",
+            "intensity": "medium"
           }
         ],
+        "removedInteractions": [
+          {
+            "id": "i_c_cache_db_call_fwd",
+            "from": "cache",
+            "to": "db",
+            "type": "flow",
+            "intensity": "low"
+          }
+        ],
+        "interactionIntensityChanged": [],
         "cameraChanged": {
           "from": {
             "mode": "focus",
@@ -3924,18 +4240,18 @@ const renderSpec = {
           },
           "to": {
             "mode": "focus",
-            "target": "cdn",
+            "target": "db_primary",
             "zoom": 1
           }
         }
       }
     },
     {
-      "id": "scene_07",
-      "start": 36,
-      "end": 42,
-      "narration": "Servers handle user requests quickly and push slow tasks into a Queue instead of doing them inline.",
-      "camera": "focus",
+      "id": "s8",
+      "start": 42,
+      "end": 48,
+      "narration": "A Queue is added so the Server can enqueue bursty work and respond fast while the Queue buffers tasks instead of blocking on the Database.",
+      "camera": "wide",
       "elements": [
         {
           "id": "users",
@@ -3946,41 +4262,18 @@ const renderSpec = {
             "x": 50,
             "y": 12
           },
+          "effects": [],
           "visualStyle": {
-            "size": 60.3,
+            "size": 64.8,
             "opacity": 1,
-            "color": "#2A4B88",
-            "strokeWidth": 2.455605831561735,
-            "strokeColor": "#00FFFF",
+            "color": "#345F9F",
+            "strokeWidth": 2.545584412271571,
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 11.323,
+            "glowColor": "#93C5FD",
+            "glowBlur": 6.327360000000001,
             "textColor": "#E8F6FF",
-            "fontSize": 18.759999999999998,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "cdn",
-          "type": "cdn",
-          "sourceEntityId": "cdn",
-          "label": "CDN",
-          "position": {
-            "x": 50,
-            "y": 22
-          },
-          "visualStyle": {
-            "size": 60.3,
-            "opacity": 1,
-            "color": "#2A4B88",
-            "strokeWidth": 2.455605831561735,
-            "strokeColor": "#00FFFF",
-            "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 11.323,
-            "textColor": "#E8F6FF",
-            "fontSize": 18.759999999999998,
+            "fontSize": 20.16,
             "fontWeight": 600,
             "status": "normal"
           }
@@ -3992,19 +4285,20 @@ const renderSpec = {
           "label": "Load Balancer",
           "position": {
             "x": 50,
-            "y": 32
+            "y": 24
           },
+          "effects": [],
           "visualStyle": {
-            "size": 60.3,
+            "size": 64.8,
             "opacity": 1,
-            "color": "#2A4B88",
-            "strokeWidth": 2.455605831561735,
-            "strokeColor": "#00FFFF",
+            "color": "#345F9F",
+            "strokeWidth": 2.545584412271571,
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 11.323,
+            "glowColor": "#93C5FD",
+            "glowBlur": 6.327360000000001,
             "textColor": "#E8F6FF",
-            "fontSize": 18.759999999999998,
+            "fontSize": 20.16,
             "fontWeight": 600,
             "status": "normal"
           }
@@ -4014,22 +4308,23 @@ const renderSpec = {
           "type": "server",
           "sourceEntityId": "app",
           "position": {
-            "x": 34.70787037037037,
-            "y": 42
+            "x": 33.56666666666667,
+            "y": 36
           },
+          "effects": [],
           "visualStyle": {
-            "size": 60.3,
+            "size": 64.8,
             "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.455605831561735,
-            "strokeColor": "#34D399",
+            "color": "#345F9F",
+            "strokeWidth": 2.545584412271571,
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#34D399",
-            "glowBlur": 11.323,
+            "glowColor": "#93C5FD",
+            "glowBlur": 6.327360000000001,
             "textColor": "#E8F6FF",
-            "fontSize": 18.759999999999998,
+            "fontSize": 20.16,
             "fontWeight": 600,
-            "status": "active"
+            "status": "normal"
           }
         },
         {
@@ -4039,21 +4334,22 @@ const renderSpec = {
           "label": "Server",
           "position": {
             "x": 50,
-            "y": 42
+            "y": 36
           },
+          "effects": [],
           "visualStyle": {
-            "size": 60.3,
+            "size": 64.8,
             "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.455605831561735,
-            "strokeColor": "#34D399",
+            "color": "#345F9F",
+            "strokeWidth": 2.545584412271571,
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#34D399",
-            "glowBlur": 11.323,
+            "glowColor": "#93C5FD",
+            "glowBlur": 6.327360000000001,
             "textColor": "#E8F6FF",
-            "fontSize": 18.759999999999998,
+            "fontSize": 20.16,
             "fontWeight": 600,
-            "status": "active"
+            "status": "normal"
           }
         },
         {
@@ -4061,22 +4357,23 @@ const renderSpec = {
           "type": "server",
           "sourceEntityId": "app",
           "position": {
-            "x": 65.29212962962963,
-            "y": 42
+            "x": 66.43333333333334,
+            "y": 36
           },
+          "effects": [],
           "visualStyle": {
-            "size": 60.3,
+            "size": 64.8,
             "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.455605831561735,
-            "strokeColor": "#34D399",
+            "color": "#345F9F",
+            "strokeWidth": 2.545584412271571,
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#34D399",
-            "glowBlur": 11.323,
+            "glowColor": "#93C5FD",
+            "glowBlur": 6.327360000000001,
             "textColor": "#E8F6FF",
-            "fontSize": 18.759999999999998,
+            "fontSize": 20.16,
             "fontWeight": 600,
-            "status": "active"
+            "status": "normal"
           }
         },
         {
@@ -4086,68 +4383,70 @@ const renderSpec = {
           "label": "Queue",
           "position": {
             "x": 50,
-            "y": 52
+            "y": 48
           },
-          "enter": "zoom_in",
+          "effects": [],
           "visualStyle": {
-            "size": 60.3,
+            "size": 64.8,
             "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.455605831561735,
-            "strokeColor": "#34D399",
+            "color": "#345F9F",
+            "strokeWidth": 2.545584412271571,
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#34D399",
-            "glowBlur": 11.323,
+            "glowColor": "#93C5FD",
+            "glowBlur": 6.327360000000001,
             "textColor": "#E8F6FF",
-            "fontSize": 18.759999999999998,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "cache",
-          "type": "cache",
-          "sourceEntityId": "cache",
-          "label": "Cache",
-          "position": {
-            "x": 50,
-            "y": 62
-          },
-          "visualStyle": {
-            "size": 60.3,
-            "opacity": 1,
-            "color": "#2A4B88",
-            "strokeWidth": 2.455605831561735,
-            "strokeColor": "#00FFFF",
-            "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 11.323,
-            "textColor": "#E8F6FF",
-            "fontSize": 18.759999999999998,
+            "fontSize": 20.16,
             "fontWeight": 600,
             "status": "normal"
           }
         },
         {
-          "id": "db",
-          "type": "database",
-          "sourceEntityId": "db",
-          "label": "Database",
+          "id": "db_primary",
+          "type": "primary_database",
+          "sourceEntityId": "db_primary",
+          "label": "Primary Database",
+          "position": {
+            "x": 50,
+            "y": 60
+          },
+          "effects": [],
+          "visualStyle": {
+            "size": 64.8,
+            "opacity": 1,
+            "color": "#345F9F",
+            "strokeWidth": 2.545584412271571,
+            "strokeColor": "#8AA4C8",
+            "glow": true,
+            "glowColor": "#93C5FD",
+            "glowBlur": 6.327360000000001,
+            "textColor": "#E8F6FF",
+            "fontSize": 20.16,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        },
+        {
+          "id": "db_replica",
+          "type": "read_replica",
+          "sourceEntityId": "db_replica",
+          "label": "Read Replica",
           "position": {
             "x": 50,
             "y": 72
           },
+          "effects": [],
           "visualStyle": {
-            "size": 60.3,
+            "size": 64.8,
             "opacity": 1,
-            "color": "#2A4B88",
-            "strokeWidth": 2.455605831561735,
-            "strokeColor": "#00FFFF",
+            "color": "#345F9F",
+            "strokeWidth": 2.545584412271571,
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 11.323,
+            "glowColor": "#93C5FD",
+            "glowBlur": 6.327360000000001,
             "textColor": "#E8F6FF",
-            "fontSize": 18.759999999999998,
+            "fontSize": 20.16,
             "fontWeight": 600,
             "status": "normal"
           }
@@ -4167,18 +4466,6 @@ const renderSpec = {
           }
         },
         {
-          "id": "cdn",
-          "type": "cdn",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "CDN",
-          "layout": {
-            "x": 50,
-            "y": 22
-          }
-        },
-        {
           "id": "lb",
           "type": "load_balancer",
           "count": 1,
@@ -4187,7 +4474,7 @@ const renderSpec = {
           "label": "Load Balancer",
           "layout": {
             "x": 50,
-            "y": 32
+            "y": 24
           }
         },
         {
@@ -4195,11 +4482,11 @@ const renderSpec = {
           "type": "server",
           "count": 3,
           "importance": "secondary",
-          "status": "active",
+          "status": "normal",
           "label": "Server",
           "layout": {
             "x": 50,
-            "y": 42
+            "y": 36
           }
         },
         {
@@ -4207,32 +4494,32 @@ const renderSpec = {
           "type": "queue",
           "count": 1,
           "importance": "primary",
-          "status": "active",
+          "status": "normal",
           "label": "Queue",
           "layout": {
             "x": 50,
-            "y": 52
+            "y": 48
           }
         },
         {
-          "id": "cache",
-          "type": "cache",
+          "id": "db_primary",
+          "type": "primary_database",
           "count": 1,
           "importance": "secondary",
           "status": "normal",
-          "label": "Cache",
+          "label": "Primary Database",
           "layout": {
             "x": 50,
-            "y": 62
+            "y": 60
           }
         },
         {
-          "id": "db",
-          "type": "database",
+          "id": "db_replica",
+          "type": "read_replica",
           "count": 1,
           "importance": "secondary",
           "status": "normal",
-          "label": "Database",
+          "label": "Read Replica",
           "layout": {
             "x": 50,
             "y": 72
@@ -4240,13 +4527,6 @@ const renderSpec = {
         }
       ],
       "connections": [
-        {
-          "id": "c_users_cdn_fetch",
-          "from": "users",
-          "to": "cdn",
-          "direction": "one_way",
-          "style": "solid"
-        },
         {
           "id": "c_users_lb_req",
           "from": "users",
@@ -4262,35 +4542,21 @@ const renderSpec = {
           "style": "solid"
         },
         {
-          "id": "c_app_queue_dispatch",
+          "id": "c_app_queue_async",
           "from": "app",
           "to": "queue",
           "direction": "one_way",
           "style": "solid"
         },
         {
-          "id": "c_app_cache_lookup",
+          "id": "c_app_db_replica_read",
           "from": "app",
-          "to": "cache",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_app_db_req",
-          "from": "app",
-          "to": "db",
+          "to": "db_replica",
           "direction": "one_way",
           "style": "solid"
         }
       ],
       "interactions": [
-        {
-          "id": "i_c_users_cdn_fetch_fwd",
-          "from": "users",
-          "to": "cdn",
-          "type": "flow",
-          "intensity": "high"
-        },
         {
           "id": "i_c_users_lb_req_fwd",
           "from": "users",
@@ -4306,25 +4572,18 @@ const renderSpec = {
           "intensity": "medium"
         },
         {
-          "id": "i_c_app_queue_dispatch_fwd",
+          "id": "i_c_app_queue_async_fwd",
           "from": "app",
           "to": "queue",
           "type": "broadcast",
-          "intensity": "medium"
+          "intensity": "high"
         },
         {
-          "id": "i_c_app_cache_lookup_fwd",
+          "id": "i_c_app_db_replica_read_fwd",
           "from": "app",
-          "to": "cache",
-          "type": "ping",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_app_db_req_fwd",
-          "from": "app",
-          "to": "db",
+          "to": "db_replica",
           "type": "flow",
-          "intensity": "low"
+          "intensity": "medium"
         }
       ],
       "sourceCamera": {
@@ -4335,21 +4594,21 @@ const renderSpec = {
       "directives": {
         "camera": {
           "mode": "follow_action",
-          "zoom": "tight",
+          "zoom": "medium",
           "active_zone": "upper_third",
           "reserve_bottom_percent": 25
         },
         "visual": {
-          "theme": "neon",
+          "theme": "default",
           "background_texture": "grid",
-          "glow_strength": "strong"
+          "glow_strength": "soft"
         },
         "motion": {
-          "entry_style": "elastic_pop",
-          "pacing": "reel_fast"
+          "entry_style": "drop_bounce",
+          "pacing": "balanced"
         },
         "flow": {
-          "renderer": "hybrid"
+          "renderer": "packets"
         }
       },
       "source": {
@@ -4367,18 +4626,6 @@ const renderSpec = {
             }
           },
           {
-            "id": "cdn",
-            "type": "cdn",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "CDN",
-            "layout": {
-              "x": 50,
-              "y": 22
-            }
-          },
-          {
             "id": "lb",
             "type": "load_balancer",
             "count": 1,
@@ -4387,7 +4634,7 @@ const renderSpec = {
             "label": "Load Balancer",
             "layout": {
               "x": 50,
-              "y": 32
+              "y": 24
             }
           },
           {
@@ -4395,11 +4642,11 @@ const renderSpec = {
             "type": "server",
             "count": 3,
             "importance": "secondary",
-            "status": "active",
+            "status": "normal",
             "label": "Server",
             "layout": {
               "x": 50,
-              "y": 42
+              "y": 36
             }
           },
           {
@@ -4407,32 +4654,32 @@ const renderSpec = {
             "type": "queue",
             "count": 1,
             "importance": "primary",
-            "status": "active",
+            "status": "normal",
             "label": "Queue",
             "layout": {
               "x": 50,
-              "y": 52
+              "y": 48
             }
           },
           {
-            "id": "cache",
-            "type": "cache",
+            "id": "db_primary",
+            "type": "primary_database",
             "count": 1,
             "importance": "secondary",
             "status": "normal",
-            "label": "Cache",
+            "label": "Primary Database",
             "layout": {
               "x": 50,
-              "y": 62
+              "y": 60
             }
           },
           {
-            "id": "db",
-            "type": "database",
+            "id": "db_replica",
+            "type": "read_replica",
             "count": 1,
             "importance": "secondary",
             "status": "normal",
-            "label": "Database",
+            "label": "Read Replica",
             "layout": {
               "x": 50,
               "y": 72
@@ -4440,13 +4687,6 @@ const renderSpec = {
           }
         ],
         "connections": [
-          {
-            "id": "c_users_cdn_fetch",
-            "from": "users",
-            "to": "cdn",
-            "direction": "one_way",
-            "style": "solid"
-          },
           {
             "id": "c_users_lb_req",
             "from": "users",
@@ -4462,35 +4702,21 @@ const renderSpec = {
             "style": "solid"
           },
           {
-            "id": "c_app_queue_dispatch",
+            "id": "c_app_queue_async",
             "from": "app",
             "to": "queue",
             "direction": "one_way",
             "style": "solid"
           },
           {
-            "id": "c_app_cache_lookup",
+            "id": "c_app_db_replica_read",
             "from": "app",
-            "to": "cache",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_app_db_req",
-            "from": "app",
-            "to": "db",
+            "to": "db_replica",
             "direction": "one_way",
             "style": "solid"
           }
         ],
         "interactions": [
-          {
-            "id": "i_c_users_cdn_fetch_fwd",
-            "from": "users",
-            "to": "cdn",
-            "type": "flow",
-            "intensity": "high"
-          },
           {
             "id": "i_c_users_lb_req_fwd",
             "from": "users",
@@ -4506,25 +4732,18 @@ const renderSpec = {
             "intensity": "medium"
           },
           {
-            "id": "i_c_app_queue_dispatch_fwd",
+            "id": "i_c_app_queue_async_fwd",
             "from": "app",
             "to": "queue",
             "type": "broadcast",
-            "intensity": "medium"
+            "intensity": "high"
           },
           {
-            "id": "i_c_app_cache_lookup_fwd",
+            "id": "i_c_app_db_replica_read_fwd",
             "from": "app",
-            "to": "cache",
-            "type": "ping",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_app_db_req_fwd",
-            "from": "app",
-            "to": "db",
+            "to": "db_replica",
             "type": "flow",
-            "intensity": "low"
+            "intensity": "medium"
           }
         ],
         "camera": {
@@ -4533,6 +4752,7 @@ const renderSpec = {
           "zoom": 1
         }
       },
+      "staticScene": true,
       "motionPersonality": "CALM",
       "diff": {
         "entityDiffs": [
@@ -4541,82 +4761,70 @@ const renderSpec = {
             "entityId": "queue"
           },
           {
-            "type": "entity_moved",
-            "entityId": "cdn",
-            "from": {
-              "x": 50,
-              "y": 24
-            },
-            "to": {
-              "x": 50,
-              "y": 22
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "lb",
-            "from": {
-              "x": 50,
-              "y": 36
-            },
-            "to": {
-              "x": 50,
-              "y": 32
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "app",
-            "from": {
-              "x": 50,
-              "y": 48
-            },
-            "to": {
-              "x": 50,
-              "y": 42
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "cache",
-            "from": {
-              "x": 50,
-              "y": 60
-            },
-            "to": {
-              "x": 50,
-              "y": 62
-            }
-          },
-          {
-            "type": "entity_status_changed",
-            "entityId": "cdn",
-            "from": "active",
-            "to": "normal"
+            "type": "entity_removed",
+            "entityId": "cache"
           },
           {
             "type": "entity_importance_changed",
-            "entityId": "cdn",
+            "entityId": "db_primary",
             "from": "primary",
             "to": "secondary"
-          },
-          {
-            "type": "entity_status_changed",
-            "entityId": "app",
-            "from": "normal",
-            "to": "active"
           }
         ],
         "connectionDiffs": [
           {
             "type": "connection_added",
-            "connectionId": "c_app_queue_dispatch"
+            "connectionId": "c_app_queue_async"
+          },
+          {
+            "type": "connection_added",
+            "connectionId": "c_app_db_replica_read"
+          },
+          {
+            "type": "connection_removed",
+            "connectionId": "c_app_cache_lookup"
+          },
+          {
+            "type": "connection_removed",
+            "connectionId": "c_cache_db_replica_read"
+          },
+          {
+            "type": "connection_removed",
+            "connectionId": "c_cache_db_primary_write"
+          },
+          {
+            "type": "connection_removed",
+            "connectionId": "c_db_primary_replication"
           }
         ],
         "interactionDiffs": [
           {
             "type": "interaction_added",
-            "interactionId": "i_c_app_queue_dispatch_fwd"
+            "interactionId": "i_c_app_queue_async_fwd"
+          },
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_app_db_replica_read_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_app_cache_lookup_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_app_cache_lookup_rev"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_cache_db_replica_read_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_cache_db_primary_write_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_db_primary_replication_fwd"
           }
         ],
         "cameraDiffs": [
@@ -4624,7 +4832,7 @@ const renderSpec = {
             "type": "camera_changed",
             "from": {
               "mode": "focus",
-              "target": "cdn",
+              "target": "db_primary",
               "zoom": 1
             },
             "to": {
@@ -4635,158 +4843,43 @@ const renderSpec = {
           }
         ]
       },
-      "hierarchyTransition": null,
-      "plan": {
-        "phaseOrder": [
-          "removals",
-          "moves",
-          "additions",
-          "connections",
-          "interactions",
-          "camera"
-        ],
-        "removals": [],
-        "moves": [
-          {
-            "entityId": "cdn",
-            "elementIds": [
-              "cdn"
-            ],
-            "action": "move"
+      "hierarchy": {
+        "primaryId": "queue",
+        "entityStyles": {
+          "users": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
           },
-          {
-            "entityId": "lb",
-            "elementIds": [
-              "lb"
-            ],
-            "action": "move"
+          "lb": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
           },
-          {
-            "entityId": "app",
-            "elementIds": [
-              "app_1",
-              "app",
-              "app_3"
-            ],
-            "action": "move"
+          "app": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
           },
-          {
-            "entityId": "cache",
-            "elementIds": [
-              "cache"
-            ],
-            "action": "move"
-          }
-        ],
-        "additions": [
-          {
-            "entityId": "queue",
-            "elementIds": [
-              "queue"
-            ],
-            "action": "add",
-            "enter": "zoom_in"
-          }
-        ],
-        "connections": [
-          {
-            "entityId": "app",
-            "elementIds": [
-              "app_1",
-              "app",
-              "app_3"
-            ],
-            "action": "connect",
-            "connectionId": "c_app_queue_dispatch"
-          },
-          {
-            "entityId": "queue",
-            "elementIds": [
-              "queue"
-            ],
-            "action": "connect",
-            "connectionId": "c_app_queue_dispatch"
-          }
-        ],
-        "interactions": [
-          {
-            "entityId": "app",
-            "elementIds": [
-              "app_1",
-              "app",
-              "app_3"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_app_queue_dispatch_fwd"
-          },
-          {
-            "entityId": "queue",
-            "elementIds": [
-              "queue"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_app_queue_dispatch_fwd"
-          }
-        ]
-      },
-      "animationPlan": {
-        "entities": [
-          {
-            "entityId": "cdn",
-            "action": "move",
-            "delay": 0.6000000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "lb",
-            "action": "move",
-            "delay": 0.6560000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "app",
-            "action": "move",
-            "delay": 0.7120000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "cache",
-            "action": "move",
-            "delay": 0.768,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "queue",
-            "action": "add",
-            "delay": 0.37399999999999994,
-            "duration": 0.62,
-            "easing": "cubic-bezier(0.2,0,0,1)",
+          "queue": {
             "scale": 1.2,
-            "isPrimary": true
+            "opacity": 1,
+            "glow": true
+          },
+          "db_primary": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
+          },
+          "db_replica": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
           }
-        ],
-        "connections": [
-          {
-            "connectionId": "c_app_queue_dispatch",
-            "delay": 0.504,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          }
-        ],
-        "camera": null
+        }
       },
-      "cameraPlan": {
-        "targetId": "queue",
-        "targetElementId": "queue",
-        "zoom": 1,
-        "duration": 0.55,
-        "easing": "cubic-bezier(0.2,0,0,1)",
-        "motionType": "focus_primary"
-      },
+      "hierarchyTransition": null,
+      "cameraPlan": null,
       "sceneDiff": {
         "addedEntities": [
           {
@@ -4794,666 +4887,15 @@ const renderSpec = {
             "type": "queue",
             "count": 1,
             "importance": "primary",
-            "status": "active",
+            "status": "normal",
             "label": "Queue",
             "layout": {
-              "x": 50,
-              "y": 52
-            }
-          }
-        ],
-        "removedEntities": [],
-        "movedEntities": [
-          {
-            "id": "cdn",
-            "from": {
-              "x": 50,
-              "y": 24
-            },
-            "to": {
-              "x": 50,
-              "y": 22
-            }
-          },
-          {
-            "id": "lb",
-            "from": {
-              "x": 50,
-              "y": 36
-            },
-            "to": {
-              "x": 50,
-              "y": 32
-            }
-          },
-          {
-            "id": "app",
-            "from": {
               "x": 50,
               "y": 48
-            },
-            "to": {
-              "x": 50,
-              "y": 42
-            }
-          },
-          {
-            "id": "cache",
-            "from": {
-              "x": 50,
-              "y": 60
-            },
-            "to": {
-              "x": 50,
-              "y": 62
             }
           }
         ],
-        "updatedEntities": [
-          {
-            "id": "cdn",
-            "changes": {
-              "status": {
-                "from": "active",
-                "to": "normal"
-              },
-              "importance": {
-                "from": "primary",
-                "to": "secondary"
-              }
-            }
-          },
-          {
-            "id": "app",
-            "changes": {
-              "status": {
-                "from": "normal",
-                "to": "active"
-              }
-            }
-          }
-        ],
-        "addedConnections": [
-          {
-            "id": "c_app_queue_dispatch",
-            "from": "app",
-            "to": "queue",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "removedConnections": [],
-        "addedInteractions": [
-          {
-            "id": "i_c_app_queue_dispatch_fwd",
-            "from": "app",
-            "to": "queue",
-            "type": "broadcast",
-            "intensity": "medium"
-          }
-        ],
-        "removedInteractions": [],
-        "interactionIntensityChanged": [],
-        "cameraChanged": {
-          "from": {
-            "mode": "focus",
-            "target": "cdn",
-            "zoom": 1
-          },
-          "to": {
-            "mode": "focus",
-            "target": "queue",
-            "zoom": 1
-          }
-        }
-      }
-    },
-    {
-      "id": "scene_08",
-      "start": 42,
-      "end": 48,
-      "narration": "Workers pull jobs from the Queue and update the Database while Servers stay focused on fast responses.",
-      "camera": "focus",
-      "elements": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "sourceEntityId": "users",
-          "label": "Users",
-          "position": {
-            "x": 50,
-            "y": 12
-          },
-          "visualStyle": {
-            "size": 55.8,
-            "opacity": 1,
-            "color": "#2A4B88",
-            "strokeWidth": 2.3622023622035435,
-            "strokeColor": "#00FFFF",
-            "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 10.478000000000002,
-            "textColor": "#E8F6FF",
-            "fontSize": 17.36,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "cdn",
-          "type": "cdn",
-          "sourceEntityId": "cdn",
-          "label": "CDN",
-          "position": {
-            "x": 50,
-            "y": 20.57142857142857
-          },
-          "visualStyle": {
-            "size": 55.8,
-            "opacity": 1,
-            "color": "#2A4B88",
-            "strokeWidth": 2.3622023622035435,
-            "strokeColor": "#00FFFF",
-            "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 10.478000000000002,
-            "textColor": "#E8F6FF",
-            "fontSize": 17.36,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "lb",
-          "type": "load_balancer",
-          "sourceEntityId": "lb",
-          "label": "Load Balancer",
-          "position": {
-            "x": 50,
-            "y": 29.142857142857142
-          },
-          "visualStyle": {
-            "size": 55.8,
-            "opacity": 1,
-            "color": "#2A4B88",
-            "strokeWidth": 2.3622023622035435,
-            "strokeColor": "#00FFFF",
-            "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 10.478000000000002,
-            "textColor": "#E8F6FF",
-            "fontSize": 17.36,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_1",
-          "type": "server",
-          "sourceEntityId": "app",
-          "position": {
-            "x": 35.849074074074075,
-            "y": 37.714285714285715
-          },
-          "visualStyle": {
-            "size": 55.8,
-            "opacity": 1,
-            "color": "#2A4B88",
-            "strokeWidth": 2.3622023622035435,
-            "strokeColor": "#00FFFF",
-            "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 10.478000000000002,
-            "textColor": "#E8F6FF",
-            "fontSize": 17.36,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app",
-          "type": "server",
-          "sourceEntityId": "app",
-          "label": "Server",
-          "position": {
-            "x": 50,
-            "y": 37.714285714285715
-          },
-          "visualStyle": {
-            "size": 55.8,
-            "opacity": 1,
-            "color": "#2A4B88",
-            "strokeWidth": 2.3622023622035435,
-            "strokeColor": "#00FFFF",
-            "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 10.478000000000002,
-            "textColor": "#E8F6FF",
-            "fontSize": 17.36,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_3",
-          "type": "server",
-          "sourceEntityId": "app",
-          "position": {
-            "x": 64.15092592592592,
-            "y": 37.714285714285715
-          },
-          "visualStyle": {
-            "size": 55.8,
-            "opacity": 1,
-            "color": "#2A4B88",
-            "strokeWidth": 2.3622023622035435,
-            "strokeColor": "#00FFFF",
-            "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 10.478000000000002,
-            "textColor": "#E8F6FF",
-            "fontSize": 17.36,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "queue",
-          "type": "queue",
-          "sourceEntityId": "queue",
-          "label": "Queue",
-          "position": {
-            "x": 50,
-            "y": 46.285714285714285
-          },
-          "visualStyle": {
-            "size": 55.8,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.3622023622035435,
-            "strokeColor": "#34D399",
-            "glow": true,
-            "glowColor": "#34D399",
-            "glowBlur": 10.478000000000002,
-            "textColor": "#E8F6FF",
-            "fontSize": 17.36,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "worker",
-          "type": "worker",
-          "sourceEntityId": "worker",
-          "label": "Worker",
-          "position": {
-            "x": 50,
-            "y": 54.857142857142854
-          },
-          "enter": "zoom_in",
-          "visualStyle": {
-            "size": 55.8,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.3622023622035435,
-            "strokeColor": "#34D399",
-            "glow": true,
-            "glowColor": "#34D399",
-            "glowBlur": 10.478000000000002,
-            "textColor": "#E8F6FF",
-            "fontSize": 17.36,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "cache",
-          "type": "cache",
-          "sourceEntityId": "cache",
-          "label": "Cache",
-          "position": {
-            "x": 50,
-            "y": 63.42857142857143
-          },
-          "visualStyle": {
-            "size": 55.8,
-            "opacity": 1,
-            "color": "#2A4B88",
-            "strokeWidth": 2.3622023622035435,
-            "strokeColor": "#00FFFF",
-            "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 10.478000000000002,
-            "textColor": "#E8F6FF",
-            "fontSize": 17.36,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "db",
-          "type": "database",
-          "sourceEntityId": "db",
-          "label": "Database",
-          "position": {
-            "x": 50,
-            "y": 72
-          },
-          "visualStyle": {
-            "size": 55.8,
-            "opacity": 1,
-            "color": "#2A4B88",
-            "strokeWidth": 2.3622023622035435,
-            "strokeColor": "#00FFFF",
-            "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 10.478000000000002,
-            "textColor": "#E8F6FF",
-            "fontSize": 17.36,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        }
-      ],
-      "entities": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Users",
-          "layout": {
-            "x": 50,
-            "y": 12
-          }
-        },
-        {
-          "id": "cdn",
-          "type": "cdn",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "CDN",
-          "layout": {
-            "x": 50,
-            "y": 20.57142857142857
-          }
-        },
-        {
-          "id": "lb",
-          "type": "load_balancer",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Load Balancer",
-          "layout": {
-            "x": 50,
-            "y": 29.142857142857142
-          }
-        },
-        {
-          "id": "app",
-          "type": "server",
-          "count": 3,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Server",
-          "layout": {
-            "x": 50,
-            "y": 37.714285714285715
-          }
-        },
-        {
-          "id": "queue",
-          "type": "queue",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "Queue",
-          "layout": {
-            "x": 50,
-            "y": 46.285714285714285
-          }
-        },
-        {
-          "id": "worker",
-          "type": "worker",
-          "count": 1,
-          "importance": "primary",
-          "status": "active",
-          "label": "Worker",
-          "layout": {
-            "x": 50,
-            "y": 54.857142857142854
-          }
-        },
-        {
-          "id": "cache",
-          "type": "cache",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Cache",
-          "layout": {
-            "x": 50,
-            "y": 63.42857142857143
-          }
-        },
-        {
-          "id": "db",
-          "type": "database",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Database",
-          "layout": {
-            "x": 50,
-            "y": 72
-          }
-        }
-      ],
-      "connections": [
-        {
-          "id": "c_users_cdn_fetch",
-          "from": "users",
-          "to": "cdn",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_users_lb_req",
-          "from": "users",
-          "to": "lb",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_lb_app_req",
-          "from": "lb",
-          "to": "app",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_app_queue_dispatch",
-          "from": "app",
-          "to": "queue",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_queue_worker_dispatch",
-          "from": "queue",
-          "to": "worker",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_worker_db_commit",
-          "from": "worker",
-          "to": "db",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_app_cache_lookup",
-          "from": "app",
-          "to": "cache",
-          "direction": "one_way",
-          "style": "solid"
-        }
-      ],
-      "interactions": [
-        {
-          "id": "i_c_users_cdn_fetch_fwd",
-          "from": "users",
-          "to": "cdn",
-          "type": "flow",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_users_lb_req_fwd",
-          "from": "users",
-          "to": "lb",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_lb_app_req_fwd",
-          "from": "lb",
-          "to": "app",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_app_queue_dispatch_fwd",
-          "from": "app",
-          "to": "queue",
-          "type": "broadcast",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_queue_worker_dispatch_fwd",
-          "from": "queue",
-          "to": "worker",
-          "type": "broadcast",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_worker_db_commit_fwd",
-          "from": "worker",
-          "to": "db",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_app_cache_lookup_fwd",
-          "from": "app",
-          "to": "cache",
-          "type": "ping",
-          "intensity": "medium"
-        }
-      ],
-      "sourceCamera": {
-        "mode": "focus",
-        "target": "worker",
-        "zoom": 1
-      },
-      "directives": {
-        "camera": {
-          "mode": "follow_action",
-          "zoom": "tight",
-          "active_zone": "upper_third",
-          "reserve_bottom_percent": 25
-        },
-        "visual": {
-          "theme": "neon",
-          "background_texture": "grid",
-          "glow_strength": "strong"
-        },
-        "motion": {
-          "entry_style": "elastic_pop",
-          "pacing": "reel_fast"
-        },
-        "flow": {
-          "renderer": "hybrid"
-        }
-      },
-      "source": {
-        "entities": [
-          {
-            "id": "users",
-            "type": "users_cluster",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Users",
-            "layout": {
-              "x": 50,
-              "y": 12
-            }
-          },
-          {
-            "id": "cdn",
-            "type": "cdn",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "CDN",
-            "layout": {
-              "x": 50,
-              "y": 20.57142857142857
-            }
-          },
-          {
-            "id": "lb",
-            "type": "load_balancer",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Load Balancer",
-            "layout": {
-              "x": 50,
-              "y": 29.142857142857142
-            }
-          },
-          {
-            "id": "app",
-            "type": "server",
-            "count": 3,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Server",
-            "layout": {
-              "x": 50,
-              "y": 37.714285714285715
-            }
-          },
-          {
-            "id": "queue",
-            "type": "queue",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Queue",
-            "layout": {
-              "x": 50,
-              "y": 46.285714285714285
-            }
-          },
-          {
-            "id": "worker",
-            "type": "worker",
-            "count": 1,
-            "importance": "primary",
-            "status": "active",
-            "label": "Worker",
-            "layout": {
-              "x": 50,
-              "y": 54.857142857142854
-            }
-          },
+        "removedEntities": [
           {
             "id": "cache",
             "type": "cache",
@@ -5463,553 +4905,14 @@ const renderSpec = {
             "label": "Cache",
             "layout": {
               "x": 50,
-              "y": 63.42857142857143
-            }
-          },
-          {
-            "id": "db",
-            "type": "database",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Database",
-            "layout": {
-              "x": 50,
-              "y": 72
+              "y": 48
             }
           }
         ],
-        "connections": [
-          {
-            "id": "c_users_cdn_fetch",
-            "from": "users",
-            "to": "cdn",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_users_lb_req",
-            "from": "users",
-            "to": "lb",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_lb_app_req",
-            "from": "lb",
-            "to": "app",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_app_queue_dispatch",
-            "from": "app",
-            "to": "queue",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_queue_worker_dispatch",
-            "from": "queue",
-            "to": "worker",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_worker_db_commit",
-            "from": "worker",
-            "to": "db",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_app_cache_lookup",
-            "from": "app",
-            "to": "cache",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "interactions": [
-          {
-            "id": "i_c_users_cdn_fetch_fwd",
-            "from": "users",
-            "to": "cdn",
-            "type": "flow",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_users_lb_req_fwd",
-            "from": "users",
-            "to": "lb",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_lb_app_req_fwd",
-            "from": "lb",
-            "to": "app",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_app_queue_dispatch_fwd",
-            "from": "app",
-            "to": "queue",
-            "type": "broadcast",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_queue_worker_dispatch_fwd",
-            "from": "queue",
-            "to": "worker",
-            "type": "broadcast",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_worker_db_commit_fwd",
-            "from": "worker",
-            "to": "db",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_app_cache_lookup_fwd",
-            "from": "app",
-            "to": "cache",
-            "type": "ping",
-            "intensity": "medium"
-          }
-        ],
-        "camera": {
-          "mode": "focus",
-          "target": "worker",
-          "zoom": 1
-        }
-      },
-      "motionPersonality": "CALM",
-      "diff": {
-        "entityDiffs": [
-          {
-            "type": "entity_added",
-            "entityId": "worker"
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "cdn",
-            "from": {
-              "x": 50,
-              "y": 22
-            },
-            "to": {
-              "x": 50,
-              "y": 20.57142857142857
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "lb",
-            "from": {
-              "x": 50,
-              "y": 32
-            },
-            "to": {
-              "x": 50,
-              "y": 29.142857142857142
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "app",
-            "from": {
-              "x": 50,
-              "y": 42
-            },
-            "to": {
-              "x": 50,
-              "y": 37.714285714285715
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "queue",
-            "from": {
-              "x": 50,
-              "y": 52
-            },
-            "to": {
-              "x": 50,
-              "y": 46.285714285714285
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "cache",
-            "from": {
-              "x": 50,
-              "y": 62
-            },
-            "to": {
-              "x": 50,
-              "y": 63.42857142857143
-            }
-          },
-          {
-            "type": "entity_status_changed",
-            "entityId": "app",
-            "from": "active",
-            "to": "normal"
-          },
-          {
-            "type": "entity_importance_changed",
-            "entityId": "queue",
-            "from": "primary",
-            "to": "secondary"
-          }
-        ],
-        "connectionDiffs": [
-          {
-            "type": "connection_added",
-            "connectionId": "c_queue_worker_dispatch"
-          },
-          {
-            "type": "connection_added",
-            "connectionId": "c_worker_db_commit"
-          },
-          {
-            "type": "connection_removed",
-            "connectionId": "c_app_db_req"
-          }
-        ],
-        "interactionDiffs": [
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_queue_worker_dispatch_fwd"
-          },
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_worker_db_commit_fwd"
-          },
-          {
-            "type": "interaction_removed",
-            "interactionId": "i_c_app_db_req_fwd"
-          }
-        ],
-        "cameraDiffs": [
-          {
-            "type": "camera_changed",
-            "from": {
-              "mode": "focus",
-              "target": "queue",
-              "zoom": 1
-            },
-            "to": {
-              "mode": "focus",
-              "target": "worker",
-              "zoom": 1
-            }
-          }
-        ]
-      },
-      "hierarchyTransition": null,
-      "plan": {
-        "phaseOrder": [
-          "removals",
-          "moves",
-          "additions",
-          "connections",
-          "interactions",
-          "camera"
-        ],
-        "removals": [],
-        "moves": [
-          {
-            "entityId": "cdn",
-            "elementIds": [
-              "cdn"
-            ],
-            "action": "move"
-          },
-          {
-            "entityId": "lb",
-            "elementIds": [
-              "lb"
-            ],
-            "action": "move"
-          },
-          {
-            "entityId": "app",
-            "elementIds": [
-              "app_1",
-              "app",
-              "app_3"
-            ],
-            "action": "move"
-          },
-          {
-            "entityId": "queue",
-            "elementIds": [
-              "queue"
-            ],
-            "action": "move"
-          },
-          {
-            "entityId": "cache",
-            "elementIds": [
-              "cache"
-            ],
-            "action": "move"
-          }
-        ],
-        "additions": [
-          {
-            "entityId": "worker",
-            "elementIds": [
-              "worker"
-            ],
-            "action": "add",
-            "enter": "zoom_in"
-          }
-        ],
-        "connections": [
-          {
-            "entityId": "queue",
-            "elementIds": [
-              "queue"
-            ],
-            "action": "connect",
-            "connectionId": "c_queue_worker_dispatch"
-          },
-          {
-            "entityId": "worker",
-            "elementIds": [
-              "worker"
-            ],
-            "action": "connect",
-            "connectionId": "c_worker_db_commit",
-            "cleanup": false
-          },
-          {
-            "entityId": "db",
-            "elementIds": [
-              "db"
-            ],
-            "action": "connect",
-            "connectionId": "c_app_db_req",
-            "cleanup": false
-          },
-          {
-            "entityId": "app",
-            "elementIds": [
-              "app_1",
-              "app",
-              "app_3"
-            ],
-            "action": "connect",
-            "connectionId": "c_app_db_req"
-          }
-        ],
-        "interactions": [
-          {
-            "entityId": "queue",
-            "elementIds": [
-              "queue"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_queue_worker_dispatch_fwd"
-          },
-          {
-            "entityId": "worker",
-            "elementIds": [
-              "worker"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_worker_db_commit_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "db",
-            "elementIds": [
-              "db"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_app_db_req_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "app",
-            "elementIds": [
-              "app_1",
-              "app",
-              "app_3"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_app_db_req_fwd"
-          }
-        ]
-      },
-      "animationPlan": {
-        "entities": [
-          {
-            "entityId": "cdn",
-            "action": "move",
-            "delay": 0.6000000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "lb",
-            "action": "move",
-            "delay": 0.6560000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "app",
-            "action": "move",
-            "delay": 0.7120000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "queue",
-            "action": "move",
-            "delay": 0.768,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "cache",
-            "action": "move",
-            "delay": 0.8240000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "worker",
-            "action": "add",
-            "delay": 0.37399999999999994,
-            "duration": 0.62,
-            "easing": "cubic-bezier(0.2,0,0,1)",
-            "scale": 1.2,
-            "isPrimary": true
-          }
-        ],
-        "connections": [
-          {
-            "connectionId": "c_queue_worker_dispatch",
-            "delay": 0.504,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "connectionId": "c_worker_db_commit",
-            "delay": 0.56,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "connectionId": "c_app_db_req",
-            "delay": 0.616,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          }
-        ],
-        "camera": null
-      },
-      "cameraPlan": {
-        "targetId": "worker",
-        "targetElementId": "worker",
-        "zoom": 1,
-        "duration": 0.55,
-        "easing": "cubic-bezier(0.2,0,0,1)",
-        "motionType": "focus_primary"
-      },
-      "sceneDiff": {
-        "addedEntities": [
-          {
-            "id": "worker",
-            "type": "worker",
-            "count": 1,
-            "importance": "primary",
-            "status": "active",
-            "label": "Worker",
-            "layout": {
-              "x": 50,
-              "y": 54.857142857142854
-            }
-          }
-        ],
-        "removedEntities": [],
-        "movedEntities": [
-          {
-            "id": "cdn",
-            "from": {
-              "x": 50,
-              "y": 22
-            },
-            "to": {
-              "x": 50,
-              "y": 20.57142857142857
-            }
-          },
-          {
-            "id": "lb",
-            "from": {
-              "x": 50,
-              "y": 32
-            },
-            "to": {
-              "x": 50,
-              "y": 29.142857142857142
-            }
-          },
-          {
-            "id": "app",
-            "from": {
-              "x": 50,
-              "y": 42
-            },
-            "to": {
-              "x": 50,
-              "y": 37.714285714285715
-            }
-          },
-          {
-            "id": "queue",
-            "from": {
-              "x": 50,
-              "y": 52
-            },
-            "to": {
-              "x": 50,
-              "y": 46.285714285714285
-            }
-          },
-          {
-            "id": "cache",
-            "from": {
-              "x": 50,
-              "y": 62
-            },
-            "to": {
-              "x": 50,
-              "y": 63.42857142857143
-            }
-          }
-        ],
+        "movedEntities": [],
         "updatedEntities": [
           {
-            "id": "app",
-            "changes": {
-              "status": {
-                "from": "active",
-                "to": "normal"
-              }
-            }
-          },
-          {
-            "id": "queue",
+            "id": "db_primary",
             "changes": {
               "importance": {
                 "from": "primary",
@@ -6020,75 +4923,124 @@ const renderSpec = {
         ],
         "addedConnections": [
           {
-            "id": "c_queue_worker_dispatch",
-            "from": "queue",
-            "to": "worker",
+            "id": "c_app_queue_async",
+            "from": "app",
+            "to": "queue",
             "direction": "one_way",
             "style": "solid"
           },
           {
-            "id": "c_worker_db_commit",
-            "from": "worker",
-            "to": "db",
+            "id": "c_app_db_replica_read",
+            "from": "app",
+            "to": "db_replica",
             "direction": "one_way",
             "style": "solid"
           }
         ],
         "removedConnections": [
           {
-            "id": "c_app_db_req",
+            "id": "c_app_cache_lookup",
             "from": "app",
-            "to": "db",
+            "to": "cache",
+            "direction": "bidirectional",
+            "style": "solid"
+          },
+          {
+            "id": "c_cache_db_replica_read",
+            "from": "cache",
+            "to": "db_replica",
             "direction": "one_way",
             "style": "solid"
+          },
+          {
+            "id": "c_cache_db_primary_write",
+            "from": "cache",
+            "to": "db_primary",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_db_primary_replication",
+            "from": "db_primary",
+            "to": "db_replica",
+            "direction": "one_way",
+            "style": "dashed"
           }
         ],
         "addedInteractions": [
           {
-            "id": "i_c_queue_worker_dispatch_fwd",
-            "from": "queue",
-            "to": "worker",
+            "id": "i_c_app_queue_async_fwd",
+            "from": "app",
+            "to": "queue",
             "type": "broadcast",
-            "intensity": "medium"
+            "intensity": "high"
           },
           {
-            "id": "i_c_worker_db_commit_fwd",
-            "from": "worker",
-            "to": "db",
+            "id": "i_c_app_db_replica_read_fwd",
+            "from": "app",
+            "to": "db_replica",
             "type": "flow",
             "intensity": "medium"
           }
         ],
         "removedInteractions": [
           {
-            "id": "i_c_app_db_req_fwd",
+            "id": "i_c_app_cache_lookup_fwd",
             "from": "app",
-            "to": "db",
+            "to": "cache",
+            "type": "ping",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_app_cache_lookup_rev",
+            "from": "cache",
+            "to": "app",
+            "type": "ping",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_cache_db_replica_read_fwd",
+            "from": "cache",
+            "to": "db_replica",
             "type": "flow",
-            "intensity": "low"
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_cache_db_primary_write_fwd",
+            "from": "cache",
+            "to": "db_primary",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_db_primary_replication_fwd",
+            "from": "db_primary",
+            "to": "db_replica",
+            "type": "broadcast",
+            "intensity": "medium"
           }
         ],
         "interactionIntensityChanged": [],
         "cameraChanged": {
           "from": {
             "mode": "focus",
-            "target": "queue",
+            "target": "db_primary",
             "zoom": 1
           },
           "to": {
             "mode": "focus",
-            "target": "worker",
+            "target": "queue",
             "zoom": 1
           }
         }
       }
     },
     {
-      "id": "scene_09",
+      "id": "s9",
       "start": 48,
       "end": 54,
-      "narration": "Servers and Workers write to a primary Database and read from a second Database replica to spread load.",
-      "camera": "focus",
+      "narration": "Workers scale out to consume queue_dispatch traffic from the Queue and then worker_commit results into the Primary Database while reads stay on the Read Replica.",
+      "camera": "wide",
       "elements": [
         {
           "id": "users",
@@ -6099,39 +5051,16 @@ const renderSpec = {
             "x": 50,
             "y": 12
           },
+          "effects": [],
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.264950330581225,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 9.633000000000001,
-            "textColor": "#E8F6FF",
-            "fontSize": 16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "cdn",
-          "type": "cdn",
-          "sourceEntityId": "cdn",
-          "label": "CDN",
-          "position": {
-            "x": 50,
-            "y": 20.57142857142857
-          },
-          "visualStyle": {
-            "size": 52,
-            "opacity": 1,
-            "color": "#2A4B88",
-            "strokeWidth": 2.264950330581225,
-            "strokeColor": "#00FFFF",
-            "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 9.633000000000001,
+            "glowColor": "#93C5FD",
+            "glowBlur": 5.0091600000000005,
             "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
@@ -6145,17 +5074,18 @@ const renderSpec = {
           "label": "Load Balancer",
           "position": {
             "x": 50,
-            "y": 29.142857142857142
+            "y": 22
           },
+          "effects": [],
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.264950330581225,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 9.633000000000001,
+            "glowColor": "#93C5FD",
+            "glowBlur": 5.0091600000000005,
             "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
@@ -6168,17 +5098,18 @@ const renderSpec = {
           "sourceEntityId": "app",
           "position": {
             "x": 36.99027777777778,
-            "y": 37.714285714285715
+            "y": 32
           },
+          "effects": [],
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.264950330581225,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 9.633000000000001,
+            "glowColor": "#93C5FD",
+            "glowBlur": 5.0091600000000005,
             "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
@@ -6192,17 +5123,18 @@ const renderSpec = {
           "label": "Server",
           "position": {
             "x": 50,
-            "y": 37.714285714285715
+            "y": 32
           },
+          "effects": [],
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.264950330581225,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 9.633000000000001,
+            "glowColor": "#93C5FD",
+            "glowBlur": 5.0091600000000005,
             "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
@@ -6215,17 +5147,18 @@ const renderSpec = {
           "sourceEntityId": "app",
           "position": {
             "x": 63.00972222222222,
-            "y": 37.714285714285715
+            "y": 32
           },
+          "effects": [],
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.264950330581225,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 9.633000000000001,
+            "glowColor": "#93C5FD",
+            "glowBlur": 5.0091600000000005,
             "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
@@ -6239,21 +5172,46 @@ const renderSpec = {
           "label": "Queue",
           "position": {
             "x": 50,
-            "y": 46.285714285714285
+            "y": 42
           },
+          "effects": [],
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#34D399",
             "strokeWidth": 2.264950330581225,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#34D399",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 9.633000000000001,
+            "glowColor": "#34D399",
+            "glowBlur": 5.0091600000000005,
             "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
-            "status": "normal"
+            "status": "active"
+          }
+        },
+        {
+          "id": "worker_1",
+          "type": "worker",
+          "sourceEntityId": "worker",
+          "position": {
+            "x": 38,
+            "y": 52
+          },
+          "effects": [],
+          "visualStyle": {
+            "size": 52,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.264950330581225,
+            "strokeColor": "#34D399",
+            "glow": true,
+            "glowColor": "#34D399",
+            "glowBlur": 5.0091600000000005,
+            "textColor": "#E8F6FF",
+            "fontSize": 16,
+            "fontWeight": 600,
+            "status": "active"
           }
         },
         {
@@ -6263,56 +5221,9 @@ const renderSpec = {
           "label": "Worker",
           "position": {
             "x": 50,
-            "y": 54.857142857142854
+            "y": 52
           },
-          "visualStyle": {
-            "size": 52,
-            "opacity": 1,
-            "color": "#2A4B88",
-            "strokeWidth": 2.264950330581225,
-            "strokeColor": "#00FFFF",
-            "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 9.633000000000001,
-            "textColor": "#E8F6FF",
-            "fontSize": 16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "cache",
-          "type": "cache",
-          "sourceEntityId": "cache",
-          "label": "Cache",
-          "position": {
-            "x": 50,
-            "y": 63.42857142857143
-          },
-          "visualStyle": {
-            "size": 52,
-            "opacity": 1,
-            "color": "#2A4B88",
-            "strokeWidth": 2.264950330581225,
-            "strokeColor": "#00FFFF",
-            "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 9.633000000000001,
-            "textColor": "#E8F6FF",
-            "fontSize": 16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "db",
-          "type": "database",
-          "sourceEntityId": "db",
-          "label": "Database",
-          "position": {
-            "x": 50,
-            "y": 69
-          },
+          "effects": [],
           "visualStyle": {
             "size": 52,
             "opacity": 1,
@@ -6321,7 +5232,7 @@ const renderSpec = {
             "strokeColor": "#34D399",
             "glow": true,
             "glowColor": "#34D399",
-            "glowBlur": 9.633000000000001,
+            "glowBlur": 5.0091600000000005,
             "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
@@ -6329,14 +5240,14 @@ const renderSpec = {
           }
         },
         {
-          "id": "db_2",
-          "type": "database",
-          "sourceEntityId": "db",
+          "id": "worker_3",
+          "type": "worker",
+          "sourceEntityId": "worker",
           "position": {
-            "x": 50,
-            "y": 75
+            "x": 62,
+            "y": 52
           },
-          "enter": "zoom_in",
+          "effects": [],
           "visualStyle": {
             "size": 52,
             "opacity": 1,
@@ -6345,11 +5256,61 @@ const renderSpec = {
             "strokeColor": "#34D399",
             "glow": true,
             "glowColor": "#34D399",
-            "glowBlur": 9.633000000000001,
+            "glowBlur": 5.0091600000000005,
             "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "active"
+          }
+        },
+        {
+          "id": "db_primary",
+          "type": "primary_database",
+          "sourceEntityId": "db_primary",
+          "label": "Primary Database",
+          "position": {
+            "x": 50,
+            "y": 62
+          },
+          "effects": [],
+          "visualStyle": {
+            "size": 52,
+            "opacity": 1,
+            "color": "#345F9F",
+            "strokeWidth": 2.264950330581225,
+            "strokeColor": "#8AA4C8",
+            "glow": true,
+            "glowColor": "#93C5FD",
+            "glowBlur": 5.0091600000000005,
+            "textColor": "#E8F6FF",
+            "fontSize": 16,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        },
+        {
+          "id": "db_replica",
+          "type": "read_replica",
+          "sourceEntityId": "db_replica",
+          "label": "Read Replica",
+          "position": {
+            "x": 50,
+            "y": 72
+          },
+          "effects": [],
+          "visualStyle": {
+            "size": 52,
+            "opacity": 1,
+            "color": "#345F9F",
+            "strokeWidth": 2.264950330581225,
+            "strokeColor": "#8AA4C8",
+            "glow": true,
+            "glowColor": "#93C5FD",
+            "glowBlur": 5.0091600000000005,
+            "textColor": "#E8F6FF",
+            "fontSize": 16,
+            "fontWeight": 600,
+            "status": "normal"
           }
         }
       ],
@@ -6367,18 +5328,6 @@ const renderSpec = {
           }
         },
         {
-          "id": "cdn",
-          "type": "cdn",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "CDN",
-          "layout": {
-            "x": 50,
-            "y": 20.57142857142857
-          }
-        },
-        {
           "id": "lb",
           "type": "load_balancer",
           "count": 1,
@@ -6387,7 +5336,7 @@ const renderSpec = {
           "label": "Load Balancer",
           "layout": {
             "x": 50,
-            "y": 29.142857142857142
+            "y": 22
           }
         },
         {
@@ -6399,7 +5348,7 @@ const renderSpec = {
           "label": "Server",
           "layout": {
             "x": 50,
-            "y": 37.714285714285715
+            "y": 32
           }
         },
         {
@@ -6407,44 +5356,44 @@ const renderSpec = {
           "type": "queue",
           "count": 1,
           "importance": "secondary",
-          "status": "normal",
+          "status": "active",
           "label": "Queue",
           "layout": {
             "x": 50,
-            "y": 46.285714285714285
+            "y": 42
           }
         },
         {
           "id": "worker",
           "type": "worker",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
+          "count": 3,
+          "importance": "primary",
+          "status": "active",
           "label": "Worker",
           "layout": {
             "x": 50,
-            "y": 54.857142857142854
+            "y": 52
           }
         },
         {
-          "id": "cache",
-          "type": "cache",
+          "id": "db_primary",
+          "type": "primary_database",
           "count": 1,
           "importance": "secondary",
           "status": "normal",
-          "label": "Cache",
+          "label": "Primary Database",
           "layout": {
             "x": 50,
-            "y": 63.42857142857143
+            "y": 62
           }
         },
         {
-          "id": "db",
-          "type": "database",
-          "count": 2,
-          "importance": "primary",
-          "status": "active",
-          "label": "Database",
+          "id": "db_replica",
+          "type": "read_replica",
+          "count": 1,
+          "importance": "secondary",
+          "status": "normal",
+          "label": "Read Replica",
           "layout": {
             "x": 50,
             "y": 72
@@ -6452,13 +5401,6 @@ const renderSpec = {
         }
       ],
       "connections": [
-        {
-          "id": "c_users_cdn_fetch",
-          "from": "users",
-          "to": "cdn",
-          "direction": "one_way",
-          "style": "solid"
-        },
         {
           "id": "c_users_lb_req",
           "from": "users",
@@ -6474,16 +5416,9 @@ const renderSpec = {
           "style": "solid"
         },
         {
-          "id": "c_app_cache_lookup",
+          "id": "c_app_queue_async",
           "from": "app",
-          "to": "cache",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_app_db_req",
-          "from": "app",
-          "to": "db",
+          "to": "queue",
           "direction": "one_way",
           "style": "solid"
         },
@@ -6495,21 +5430,21 @@ const renderSpec = {
           "style": "solid"
         },
         {
-          "id": "c_worker_db_commit",
+          "id": "c_worker_db_primary_commit",
           "from": "worker",
-          "to": "db",
+          "to": "db_primary",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_app_db_replica_read",
+          "from": "app",
+          "to": "db_replica",
           "direction": "one_way",
           "style": "solid"
         }
       ],
       "interactions": [
-        {
-          "id": "i_c_users_cdn_fetch_fwd",
-          "from": "users",
-          "to": "cdn",
-          "type": "flow",
-          "intensity": "high"
-        },
         {
           "id": "i_c_users_lb_req_fwd",
           "from": "users",
@@ -6525,50 +5460,50 @@ const renderSpec = {
           "intensity": "medium"
         },
         {
-          "id": "i_c_app_cache_lookup_fwd",
+          "id": "i_c_app_queue_async_fwd",
           "from": "app",
-          "to": "cache",
-          "type": "ping",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_app_db_req_fwd",
-          "from": "app",
-          "to": "db",
-          "type": "flow",
-          "intensity": "medium"
+          "to": "queue",
+          "type": "broadcast",
+          "intensity": "high"
         },
         {
           "id": "i_c_queue_worker_dispatch_fwd",
           "from": "queue",
           "to": "worker",
           "type": "broadcast",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_worker_db_primary_commit_fwd",
+          "from": "worker",
+          "to": "db_primary",
+          "type": "flow",
           "intensity": "medium"
         },
         {
-          "id": "i_c_worker_db_commit_fwd",
-          "from": "worker",
-          "to": "db",
+          "id": "i_c_app_db_replica_read_fwd",
+          "from": "app",
+          "to": "db_replica",
           "type": "flow",
           "intensity": "medium"
         }
       ],
       "sourceCamera": {
         "mode": "focus",
-        "target": "db",
+        "target": "worker",
         "zoom": 1
       },
       "directives": {
         "camera": {
           "mode": "follow_action",
-          "zoom": "tight",
+          "zoom": "wide",
           "active_zone": "upper_third",
           "reserve_bottom_percent": 25
         },
         "visual": {
-          "theme": "neon",
+          "theme": "default",
           "background_texture": "grid",
-          "glow_strength": "strong"
+          "glow_strength": "soft"
         },
         "motion": {
           "entry_style": "elastic_pop",
@@ -6593,18 +5528,6 @@ const renderSpec = {
             }
           },
           {
-            "id": "cdn",
-            "type": "cdn",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "CDN",
-            "layout": {
-              "x": 50,
-              "y": 20.57142857142857
-            }
-          },
-          {
             "id": "lb",
             "type": "load_balancer",
             "count": 1,
@@ -6613,7 +5536,7 @@ const renderSpec = {
             "label": "Load Balancer",
             "layout": {
               "x": 50,
-              "y": 29.142857142857142
+              "y": 22
             }
           },
           {
@@ -6625,7 +5548,7 @@ const renderSpec = {
             "label": "Server",
             "layout": {
               "x": 50,
-              "y": 37.714285714285715
+              "y": 32
             }
           },
           {
@@ -6633,44 +5556,44 @@ const renderSpec = {
             "type": "queue",
             "count": 1,
             "importance": "secondary",
-            "status": "normal",
+            "status": "active",
             "label": "Queue",
             "layout": {
               "x": 50,
-              "y": 46.285714285714285
+              "y": 42
             }
           },
           {
             "id": "worker",
             "type": "worker",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
+            "count": 3,
+            "importance": "primary",
+            "status": "active",
             "label": "Worker",
             "layout": {
               "x": 50,
-              "y": 54.857142857142854
+              "y": 52
             }
           },
           {
-            "id": "cache",
-            "type": "cache",
+            "id": "db_primary",
+            "type": "primary_database",
             "count": 1,
             "importance": "secondary",
             "status": "normal",
-            "label": "Cache",
+            "label": "Primary Database",
             "layout": {
               "x": 50,
-              "y": 63.42857142857143
+              "y": 62
             }
           },
           {
-            "id": "db",
-            "type": "database",
-            "count": 2,
-            "importance": "primary",
-            "status": "active",
-            "label": "Database",
+            "id": "db_replica",
+            "type": "read_replica",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Read Replica",
             "layout": {
               "x": 50,
               "y": 72
@@ -6678,13 +5601,6 @@ const renderSpec = {
           }
         ],
         "connections": [
-          {
-            "id": "c_users_cdn_fetch",
-            "from": "users",
-            "to": "cdn",
-            "direction": "one_way",
-            "style": "solid"
-          },
           {
             "id": "c_users_lb_req",
             "from": "users",
@@ -6700,16 +5616,9 @@ const renderSpec = {
             "style": "solid"
           },
           {
-            "id": "c_app_cache_lookup",
+            "id": "c_app_queue_async",
             "from": "app",
-            "to": "cache",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_app_db_req",
-            "from": "app",
-            "to": "db",
+            "to": "queue",
             "direction": "one_way",
             "style": "solid"
           },
@@ -6721,21 +5630,21 @@ const renderSpec = {
             "style": "solid"
           },
           {
-            "id": "c_worker_db_commit",
+            "id": "c_worker_db_primary_commit",
             "from": "worker",
-            "to": "db",
+            "to": "db_primary",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_app_db_replica_read",
+            "from": "app",
+            "to": "db_replica",
             "direction": "one_way",
             "style": "solid"
           }
         ],
         "interactions": [
-          {
-            "id": "i_c_users_cdn_fetch_fwd",
-            "from": "users",
-            "to": "cdn",
-            "type": "flow",
-            "intensity": "high"
-          },
           {
             "id": "i_c_users_lb_req_fwd",
             "from": "users",
@@ -6751,98 +5660,127 @@ const renderSpec = {
             "intensity": "medium"
           },
           {
-            "id": "i_c_app_cache_lookup_fwd",
+            "id": "i_c_app_queue_async_fwd",
             "from": "app",
-            "to": "cache",
-            "type": "ping",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_app_db_req_fwd",
-            "from": "app",
-            "to": "db",
-            "type": "flow",
-            "intensity": "medium"
+            "to": "queue",
+            "type": "broadcast",
+            "intensity": "high"
           },
           {
             "id": "i_c_queue_worker_dispatch_fwd",
             "from": "queue",
             "to": "worker",
             "type": "broadcast",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_worker_db_primary_commit_fwd",
+            "from": "worker",
+            "to": "db_primary",
+            "type": "flow",
             "intensity": "medium"
           },
           {
-            "id": "i_c_worker_db_commit_fwd",
-            "from": "worker",
-            "to": "db",
+            "id": "i_c_app_db_replica_read_fwd",
+            "from": "app",
+            "to": "db_replica",
             "type": "flow",
             "intensity": "medium"
           }
         ],
         "camera": {
           "mode": "focus",
-          "target": "db",
+          "target": "worker",
           "zoom": 1
         }
       },
+      "staticScene": true,
       "motionPersonality": "CALM",
       "diff": {
         "entityDiffs": [
           {
+            "type": "entity_added",
+            "entityId": "worker"
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "lb",
+            "from": {
+              "x": 50,
+              "y": 24
+            },
+            "to": {
+              "x": 50,
+              "y": 22
+            }
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "app",
+            "from": {
+              "x": 50,
+              "y": 36
+            },
+            "to": {
+              "x": 50,
+              "y": 32
+            }
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "queue",
+            "from": {
+              "x": 50,
+              "y": 48
+            },
+            "to": {
+              "x": 50,
+              "y": 42
+            }
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "db_primary",
+            "from": {
+              "x": 50,
+              "y": 60
+            },
+            "to": {
+              "x": 50,
+              "y": 62
+            }
+          },
+          {
             "type": "entity_status_changed",
             "entityId": "queue",
-            "from": "active",
-            "to": "normal"
-          },
-          {
-            "type": "entity_status_changed",
-            "entityId": "worker",
-            "from": "active",
-            "to": "normal"
-          },
-          {
-            "type": "entity_importance_changed",
-            "entityId": "worker",
-            "from": "primary",
-            "to": "secondary"
-          },
-          {
-            "type": "entity_count_changed",
-            "entityId": "db",
-            "from": 1,
-            "to": 2
-          },
-          {
-            "type": "entity_status_changed",
-            "entityId": "db",
             "from": "normal",
             "to": "active"
           },
           {
             "type": "entity_importance_changed",
-            "entityId": "db",
-            "from": "secondary",
-            "to": "primary"
+            "entityId": "queue",
+            "from": "primary",
+            "to": "secondary"
           }
         ],
         "connectionDiffs": [
           {
             "type": "connection_added",
-            "connectionId": "c_app_db_req"
+            "connectionId": "c_queue_worker_dispatch"
           },
           {
-            "type": "connection_removed",
-            "connectionId": "c_app_queue_dispatch"
+            "type": "connection_added",
+            "connectionId": "c_worker_db_primary_commit"
           }
         ],
         "interactionDiffs": [
           {
             "type": "interaction_added",
-            "interactionId": "i_c_app_db_req_fwd"
+            "interactionId": "i_c_queue_worker_dispatch_fwd"
           },
           {
-            "type": "interaction_removed",
-            "interactionId": "i_c_app_queue_dispatch_fwd"
+            "type": "interaction_added",
+            "interactionId": "i_c_worker_db_primary_commit_fwd"
           }
         ],
         "cameraDiffs": [
@@ -6850,239 +5788,190 @@ const renderSpec = {
             "type": "camera_changed",
             "from": {
               "mode": "focus",
-              "target": "worker",
+              "target": "queue",
               "zoom": 1
             },
             "to": {
               "mode": "focus",
-              "target": "db",
+              "target": "worker",
               "zoom": 1
             }
           }
         ]
       },
-      "hierarchyTransition": null,
-      "plan": {
-        "phaseOrder": [
-          "removals",
-          "moves",
-          "additions",
-          "connections",
-          "interactions",
-          "camera"
-        ],
-        "removals": [],
-        "moves": [],
-        "additions": [
-          {
-            "entityId": "db",
-            "elementIds": [
-              "db",
-              "db_2"
-            ],
-            "action": "add",
-            "enter": "zoom_in",
-            "cleanup": false
-          }
-        ],
-        "connections": [
-          {
-            "entityId": "app",
-            "elementIds": [
-              "app_1",
-              "app",
-              "app_3"
-            ],
-            "action": "connect",
-            "connectionId": "c_app_queue_dispatch",
-            "cleanup": false
+      "hierarchy": {
+        "primaryId": "worker",
+        "entityStyles": {
+          "users": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
           },
-          {
-            "entityId": "db",
-            "elementIds": [
-              "db",
-              "db_2"
-            ],
-            "action": "connect",
-            "connectionId": "c_app_db_req"
+          "lb": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
           },
-          {
-            "entityId": "queue",
-            "elementIds": [
-              "queue"
-            ],
-            "action": "connect",
-            "connectionId": "c_app_queue_dispatch"
-          }
-        ],
-        "interactions": [
-          {
-            "entityId": "app",
-            "elementIds": [
-              "app_1",
-              "app",
-              "app_3"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_app_queue_dispatch_fwd",
-            "cleanup": false
+          "app": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
           },
-          {
-            "entityId": "db",
-            "elementIds": [
-              "db",
-              "db_2"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_app_db_req_fwd"
+          "queue": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
           },
-          {
-            "entityId": "queue",
-            "elementIds": [
-              "queue"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_app_queue_dispatch_fwd"
-          }
-        ]
-      },
-      "animationPlan": {
-        "entities": [
-          {
-            "entityId": "db",
-            "action": "add",
-            "delay": 0.37399999999999994,
-            "duration": 0.62,
-            "easing": "cubic-bezier(0.2,0,0,1)",
+          "worker": {
             "scale": 1.2,
-            "isPrimary": true
+            "opacity": 1,
+            "glow": true
+          },
+          "db_primary": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
+          },
+          "db_replica": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
+          }
+        }
+      },
+      "hierarchyTransition": null,
+      "cameraPlan": null,
+      "sceneDiff": {
+        "addedEntities": [
+          {
+            "id": "worker",
+            "type": "worker",
+            "count": 3,
+            "importance": "primary",
+            "status": "active",
+            "label": "Worker",
+            "layout": {
+              "x": 50,
+              "y": 52
+            }
           }
         ],
-        "connections": [
+        "removedEntities": [],
+        "movedEntities": [
           {
-            "connectionId": "c_app_db_req",
-            "delay": 0.504,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
+            "id": "lb",
+            "from": {
+              "x": 50,
+              "y": 24
+            },
+            "to": {
+              "x": 50,
+              "y": 22
+            }
           },
           {
-            "connectionId": "c_app_queue_dispatch",
-            "delay": 0.56,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
+            "id": "app",
+            "from": {
+              "x": 50,
+              "y": 36
+            },
+            "to": {
+              "x": 50,
+              "y": 32
+            }
+          },
+          {
+            "id": "queue",
+            "from": {
+              "x": 50,
+              "y": 48
+            },
+            "to": {
+              "x": 50,
+              "y": 42
+            }
+          },
+          {
+            "id": "db_primary",
+            "from": {
+              "x": 50,
+              "y": 60
+            },
+            "to": {
+              "x": 50,
+              "y": 62
+            }
           }
         ],
-        "camera": null
-      },
-      "cameraPlan": {
-        "targetId": "db",
-        "targetElementId": "db",
-        "zoom": 1,
-        "duration": 0.55,
-        "easing": "cubic-bezier(0.2,0,0,1)",
-        "motionType": "focus_primary"
-      },
-      "sceneDiff": {
-        "addedEntities": [],
-        "removedEntities": [],
-        "movedEntities": [],
         "updatedEntities": [
           {
             "id": "queue",
             "changes": {
               "status": {
-                "from": "active",
-                "to": "normal"
-              }
-            }
-          },
-          {
-            "id": "worker",
-            "changes": {
-              "status": {
-                "from": "active",
-                "to": "normal"
+                "from": "normal",
+                "to": "active"
               },
               "importance": {
                 "from": "primary",
                 "to": "secondary"
               }
             }
-          },
-          {
-            "id": "db",
-            "changes": {
-              "status": {
-                "from": "normal",
-                "to": "active"
-              },
-              "count": {
-                "from": 1,
-                "to": 2
-              },
-              "importance": {
-                "from": "secondary",
-                "to": "primary"
-              }
-            }
           }
         ],
         "addedConnections": [
           {
-            "id": "c_app_db_req",
-            "from": "app",
-            "to": "db",
+            "id": "c_queue_worker_dispatch",
+            "from": "queue",
+            "to": "worker",
             "direction": "one_way",
             "style": "solid"
-          }
-        ],
-        "removedConnections": [
+          },
           {
-            "id": "c_app_queue_dispatch",
-            "from": "app",
-            "to": "queue",
+            "id": "c_worker_db_primary_commit",
+            "from": "worker",
+            "to": "db_primary",
             "direction": "one_way",
             "style": "solid"
           }
         ],
+        "removedConnections": [],
         "addedInteractions": [
           {
-            "id": "i_c_app_db_req_fwd",
-            "from": "app",
-            "to": "db",
+            "id": "i_c_queue_worker_dispatch_fwd",
+            "from": "queue",
+            "to": "worker",
+            "type": "broadcast",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_worker_db_primary_commit_fwd",
+            "from": "worker",
+            "to": "db_primary",
             "type": "flow",
             "intensity": "medium"
           }
         ],
-        "removedInteractions": [
-          {
-            "id": "i_c_app_queue_dispatch_fwd",
-            "from": "app",
-            "to": "queue",
-            "type": "broadcast",
-            "intensity": "medium"
-          }
-        ],
+        "removedInteractions": [],
         "interactionIntensityChanged": [],
         "cameraChanged": {
           "from": {
             "mode": "focus",
-            "target": "worker",
+            "target": "queue",
             "zoom": 1
           },
           "to": {
             "mode": "focus",
-            "target": "db",
+            "target": "worker",
             "zoom": 1
           }
         }
       }
     },
     {
-      "id": "scene_10",
+      "id": "s10",
       "start": 54,
       "end": 60,
-      "narration": "The final stack shows Users hitting a CDN, then a Load Balancer, then multiple Servers using a Cache, with a Queue and multiple Workers feeding updates into replicated Databases.",
+      "narration": "At 1 million users, traffic flows from Users to the Load Balancer, fans out to Servers, hits Cache for fast reads, uses Read Replicas for scale, and uses a Queue plus Workers to absorb bursts before writing to the Primary Database.",
       "camera": "wide",
       "elements": [
         {
@@ -7094,6 +5983,7 @@ const renderSpec = {
             "x": 50,
             "y": 12
           },
+          "effects": [],
           "visualStyle": {
             "size": 52,
             "opacity": 1,
@@ -7102,35 +5992,11 @@ const renderSpec = {
             "strokeColor": "#34D399",
             "glow": true,
             "glowColor": "#34D399",
-            "glowBlur": 9.464000000000002,
+            "glowBlur": 4.921280000000001,
             "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
             "status": "active"
-          }
-        },
-        {
-          "id": "cdn",
-          "type": "cdn",
-          "sourceEntityId": "cdn",
-          "label": "CDN",
-          "position": {
-            "x": 50,
-            "y": 20.57142857142857
-          },
-          "visualStyle": {
-            "size": 52,
-            "opacity": 1,
-            "color": "#2A4B88",
-            "strokeWidth": 2.244994432064365,
-            "strokeColor": "#00FFFF",
-            "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 9.464000000000002,
-            "textColor": "#E8F6FF",
-            "fontSize": 16,
-            "fontWeight": 600,
-            "status": "normal"
           }
         },
         {
@@ -7140,17 +6006,18 @@ const renderSpec = {
           "label": "Load Balancer",
           "position": {
             "x": 50,
-            "y": 29.142857142857142
+            "y": 20.57142857142857
           },
+          "effects": [],
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.244994432064365,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 9.464000000000002,
+            "glowColor": "#93C5FD",
+            "glowBlur": 4.921280000000001,
             "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
@@ -7163,17 +6030,18 @@ const renderSpec = {
           "sourceEntityId": "app",
           "position": {
             "x": 37.21851851851852,
-            "y": 37.714285714285715
+            "y": 29.142857142857142
           },
+          "effects": [],
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.244994432064365,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 9.464000000000002,
+            "glowColor": "#93C5FD",
+            "glowBlur": 4.921280000000001,
             "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
@@ -7187,17 +6055,18 @@ const renderSpec = {
           "label": "Server",
           "position": {
             "x": 50,
-            "y": 37.714285714285715
+            "y": 29.142857142857142
           },
+          "effects": [],
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.244994432064365,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 9.464000000000002,
+            "glowColor": "#93C5FD",
+            "glowBlur": 4.921280000000001,
             "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
@@ -7210,17 +6079,18 @@ const renderSpec = {
           "sourceEntityId": "app",
           "position": {
             "x": 62.78148148148148,
-            "y": 37.714285714285715
+            "y": 29.142857142857142
           },
+          "effects": [],
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.244994432064365,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 9.464000000000002,
+            "glowColor": "#93C5FD",
+            "glowBlur": 4.921280000000001,
             "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
@@ -7234,17 +6104,18 @@ const renderSpec = {
           "label": "Cache",
           "position": {
             "x": 50,
-            "y": 46.285714285714285
+            "y": 37.714285714285715
           },
+          "effects": [],
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.244994432064365,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 9.464000000000002,
+            "glowColor": "#93C5FD",
+            "glowBlur": 4.921280000000001,
             "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
@@ -7258,17 +6129,18 @@ const renderSpec = {
           "label": "Queue",
           "position": {
             "x": 50,
-            "y": 54.857142857142854
+            "y": 46.285714285714285
           },
+          "effects": [],
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.244994432064365,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 9.464000000000002,
+            "glowColor": "#93C5FD",
+            "glowBlur": 4.921280000000001,
             "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
@@ -7281,18 +6153,18 @@ const renderSpec = {
           "sourceEntityId": "worker",
           "position": {
             "x": 38,
-            "y": 63.42857142857143
+            "y": 54.857142857142854
           },
-          "enter": "zoom_in",
+          "effects": [],
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.244994432064365,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 9.464000000000002,
+            "glowColor": "#93C5FD",
+            "glowBlur": 4.921280000000001,
             "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
@@ -7306,17 +6178,18 @@ const renderSpec = {
           "label": "Worker",
           "position": {
             "x": 50,
-            "y": 63.42857142857143
+            "y": 54.857142857142854
           },
+          "effects": [],
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.244994432064365,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 9.464000000000002,
+            "glowColor": "#93C5FD",
+            "glowBlur": 4.921280000000001,
             "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
@@ -7329,18 +6202,43 @@ const renderSpec = {
           "sourceEntityId": "worker",
           "position": {
             "x": 62,
+            "y": 54.857142857142854
+          },
+          "effects": [],
+          "visualStyle": {
+            "size": 52,
+            "opacity": 1,
+            "color": "#345F9F",
+            "strokeWidth": 2.244994432064365,
+            "strokeColor": "#8AA4C8",
+            "glow": true,
+            "glowColor": "#93C5FD",
+            "glowBlur": 4.921280000000001,
+            "textColor": "#E8F6FF",
+            "fontSize": 16,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        },
+        {
+          "id": "db_primary",
+          "type": "primary_database",
+          "sourceEntityId": "db_primary",
+          "label": "Primary Database",
+          "position": {
+            "x": 50,
             "y": 63.42857142857143
           },
-          "enter": "zoom_in",
+          "effects": [],
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.244994432064365,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 9.464000000000002,
+            "glowColor": "#93C5FD",
+            "glowBlur": 4.921280000000001,
             "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
@@ -7348,46 +6246,24 @@ const renderSpec = {
           }
         },
         {
-          "id": "db",
-          "type": "database",
-          "sourceEntityId": "db",
-          "label": "Database",
+          "id": "db_replica",
+          "type": "read_replica",
+          "sourceEntityId": "db_replica",
+          "label": "Read Replica",
           "position": {
             "x": 50,
-            "y": 69
+            "y": 72
           },
+          "effects": [],
           "visualStyle": {
             "size": 52,
             "opacity": 1,
-            "color": "#2A4B88",
+            "color": "#345F9F",
             "strokeWidth": 2.244994432064365,
-            "strokeColor": "#00FFFF",
+            "strokeColor": "#8AA4C8",
             "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 9.464000000000002,
-            "textColor": "#E8F6FF",
-            "fontSize": 16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "db_2",
-          "type": "database",
-          "sourceEntityId": "db",
-          "position": {
-            "x": 50,
-            "y": 75
-          },
-          "visualStyle": {
-            "size": 52,
-            "opacity": 1,
-            "color": "#2A4B88",
-            "strokeWidth": 2.244994432064365,
-            "strokeColor": "#00FFFF",
-            "glow": true,
-            "glowColor": "#00FFFF",
-            "glowBlur": 9.464000000000002,
+            "glowColor": "#93C5FD",
+            "glowBlur": 4.921280000000001,
             "textColor": "#E8F6FF",
             "fontSize": 16,
             "fontWeight": 600,
@@ -7409,18 +6285,6 @@ const renderSpec = {
           }
         },
         {
-          "id": "cdn",
-          "type": "cdn",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "CDN",
-          "layout": {
-            "x": 50,
-            "y": 20.57142857142857
-          }
-        },
-        {
           "id": "lb",
           "type": "load_balancer",
           "count": 1,
@@ -7429,7 +6293,7 @@ const renderSpec = {
           "label": "Load Balancer",
           "layout": {
             "x": 50,
-            "y": 29.142857142857142
+            "y": 20.57142857142857
           }
         },
         {
@@ -7441,7 +6305,7 @@ const renderSpec = {
           "label": "Server",
           "layout": {
             "x": 50,
-            "y": 37.714285714285715
+            "y": 29.142857142857142
           }
         },
         {
@@ -7453,7 +6317,7 @@ const renderSpec = {
           "label": "Cache",
           "layout": {
             "x": 50,
-            "y": 46.285714285714285
+            "y": 37.714285714285715
           }
         },
         {
@@ -7465,7 +6329,7 @@ const renderSpec = {
           "label": "Queue",
           "layout": {
             "x": 50,
-            "y": 54.857142857142854
+            "y": 46.285714285714285
           }
         },
         {
@@ -7477,16 +6341,28 @@ const renderSpec = {
           "label": "Worker",
           "layout": {
             "x": 50,
+            "y": 54.857142857142854
+          }
+        },
+        {
+          "id": "db_primary",
+          "type": "primary_database",
+          "count": 1,
+          "importance": "secondary",
+          "status": "normal",
+          "label": "Primary Database",
+          "layout": {
+            "x": 50,
             "y": 63.42857142857143
           }
         },
         {
-          "id": "db",
-          "type": "database",
-          "count": 2,
+          "id": "db_replica",
+          "type": "read_replica",
+          "count": 1,
           "importance": "secondary",
           "status": "normal",
-          "label": "Database",
+          "label": "Read Replica",
           "layout": {
             "x": 50,
             "y": 72
@@ -7494,13 +6370,6 @@ const renderSpec = {
         }
       ],
       "connections": [
-        {
-          "id": "c_users_cdn_fetch",
-          "from": "users",
-          "to": "cdn",
-          "direction": "one_way",
-          "style": "solid"
-        },
         {
           "id": "c_users_lb_req",
           "from": "users",
@@ -7519,11 +6388,18 @@ const renderSpec = {
           "id": "c_app_cache_lookup",
           "from": "app",
           "to": "cache",
+          "direction": "bidirectional",
+          "style": "solid"
+        },
+        {
+          "id": "c_cache_db_replica_read",
+          "from": "cache",
+          "to": "db_replica",
           "direction": "one_way",
           "style": "solid"
         },
         {
-          "id": "c_app_queue_dispatch",
+          "id": "c_app_queue_async",
           "from": "app",
           "to": "queue",
           "direction": "one_way",
@@ -7537,61 +6413,82 @@ const renderSpec = {
           "style": "solid"
         },
         {
-          "id": "c_worker_db_commit",
+          "id": "c_worker_db_primary_commit",
           "from": "worker",
-          "to": "db",
+          "to": "db_primary",
           "direction": "one_way",
           "style": "solid"
+        },
+        {
+          "id": "c_db_primary_replication",
+          "from": "db_primary",
+          "to": "db_replica",
+          "direction": "one_way",
+          "style": "dashed"
         }
       ],
       "interactions": [
-        {
-          "id": "i_c_users_cdn_fetch_fwd",
-          "from": "users",
-          "to": "cdn",
-          "type": "flow",
-          "intensity": "high"
-        },
         {
           "id": "i_c_users_lb_req_fwd",
           "from": "users",
           "to": "lb",
           "type": "flow",
-          "intensity": "medium"
+          "intensity": "high"
         },
         {
           "id": "i_c_lb_app_req_fwd",
           "from": "lb",
           "to": "app",
           "type": "flow",
-          "intensity": "medium"
+          "intensity": "high"
         },
         {
           "id": "i_c_app_cache_lookup_fwd",
           "from": "app",
           "to": "cache",
           "type": "ping",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_app_cache_lookup_rev",
+          "from": "cache",
+          "to": "app",
+          "type": "ping",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_cache_db_replica_read_fwd",
+          "from": "cache",
+          "to": "db_replica",
+          "type": "flow",
           "intensity": "medium"
         },
         {
-          "id": "i_c_app_queue_dispatch_fwd",
+          "id": "i_c_app_queue_async_fwd",
           "from": "app",
           "to": "queue",
           "type": "broadcast",
-          "intensity": "medium"
+          "intensity": "high"
         },
         {
           "id": "i_c_queue_worker_dispatch_fwd",
           "from": "queue",
           "to": "worker",
           "type": "broadcast",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_worker_db_primary_commit_fwd",
+          "from": "worker",
+          "to": "db_primary",
+          "type": "flow",
           "intensity": "medium"
         },
         {
-          "id": "i_c_worker_db_commit_fwd",
-          "from": "worker",
-          "to": "db",
-          "type": "flow",
+          "id": "i_c_db_primary_replication_fwd",
+          "from": "db_primary",
+          "to": "db_replica",
+          "type": "broadcast",
           "intensity": "medium"
         }
       ],
@@ -7607,13 +6504,13 @@ const renderSpec = {
           "reserve_bottom_percent": 25
         },
         "visual": {
-          "theme": "neon",
+          "theme": "default",
           "background_texture": "grid",
-          "glow_strength": "strong"
+          "glow_strength": "soft"
         },
         "motion": {
           "entry_style": "elastic_pop",
-          "pacing": "reel_fast"
+          "pacing": "balanced"
         },
         "flow": {
           "renderer": "hybrid"
@@ -7634,18 +6531,6 @@ const renderSpec = {
             }
           },
           {
-            "id": "cdn",
-            "type": "cdn",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "CDN",
-            "layout": {
-              "x": 50,
-              "y": 20.57142857142857
-            }
-          },
-          {
             "id": "lb",
             "type": "load_balancer",
             "count": 1,
@@ -7654,7 +6539,7 @@ const renderSpec = {
             "label": "Load Balancer",
             "layout": {
               "x": 50,
-              "y": 29.142857142857142
+              "y": 20.57142857142857
             }
           },
           {
@@ -7666,7 +6551,7 @@ const renderSpec = {
             "label": "Server",
             "layout": {
               "x": 50,
-              "y": 37.714285714285715
+              "y": 29.142857142857142
             }
           },
           {
@@ -7678,7 +6563,7 @@ const renderSpec = {
             "label": "Cache",
             "layout": {
               "x": 50,
-              "y": 46.285714285714285
+              "y": 37.714285714285715
             }
           },
           {
@@ -7690,7 +6575,7 @@ const renderSpec = {
             "label": "Queue",
             "layout": {
               "x": 50,
-              "y": 54.857142857142854
+              "y": 46.285714285714285
             }
           },
           {
@@ -7702,16 +6587,28 @@ const renderSpec = {
             "label": "Worker",
             "layout": {
               "x": 50,
+              "y": 54.857142857142854
+            }
+          },
+          {
+            "id": "db_primary",
+            "type": "primary_database",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Primary Database",
+            "layout": {
+              "x": 50,
               "y": 63.42857142857143
             }
           },
           {
-            "id": "db",
-            "type": "database",
-            "count": 2,
+            "id": "db_replica",
+            "type": "read_replica",
+            "count": 1,
             "importance": "secondary",
             "status": "normal",
-            "label": "Database",
+            "label": "Read Replica",
             "layout": {
               "x": 50,
               "y": 72
@@ -7719,13 +6616,6 @@ const renderSpec = {
           }
         ],
         "connections": [
-          {
-            "id": "c_users_cdn_fetch",
-            "from": "users",
-            "to": "cdn",
-            "direction": "one_way",
-            "style": "solid"
-          },
           {
             "id": "c_users_lb_req",
             "from": "users",
@@ -7744,11 +6634,18 @@ const renderSpec = {
             "id": "c_app_cache_lookup",
             "from": "app",
             "to": "cache",
+            "direction": "bidirectional",
+            "style": "solid"
+          },
+          {
+            "id": "c_cache_db_replica_read",
+            "from": "cache",
+            "to": "db_replica",
             "direction": "one_way",
             "style": "solid"
           },
           {
-            "id": "c_app_queue_dispatch",
+            "id": "c_app_queue_async",
             "from": "app",
             "to": "queue",
             "direction": "one_way",
@@ -7762,61 +6659,82 @@ const renderSpec = {
             "style": "solid"
           },
           {
-            "id": "c_worker_db_commit",
+            "id": "c_worker_db_primary_commit",
             "from": "worker",
-            "to": "db",
+            "to": "db_primary",
             "direction": "one_way",
             "style": "solid"
+          },
+          {
+            "id": "c_db_primary_replication",
+            "from": "db_primary",
+            "to": "db_replica",
+            "direction": "one_way",
+            "style": "dashed"
           }
         ],
         "interactions": [
-          {
-            "id": "i_c_users_cdn_fetch_fwd",
-            "from": "users",
-            "to": "cdn",
-            "type": "flow",
-            "intensity": "high"
-          },
           {
             "id": "i_c_users_lb_req_fwd",
             "from": "users",
             "to": "lb",
             "type": "flow",
-            "intensity": "medium"
+            "intensity": "high"
           },
           {
             "id": "i_c_lb_app_req_fwd",
             "from": "lb",
             "to": "app",
             "type": "flow",
-            "intensity": "medium"
+            "intensity": "high"
           },
           {
             "id": "i_c_app_cache_lookup_fwd",
             "from": "app",
             "to": "cache",
             "type": "ping",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_app_cache_lookup_rev",
+            "from": "cache",
+            "to": "app",
+            "type": "ping",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_cache_db_replica_read_fwd",
+            "from": "cache",
+            "to": "db_replica",
+            "type": "flow",
             "intensity": "medium"
           },
           {
-            "id": "i_c_app_queue_dispatch_fwd",
+            "id": "i_c_app_queue_async_fwd",
             "from": "app",
             "to": "queue",
             "type": "broadcast",
-            "intensity": "medium"
+            "intensity": "high"
           },
           {
             "id": "i_c_queue_worker_dispatch_fwd",
             "from": "queue",
             "to": "worker",
             "type": "broadcast",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_worker_db_primary_commit_fwd",
+            "from": "worker",
+            "to": "db_primary",
+            "type": "flow",
             "intensity": "medium"
           },
           {
-            "id": "i_c_worker_db_commit_fwd",
-            "from": "worker",
-            "to": "db",
-            "type": "flow",
+            "id": "i_c_db_primary_replication_fwd",
+            "from": "db_primary",
+            "to": "db_replica",
+            "type": "broadcast",
             "intensity": "medium"
           }
         ],
@@ -7825,19 +6743,36 @@ const renderSpec = {
           "zoom": 1
         }
       },
+      "staticScene": true,
       "motionPersonality": "CALM",
       "diff": {
         "entityDiffs": [
           {
+            "type": "entity_added",
+            "entityId": "cache"
+          },
+          {
             "type": "entity_moved",
-            "entityId": "cache",
+            "entityId": "lb",
             "from": {
               "x": 50,
-              "y": 63.42857142857143
+              "y": 22
             },
             "to": {
               "x": 50,
-              "y": 46.285714285714285
+              "y": 20.57142857142857
+            }
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "app",
+            "from": {
+              "x": 50,
+              "y": 32
+            },
+            "to": {
+              "x": 50,
+              "y": 29.142857142857142
             }
           },
           {
@@ -7845,7 +6780,19 @@ const renderSpec = {
             "entityId": "queue",
             "from": {
               "x": 50,
+              "y": 42
+            },
+            "to": {
+              "x": 50,
               "y": 46.285714285714285
+            }
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "worker",
+            "from": {
+              "x": 50,
+              "y": 52
             },
             "to": {
               "x": 50,
@@ -7854,10 +6801,10 @@ const renderSpec = {
           },
           {
             "type": "entity_moved",
-            "entityId": "worker",
+            "entityId": "db_primary",
             "from": {
               "x": 50,
-              "y": 54.857142857142854
+              "y": 62
             },
             "to": {
               "x": 50,
@@ -7877,20 +6824,20 @@ const renderSpec = {
             "to": "primary"
           },
           {
-            "type": "entity_count_changed",
-            "entityId": "worker",
-            "from": 1,
-            "to": 3
+            "type": "entity_status_changed",
+            "entityId": "queue",
+            "from": "active",
+            "to": "normal"
           },
           {
             "type": "entity_status_changed",
-            "entityId": "db",
+            "entityId": "worker",
             "from": "active",
             "to": "normal"
           },
           {
             "type": "entity_importance_changed",
-            "entityId": "db",
+            "entityId": "worker",
             "from": "primary",
             "to": "secondary"
           }
@@ -7898,21 +6845,53 @@ const renderSpec = {
         "connectionDiffs": [
           {
             "type": "connection_added",
-            "connectionId": "c_app_queue_dispatch"
+            "connectionId": "c_app_cache_lookup"
+          },
+          {
+            "type": "connection_added",
+            "connectionId": "c_cache_db_replica_read"
+          },
+          {
+            "type": "connection_added",
+            "connectionId": "c_db_primary_replication"
           },
           {
             "type": "connection_removed",
-            "connectionId": "c_app_db_req"
+            "connectionId": "c_app_db_replica_read"
           }
         ],
         "interactionDiffs": [
           {
             "type": "interaction_added",
-            "interactionId": "i_c_app_queue_dispatch_fwd"
+            "interactionId": "i_c_app_cache_lookup_fwd"
+          },
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_app_cache_lookup_rev"
+          },
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_cache_db_replica_read_fwd"
+          },
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_db_primary_replication_fwd"
           },
           {
             "type": "interaction_removed",
-            "interactionId": "i_c_app_db_req_fwd"
+            "interactionId": "i_c_app_db_replica_read_fwd"
+          },
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_users_lb_req_fwd",
+            "from": "medium",
+            "to": "high"
+          },
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_lb_app_req_fwd",
+            "from": "medium",
+            "to": "high"
           }
         ],
         "cameraDiffs": [
@@ -7920,7 +6899,7 @@ const renderSpec = {
             "type": "camera_changed",
             "from": {
               "mode": "focus",
-              "target": "db",
+              "target": "worker",
               "zoom": 1
             },
             "to": {
@@ -7930,198 +6909,108 @@ const renderSpec = {
           }
         ]
       },
-      "hierarchyTransition": null,
-      "plan": {
-        "phaseOrder": [
-          "removals",
-          "moves",
-          "additions",
-          "connections",
-          "interactions",
-          "camera"
-        ],
-        "removals": [],
-        "moves": [
-          {
-            "entityId": "cache",
-            "elementIds": [
-              "cache"
-            ],
-            "action": "move"
+      "hierarchy": {
+        "primaryId": "lb",
+        "entityStyles": {
+          "users": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
           },
-          {
-            "entityId": "queue",
-            "elementIds": [
-              "queue"
-            ],
-            "action": "move"
-          },
-          {
-            "entityId": "worker",
-            "elementIds": [
-              "worker_1",
-              "worker",
-              "worker_3"
-            ],
-            "action": "move"
-          }
-        ],
-        "additions": [
-          {
-            "entityId": "lb",
-            "elementIds": [
-              "lb"
-            ],
-            "action": "add",
-            "enter": "zoom_in"
-          },
-          {
-            "entityId": "worker",
-            "elementIds": [
-              "worker_1",
-              "worker",
-              "worker_3"
-            ],
-            "action": "add",
-            "enter": "zoom_in"
-          }
-        ],
-        "connections": [
-          {
-            "entityId": "app",
-            "elementIds": [
-              "app_1",
-              "app",
-              "app_3"
-            ],
-            "action": "connect",
-            "connectionId": "c_app_db_req",
-            "cleanup": false
-          },
-          {
-            "entityId": "queue",
-            "elementIds": [
-              "queue"
-            ],
-            "action": "connect",
-            "connectionId": "c_app_queue_dispatch"
-          },
-          {
-            "entityId": "db",
-            "elementIds": [
-              "db",
-              "db_2"
-            ],
-            "action": "connect",
-            "connectionId": "c_app_db_req"
-          }
-        ],
-        "interactions": [
-          {
-            "entityId": "app",
-            "elementIds": [
-              "app_1",
-              "app",
-              "app_3"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_app_db_req_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "queue",
-            "elementIds": [
-              "queue"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_app_queue_dispatch_fwd"
-          },
-          {
-            "entityId": "db",
-            "elementIds": [
-              "db",
-              "db_2"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_app_db_req_fwd"
-          }
-        ]
-      },
-      "animationPlan": {
-        "entities": [
-          {
-            "entityId": "cache",
-            "action": "move",
-            "delay": 0.6000000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "queue",
-            "action": "move",
-            "delay": 0.6560000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "worker",
-            "action": "move",
-            "delay": 0.7120000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "lb",
-            "action": "add",
-            "delay": 0.37399999999999994,
-            "duration": 0.62,
-            "easing": "cubic-bezier(0.2,0,0,1)",
+          "lb": {
             "scale": 1.2,
-            "isPrimary": true
-          }
-        ],
-        "connections": [
-          {
-            "connectionId": "c_app_queue_dispatch",
-            "delay": 0.504,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
+            "opacity": 1,
+            "glow": true
           },
+          "app": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
+          },
+          "cache": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
+          },
+          "queue": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
+          },
+          "worker": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
+          },
+          "db_primary": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
+          },
+          "db_replica": {
+            "scale": 1,
+            "opacity": 0.55,
+            "glow": false
+          }
+        }
+      },
+      "hierarchyTransition": null,
+      "cameraPlan": null,
+      "sceneDiff": {
+        "addedEntities": [
           {
-            "connectionId": "c_app_db_req",
-            "delay": 0.56,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
+            "id": "cache",
+            "type": "cache",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Cache",
+            "layout": {
+              "x": 50,
+              "y": 37.714285714285715
+            }
           }
         ],
-        "camera": null
-      },
-      "cameraPlan": {
-        "zoom": 1,
-        "duration": 0.45,
-        "easing": "cubic-bezier(0.2,0,0,1)",
-        "motionType": "expand_architecture"
-      },
-      "sceneDiff": {
-        "addedEntities": [],
         "removedEntities": [],
         "movedEntities": [
           {
-            "id": "cache",
+            "id": "lb",
             "from": {
               "x": 50,
-              "y": 63.42857142857143
+              "y": 22
             },
             "to": {
               "x": 50,
-              "y": 46.285714285714285
+              "y": 20.57142857142857
+            }
+          },
+          {
+            "id": "app",
+            "from": {
+              "x": 50,
+              "y": 32
+            },
+            "to": {
+              "x": 50,
+              "y": 29.142857142857142
             }
           },
           {
             "id": "queue",
             "from": {
               "x": 50,
+              "y": 42
+            },
+            "to": {
+              "x": 50,
               "y": 46.285714285714285
+            }
+          },
+          {
+            "id": "worker",
+            "from": {
+              "x": 50,
+              "y": 52
             },
             "to": {
               "x": 50,
@@ -8129,10 +7018,10 @@ const renderSpec = {
             }
           },
           {
-            "id": "worker",
+            "id": "db_primary",
             "from": {
               "x": 50,
-              "y": 54.857142857142854
+              "y": 62
             },
             "to": {
               "x": 50,
@@ -8160,16 +7049,16 @@ const renderSpec = {
             }
           },
           {
-            "id": "worker",
+            "id": "queue",
             "changes": {
-              "count": {
-                "from": 1,
-                "to": 3
+              "status": {
+                "from": "active",
+                "to": "normal"
               }
             }
           },
           {
-            "id": "db",
+            "id": "worker",
             "changes": {
               "status": {
                 "from": "active",
@@ -8184,45 +7073,91 @@ const renderSpec = {
         ],
         "addedConnections": [
           {
-            "id": "c_app_queue_dispatch",
+            "id": "c_app_cache_lookup",
             "from": "app",
-            "to": "queue",
+            "to": "cache",
+            "direction": "bidirectional",
+            "style": "solid"
+          },
+          {
+            "id": "c_cache_db_replica_read",
+            "from": "cache",
+            "to": "db_replica",
             "direction": "one_way",
             "style": "solid"
+          },
+          {
+            "id": "c_db_primary_replication",
+            "from": "db_primary",
+            "to": "db_replica",
+            "direction": "one_way",
+            "style": "dashed"
           }
         ],
         "removedConnections": [
           {
-            "id": "c_app_db_req",
+            "id": "c_app_db_replica_read",
             "from": "app",
-            "to": "db",
+            "to": "db_replica",
             "direction": "one_way",
             "style": "solid"
           }
         ],
         "addedInteractions": [
           {
-            "id": "i_c_app_queue_dispatch_fwd",
+            "id": "i_c_app_cache_lookup_fwd",
             "from": "app",
-            "to": "queue",
+            "to": "cache",
+            "type": "ping",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_app_cache_lookup_rev",
+            "from": "cache",
+            "to": "app",
+            "type": "ping",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_cache_db_replica_read_fwd",
+            "from": "cache",
+            "to": "db_replica",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_db_primary_replication_fwd",
+            "from": "db_primary",
+            "to": "db_replica",
             "type": "broadcast",
             "intensity": "medium"
           }
         ],
         "removedInteractions": [
           {
-            "id": "i_c_app_db_req_fwd",
+            "id": "i_c_app_db_replica_read_fwd",
             "from": "app",
-            "to": "db",
+            "to": "db_replica",
             "type": "flow",
             "intensity": "medium"
           }
         ],
-        "interactionIntensityChanged": [],
+        "interactionIntensityChanged": [
+          {
+            "id": "i_c_users_lb_req_fwd",
+            "from": "medium",
+            "to": "high"
+          },
+          {
+            "id": "i_c_lb_app_req_fwd",
+            "from": "medium",
+            "to": "high"
+          }
+        ],
         "cameraChanged": {
           "from": {
             "mode": "focus",
-            "target": "db",
+            "target": "worker",
             "zoom": 1
           },
           "to": {
@@ -8235,10 +7170,42 @@ const renderSpec = {
   ]
 } as unknown as MotionRenderSpec;
 const TIMELINE_EPSILON = 0.001;
+const DEFAULT_VISUAL_DIRECTIVES = {
+  theme: 'neon',
+  background_texture: 'grid',
+  glow_strength: 'strong',
+} as const;
+
+const resolveVisualDirectives = (scene: MotionRenderSpec['scenes'][number]) =>
+  scene.directives?.visual ?? DEFAULT_VISUAL_DIRECTIVES;
+
+const resolveBackdropColor = (theme: 'default' | 'neon'): string =>
+  theme === 'default' ? '#070B12' : StyleTokens.colors.background;
+
+const resolveGridOpacity = (
+  visual: typeof DEFAULT_VISUAL_DIRECTIVES,
+): number => {
+  if (visual.background_texture === 'none') {
+    return 0;
+  }
+
+  if (visual.theme === 'default') {
+    return visual.glow_strength === 'soft' ? 0.026 : 0.036;
+  }
+
+  return visual.glow_strength === 'soft' ? 0.04 : 0.056;
+};
 
 export default makeScene2D(function* (view) {
   const caption = createRef<Txt>();
   view.fill(StyleTokens.colors.background);
+  const backdrop = new Rect({
+    width: 1080,
+    height: 1920,
+    fill: StyleTokens.colors.background,
+    zIndex: -300,
+  });
+  view.add(backdrop);
   const world = new Node({zIndex: 0});
   view.add(world);
   const gridLayer = new Node({
@@ -8305,6 +7272,11 @@ export default makeScene2D(function* (view) {
       validateSceneForRuntime(scene, logger);
 
       yield* waitUntil(timeline, scene.start, logger);
+      const visual = resolveVisualDirectives(scene);
+      yield* all(
+        backdrop.fill(resolveBackdropColor(visual.theme), 0.12),
+        gridLayer.opacity(resolveGridOpacity(visual), 0.12),
+      );
       yield* executeScene(world, scene, sceneState);
       advanceTimeline(timeline, sceneState.lastExecutionDuration);
       yield* waitUntil(timeline, scene.end, logger);
@@ -8319,7 +7291,11 @@ export default makeScene2D(function* (view) {
 
     while (elapsed < renderSpec.duration) {
       const step = Math.min(cycle, renderSpec.duration - elapsed);
-      yield* gridLayer.y(14, step / 2).to(0, step / 2);
+      if (gridLayer.opacity() > 0.001) {
+        yield* gridLayer.y(14, step / 2).to(0, step / 2);
+      } else {
+        yield* gridLayer.y(0, step);
+      }
       elapsed += step;
     }
   })();

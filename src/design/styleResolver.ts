@@ -3,6 +3,7 @@ import type {
   Connection,
   DesignedEntity,
   Interaction,
+  SceneDirectives,
 } from '../schema/moment.schema.js';
 import type {HierarchyPlan} from './hierarchyPlanner.js';
 
@@ -34,6 +35,30 @@ export interface FlowVisualStyle {
   speed: number;
 }
 
+type VisualDirectives = SceneDirectives['visual'] | undefined;
+
+const DEFAULT_THEME_COLORS = {
+  primary: StyleTokens.colors.primary,
+  connection: StyleTokens.colors.connection,
+  flow: StyleTokens.colors.flow,
+  glow: StyleTokens.effects.glowColor,
+} as const;
+
+const CLASSIC_THEME_COLORS = {
+  primary: '#345F9F',
+  connection: '#8AA4C8',
+  flow: '#60A5FA',
+  glow: '#93C5FD',
+} as const;
+
+const resolveThemeColors = (visual: VisualDirectives) =>
+  (visual?.theme ?? 'neon') === 'default'
+    ? CLASSIC_THEME_COLORS
+    : DEFAULT_THEME_COLORS;
+
+const resolveGlowMultiplier = (visual: VisualDirectives): number =>
+  (visual?.glow_strength ?? 'strong') === 'soft' ? 0.52 : 1;
+
 const resolveStatus = (entity: DesignedEntity): EntityStatus =>
   (entity.status ?? 'normal') as EntityStatus;
 
@@ -48,23 +73,27 @@ const STATUS_COLOR_MAP: Record<EntityStatus, string> = {
 export const resolveEntityStyle = (
   entity: DesignedEntity,
   _hierarchy: HierarchyPlan,
+  visual?: VisualDirectives,
 ): EntityVisualStyle => {
   const status = resolveStatus(entity);
   const statusColor = STATUS_COLOR_MAP[status];
+  const themeColors = resolveThemeColors(visual);
+  const glowMultiplier = resolveGlowMultiplier(visual);
   const size = StyleTokens.sizes.medium;
+  const baseGlowBlur =
+    status === 'overloaded' || status === 'error'
+      ? Math.max(StyleTokens.effects.glowBlur * 0.85, 22)
+      : Math.max(StyleTokens.effects.glowBlur * 0.65, 14);
 
   return {
     size,
     opacity: StyleTokens.opacity.primary,
-    color: status === 'normal' ? StyleTokens.colors.primary : statusColor,
+    color: status === 'normal' ? themeColors.primary : statusColor,
     strokeWidth: StyleTokens.stroke.normal,
-    strokeColor: status === 'normal' ? StyleTokens.colors.connection : statusColor,
+    strokeColor: status === 'normal' ? themeColors.connection : statusColor,
     glow: true,
-    glowColor: status === 'normal' ? StyleTokens.effects.glowColor : statusColor,
-    glowBlur:
-      status === 'overloaded' || status === 'error'
-        ? Math.max(StyleTokens.effects.glowBlur * 0.85, 22)
-        : Math.max(StyleTokens.effects.glowBlur * 0.65, 14),
+    glowColor: status === 'normal' ? themeColors.glow : statusColor,
+    glowBlur: Math.max(8, baseGlowBlur * glowMultiplier),
     textColor: StyleTokens.colors.text,
     fontSize: StyleTokens.text.fontSizeSecondary,
     fontWeight: StyleTokens.text.fontWeight,
@@ -72,16 +101,29 @@ export const resolveEntityStyle = (
   };
 };
 
-export const resolveConnectionStyle = (_connection: Connection): ConnectionVisualStyle => ({
-  color: StyleTokens.colors.connection,
-  width: StyleTokens.connections.thickness,
-  curved: StyleTokens.connections.curve,
-  arrowSize: StyleTokens.connections.arrowSize,
-});
+export const resolveConnectionStyle = (
+  _connection: Connection,
+  visual?: VisualDirectives,
+): ConnectionVisualStyle => {
+  const themeColors = resolveThemeColors(visual);
+  const glowMultiplier = resolveGlowMultiplier(visual);
 
-export const resolveFlowStyle = (interaction: Interaction): FlowVisualStyle => {
+  return {
+    color: themeColors.connection,
+    width: Math.max(2, StyleTokens.connections.thickness * (0.85 + glowMultiplier * 0.15)),
+    curved: StyleTokens.connections.curve,
+    arrowSize: StyleTokens.connections.arrowSize,
+  };
+};
+
+export const resolveFlowStyle = (
+  interaction: Interaction,
+  visual?: VisualDirectives,
+): FlowVisualStyle => {
   let speed: number = StyleTokens.flow.speedMedium;
-  let color: string = StyleTokens.colors.flow;
+  const themeColors = resolveThemeColors(visual);
+  const glowMultiplier = resolveGlowMultiplier(visual);
+  let color: string = themeColors.flow;
   let particleSize: number = StyleTokens.flow.particleSize;
 
   if (interaction.intensity === 'low') {
@@ -107,12 +149,12 @@ export const resolveFlowStyle = (interaction: Interaction): FlowVisualStyle => {
   if (interaction.type === 'ping') {
     speed *= 1.28;
     particleSize += 0.6;
-    color = '#34D399';
+    color = (visual?.theme ?? 'neon') === 'default' ? '#4ADE80' : '#34D399';
   }
 
   return {
     color,
-    particleSize,
+    particleSize: Math.max(3.5, particleSize * (0.85 + glowMultiplier * 0.2)),
     speed,
   };
 };

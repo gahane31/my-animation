@@ -3,6 +3,7 @@ import {
   all,
   easeInCubic,
   easeInOutCubic,
+  easeOutBack,
   easeOutCubic,
   linear,
   type TimingFunction,
@@ -445,7 +446,7 @@ const syncSceneConnections = (
       continue;
     }
 
-    const style = resolveConnectionStyle(connection);
+    const style = resolveConnectionStyle(connection, scene.directives?.visual);
     const bidirectional = connection.direction === 'bidirectional';
     const existingNode = state.connections.get(connection.id);
 
@@ -703,12 +704,35 @@ const executeMovesPhase = (
   };
 };
 
+const runElasticPopEntry = (
+  node: Node,
+  duration: number,
+  timingFunction: TimingFunction,
+  scaleTarget = 1,
+): ThreadGenerator =>
+  (function* elasticPopEntryThread() {
+    const phaseOneDuration = Math.max(0.08, duration * 0.62);
+    const phaseTwoDuration = Math.max(0.06, duration - phaseOneDuration);
+    const initialScale = Math.max(0.05, scaleTarget * 0.05);
+
+    node.scale(initialScale);
+    node.opacity(Math.min(node.opacity(), 0.06));
+
+    yield* all(
+      node.scale(scaleTarget * 1.1, phaseOneDuration, easeOutBack),
+      node.opacity(1, Math.max(0.08, phaseOneDuration * 0.75), timingFunction),
+    );
+
+    yield* node.scale(scaleTarget, phaseTwoDuration, timingFunction);
+  })();
+
 const executeAdditionsPhase = (
   intents: ElementAnimationIntent[],
   sceneDuration: number,
   lifecycleById: Map<string, LifecycleResult>,
   sceneElementById: Map<string, MotionElementSpec>,
   entityTimingByKey: Map<string, EntityTimingPlan>,
+  entryStyle: 'drop_bounce' | 'elastic_pop',
 ): PhaseExecutionPlan => {
   const phase = getScenePhases(sceneDuration).enter;
   const fallbackDuration = Math.max(DEFAULT_ENTRY_FADE_DURATION, phase.end - phase.start);
@@ -740,8 +764,26 @@ const executeAdditionsPhase = (
         localDelay,
         (function* additionThread() {
           const entryAnimation = intent.enter ?? elementSpec?.enter;
+          const directiveControlsEntry =
+            lifecycle.isNew &&
+            (entryAnimation === undefined || entryAnimation === AnimationType.ZoomIn);
 
-          if (entryAnimation) {
+          if (directiveControlsEntry) {
+            if (entryStyle === 'drop_bounce') {
+              yield* runElementAnimationTimed(lifecycle.node, AnimationType.ZoomIn, {
+                duration: timing.duration,
+                timingFunction,
+                scaleTarget: timing.scale,
+              });
+            } else {
+              yield* runElasticPopEntry(
+                lifecycle.node,
+                timing.duration,
+                timingFunction,
+                timing.scale ?? 1,
+              );
+            }
+          } else if (entryAnimation) {
             yield* runElementAnimationTimed(lifecycle.node, entryAnimation, {
               duration: timing.duration,
               timingFunction,
@@ -876,7 +918,7 @@ const executeEffectsPhase = (
             id: intent.connectionId,
             from: intent.entityId,
             to: intent.entityId,
-          })
+          }, scene.directives?.visual)
         : undefined;
     const flowStyle =
       phaseType === 'interactions' && intent.interactionId
@@ -885,7 +927,7 @@ const executeEffectsPhase = (
             from: intent.entityId,
             to: intent.entityId,
             type: 'flow',
-          })
+          }, scene.directives?.visual)
         : undefined;
 
     const effects = intent.effects ?? [];
@@ -1001,7 +1043,7 @@ const executeInteractionFlowsPhase = (
     }
 
     const existingTarget = flowTargets.get(connectionId);
-    const resolvedStyle = resolveFlowStyle(interaction);
+    const resolvedStyle = resolveFlowStyle(interaction, scene.directives?.visual);
     let directionMultiplier = -1;
     if (interaction.from === connection.to && interaction.to === connection.from) {
       directionMultiplier = 1;
@@ -1341,6 +1383,7 @@ const executePlanDrivenScene = (
           lifecycleById,
           sceneElementById,
           entityTimingByKey,
+          scene.directives?.motion.entry_style ?? 'elastic_pop',
         );
         break;
       case 'connections':

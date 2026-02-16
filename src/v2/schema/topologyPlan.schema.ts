@@ -33,9 +33,9 @@ const normalizeConnectionTypeInput = (value: unknown): unknown => {
   return normalized;
 };
 
-const optionalConnectionTypeSchema = z.preprocess(
+const connectionTypeSchema = z.preprocess(
   (value) => normalizeConnectionTypeInput(nullToUndefined(value)),
-  z.enum(['static', 'flowing', 'both_ways']).optional(),
+  z.enum(['static', 'flowing', 'both_ways']).default('flowing'),
 );
 const optionalTransitionStyleSchema = z.preprocess(
   nullToUndefined,
@@ -116,7 +116,7 @@ export const topologyConnectionSchema = z.object({
   kind: z.enum(CONNECTION_KINDS),
   pattern: z.enum(FLOW_PATTERNS),
   intensity: optionalIntensitySchema,
-  connection_type: optionalConnectionTypeSchema,
+  connection_type: connectionTypeSchema,
 });
 
 const addEntityOperationSchema = z.object({
@@ -485,12 +485,7 @@ export const topologyPlanResponseFormat = {
                   intensity: {
                     anyOf: [{type: 'string', enum: ['low', 'medium', 'high']}, {type: 'null'}],
                   },
-                  connection_type: {
-                    anyOf: [
-                      {type: 'string', enum: ['static', 'flowing', 'both_ways']},
-                      {type: 'null'},
-                    ],
-                  },
+                  connection_type: {type: 'string', enum: ['static', 'flowing', 'both_ways']},
                 },
               },
             },
