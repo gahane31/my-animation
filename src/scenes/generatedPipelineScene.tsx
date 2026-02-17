@@ -18,518 +18,82 @@ const renderSpec = {
       "id": "s1",
       "start": 0,
       "end": 6,
-      "narration": "Users send steady requests to one Server, and that Server reads and writes to one Database.",
-      "camera": "wide",
+      "narration": "A Users cluster sends steady API requests straight into one Server, and the Server talks to a Database to answer them.",
       "elements": [
         {
           "id": "users",
           "type": "users_cluster",
           "sourceEntityId": "users",
           "label": "Users",
+          "icon": "users",
           "position": {
             "x": 50,
-            "y": 19.8
+            "y": 9.66
           },
-          "effects": [],
+          "enter": "zoom_in",
           "visualStyle": {
-            "size": 115.2,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 3.394112549695428,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 11.248640000000004,
-            "textColor": "#E8F6FF",
-            "fontSize": 35.84,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app",
-          "type": "server",
-          "sourceEntityId": "app",
-          "label": "Server",
-          "position": {
-            "x": 50,
-            "y": 42
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 115.2,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 3.394112549695428,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 11.248640000000004,
-            "textColor": "#E8F6FF",
-            "fontSize": 35.84,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "db",
-          "type": "database",
-          "sourceEntityId": "db",
-          "label": "Database",
-          "position": {
-            "x": 50,
-            "y": 64.2
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 115.2,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 3.394112549695428,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 11.248640000000004,
-            "textColor": "#E8F6FF",
-            "fontSize": 35.84,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        }
-      ],
-      "entities": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Users",
-          "layout": {
-            "x": 50,
-            "y": 19.8
-          }
-        },
-        {
-          "id": "app",
-          "type": "server",
-          "count": 1,
-          "importance": "primary",
-          "status": "normal",
-          "label": "Server",
-          "layout": {
-            "x": 50,
-            "y": 42
-          }
-        },
-        {
-          "id": "db",
-          "type": "database",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Database",
-          "layout": {
-            "x": 50,
-            "y": 64.2
-          }
-        }
-      ],
-      "connections": [
-        {
-          "id": "c_users_app_req",
-          "from": "users",
-          "to": "app",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_app_db_call",
-          "from": "app",
-          "to": "db",
-          "direction": "bidirectional",
-          "style": "solid"
-        }
-      ],
-      "interactions": [
-        {
-          "id": "i_c_users_app_req_fwd",
-          "from": "users",
-          "to": "app",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_app_db_call_fwd",
-          "from": "app",
-          "to": "db",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_app_db_call_rev",
-          "from": "db",
-          "to": "app",
-          "type": "flow",
-          "intensity": "medium"
-        }
-      ],
-      "sourceCamera": {
-        "mode": "focus",
-        "target": "app",
-        "zoom": 1.1
-      },
-      "directives": {
-        "camera": {
-          "mode": "follow_action",
-          "zoom": "medium",
-          "active_zone": "upper_third",
-          "reserve_bottom_percent": 25
-        },
-        "visual": {
-          "theme": "default",
-          "background_texture": "grid",
-          "glow_strength": "soft"
-        },
-        "motion": {
-          "entry_style": "elastic_pop",
-          "pacing": "reel_fast"
-        },
-        "flow": {
-          "renderer": "hybrid"
-        }
-      },
-      "source": {
-        "entities": [
-          {
-            "id": "users",
-            "type": "users_cluster",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Users",
-            "layout": {
-              "x": 50,
-              "y": 19.8
-            }
-          },
-          {
-            "id": "app",
-            "type": "server",
-            "count": 1,
-            "importance": "primary",
-            "status": "normal",
-            "label": "Server",
-            "layout": {
-              "x": 50,
-              "y": 42
-            }
-          },
-          {
-            "id": "db",
-            "type": "database",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Database",
-            "layout": {
-              "x": 50,
-              "y": 64.2
-            }
-          }
-        ],
-        "connections": [
-          {
-            "id": "c_users_app_req",
-            "from": "users",
-            "to": "app",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_app_db_call",
-            "from": "app",
-            "to": "db",
-            "direction": "bidirectional",
-            "style": "solid"
-          }
-        ],
-        "interactions": [
-          {
-            "id": "i_c_users_app_req_fwd",
-            "from": "users",
-            "to": "app",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_app_db_call_fwd",
-            "from": "app",
-            "to": "db",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_app_db_call_rev",
-            "from": "db",
-            "to": "app",
-            "type": "flow",
-            "intensity": "medium"
-          }
-        ],
-        "camera": {
-          "mode": "focus",
-          "target": "app",
-          "zoom": 1.1
-        }
-      },
-      "staticScene": true,
-      "motionPersonality": "CALM",
-      "diff": {
-        "entityDiffs": [
-          {
-            "type": "entity_added",
-            "entityId": "users"
-          },
-          {
-            "type": "entity_added",
-            "entityId": "app"
-          },
-          {
-            "type": "entity_added",
-            "entityId": "db"
-          }
-        ],
-        "connectionDiffs": [
-          {
-            "type": "connection_added",
-            "connectionId": "c_users_app_req"
-          },
-          {
-            "type": "connection_added",
-            "connectionId": "c_app_db_call"
-          }
-        ],
-        "interactionDiffs": [
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_users_app_req_fwd"
-          },
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_app_db_call_fwd"
-          },
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_app_db_call_rev"
-          }
-        ],
-        "cameraDiffs": [
-          {
-            "type": "camera_changed",
-            "from": null,
-            "to": {
-              "mode": "focus",
-              "target": "app",
-              "zoom": 1.1
-            }
-          }
-        ]
-      },
-      "hierarchy": {
-        "primaryId": "app",
-        "entityStyles": {
-          "users": {
-            "scale": 1,
-            "opacity": 0.4,
-            "glow": false
-          },
-          "app": {
-            "scale": 1.2,
-            "opacity": 1,
-            "glow": true
-          },
-          "db": {
-            "scale": 1,
-            "opacity": 0.4,
-            "glow": false
-          }
-        }
-      },
-      "hierarchyTransition": null,
-      "cameraPlan": null,
-      "sceneDiff": {
-        "addedEntities": [
-          {
-            "id": "users",
-            "type": "users_cluster",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Users",
-            "layout": {
-              "x": 50,
-              "y": 19.8
-            }
-          },
-          {
-            "id": "app",
-            "type": "server",
-            "count": 1,
-            "importance": "primary",
-            "status": "normal",
-            "label": "Server",
-            "layout": {
-              "x": 50,
-              "y": 42
-            }
-          },
-          {
-            "id": "db",
-            "type": "database",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Database",
-            "layout": {
-              "x": 50,
-              "y": 64.2
-            }
-          }
-        ],
-        "removedEntities": [],
-        "movedEntities": [],
-        "updatedEntities": [],
-        "addedConnections": [
-          {
-            "id": "c_users_app_req",
-            "from": "users",
-            "to": "app",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_app_db_call",
-            "from": "app",
-            "to": "db",
-            "direction": "bidirectional",
-            "style": "solid"
-          }
-        ],
-        "removedConnections": [],
-        "addedInteractions": [
-          {
-            "id": "i_c_users_app_req_fwd",
-            "from": "users",
-            "to": "app",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_app_db_call_fwd",
-            "from": "app",
-            "to": "db",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_app_db_call_rev",
-            "from": "db",
-            "to": "app",
-            "type": "flow",
-            "intensity": "medium"
-          }
-        ],
-        "removedInteractions": [],
-        "interactionIntensityChanged": [],
-        "cameraChanged": {
-          "from": null,
-          "to": {
-            "mode": "focus",
-            "target": "app",
-            "zoom": 1.1
-          }
-        }
-      }
-    },
-    {
-      "id": "s2",
-      "start": 6,
-      "end": 12,
-      "narration": "The same Users now create heavier traffic, and the single Server is in overload while requests pile up before reaching the Database.",
-      "camera": "wide",
-      "elements": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "sourceEntityId": "users",
-          "label": "Users",
-          "position": {
-            "x": 50,
-            "y": 19.8
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 115.2,
+            "size": 149.4,
             "opacity": 1,
             "color": "#34D399",
-            "strokeWidth": 3.394112549695428,
+            "strokeWidth": 2.7829653249726274,
             "strokeColor": "#34D399",
-            "glow": true,
+            "glow": false,
             "glowColor": "#34D399",
-            "glowBlur": 21.632,
+            "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 35.84,
+            "fontSize": 52.987199999999994,
             "fontWeight": 600,
             "status": "active"
           }
         },
         {
-          "id": "app",
+          "id": "app_server",
           "type": "server",
-          "sourceEntityId": "app",
+          "sourceEntityId": "app_server",
           "label": "Server",
+          "icon": "server",
           "position": {
             "x": 50,
-            "y": 42
+            "y": 40.25
           },
-          "effects": [],
+          "enter": "zoom_in",
           "visualStyle": {
-            "size": 115.2,
+            "size": 149.4,
             "opacity": 1,
-            "color": "#EF4444",
-            "strokeWidth": 3.394112549695428,
-            "strokeColor": "#EF4444",
-            "glow": true,
-            "glowColor": "#EF4444",
-            "glowBlur": 28.287999999999997,
+            "color": "#1F314D",
+            "strokeWidth": 2.7829653249726274,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 35.84,
+            "fontSize": 52.987199999999994,
             "fontWeight": 600,
-            "status": "overloaded"
+            "status": "normal"
           }
         },
         {
-          "id": "db",
+          "id": "app_db",
           "type": "database",
-          "sourceEntityId": "db",
+          "sourceEntityId": "app_db",
           "label": "Database",
+          "icon": "database",
           "position": {
             "x": 50,
-            "y": 64.2
+            "y": 70.84
           },
-          "effects": [],
+          "enter": "zoom_in",
           "visualStyle": {
-            "size": 115.2,
+            "size": 149.4,
             "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 3.394112549695428,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 21.632,
+            "color": "#1F314D",
+            "strokeWidth": 2.7829653249726274,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 35.84,
+            "fontSize": 52.987199999999994,
             "fontWeight": 600,
             "status": "normal"
           }
@@ -540,1182 +104,77 @@ const renderSpec = {
           "id": "users",
           "type": "users_cluster",
           "count": 1,
-          "importance": "secondary",
+          "importance": "primary",
           "status": "active",
           "label": "Users",
+          "icon": "users",
           "layout": {
             "x": 50,
-            "y": 19.8
+            "y": 9.66
           }
         },
         {
-          "id": "app",
+          "id": "app_server",
           "type": "server",
           "count": 1,
-          "importance": "primary",
-          "status": "overloaded",
+          "importance": "secondary",
+          "status": "normal",
           "label": "Server",
+          "icon": "server",
           "layout": {
             "x": 50,
-            "y": 42
+            "y": 40.25
           }
         },
         {
-          "id": "db",
+          "id": "app_db",
           "type": "database",
           "count": 1,
           "importance": "secondary",
           "status": "normal",
           "label": "Database",
+          "icon": "database",
           "layout": {
             "x": 50,
-            "y": 64.2
+            "y": 70.84
           }
         }
       ],
       "connections": [
         {
-          "id": "c_users_app_req",
+          "id": "c_users_to_server",
           "from": "users",
-          "to": "app",
+          "to": "app_server",
           "direction": "one_way",
           "style": "solid"
         },
         {
-          "id": "c_app_db_call",
-          "from": "app",
-          "to": "db",
-          "direction": "bidirectional",
+          "id": "c_server_to_db",
+          "from": "app_server",
+          "to": "app_db",
+          "direction": "one_way",
           "style": "solid"
         }
       ],
       "interactions": [
         {
-          "id": "i_c_users_app_req_fwd",
+          "id": "i_c_users_to_server_fwd",
           "from": "users",
-          "to": "app",
-          "type": "flow",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_app_db_call_fwd",
-          "from": "app",
-          "to": "db",
+          "to": "app_server",
           "type": "flow",
           "intensity": "medium"
         },
         {
-          "id": "i_c_app_db_call_rev",
-          "from": "db",
-          "to": "app",
+          "id": "i_c_server_to_db_fwd",
+          "from": "app_server",
+          "to": "app_db",
           "type": "flow",
           "intensity": "medium"
         }
       ],
       "sourceCamera": {
         "mode": "focus",
-        "target": "app",
-        "zoom": 1.12
-      },
-      "directives": {
-        "camera": {
-          "mode": "follow_action",
-          "zoom": "tight",
-          "active_zone": "upper_third",
-          "reserve_bottom_percent": 25
-        },
-        "visual": {
-          "theme": "default",
-          "background_texture": "grid",
-          "glow_strength": "strong"
-        },
-        "motion": {
-          "entry_style": "drop_bounce",
-          "pacing": "reel_fast"
-        },
-        "flow": {
-          "renderer": "packets"
-        }
-      },
-      "source": {
-        "entities": [
-          {
-            "id": "users",
-            "type": "users_cluster",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Users",
-            "layout": {
-              "x": 50,
-              "y": 19.8
-            }
-          },
-          {
-            "id": "app",
-            "type": "server",
-            "count": 1,
-            "importance": "primary",
-            "status": "overloaded",
-            "label": "Server",
-            "layout": {
-              "x": 50,
-              "y": 42
-            }
-          },
-          {
-            "id": "db",
-            "type": "database",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Database",
-            "layout": {
-              "x": 50,
-              "y": 64.2
-            }
-          }
-        ],
-        "connections": [
-          {
-            "id": "c_users_app_req",
-            "from": "users",
-            "to": "app",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_app_db_call",
-            "from": "app",
-            "to": "db",
-            "direction": "bidirectional",
-            "style": "solid"
-          }
-        ],
-        "interactions": [
-          {
-            "id": "i_c_users_app_req_fwd",
-            "from": "users",
-            "to": "app",
-            "type": "flow",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_app_db_call_fwd",
-            "from": "app",
-            "to": "db",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_app_db_call_rev",
-            "from": "db",
-            "to": "app",
-            "type": "flow",
-            "intensity": "medium"
-          }
-        ],
-        "camera": {
-          "mode": "focus",
-          "target": "app",
-          "zoom": 1.12
-        }
-      },
-      "staticScene": true,
-      "motionPersonality": "CALM",
-      "diff": {
-        "entityDiffs": [
-          {
-            "type": "entity_status_changed",
-            "entityId": "users",
-            "from": "normal",
-            "to": "active"
-          },
-          {
-            "type": "entity_status_changed",
-            "entityId": "app",
-            "from": "normal",
-            "to": "overloaded"
-          }
-        ],
-        "connectionDiffs": [],
-        "interactionDiffs": [
-          {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_users_app_req_fwd",
-            "from": "medium",
-            "to": "high"
-          }
-        ],
-        "cameraDiffs": [
-          {
-            "type": "camera_changed",
-            "from": {
-              "mode": "focus",
-              "target": "app",
-              "zoom": 1.1
-            },
-            "to": {
-              "mode": "focus",
-              "target": "app",
-              "zoom": 1.12
-            }
-          }
-        ]
-      },
-      "hierarchy": {
-        "primaryId": "app",
-        "entityStyles": {
-          "users": {
-            "scale": 1,
-            "opacity": 0.4,
-            "glow": false
-          },
-          "app": {
-            "scale": 1.2,
-            "opacity": 1,
-            "glow": true
-          },
-          "db": {
-            "scale": 1,
-            "opacity": 0.4,
-            "glow": false
-          }
-        }
-      },
-      "hierarchyTransition": null,
-      "cameraPlan": null,
-      "sceneDiff": {
-        "addedEntities": [],
-        "removedEntities": [],
-        "movedEntities": [],
-        "updatedEntities": [
-          {
-            "id": "users",
-            "changes": {
-              "status": {
-                "from": "normal",
-                "to": "active"
-              }
-            }
-          },
-          {
-            "id": "app",
-            "changes": {
-              "status": {
-                "from": "normal",
-                "to": "overloaded"
-              }
-            }
-          }
-        ],
-        "addedConnections": [],
-        "removedConnections": [],
-        "addedInteractions": [],
-        "removedInteractions": [],
-        "interactionIntensityChanged": [
-          {
-            "id": "i_c_users_app_req_fwd",
-            "from": "medium",
-            "to": "high"
-          }
-        ],
-        "cameraChanged": {
-          "from": {
-            "mode": "focus",
-            "target": "app",
-            "zoom": 1.1
-          },
-          "to": {
-            "mode": "focus",
-            "target": "app",
-            "zoom": 1.12
-          }
-        }
-      }
-    },
-    {
-      "id": "s3",
-      "start": 12,
-      "end": 18,
-      "narration": "A Load Balancer is inserted so user requests hit the Load Balancer first and then flow down to the Server and Database.",
-      "camera": "wide",
-      "elements": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "sourceEntityId": "users",
-          "label": "Users",
-          "position": {
-            "x": 50,
-            "y": 16.2
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 102.6,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 3.2031234756093934,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 10.018320000000001,
-            "textColor": "#E8F6FF",
-            "fontSize": 31.919999999999998,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "lb",
-          "type": "load_balancer",
-          "sourceEntityId": "lb",
-          "label": "Load Balancer",
-          "position": {
-            "x": 50,
-            "y": 33.4
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 102.6,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 3.2031234756093934,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 10.018320000000001,
-            "textColor": "#E8F6FF",
-            "fontSize": 31.919999999999998,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app",
-          "type": "server",
-          "sourceEntityId": "app",
-          "label": "Server",
-          "position": {
-            "x": 50,
-            "y": 50.599999999999994
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 102.6,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 3.2031234756093934,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 10.018320000000001,
-            "textColor": "#E8F6FF",
-            "fontSize": 31.919999999999998,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "db",
-          "type": "database",
-          "sourceEntityId": "db",
-          "label": "Database",
-          "position": {
-            "x": 50,
-            "y": 67.8
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 102.6,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 3.2031234756093934,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 10.018320000000001,
-            "textColor": "#E8F6FF",
-            "fontSize": 31.919999999999998,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        }
-      ],
-      "entities": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Users",
-          "layout": {
-            "x": 50,
-            "y": 16.2
-          }
-        },
-        {
-          "id": "lb",
-          "type": "load_balancer",
-          "count": 1,
-          "importance": "primary",
-          "status": "normal",
-          "label": "Load Balancer",
-          "layout": {
-            "x": 50,
-            "y": 33.4
-          }
-        },
-        {
-          "id": "app",
-          "type": "server",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Server",
-          "layout": {
-            "x": 50,
-            "y": 50.599999999999994
-          }
-        },
-        {
-          "id": "db",
-          "type": "database",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Database",
-          "layout": {
-            "x": 50,
-            "y": 67.8
-          }
-        }
-      ],
-      "connections": [
-        {
-          "id": "c_users_lb_req",
-          "from": "users",
-          "to": "lb",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_lb_app_req",
-          "from": "lb",
-          "to": "app",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_app_db_call",
-          "from": "app",
-          "to": "db",
-          "direction": "bidirectional",
-          "style": "solid"
-        }
-      ],
-      "interactions": [
-        {
-          "id": "i_c_users_lb_req_fwd",
-          "from": "users",
-          "to": "lb",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_lb_app_req_fwd",
-          "from": "lb",
-          "to": "app",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_app_db_call_fwd",
-          "from": "app",
-          "to": "db",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_app_db_call_rev",
-          "from": "db",
-          "to": "app",
-          "type": "flow",
-          "intensity": "medium"
-        }
-      ],
-      "sourceCamera": {
-        "mode": "focus",
-        "target": "lb",
-        "zoom": 1.08
-      },
-      "directives": {
-        "camera": {
-          "mode": "follow_action",
-          "zoom": "medium",
-          "active_zone": "upper_third",
-          "reserve_bottom_percent": 25
-        },
-        "visual": {
-          "theme": "default",
-          "background_texture": "grid",
-          "glow_strength": "soft"
-        },
-        "motion": {
-          "entry_style": "elastic_pop",
-          "pacing": "balanced"
-        },
-        "flow": {
-          "renderer": "hybrid"
-        }
-      },
-      "source": {
-        "entities": [
-          {
-            "id": "users",
-            "type": "users_cluster",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Users",
-            "layout": {
-              "x": 50,
-              "y": 16.2
-            }
-          },
-          {
-            "id": "lb",
-            "type": "load_balancer",
-            "count": 1,
-            "importance": "primary",
-            "status": "normal",
-            "label": "Load Balancer",
-            "layout": {
-              "x": 50,
-              "y": 33.4
-            }
-          },
-          {
-            "id": "app",
-            "type": "server",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Server",
-            "layout": {
-              "x": 50,
-              "y": 50.599999999999994
-            }
-          },
-          {
-            "id": "db",
-            "type": "database",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Database",
-            "layout": {
-              "x": 50,
-              "y": 67.8
-            }
-          }
-        ],
-        "connections": [
-          {
-            "id": "c_users_lb_req",
-            "from": "users",
-            "to": "lb",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_lb_app_req",
-            "from": "lb",
-            "to": "app",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_app_db_call",
-            "from": "app",
-            "to": "db",
-            "direction": "bidirectional",
-            "style": "solid"
-          }
-        ],
-        "interactions": [
-          {
-            "id": "i_c_users_lb_req_fwd",
-            "from": "users",
-            "to": "lb",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_lb_app_req_fwd",
-            "from": "lb",
-            "to": "app",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_app_db_call_fwd",
-            "from": "app",
-            "to": "db",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_app_db_call_rev",
-            "from": "db",
-            "to": "app",
-            "type": "flow",
-            "intensity": "medium"
-          }
-        ],
-        "camera": {
-          "mode": "focus",
-          "target": "lb",
-          "zoom": 1.08
-        }
-      },
-      "staticScene": true,
-      "motionPersonality": "CALM",
-      "diff": {
-        "entityDiffs": [
-          {
-            "type": "entity_added",
-            "entityId": "lb"
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "users",
-            "from": {
-              "x": 50,
-              "y": 19.8
-            },
-            "to": {
-              "x": 50,
-              "y": 16.2
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "app",
-            "from": {
-              "x": 50,
-              "y": 42
-            },
-            "to": {
-              "x": 50,
-              "y": 50.599999999999994
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "db",
-            "from": {
-              "x": 50,
-              "y": 64.2
-            },
-            "to": {
-              "x": 50,
-              "y": 67.8
-            }
-          },
-          {
-            "type": "entity_status_changed",
-            "entityId": "users",
-            "from": "active",
-            "to": "normal"
-          },
-          {
-            "type": "entity_status_changed",
-            "entityId": "app",
-            "from": "overloaded",
-            "to": "normal"
-          },
-          {
-            "type": "entity_importance_changed",
-            "entityId": "app",
-            "from": "primary",
-            "to": "secondary"
-          }
-        ],
-        "connectionDiffs": [
-          {
-            "type": "connection_added",
-            "connectionId": "c_users_lb_req"
-          },
-          {
-            "type": "connection_added",
-            "connectionId": "c_lb_app_req"
-          },
-          {
-            "type": "connection_removed",
-            "connectionId": "c_users_app_req"
-          }
-        ],
-        "interactionDiffs": [
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_users_lb_req_fwd"
-          },
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_lb_app_req_fwd"
-          },
-          {
-            "type": "interaction_removed",
-            "interactionId": "i_c_users_app_req_fwd"
-          }
-        ],
-        "cameraDiffs": [
-          {
-            "type": "camera_changed",
-            "from": {
-              "mode": "focus",
-              "target": "app",
-              "zoom": 1.12
-            },
-            "to": {
-              "mode": "focus",
-              "target": "lb",
-              "zoom": 1.08
-            }
-          }
-        ]
-      },
-      "hierarchy": {
-        "primaryId": "lb",
-        "entityStyles": {
-          "users": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "lb": {
-            "scale": 1.2,
-            "opacity": 1,
-            "glow": true
-          },
-          "app": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "db": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          }
-        }
-      },
-      "hierarchyTransition": null,
-      "cameraPlan": null,
-      "sceneDiff": {
-        "addedEntities": [
-          {
-            "id": "lb",
-            "type": "load_balancer",
-            "count": 1,
-            "importance": "primary",
-            "status": "normal",
-            "label": "Load Balancer",
-            "layout": {
-              "x": 50,
-              "y": 33.4
-            }
-          }
-        ],
-        "removedEntities": [],
-        "movedEntities": [
-          {
-            "id": "users",
-            "from": {
-              "x": 50,
-              "y": 19.8
-            },
-            "to": {
-              "x": 50,
-              "y": 16.2
-            }
-          },
-          {
-            "id": "app",
-            "from": {
-              "x": 50,
-              "y": 42
-            },
-            "to": {
-              "x": 50,
-              "y": 50.599999999999994
-            }
-          },
-          {
-            "id": "db",
-            "from": {
-              "x": 50,
-              "y": 64.2
-            },
-            "to": {
-              "x": 50,
-              "y": 67.8
-            }
-          }
-        ],
-        "updatedEntities": [
-          {
-            "id": "users",
-            "changes": {
-              "status": {
-                "from": "active",
-                "to": "normal"
-              }
-            }
-          },
-          {
-            "id": "app",
-            "changes": {
-              "status": {
-                "from": "overloaded",
-                "to": "normal"
-              },
-              "importance": {
-                "from": "primary",
-                "to": "secondary"
-              }
-            }
-          }
-        ],
-        "addedConnections": [
-          {
-            "id": "c_users_lb_req",
-            "from": "users",
-            "to": "lb",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_lb_app_req",
-            "from": "lb",
-            "to": "app",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "removedConnections": [
-          {
-            "id": "c_users_app_req",
-            "from": "users",
-            "to": "app",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "addedInteractions": [
-          {
-            "id": "i_c_users_lb_req_fwd",
-            "from": "users",
-            "to": "lb",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_lb_app_req_fwd",
-            "from": "lb",
-            "to": "app",
-            "type": "flow",
-            "intensity": "medium"
-          }
-        ],
-        "removedInteractions": [
-          {
-            "id": "i_c_users_app_req_fwd",
-            "from": "users",
-            "to": "app",
-            "type": "flow",
-            "intensity": "high"
-          }
-        ],
-        "interactionIntensityChanged": [],
-        "cameraChanged": {
-          "from": {
-            "mode": "focus",
-            "target": "app",
-            "zoom": 1.12
-          },
-          "to": {
-            "mode": "focus",
-            "target": "lb",
-            "zoom": 1.08
-          }
-        }
-      }
-    },
-    {
-      "id": "s4",
-      "start": 18,
-      "end": 24,
-      "narration": "The Load Balancer fans out steady requests across multiple Server instances, and each Server still talks to the same Database.",
-      "camera": "wide",
-      "elements": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "sourceEntityId": "users",
-          "label": "Users",
-          "position": {
-            "x": 50,
-            "y": 16.2
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 81,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.846049894151541,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 7.909200000000002,
-            "textColor": "#E8F6FF",
-            "fontSize": 25.2,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "lb",
-          "type": "load_balancer",
-          "sourceEntityId": "lb",
-          "label": "Load Balancer",
-          "position": {
-            "x": 50,
-            "y": 33.4
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 81,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.846049894151541,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 7.909200000000002,
-            "textColor": "#E8F6FF",
-            "fontSize": 25.2,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_1",
-          "type": "server",
-          "sourceEntityId": "app",
-          "position": {
-            "x": 29.458333333333336,
-            "y": 50.599999999999994
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 81,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.846049894151541,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 7.909200000000002,
-            "textColor": "#E8F6FF",
-            "fontSize": 25.2,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app",
-          "type": "server",
-          "sourceEntityId": "app",
-          "label": "Server",
-          "position": {
-            "x": 50,
-            "y": 50.599999999999994
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 81,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.846049894151541,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 7.909200000000002,
-            "textColor": "#E8F6FF",
-            "fontSize": 25.2,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_3",
-          "type": "server",
-          "sourceEntityId": "app",
-          "position": {
-            "x": 70.54166666666666,
-            "y": 50.599999999999994
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 81,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.846049894151541,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 7.909200000000002,
-            "textColor": "#E8F6FF",
-            "fontSize": 25.2,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "db",
-          "type": "database",
-          "sourceEntityId": "db",
-          "label": "Database",
-          "position": {
-            "x": 50,
-            "y": 67.8
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 81,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.846049894151541,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 7.909200000000002,
-            "textColor": "#E8F6FF",
-            "fontSize": 25.2,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        }
-      ],
-      "entities": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Users",
-          "layout": {
-            "x": 50,
-            "y": 16.2
-          }
-        },
-        {
-          "id": "lb",
-          "type": "load_balancer",
-          "count": 1,
-          "importance": "primary",
-          "status": "normal",
-          "label": "Load Balancer",
-          "layout": {
-            "x": 50,
-            "y": 33.4
-          }
-        },
-        {
-          "id": "app",
-          "type": "server",
-          "count": 3,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Server",
-          "layout": {
-            "x": 50,
-            "y": 50.599999999999994
-          }
-        },
-        {
-          "id": "db",
-          "type": "database",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Database",
-          "layout": {
-            "x": 50,
-            "y": 67.8
-          }
-        }
-      ],
-      "connections": [
-        {
-          "id": "c_users_lb_req",
-          "from": "users",
-          "to": "lb",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_lb_app_req",
-          "from": "lb",
-          "to": "app",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_app_db_call",
-          "from": "app",
-          "to": "db",
-          "direction": "bidirectional",
-          "style": "solid"
-        }
-      ],
-      "interactions": [
-        {
-          "id": "i_c_users_lb_req_fwd",
-          "from": "users",
-          "to": "lb",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_lb_app_req_fwd",
-          "from": "lb",
-          "to": "app",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_app_db_call_fwd",
-          "from": "app",
-          "to": "db",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_app_db_call_rev",
-          "from": "db",
-          "to": "app",
-          "type": "flow",
-          "intensity": "medium"
-        }
-      ],
-      "sourceCamera": {
-        "mode": "focus",
-        "target": "lb",
+        "target": "users",
         "zoom": 1
       },
       "directives": {
@@ -1731,11 +190,11 @@ const renderSpec = {
           "glow_strength": "soft"
         },
         "motion": {
-          "entry_style": "drop_bounce",
+          "entry_style": "draw_in",
           "pacing": "balanced"
         },
         "flow": {
-          "renderer": "packets"
+          "renderer": "hybrid"
         }
       },
       "source": {
@@ -1744,351 +203,433 @@ const renderSpec = {
             "id": "users",
             "type": "users_cluster",
             "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Users",
-            "layout": {
-              "x": 50,
-              "y": 16.2
-            }
-          },
-          {
-            "id": "lb",
-            "type": "load_balancer",
-            "count": 1,
             "importance": "primary",
-            "status": "normal",
-            "label": "Load Balancer",
+            "status": "active",
+            "label": "Users",
+            "icon": "users",
             "layout": {
               "x": 50,
-              "y": 33.4
+              "y": 9.66
             }
           },
           {
-            "id": "app",
+            "id": "app_server",
             "type": "server",
-            "count": 3,
+            "count": 1,
             "importance": "secondary",
             "status": "normal",
             "label": "Server",
+            "icon": "server",
             "layout": {
               "x": 50,
-              "y": 50.599999999999994
+              "y": 40.25
             }
           },
           {
-            "id": "db",
+            "id": "app_db",
             "type": "database",
             "count": 1,
             "importance": "secondary",
             "status": "normal",
             "label": "Database",
+            "icon": "database",
             "layout": {
               "x": 50,
-              "y": 67.8
+              "y": 70.84
             }
           }
         ],
         "connections": [
           {
-            "id": "c_users_lb_req",
+            "id": "c_users_to_server",
             "from": "users",
-            "to": "lb",
+            "to": "app_server",
             "direction": "one_way",
             "style": "solid"
           },
           {
-            "id": "c_lb_app_req",
-            "from": "lb",
-            "to": "app",
+            "id": "c_server_to_db",
+            "from": "app_server",
+            "to": "app_db",
             "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_app_db_call",
-            "from": "app",
-            "to": "db",
-            "direction": "bidirectional",
             "style": "solid"
           }
         ],
         "interactions": [
           {
-            "id": "i_c_users_lb_req_fwd",
+            "id": "i_c_users_to_server_fwd",
             "from": "users",
-            "to": "lb",
+            "to": "app_server",
             "type": "flow",
             "intensity": "medium"
           },
           {
-            "id": "i_c_lb_app_req_fwd",
-            "from": "lb",
-            "to": "app",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_app_db_call_fwd",
-            "from": "app",
-            "to": "db",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_app_db_call_rev",
-            "from": "db",
-            "to": "app",
+            "id": "i_c_server_to_db_fwd",
+            "from": "app_server",
+            "to": "app_db",
             "type": "flow",
             "intensity": "medium"
           }
         ],
         "camera": {
           "mode": "focus",
-          "target": "lb",
+          "target": "users",
           "zoom": 1
         }
       },
-      "staticScene": true,
-      "motionPersonality": "CALM",
+      "motionPersonality": "ENERGETIC",
       "diff": {
         "entityDiffs": [
           {
-            "type": "entity_count_changed",
-            "entityId": "app",
-            "from": 1,
-            "to": 3
+            "type": "entity_added",
+            "entityId": "users"
+          },
+          {
+            "type": "entity_added",
+            "entityId": "app_server"
+          },
+          {
+            "type": "entity_added",
+            "entityId": "app_db"
           }
         ],
-        "connectionDiffs": [],
-        "interactionDiffs": [],
+        "connectionDiffs": [
+          {
+            "type": "connection_added",
+            "connectionId": "c_users_to_server"
+          },
+          {
+            "type": "connection_added",
+            "connectionId": "c_server_to_db"
+          }
+        ],
+        "interactionDiffs": [
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_users_to_server_fwd"
+          },
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_server_to_db_fwd"
+          }
+        ],
         "cameraDiffs": [
           {
             "type": "camera_changed",
-            "from": {
-              "mode": "focus",
-              "target": "lb",
-              "zoom": 1.08
-            },
+            "from": null,
             "to": {
               "mode": "focus",
-              "target": "lb",
+              "target": "users",
               "zoom": 1
             }
           }
         ]
       },
-      "hierarchy": {
-        "primaryId": "lb",
-        "entityStyles": {
-          "users": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "lb": {
-            "scale": 1.2,
-            "opacity": 1,
-            "glow": true
-          },
-          "app": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "db": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          }
-        }
-      },
       "hierarchyTransition": null,
+      "plan": {
+        "phaseOrder": [
+          "removals",
+          "moves",
+          "additions",
+          "connections",
+          "interactions",
+          "camera"
+        ],
+        "removals": [],
+        "moves": [],
+        "additions": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "add",
+            "enter": "zoom_in"
+          },
+          {
+            "entityId": "app_server",
+            "elementIds": [
+              "app_server"
+            ],
+            "action": "add",
+            "enter": "zoom_in"
+          },
+          {
+            "entityId": "app_db",
+            "elementIds": [
+              "app_db"
+            ],
+            "action": "add",
+            "enter": "zoom_in"
+          }
+        ],
+        "connections": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "connect",
+            "connectionId": "c_users_to_server"
+          },
+          {
+            "entityId": "app_server",
+            "elementIds": [
+              "app_server"
+            ],
+            "action": "connect",
+            "connectionId": "c_server_to_db",
+            "cleanup": false
+          },
+          {
+            "entityId": "app_db",
+            "elementIds": [
+              "app_db"
+            ],
+            "action": "connect",
+            "connectionId": "c_server_to_db"
+          }
+        ],
+        "interactions": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_server_fwd"
+          },
+          {
+            "entityId": "app_server",
+            "elementIds": [
+              "app_server"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_server_to_db_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "app_db",
+            "elementIds": [
+              "app_db"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_server_to_db_fwd"
+          }
+        ]
+      },
+      "animationPlan": {
+        "entities": [
+          {
+            "entityId": "app_db",
+            "action": "add",
+            "delay": 0.32399999999999995,
+            "duration": 0.54,
+            "easing": "cubic-bezier(0.4,0,0.2,1)",
+            "isPrimary": false
+          },
+          {
+            "entityId": "app_server",
+            "action": "add",
+            "delay": 0.354,
+            "duration": 0.54,
+            "easing": "cubic-bezier(0.4,0,0.2,1)",
+            "isPrimary": false
+          },
+          {
+            "entityId": "users",
+            "action": "add",
+            "delay": 0.43399999999999994,
+            "duration": 0.62,
+            "easing": "cubic-bezier(0.4,0,0.2,1)",
+            "scale": 1.2,
+            "isPrimary": true
+          }
+        ],
+        "connections": [
+          {
+            "connectionId": "c_users_to_server",
+            "delay": 0.504,
+            "duration": 0.42,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "connectionId": "c_server_to_db",
+            "delay": 0.544,
+            "duration": 0.42,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          }
+        ],
+        "camera": null
+      },
       "cameraPlan": null,
       "sceneDiff": {
-        "addedEntities": [],
-        "removedEntities": [],
-        "movedEntities": [],
-        "updatedEntities": [
+        "addedEntities": [
           {
-            "id": "app",
-            "changes": {
-              "count": {
-                "from": 1,
-                "to": 3
-              }
+            "id": "users",
+            "type": "users_cluster",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "Users",
+            "icon": "users",
+            "layout": {
+              "x": 50,
+              "y": 9.66
+            }
+          },
+          {
+            "id": "app_server",
+            "type": "server",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Server",
+            "icon": "server",
+            "layout": {
+              "x": 50,
+              "y": 40.25
+            }
+          },
+          {
+            "id": "app_db",
+            "type": "database",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Database",
+            "icon": "database",
+            "layout": {
+              "x": 50,
+              "y": 70.84
             }
           }
         ],
-        "addedConnections": [],
+        "removedEntities": [],
+        "movedEntities": [],
+        "updatedEntities": [],
+        "addedConnections": [
+          {
+            "id": "c_users_to_server",
+            "from": "users",
+            "to": "app_server",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_server_to_db",
+            "from": "app_server",
+            "to": "app_db",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
         "removedConnections": [],
-        "addedInteractions": [],
+        "addedInteractions": [
+          {
+            "id": "i_c_users_to_server_fwd",
+            "from": "users",
+            "to": "app_server",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_server_to_db_fwd",
+            "from": "app_server",
+            "to": "app_db",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
         "removedInteractions": [],
         "interactionIntensityChanged": [],
         "cameraChanged": {
-          "from": {
-            "mode": "focus",
-            "target": "lb",
-            "zoom": 1.08
-          },
+          "from": null,
           "to": {
             "mode": "focus",
-            "target": "lb",
+            "target": "users",
             "zoom": 1
           }
         }
       }
     },
     {
-      "id": "s5",
-      "start": 24,
-      "end": 30,
-      "narration": "With more Servers, the Database becomes the hot spot and is in overload because too many reads and writes converge on it.",
-      "camera": "wide",
+      "id": "s2",
+      "start": 6,
+      "end": 12,
+      "narration": "The same Users cluster now sends a burst of requests that overwhelms the single Server, and the Database becomes a bottleneck behind it.",
       "elements": [
         {
           "id": "users",
           "type": "users_cluster",
           "sourceEntityId": "users",
           "label": "Users",
+          "icon": "users",
           "position": {
             "x": 50,
-            "y": 16.2
+            "y": 9.66
           },
-          "effects": [],
           "visualStyle": {
-            "size": 81,
+            "size": 149.4,
             "opacity": 1,
             "color": "#34D399",
-            "strokeWidth": 2.846049894151541,
+            "strokeWidth": 2.7829653249726274,
             "strokeColor": "#34D399",
-            "glow": true,
+            "glow": false,
             "glowColor": "#34D399",
-            "glowBlur": 15.210000000000003,
+            "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 25.2,
+            "fontSize": 52.987199999999994,
             "fontWeight": 600,
             "status": "active"
           }
         },
         {
-          "id": "lb",
-          "type": "load_balancer",
-          "sourceEntityId": "lb",
-          "label": "Load Balancer",
-          "position": {
-            "x": 50,
-            "y": 33.4
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 81,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.846049894151541,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 15.210000000000003,
-            "textColor": "#E8F6FF",
-            "fontSize": 25.2,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_1",
+          "id": "app_server",
           "type": "server",
-          "sourceEntityId": "app",
-          "position": {
-            "x": 29.458333333333336,
-            "y": 50.599999999999994
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 81,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.846049894151541,
-            "strokeColor": "#34D399",
-            "glow": true,
-            "glowColor": "#34D399",
-            "glowBlur": 15.210000000000003,
-            "textColor": "#E8F6FF",
-            "fontSize": 25.2,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "app",
-          "type": "server",
-          "sourceEntityId": "app",
+          "sourceEntityId": "app_server",
           "label": "Server",
+          "icon": "server",
           "position": {
             "x": 50,
-            "y": 50.599999999999994
+            "y": 40.25
           },
-          "effects": [],
           "visualStyle": {
-            "size": 81,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.846049894151541,
-            "strokeColor": "#34D399",
-            "glow": true,
-            "glowColor": "#34D399",
-            "glowBlur": 15.210000000000003,
-            "textColor": "#E8F6FF",
-            "fontSize": 25.2,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "app_3",
-          "type": "server",
-          "sourceEntityId": "app",
-          "position": {
-            "x": 70.54166666666666,
-            "y": 50.599999999999994
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 81,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.846049894151541,
-            "strokeColor": "#34D399",
-            "glow": true,
-            "glowColor": "#34D399",
-            "glowBlur": 15.210000000000003,
-            "textColor": "#E8F6FF",
-            "fontSize": 25.2,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "db",
-          "type": "database",
-          "sourceEntityId": "db",
-          "label": "Database",
-          "position": {
-            "x": 50,
-            "y": 67.8
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 81,
+            "size": 149.4,
             "opacity": 1,
             "color": "#EF4444",
-            "strokeWidth": 2.846049894151541,
+            "strokeWidth": 2.7829653249726274,
             "strokeColor": "#EF4444",
-            "glow": true,
+            "glow": false,
             "glowColor": "#EF4444",
-            "glowBlur": 19.889999999999997,
+            "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 25.2,
+            "fontSize": 52.987199999999994,
+            "fontWeight": 600,
+            "status": "overloaded"
+          }
+        },
+        {
+          "id": "app_db",
+          "type": "database",
+          "sourceEntityId": "app_db",
+          "label": "Database",
+          "icon": "database",
+          "position": {
+            "x": 50,
+            "y": 70.84
+          },
+          "visualStyle": {
+            "size": 149.4,
+            "opacity": 1,
+            "color": "#EF4444",
+            "strokeWidth": 2.7829653249726274,
+            "strokeColor": "#EF4444",
+            "glow": false,
+            "glowColor": "#EF4444",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 52.987199999999994,
             "fontWeight": 600,
             "status": "overloaded"
           }
@@ -2102,124 +643,94 @@ const renderSpec = {
           "importance": "secondary",
           "status": "active",
           "label": "Users",
+          "icon": "users",
           "layout": {
             "x": 50,
-            "y": 16.2
+            "y": 9.66
           }
         },
         {
-          "id": "lb",
-          "type": "load_balancer",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Load Balancer",
-          "layout": {
-            "x": 50,
-            "y": 33.4
-          }
-        },
-        {
-          "id": "app",
+          "id": "app_server",
           "type": "server",
-          "count": 3,
-          "importance": "secondary",
-          "status": "active",
-          "label": "Server",
-          "layout": {
-            "x": 50,
-            "y": 50.599999999999994
-          }
-        },
-        {
-          "id": "db",
-          "type": "database",
           "count": 1,
           "importance": "primary",
           "status": "overloaded",
-          "label": "Database",
+          "label": "Server",
+          "icon": "server",
           "layout": {
             "x": 50,
-            "y": 67.8
+            "y": 40.25
+          }
+        },
+        {
+          "id": "app_db",
+          "type": "database",
+          "count": 1,
+          "importance": "secondary",
+          "status": "overloaded",
+          "label": "Database",
+          "icon": "database",
+          "layout": {
+            "x": 50,
+            "y": 70.84
           }
         }
       ],
       "connections": [
         {
-          "id": "c_users_lb_req",
+          "id": "c_users_to_server",
           "from": "users",
-          "to": "lb",
+          "to": "app_server",
           "direction": "one_way",
           "style": "solid"
         },
         {
-          "id": "c_lb_app_req",
-          "from": "lb",
-          "to": "app",
+          "id": "c_server_to_db",
+          "from": "app_server",
+          "to": "app_db",
           "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_app_db_call",
-          "from": "app",
-          "to": "db",
-          "direction": "bidirectional",
           "style": "solid"
         }
       ],
       "interactions": [
         {
-          "id": "i_c_users_lb_req_fwd",
+          "id": "i_c_users_to_server_fwd",
           "from": "users",
-          "to": "lb",
-          "type": "flow",
+          "to": "app_server",
+          "type": "burst",
           "intensity": "high"
         },
         {
-          "id": "i_c_lb_app_req_fwd",
-          "from": "lb",
-          "to": "app",
-          "type": "flow",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_app_db_call_fwd",
-          "from": "app",
-          "to": "db",
-          "type": "flow",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_app_db_call_rev",
-          "from": "db",
-          "to": "app",
+          "id": "i_c_server_to_db_fwd",
+          "from": "app_server",
+          "to": "app_db",
           "type": "flow",
           "intensity": "high"
         }
       ],
       "sourceCamera": {
         "mode": "focus",
-        "target": "db",
-        "zoom": 1.08
+        "target": "app_server",
+        "zoom": 1.1
       },
       "directives": {
         "camera": {
           "mode": "follow_action",
-          "zoom": "tight",
+          "zoom": "medium",
           "active_zone": "upper_third",
           "reserve_bottom_percent": 25
         },
         "visual": {
           "theme": "default",
           "background_texture": "grid",
-          "glow_strength": "strong"
+          "glow_strength": "soft"
         },
         "motion": {
-          "entry_style": "drop_bounce",
-          "pacing": "reel_fast"
+          "entry_style": "draw_in",
+          "pacing": "balanced"
         },
         "flow": {
-          "renderer": "packets"
+          "renderer": "hybrid"
         }
       },
       "source": {
@@ -2231,165 +742,116 @@ const renderSpec = {
             "importance": "secondary",
             "status": "active",
             "label": "Users",
+            "icon": "users",
             "layout": {
               "x": 50,
-              "y": 16.2
+              "y": 9.66
             }
           },
           {
-            "id": "lb",
-            "type": "load_balancer",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Load Balancer",
-            "layout": {
-              "x": 50,
-              "y": 33.4
-            }
-          },
-          {
-            "id": "app",
+            "id": "app_server",
             "type": "server",
-            "count": 3,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Server",
-            "layout": {
-              "x": 50,
-              "y": 50.599999999999994
-            }
-          },
-          {
-            "id": "db",
-            "type": "database",
             "count": 1,
             "importance": "primary",
             "status": "overloaded",
-            "label": "Database",
+            "label": "Server",
+            "icon": "server",
             "layout": {
               "x": 50,
-              "y": 67.8
+              "y": 40.25
+            }
+          },
+          {
+            "id": "app_db",
+            "type": "database",
+            "count": 1,
+            "importance": "secondary",
+            "status": "overloaded",
+            "label": "Database",
+            "icon": "database",
+            "layout": {
+              "x": 50,
+              "y": 70.84
             }
           }
         ],
         "connections": [
           {
-            "id": "c_users_lb_req",
+            "id": "c_users_to_server",
             "from": "users",
-            "to": "lb",
+            "to": "app_server",
             "direction": "one_way",
             "style": "solid"
           },
           {
-            "id": "c_lb_app_req",
-            "from": "lb",
-            "to": "app",
+            "id": "c_server_to_db",
+            "from": "app_server",
+            "to": "app_db",
             "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_app_db_call",
-            "from": "app",
-            "to": "db",
-            "direction": "bidirectional",
             "style": "solid"
           }
         ],
         "interactions": [
           {
-            "id": "i_c_users_lb_req_fwd",
+            "id": "i_c_users_to_server_fwd",
             "from": "users",
-            "to": "lb",
-            "type": "flow",
+            "to": "app_server",
+            "type": "burst",
             "intensity": "high"
           },
           {
-            "id": "i_c_lb_app_req_fwd",
-            "from": "lb",
-            "to": "app",
-            "type": "flow",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_app_db_call_fwd",
-            "from": "app",
-            "to": "db",
-            "type": "flow",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_app_db_call_rev",
-            "from": "db",
-            "to": "app",
+            "id": "i_c_server_to_db_fwd",
+            "from": "app_server",
+            "to": "app_db",
             "type": "flow",
             "intensity": "high"
           }
         ],
         "camera": {
           "mode": "focus",
-          "target": "db",
-          "zoom": 1.08
+          "target": "app_server",
+          "zoom": 1.1
         }
       },
-      "staticScene": true,
-      "motionPersonality": "CALM",
+      "motionPersonality": "ENERGETIC",
       "diff": {
         "entityDiffs": [
           {
-            "type": "entity_status_changed",
-            "entityId": "users",
-            "from": "normal",
-            "to": "active"
-          },
-          {
             "type": "entity_importance_changed",
-            "entityId": "lb",
+            "entityId": "users",
             "from": "primary",
             "to": "secondary"
           },
           {
             "type": "entity_status_changed",
-            "entityId": "app",
-            "from": "normal",
-            "to": "active"
-          },
-          {
-            "type": "entity_status_changed",
-            "entityId": "db",
+            "entityId": "app_server",
             "from": "normal",
             "to": "overloaded"
           },
           {
             "type": "entity_importance_changed",
-            "entityId": "db",
+            "entityId": "app_server",
             "from": "secondary",
             "to": "primary"
+          },
+          {
+            "type": "entity_status_changed",
+            "entityId": "app_db",
+            "from": "normal",
+            "to": "overloaded"
           }
         ],
         "connectionDiffs": [],
         "interactionDiffs": [
           {
             "type": "interaction_intensity_changed",
-            "interactionId": "i_c_users_lb_req_fwd",
+            "interactionId": "i_c_users_to_server_fwd",
             "from": "medium",
             "to": "high"
           },
           {
             "type": "interaction_intensity_changed",
-            "interactionId": "i_c_lb_app_req_fwd",
-            "from": "medium",
-            "to": "high"
-          },
-          {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_app_db_call_fwd",
-            "from": "medium",
-            "to": "high"
-          },
-          {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_app_db_call_rev",
+            "interactionId": "i_c_server_to_db_fwd",
             "from": "medium",
             "to": "high"
           }
@@ -2399,43 +861,83 @@ const renderSpec = {
             "type": "camera_changed",
             "from": {
               "mode": "focus",
-              "target": "lb",
+              "target": "users",
               "zoom": 1
             },
             "to": {
               "mode": "focus",
-              "target": "db",
-              "zoom": 1.08
+              "target": "app_server",
+              "zoom": 1.1
             }
           }
         ]
       },
-      "hierarchy": {
-        "primaryId": "db",
-        "entityStyles": {
-          "users": {
-            "scale": 1,
-            "opacity": 0.4,
-            "glow": false
-          },
-          "lb": {
-            "scale": 1,
-            "opacity": 0.4,
-            "glow": false
-          },
-          "app": {
-            "scale": 1,
-            "opacity": 0.4,
-            "glow": false
-          },
-          "db": {
-            "scale": 1.2,
-            "opacity": 1,
-            "glow": true
-          }
-        }
-      },
       "hierarchyTransition": null,
+      "plan": {
+        "phaseOrder": [
+          "removals",
+          "moves",
+          "additions",
+          "connections",
+          "interactions",
+          "camera"
+        ],
+        "removals": [],
+        "moves": [],
+        "additions": [
+          {
+            "entityId": "app_server",
+            "elementIds": [
+              "app_server"
+            ],
+            "action": "add",
+            "enter": "zoom_in"
+          }
+        ],
+        "connections": [],
+        "interactions": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_server_fwd"
+          },
+          {
+            "entityId": "app_server",
+            "elementIds": [
+              "app_server"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_server_to_db_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "app_db",
+            "elementIds": [
+              "app_db"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_server_to_db_fwd"
+          }
+        ]
+      },
+      "animationPlan": {
+        "entities": [
+          {
+            "entityId": "app_server",
+            "action": "add",
+            "delay": 0.37399999999999994,
+            "duration": 0.62,
+            "easing": "cubic-bezier(0.4,0,0.2,1)",
+            "scale": 1.2,
+            "isPrimary": true
+          }
+        ],
+        "connections": [],
+        "camera": null
+      },
       "cameraPlan": null,
       "sceneDiff": {
         "addedEntities": [],
@@ -2445,14 +947,2629 @@ const renderSpec = {
           {
             "id": "users",
             "changes": {
-              "status": {
-                "from": "normal",
-                "to": "active"
+              "importance": {
+                "from": "primary",
+                "to": "secondary"
               }
             }
           },
           {
-            "id": "lb",
+            "id": "app_server",
+            "changes": {
+              "status": {
+                "from": "normal",
+                "to": "overloaded"
+              },
+              "importance": {
+                "from": "secondary",
+                "to": "primary"
+              }
+            }
+          },
+          {
+            "id": "app_db",
+            "changes": {
+              "status": {
+                "from": "normal",
+                "to": "overloaded"
+              }
+            }
+          }
+        ],
+        "addedConnections": [],
+        "removedConnections": [],
+        "addedInteractions": [],
+        "removedInteractions": [],
+        "interactionIntensityChanged": [
+          {
+            "id": "i_c_users_to_server_fwd",
+            "from": "medium",
+            "to": "high"
+          },
+          {
+            "id": "i_c_server_to_db_fwd",
+            "from": "medium",
+            "to": "high"
+          }
+        ],
+        "cameraChanged": {
+          "from": {
+            "mode": "focus",
+            "target": "users",
+            "zoom": 1
+          },
+          "to": {
+            "mode": "focus",
+            "target": "app_server",
+            "zoom": 1.1
+          }
+        }
+      }
+    },
+    {
+      "id": "s3",
+      "start": 12,
+      "end": 18,
+      "narration": "A Rate Limiter is inserted between Users and the Server so only a controlled number of requests per time window can pass through.",
+      "elements": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "sourceEntityId": "users",
+          "label": "Users",
+          "icon": "users",
+          "position": {
+            "x": 50,
+            "y": 7.664999999999999
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "edge_rate_limiter",
+          "type": "rate_limiter",
+          "sourceEntityId": "edge_rate_limiter",
+          "label": "Rate Limiter",
+          "icon": "timer",
+          "position": {
+            "x": 50,
+            "y": 29.38833333333334
+          },
+          "enter": "zoom_in",
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "app_server",
+          "type": "server",
+          "sourceEntityId": "app_server",
+          "label": "Server",
+          "icon": "server",
+          "position": {
+            "x": 50,
+            "y": 51.11166666666668
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        },
+        {
+          "id": "app_db",
+          "type": "database",
+          "sourceEntityId": "app_db",
+          "label": "Database",
+          "icon": "database",
+          "position": {
+            "x": 50,
+            "y": 72.83500000000001
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        }
+      ],
+      "entities": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Users",
+          "icon": "users",
+          "layout": {
+            "x": 50,
+            "y": 7.664999999999999
+          }
+        },
+        {
+          "id": "edge_rate_limiter",
+          "type": "rate_limiter",
+          "count": 1,
+          "importance": "primary",
+          "status": "active",
+          "label": "Rate Limiter",
+          "icon": "timer",
+          "layout": {
+            "x": 50,
+            "y": 29.38833333333334
+          }
+        },
+        {
+          "id": "app_server",
+          "type": "server",
+          "count": 1,
+          "importance": "secondary",
+          "status": "normal",
+          "label": "Server",
+          "icon": "server",
+          "layout": {
+            "x": 50,
+            "y": 51.11166666666668
+          }
+        },
+        {
+          "id": "app_db",
+          "type": "database",
+          "count": 1,
+          "importance": "secondary",
+          "status": "normal",
+          "label": "Database",
+          "icon": "database",
+          "layout": {
+            "x": 50,
+            "y": 72.83500000000001
+          }
+        }
+      ],
+      "connections": [
+        {
+          "id": "c_users_to_limiter",
+          "from": "users",
+          "to": "edge_rate_limiter",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_limiter_to_server",
+          "from": "edge_rate_limiter",
+          "to": "app_server",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_server_to_db",
+          "from": "app_server",
+          "to": "app_db",
+          "direction": "one_way",
+          "style": "solid"
+        }
+      ],
+      "interactions": [
+        {
+          "id": "i_c_users_to_limiter_fwd",
+          "from": "users",
+          "to": "edge_rate_limiter",
+          "type": "flow",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_limiter_to_server_fwd",
+          "from": "edge_rate_limiter",
+          "to": "app_server",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_server_to_db_fwd",
+          "from": "app_server",
+          "to": "app_db",
+          "type": "flow",
+          "intensity": "medium"
+        }
+      ],
+      "sourceCamera": {
+        "mode": "focus",
+        "target": "edge_rate_limiter",
+        "zoom": 1.08
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "medium",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "default",
+          "background_texture": "grid",
+          "glow_strength": "soft"
+        },
+        "motion": {
+          "entry_style": "draw_in",
+          "pacing": "balanced"
+        },
+        "flow": {
+          "renderer": "hybrid"
+        }
+      },
+      "source": {
+        "entities": [
+          {
+            "id": "users",
+            "type": "users_cluster",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Users",
+            "icon": "users",
+            "layout": {
+              "x": 50,
+              "y": 7.664999999999999
+            }
+          },
+          {
+            "id": "edge_rate_limiter",
+            "type": "rate_limiter",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "Rate Limiter",
+            "icon": "timer",
+            "layout": {
+              "x": 50,
+              "y": 29.38833333333334
+            }
+          },
+          {
+            "id": "app_server",
+            "type": "server",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Server",
+            "icon": "server",
+            "layout": {
+              "x": 50,
+              "y": 51.11166666666668
+            }
+          },
+          {
+            "id": "app_db",
+            "type": "database",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Database",
+            "icon": "database",
+            "layout": {
+              "x": 50,
+              "y": 72.83500000000001
+            }
+          }
+        ],
+        "connections": [
+          {
+            "id": "c_users_to_limiter",
+            "from": "users",
+            "to": "edge_rate_limiter",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_limiter_to_server",
+            "from": "edge_rate_limiter",
+            "to": "app_server",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_server_to_db",
+            "from": "app_server",
+            "to": "app_db",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "interactions": [
+          {
+            "id": "i_c_users_to_limiter_fwd",
+            "from": "users",
+            "to": "edge_rate_limiter",
+            "type": "flow",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_limiter_to_server_fwd",
+            "from": "edge_rate_limiter",
+            "to": "app_server",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_server_to_db_fwd",
+            "from": "app_server",
+            "to": "app_db",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
+        "camera": {
+          "mode": "focus",
+          "target": "edge_rate_limiter",
+          "zoom": 1.08
+        }
+      },
+      "motionPersonality": "ENERGETIC",
+      "diff": {
+        "entityDiffs": [
+          {
+            "type": "entity_added",
+            "entityId": "edge_rate_limiter"
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "users",
+            "from": {
+              "x": 50,
+              "y": 9.66
+            },
+            "to": {
+              "x": 50,
+              "y": 7.664999999999999
+            }
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "app_server",
+            "from": {
+              "x": 50,
+              "y": 40.25
+            },
+            "to": {
+              "x": 50,
+              "y": 51.11166666666668
+            }
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "app_db",
+            "from": {
+              "x": 50,
+              "y": 70.84
+            },
+            "to": {
+              "x": 50,
+              "y": 72.83500000000001
+            }
+          },
+          {
+            "type": "entity_status_changed",
+            "entityId": "app_server",
+            "from": "overloaded",
+            "to": "normal"
+          },
+          {
+            "type": "entity_importance_changed",
+            "entityId": "app_server",
+            "from": "primary",
+            "to": "secondary"
+          },
+          {
+            "type": "entity_status_changed",
+            "entityId": "app_db",
+            "from": "overloaded",
+            "to": "normal"
+          }
+        ],
+        "connectionDiffs": [
+          {
+            "type": "connection_added",
+            "connectionId": "c_users_to_limiter"
+          },
+          {
+            "type": "connection_added",
+            "connectionId": "c_limiter_to_server"
+          },
+          {
+            "type": "connection_removed",
+            "connectionId": "c_users_to_server"
+          }
+        ],
+        "interactionDiffs": [
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_users_to_limiter_fwd"
+          },
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_limiter_to_server_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_users_to_server_fwd"
+          },
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_server_to_db_fwd",
+            "from": "high",
+            "to": "medium"
+          }
+        ],
+        "cameraDiffs": [
+          {
+            "type": "camera_changed",
+            "from": {
+              "mode": "focus",
+              "target": "app_server",
+              "zoom": 1.1
+            },
+            "to": {
+              "mode": "focus",
+              "target": "edge_rate_limiter",
+              "zoom": 1.08
+            }
+          }
+        ]
+      },
+      "hierarchyTransition": null,
+      "plan": {
+        "phaseOrder": [
+          "removals",
+          "moves",
+          "additions",
+          "connections",
+          "interactions",
+          "camera"
+        ],
+        "removals": [],
+        "moves": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "move"
+          },
+          {
+            "entityId": "app_server",
+            "elementIds": [
+              "app_server"
+            ],
+            "action": "move"
+          },
+          {
+            "entityId": "app_db",
+            "elementIds": [
+              "app_db"
+            ],
+            "action": "move"
+          }
+        ],
+        "additions": [
+          {
+            "entityId": "edge_rate_limiter",
+            "elementIds": [
+              "edge_rate_limiter"
+            ],
+            "action": "add",
+            "enter": "zoom_in",
+            "cleanup": false
+          }
+        ],
+        "connections": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "connect",
+            "connectionId": "c_users_to_server",
+            "cleanup": false
+          },
+          {
+            "entityId": "edge_rate_limiter",
+            "elementIds": [
+              "edge_rate_limiter"
+            ],
+            "action": "connect",
+            "connectionId": "c_limiter_to_server",
+            "cleanup": false
+          },
+          {
+            "entityId": "app_server",
+            "elementIds": [
+              "app_server"
+            ],
+            "action": "connect",
+            "connectionId": "c_users_to_server",
+            "cleanup": false
+          }
+        ],
+        "interactions": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_server_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "edge_rate_limiter",
+            "elementIds": [
+              "edge_rate_limiter"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_limiter_to_server_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "app_server",
+            "elementIds": [
+              "app_server"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_server_to_db_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "app_db",
+            "elementIds": [
+              "app_db"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_server_to_db_fwd"
+          }
+        ]
+      },
+      "animationPlan": {
+        "entities": [
+          {
+            "entityId": "users",
+            "action": "move",
+            "delay": 0.6000000000000001,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "app_server",
+            "action": "move",
+            "delay": 0.6400000000000001,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "app_db",
+            "action": "move",
+            "delay": 0.68,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "edge_rate_limiter",
+            "action": "add",
+            "delay": 0.37399999999999994,
+            "duration": 0.62,
+            "easing": "cubic-bezier(0.4,0,0.2,1)",
+            "scale": 1.2,
+            "isPrimary": true
+          }
+        ],
+        "connections": [
+          {
+            "connectionId": "c_users_to_limiter",
+            "delay": 0.504,
+            "duration": 0.42,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "connectionId": "c_limiter_to_server",
+            "delay": 0.544,
+            "duration": 0.42,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "connectionId": "c_users_to_server",
+            "delay": 0.584,
+            "duration": 0.42,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          }
+        ],
+        "camera": null
+      },
+      "cameraPlan": null,
+      "sceneDiff": {
+        "addedEntities": [
+          {
+            "id": "edge_rate_limiter",
+            "type": "rate_limiter",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "Rate Limiter",
+            "icon": "timer",
+            "layout": {
+              "x": 50,
+              "y": 29.38833333333334
+            }
+          }
+        ],
+        "removedEntities": [],
+        "movedEntities": [
+          {
+            "id": "users",
+            "from": {
+              "x": 50,
+              "y": 9.66
+            },
+            "to": {
+              "x": 50,
+              "y": 7.664999999999999
+            }
+          },
+          {
+            "id": "app_server",
+            "from": {
+              "x": 50,
+              "y": 40.25
+            },
+            "to": {
+              "x": 50,
+              "y": 51.11166666666668
+            }
+          },
+          {
+            "id": "app_db",
+            "from": {
+              "x": 50,
+              "y": 70.84
+            },
+            "to": {
+              "x": 50,
+              "y": 72.83500000000001
+            }
+          }
+        ],
+        "updatedEntities": [
+          {
+            "id": "app_server",
+            "changes": {
+              "status": {
+                "from": "overloaded",
+                "to": "normal"
+              },
+              "importance": {
+                "from": "primary",
+                "to": "secondary"
+              }
+            }
+          },
+          {
+            "id": "app_db",
+            "changes": {
+              "status": {
+                "from": "overloaded",
+                "to": "normal"
+              }
+            }
+          }
+        ],
+        "addedConnections": [
+          {
+            "id": "c_users_to_limiter",
+            "from": "users",
+            "to": "edge_rate_limiter",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_limiter_to_server",
+            "from": "edge_rate_limiter",
+            "to": "app_server",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "removedConnections": [
+          {
+            "id": "c_users_to_server",
+            "from": "users",
+            "to": "app_server",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "addedInteractions": [
+          {
+            "id": "i_c_users_to_limiter_fwd",
+            "from": "users",
+            "to": "edge_rate_limiter",
+            "type": "flow",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_limiter_to_server_fwd",
+            "from": "edge_rate_limiter",
+            "to": "app_server",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
+        "removedInteractions": [
+          {
+            "id": "i_c_users_to_server_fwd",
+            "from": "users",
+            "to": "app_server",
+            "type": "burst",
+            "intensity": "high"
+          }
+        ],
+        "interactionIntensityChanged": [
+          {
+            "id": "i_c_server_to_db_fwd",
+            "from": "high",
+            "to": "medium"
+          }
+        ],
+        "cameraChanged": {
+          "from": {
+            "mode": "focus",
+            "target": "app_server",
+            "zoom": 1.1
+          },
+          "to": {
+            "mode": "focus",
+            "target": "edge_rate_limiter",
+            "zoom": 1.08
+          }
+        }
+      }
+    },
+    {
+      "id": "s4",
+      "start": 18,
+      "end": 24,
+      "narration": "Some requests flow from the Rate Limiter to the Server while extra requests are visibly blocked at the Rate Limiter instead of reaching the Database.",
+      "elements": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "sourceEntityId": "users",
+          "label": "Users",
+          "icon": "users",
+          "position": {
+            "x": 50,
+            "y": 7.664999999999999
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "edge_rate_limiter",
+          "type": "rate_limiter",
+          "sourceEntityId": "edge_rate_limiter",
+          "label": "Rate Limiter",
+          "icon": "timer",
+          "position": {
+            "x": 50,
+            "y": 29.38833333333334
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "active"
+          },
+          "effects": [
+            "focus"
+          ]
+        },
+        {
+          "id": "app_server",
+          "type": "server",
+          "sourceEntityId": "app_server",
+          "label": "Server",
+          "icon": "server",
+          "position": {
+            "x": 50,
+            "y": 51.11166666666668
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        },
+        {
+          "id": "app_db",
+          "type": "database",
+          "sourceEntityId": "app_db",
+          "label": "Database",
+          "icon": "database",
+          "position": {
+            "x": 50,
+            "y": 72.83500000000001
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        }
+      ],
+      "entities": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Users",
+          "icon": "users",
+          "layout": {
+            "x": 50,
+            "y": 7.664999999999999
+          }
+        },
+        {
+          "id": "edge_rate_limiter",
+          "type": "rate_limiter",
+          "count": 1,
+          "importance": "primary",
+          "status": "active",
+          "label": "Rate Limiter",
+          "icon": "timer",
+          "layout": {
+            "x": 50,
+            "y": 29.38833333333334
+          }
+        },
+        {
+          "id": "app_server",
+          "type": "server",
+          "count": 1,
+          "importance": "secondary",
+          "status": "normal",
+          "label": "Server",
+          "icon": "server",
+          "layout": {
+            "x": 50,
+            "y": 51.11166666666668
+          }
+        },
+        {
+          "id": "app_db",
+          "type": "database",
+          "count": 1,
+          "importance": "secondary",
+          "status": "normal",
+          "label": "Database",
+          "icon": "database",
+          "layout": {
+            "x": 50,
+            "y": 72.83500000000001
+          }
+        }
+      ],
+      "connections": [
+        {
+          "id": "c_users_to_limiter",
+          "from": "users",
+          "to": "edge_rate_limiter",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_limiter_to_server",
+          "from": "edge_rate_limiter",
+          "to": "app_server",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_server_to_db",
+          "from": "app_server",
+          "to": "app_db",
+          "direction": "one_way",
+          "style": "solid"
+        }
+      ],
+      "interactions": [
+        {
+          "id": "i_c_users_to_limiter_fwd",
+          "from": "users",
+          "to": "edge_rate_limiter",
+          "type": "burst",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_limiter_to_server_fwd",
+          "from": "edge_rate_limiter",
+          "to": "app_server",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_server_to_db_fwd",
+          "from": "app_server",
+          "to": "app_db",
+          "type": "flow",
+          "intensity": "medium"
+        }
+      ],
+      "sourceCamera": {
+        "mode": "focus",
+        "target": "edge_rate_limiter",
+        "zoom": 1.08
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "medium",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "default",
+          "background_texture": "grid",
+          "glow_strength": "soft"
+        },
+        "motion": {
+          "entry_style": "draw_in",
+          "pacing": "balanced"
+        },
+        "flow": {
+          "renderer": "hybrid"
+        }
+      },
+      "source": {
+        "entities": [
+          {
+            "id": "users",
+            "type": "users_cluster",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Users",
+            "icon": "users",
+            "layout": {
+              "x": 50,
+              "y": 7.664999999999999
+            }
+          },
+          {
+            "id": "edge_rate_limiter",
+            "type": "rate_limiter",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "Rate Limiter",
+            "icon": "timer",
+            "layout": {
+              "x": 50,
+              "y": 29.38833333333334
+            }
+          },
+          {
+            "id": "app_server",
+            "type": "server",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Server",
+            "icon": "server",
+            "layout": {
+              "x": 50,
+              "y": 51.11166666666668
+            }
+          },
+          {
+            "id": "app_db",
+            "type": "database",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Database",
+            "icon": "database",
+            "layout": {
+              "x": 50,
+              "y": 72.83500000000001
+            }
+          }
+        ],
+        "connections": [
+          {
+            "id": "c_users_to_limiter",
+            "from": "users",
+            "to": "edge_rate_limiter",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_limiter_to_server",
+            "from": "edge_rate_limiter",
+            "to": "app_server",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_server_to_db",
+            "from": "app_server",
+            "to": "app_db",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "interactions": [
+          {
+            "id": "i_c_users_to_limiter_fwd",
+            "from": "users",
+            "to": "edge_rate_limiter",
+            "type": "burst",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_limiter_to_server_fwd",
+            "from": "edge_rate_limiter",
+            "to": "app_server",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_server_to_db_fwd",
+            "from": "app_server",
+            "to": "app_db",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
+        "camera": {
+          "mode": "focus",
+          "target": "edge_rate_limiter",
+          "zoom": 1.08
+        }
+      },
+      "motionPersonality": "ENERGETIC",
+      "diff": {
+        "entityDiffs": [],
+        "connectionDiffs": [],
+        "interactionDiffs": [],
+        "cameraDiffs": []
+      },
+      "hierarchyTransition": null,
+      "plan": {
+        "phaseOrder": [
+          "removals",
+          "moves",
+          "additions",
+          "connections",
+          "interactions",
+          "camera"
+        ],
+        "removals": [],
+        "moves": [],
+        "additions": [],
+        "connections": [],
+        "interactions": []
+      },
+      "animationPlan": {
+        "entities": [],
+        "connections": [],
+        "camera": null
+      },
+      "cameraPlan": null,
+      "sceneDiff": {
+        "addedEntities": [],
+        "removedEntities": [],
+        "movedEntities": [],
+        "updatedEntities": [],
+        "addedConnections": [],
+        "removedConnections": [],
+        "addedInteractions": [],
+        "removedInteractions": [],
+        "interactionIntensityChanged": [],
+        "cameraChanged": null
+      }
+    },
+    {
+      "id": "s5",
+      "start": 24,
+      "end": 30,
+      "narration": "An API Gateway appears in front of the Rate Limiter so all client traffic enters through one managed API entry point.",
+      "elements": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "sourceEntityId": "users",
+          "label": "Users",
+          "icon": "users",
+          "position": {
+            "x": 74,
+            "y": 7
+          },
+          "visualStyle": {
+            "size": 122.4,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.5189712185731703,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 43.4112,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "edge_api_gateway",
+          "type": "api_gateway",
+          "sourceEntityId": "edge_api_gateway",
+          "label": "API Gateway",
+          "icon": "route",
+          "position": {
+            "x": 26,
+            "y": 23.625
+          },
+          "enter": "zoom_in",
+          "visualStyle": {
+            "size": 122.4,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.5189712185731703,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 43.4112,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "edge_rate_limiter",
+          "type": "rate_limiter",
+          "sourceEntityId": "edge_rate_limiter",
+          "label": "Rate Limiter",
+          "icon": "timer",
+          "position": {
+            "x": 74,
+            "y": 40.25
+          },
+          "visualStyle": {
+            "size": 122.4,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.5189712185731703,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 43.4112,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "app_server",
+          "type": "server",
+          "sourceEntityId": "app_server",
+          "label": "Server",
+          "icon": "server",
+          "position": {
+            "x": 26,
+            "y": 56.875
+          },
+          "visualStyle": {
+            "size": 122.4,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.5189712185731703,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 43.4112,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        },
+        {
+          "id": "app_db",
+          "type": "database",
+          "sourceEntityId": "app_db",
+          "label": "Database",
+          "icon": "database",
+          "position": {
+            "x": 74,
+            "y": 73.5
+          },
+          "visualStyle": {
+            "size": 122.4,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.5189712185731703,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 43.4112,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        }
+      ],
+      "entities": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Users",
+          "icon": "users",
+          "layout": {
+            "x": 74,
+            "y": 7
+          }
+        },
+        {
+          "id": "edge_api_gateway",
+          "type": "api_gateway",
+          "count": 1,
+          "importance": "primary",
+          "status": "active",
+          "label": "API Gateway",
+          "icon": "route",
+          "layout": {
+            "x": 26,
+            "y": 23.625
+          }
+        },
+        {
+          "id": "edge_rate_limiter",
+          "type": "rate_limiter",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Rate Limiter",
+          "icon": "timer",
+          "layout": {
+            "x": 74,
+            "y": 40.25
+          }
+        },
+        {
+          "id": "app_server",
+          "type": "server",
+          "count": 1,
+          "importance": "secondary",
+          "status": "normal",
+          "label": "Server",
+          "icon": "server",
+          "layout": {
+            "x": 26,
+            "y": 56.875
+          }
+        },
+        {
+          "id": "app_db",
+          "type": "database",
+          "count": 1,
+          "importance": "secondary",
+          "status": "normal",
+          "label": "Database",
+          "icon": "database",
+          "layout": {
+            "x": 74,
+            "y": 73.5
+          }
+        }
+      ],
+      "connections": [
+        {
+          "id": "c_users_to_gateway",
+          "from": "users",
+          "to": "edge_api_gateway",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_gateway_to_limiter",
+          "from": "edge_api_gateway",
+          "to": "edge_rate_limiter",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_limiter_to_server",
+          "from": "edge_rate_limiter",
+          "to": "app_server",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_server_to_db",
+          "from": "app_server",
+          "to": "app_db",
+          "direction": "one_way",
+          "style": "solid"
+        }
+      ],
+      "interactions": [
+        {
+          "id": "i_c_users_to_gateway_fwd",
+          "from": "users",
+          "to": "edge_api_gateway",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_gateway_to_limiter_fwd",
+          "from": "edge_api_gateway",
+          "to": "edge_rate_limiter",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_limiter_to_server_fwd",
+          "from": "edge_rate_limiter",
+          "to": "app_server",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_server_to_db_fwd",
+          "from": "app_server",
+          "to": "app_db",
+          "type": "flow",
+          "intensity": "medium"
+        }
+      ],
+      "sourceCamera": {
+        "mode": "focus",
+        "target": "edge_api_gateway",
+        "zoom": 1
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "wide",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "default",
+          "background_texture": "grid",
+          "glow_strength": "soft"
+        },
+        "motion": {
+          "entry_style": "draw_in",
+          "pacing": "balanced"
+        },
+        "flow": {
+          "renderer": "hybrid"
+        }
+      },
+      "source": {
+        "entities": [
+          {
+            "id": "users",
+            "type": "users_cluster",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Users",
+            "icon": "users",
+            "layout": {
+              "x": 74,
+              "y": 7
+            }
+          },
+          {
+            "id": "edge_api_gateway",
+            "type": "api_gateway",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "API Gateway",
+            "icon": "route",
+            "layout": {
+              "x": 26,
+              "y": 23.625
+            }
+          },
+          {
+            "id": "edge_rate_limiter",
+            "type": "rate_limiter",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Rate Limiter",
+            "icon": "timer",
+            "layout": {
+              "x": 74,
+              "y": 40.25
+            }
+          },
+          {
+            "id": "app_server",
+            "type": "server",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Server",
+            "icon": "server",
+            "layout": {
+              "x": 26,
+              "y": 56.875
+            }
+          },
+          {
+            "id": "app_db",
+            "type": "database",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Database",
+            "icon": "database",
+            "layout": {
+              "x": 74,
+              "y": 73.5
+            }
+          }
+        ],
+        "connections": [
+          {
+            "id": "c_users_to_gateway",
+            "from": "users",
+            "to": "edge_api_gateway",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_gateway_to_limiter",
+            "from": "edge_api_gateway",
+            "to": "edge_rate_limiter",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_limiter_to_server",
+            "from": "edge_rate_limiter",
+            "to": "app_server",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_server_to_db",
+            "from": "app_server",
+            "to": "app_db",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "interactions": [
+          {
+            "id": "i_c_users_to_gateway_fwd",
+            "from": "users",
+            "to": "edge_api_gateway",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_gateway_to_limiter_fwd",
+            "from": "edge_api_gateway",
+            "to": "edge_rate_limiter",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_limiter_to_server_fwd",
+            "from": "edge_rate_limiter",
+            "to": "app_server",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_server_to_db_fwd",
+            "from": "app_server",
+            "to": "app_db",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
+        "camera": {
+          "mode": "focus",
+          "target": "edge_api_gateway",
+          "zoom": 1
+        }
+      },
+      "motionPersonality": "ENERGETIC",
+      "diff": {
+        "entityDiffs": [
+          {
+            "type": "entity_added",
+            "entityId": "edge_api_gateway"
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "users",
+            "from": {
+              "x": 50,
+              "y": 7.664999999999999
+            },
+            "to": {
+              "x": 74,
+              "y": 7
+            }
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "edge_rate_limiter",
+            "from": {
+              "x": 50,
+              "y": 29.38833333333334
+            },
+            "to": {
+              "x": 74,
+              "y": 40.25
+            }
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "app_server",
+            "from": {
+              "x": 50,
+              "y": 51.11166666666668
+            },
+            "to": {
+              "x": 26,
+              "y": 56.875
+            }
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "app_db",
+            "from": {
+              "x": 50,
+              "y": 72.83500000000001
+            },
+            "to": {
+              "x": 74,
+              "y": 73.5
+            }
+          },
+          {
+            "type": "entity_importance_changed",
+            "entityId": "edge_rate_limiter",
+            "from": "primary",
+            "to": "secondary"
+          }
+        ],
+        "connectionDiffs": [
+          {
+            "type": "connection_added",
+            "connectionId": "c_users_to_gateway"
+          },
+          {
+            "type": "connection_added",
+            "connectionId": "c_gateway_to_limiter"
+          },
+          {
+            "type": "connection_removed",
+            "connectionId": "c_users_to_limiter"
+          }
+        ],
+        "interactionDiffs": [
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_users_to_gateway_fwd"
+          },
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_gateway_to_limiter_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_users_to_limiter_fwd"
+          }
+        ],
+        "cameraDiffs": [
+          {
+            "type": "camera_changed",
+            "from": {
+              "mode": "focus",
+              "target": "edge_rate_limiter",
+              "zoom": 1.08
+            },
+            "to": {
+              "mode": "focus",
+              "target": "edge_api_gateway",
+              "zoom": 1
+            }
+          }
+        ]
+      },
+      "hierarchyTransition": null,
+      "plan": {
+        "phaseOrder": [
+          "removals",
+          "moves",
+          "additions",
+          "connections",
+          "interactions",
+          "camera"
+        ],
+        "removals": [],
+        "moves": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "move"
+          },
+          {
+            "entityId": "edge_rate_limiter",
+            "elementIds": [
+              "edge_rate_limiter"
+            ],
+            "action": "move"
+          },
+          {
+            "entityId": "app_server",
+            "elementIds": [
+              "app_server"
+            ],
+            "action": "move"
+          },
+          {
+            "entityId": "app_db",
+            "elementIds": [
+              "app_db"
+            ],
+            "action": "move"
+          }
+        ],
+        "additions": [
+          {
+            "entityId": "edge_api_gateway",
+            "elementIds": [
+              "edge_api_gateway"
+            ],
+            "action": "add",
+            "enter": "zoom_in",
+            "cleanup": false
+          }
+        ],
+        "connections": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "connect",
+            "connectionId": "c_users_to_limiter",
+            "cleanup": false
+          },
+          {
+            "entityId": "edge_api_gateway",
+            "elementIds": [
+              "edge_api_gateway"
+            ],
+            "action": "connect",
+            "connectionId": "c_gateway_to_limiter",
+            "cleanup": false
+          },
+          {
+            "entityId": "edge_rate_limiter",
+            "elementIds": [
+              "edge_rate_limiter"
+            ],
+            "action": "connect",
+            "connectionId": "c_users_to_limiter",
+            "cleanup": false
+          }
+        ],
+        "interactions": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_limiter_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "edge_api_gateway",
+            "elementIds": [
+              "edge_api_gateway"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_gateway_to_limiter_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "edge_rate_limiter",
+            "elementIds": [
+              "edge_rate_limiter"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_limiter_fwd",
+            "cleanup": false
+          }
+        ]
+      },
+      "animationPlan": {
+        "entities": [
+          {
+            "entityId": "users",
+            "action": "move",
+            "delay": 0.6000000000000001,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "edge_rate_limiter",
+            "action": "move",
+            "delay": 0.6400000000000001,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "app_server",
+            "action": "move",
+            "delay": 0.68,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "app_db",
+            "action": "move",
+            "delay": 0.7200000000000001,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "edge_api_gateway",
+            "action": "add",
+            "delay": 0.37399999999999994,
+            "duration": 0.62,
+            "easing": "cubic-bezier(0.4,0,0.2,1)",
+            "scale": 1.2,
+            "isPrimary": true
+          }
+        ],
+        "connections": [
+          {
+            "connectionId": "c_users_to_gateway",
+            "delay": 0.504,
+            "duration": 0.42,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "connectionId": "c_gateway_to_limiter",
+            "delay": 0.544,
+            "duration": 0.42,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "connectionId": "c_users_to_limiter",
+            "delay": 0.584,
+            "duration": 0.42,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          }
+        ],
+        "camera": null
+      },
+      "cameraPlan": null,
+      "sceneDiff": {
+        "addedEntities": [
+          {
+            "id": "edge_api_gateway",
+            "type": "api_gateway",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "API Gateway",
+            "icon": "route",
+            "layout": {
+              "x": 26,
+              "y": 23.625
+            }
+          }
+        ],
+        "removedEntities": [],
+        "movedEntities": [
+          {
+            "id": "users",
+            "from": {
+              "x": 50,
+              "y": 7.664999999999999
+            },
+            "to": {
+              "x": 74,
+              "y": 7
+            }
+          },
+          {
+            "id": "edge_rate_limiter",
+            "from": {
+              "x": 50,
+              "y": 29.38833333333334
+            },
+            "to": {
+              "x": 74,
+              "y": 40.25
+            }
+          },
+          {
+            "id": "app_server",
+            "from": {
+              "x": 50,
+              "y": 51.11166666666668
+            },
+            "to": {
+              "x": 26,
+              "y": 56.875
+            }
+          },
+          {
+            "id": "app_db",
+            "from": {
+              "x": 50,
+              "y": 72.83500000000001
+            },
+            "to": {
+              "x": 74,
+              "y": 73.5
+            }
+          }
+        ],
+        "updatedEntities": [
+          {
+            "id": "edge_rate_limiter",
+            "changes": {
+              "importance": {
+                "from": "primary",
+                "to": "secondary"
+              }
+            }
+          }
+        ],
+        "addedConnections": [
+          {
+            "id": "c_users_to_gateway",
+            "from": "users",
+            "to": "edge_api_gateway",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_gateway_to_limiter",
+            "from": "edge_api_gateway",
+            "to": "edge_rate_limiter",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "removedConnections": [
+          {
+            "id": "c_users_to_limiter",
+            "from": "users",
+            "to": "edge_rate_limiter",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "addedInteractions": [
+          {
+            "id": "i_c_users_to_gateway_fwd",
+            "from": "users",
+            "to": "edge_api_gateway",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_gateway_to_limiter_fwd",
+            "from": "edge_api_gateway",
+            "to": "edge_rate_limiter",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
+        "removedInteractions": [
+          {
+            "id": "i_c_users_to_limiter_fwd",
+            "from": "users",
+            "to": "edge_rate_limiter",
+            "type": "burst",
+            "intensity": "high"
+          }
+        ],
+        "interactionIntensityChanged": [],
+        "cameraChanged": {
+          "from": {
+            "mode": "focus",
+            "target": "edge_rate_limiter",
+            "zoom": 1.08
+          },
+          "to": {
+            "mode": "focus",
+            "target": "edge_api_gateway",
+            "zoom": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "s6",
+      "start": 30,
+      "end": 36,
+      "narration": "Even with the Rate Limiter, allowed traffic still spikes, so the Server shows overload again as it tries to keep up.",
+      "elements": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "sourceEntityId": "users",
+          "label": "Users",
+          "icon": "users",
+          "position": {
+            "x": 74,
+            "y": 7
+          },
+          "visualStyle": {
+            "size": 122.4,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.5189712185731703,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 43.4112,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "edge_api_gateway",
+          "type": "api_gateway",
+          "sourceEntityId": "edge_api_gateway",
+          "label": "API Gateway",
+          "icon": "route",
+          "position": {
+            "x": 26,
+            "y": 23.625
+          },
+          "visualStyle": {
+            "size": 122.4,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.5189712185731703,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 43.4112,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "edge_rate_limiter",
+          "type": "rate_limiter",
+          "sourceEntityId": "edge_rate_limiter",
+          "label": "Rate Limiter",
+          "icon": "timer",
+          "position": {
+            "x": 74,
+            "y": 40.25
+          },
+          "visualStyle": {
+            "size": 122.4,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.5189712185731703,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 43.4112,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "app_server",
+          "type": "server",
+          "sourceEntityId": "app_server",
+          "label": "Server",
+          "icon": "server",
+          "position": {
+            "x": 26,
+            "y": 56.875
+          },
+          "visualStyle": {
+            "size": 122.4,
+            "opacity": 1,
+            "color": "#EF4444",
+            "strokeWidth": 2.5189712185731703,
+            "strokeColor": "#EF4444",
+            "glow": false,
+            "glowColor": "#EF4444",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 43.4112,
+            "fontWeight": 600,
+            "status": "overloaded"
+          }
+        },
+        {
+          "id": "app_db",
+          "type": "database",
+          "sourceEntityId": "app_db",
+          "label": "Database",
+          "icon": "database",
+          "position": {
+            "x": 74,
+            "y": 73.5
+          },
+          "visualStyle": {
+            "size": 122.4,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.5189712185731703,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 43.4112,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        }
+      ],
+      "entities": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Users",
+          "icon": "users",
+          "layout": {
+            "x": 74,
+            "y": 7
+          }
+        },
+        {
+          "id": "edge_api_gateway",
+          "type": "api_gateway",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "API Gateway",
+          "icon": "route",
+          "layout": {
+            "x": 26,
+            "y": 23.625
+          }
+        },
+        {
+          "id": "edge_rate_limiter",
+          "type": "rate_limiter",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Rate Limiter",
+          "icon": "timer",
+          "layout": {
+            "x": 74,
+            "y": 40.25
+          }
+        },
+        {
+          "id": "app_server",
+          "type": "server",
+          "count": 1,
+          "importance": "primary",
+          "status": "overloaded",
+          "label": "Server",
+          "icon": "server",
+          "layout": {
+            "x": 26,
+            "y": 56.875
+          }
+        },
+        {
+          "id": "app_db",
+          "type": "database",
+          "count": 1,
+          "importance": "secondary",
+          "status": "normal",
+          "label": "Database",
+          "icon": "database",
+          "layout": {
+            "x": 74,
+            "y": 73.5
+          }
+        }
+      ],
+      "connections": [
+        {
+          "id": "c_users_to_gateway",
+          "from": "users",
+          "to": "edge_api_gateway",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_gateway_to_limiter",
+          "from": "edge_api_gateway",
+          "to": "edge_rate_limiter",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_limiter_to_server",
+          "from": "edge_rate_limiter",
+          "to": "app_server",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_server_to_db",
+          "from": "app_server",
+          "to": "app_db",
+          "direction": "one_way",
+          "style": "solid"
+        }
+      ],
+      "interactions": [
+        {
+          "id": "i_c_users_to_gateway_fwd",
+          "from": "users",
+          "to": "edge_api_gateway",
+          "type": "burst",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_gateway_to_limiter_fwd",
+          "from": "edge_api_gateway",
+          "to": "edge_rate_limiter",
+          "type": "flow",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_limiter_to_server_fwd",
+          "from": "edge_rate_limiter",
+          "to": "app_server",
+          "type": "burst",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_server_to_db_fwd",
+          "from": "app_server",
+          "to": "app_db",
+          "type": "flow",
+          "intensity": "high"
+        }
+      ],
+      "sourceCamera": {
+        "mode": "focus",
+        "target": "app_server",
+        "zoom": 1.04
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "medium",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "default",
+          "background_texture": "grid",
+          "glow_strength": "soft"
+        },
+        "motion": {
+          "entry_style": "draw_in",
+          "pacing": "balanced"
+        },
+        "flow": {
+          "renderer": "hybrid"
+        }
+      },
+      "source": {
+        "entities": [
+          {
+            "id": "users",
+            "type": "users_cluster",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Users",
+            "icon": "users",
+            "layout": {
+              "x": 74,
+              "y": 7
+            }
+          },
+          {
+            "id": "edge_api_gateway",
+            "type": "api_gateway",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "API Gateway",
+            "icon": "route",
+            "layout": {
+              "x": 26,
+              "y": 23.625
+            }
+          },
+          {
+            "id": "edge_rate_limiter",
+            "type": "rate_limiter",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Rate Limiter",
+            "icon": "timer",
+            "layout": {
+              "x": 74,
+              "y": 40.25
+            }
+          },
+          {
+            "id": "app_server",
+            "type": "server",
+            "count": 1,
+            "importance": "primary",
+            "status": "overloaded",
+            "label": "Server",
+            "icon": "server",
+            "layout": {
+              "x": 26,
+              "y": 56.875
+            }
+          },
+          {
+            "id": "app_db",
+            "type": "database",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Database",
+            "icon": "database",
+            "layout": {
+              "x": 74,
+              "y": 73.5
+            }
+          }
+        ],
+        "connections": [
+          {
+            "id": "c_users_to_gateway",
+            "from": "users",
+            "to": "edge_api_gateway",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_gateway_to_limiter",
+            "from": "edge_api_gateway",
+            "to": "edge_rate_limiter",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_limiter_to_server",
+            "from": "edge_rate_limiter",
+            "to": "app_server",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_server_to_db",
+            "from": "app_server",
+            "to": "app_db",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "interactions": [
+          {
+            "id": "i_c_users_to_gateway_fwd",
+            "from": "users",
+            "to": "edge_api_gateway",
+            "type": "burst",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_gateway_to_limiter_fwd",
+            "from": "edge_api_gateway",
+            "to": "edge_rate_limiter",
+            "type": "flow",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_limiter_to_server_fwd",
+            "from": "edge_rate_limiter",
+            "to": "app_server",
+            "type": "burst",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_server_to_db_fwd",
+            "from": "app_server",
+            "to": "app_db",
+            "type": "flow",
+            "intensity": "high"
+          }
+        ],
+        "camera": {
+          "mode": "focus",
+          "target": "app_server",
+          "zoom": 1.04
+        }
+      },
+      "motionPersonality": "ENERGETIC",
+      "diff": {
+        "entityDiffs": [
+          {
+            "type": "entity_importance_changed",
+            "entityId": "edge_api_gateway",
+            "from": "primary",
+            "to": "secondary"
+          },
+          {
+            "type": "entity_status_changed",
+            "entityId": "app_server",
+            "from": "normal",
+            "to": "overloaded"
+          },
+          {
+            "type": "entity_importance_changed",
+            "entityId": "app_server",
+            "from": "secondary",
+            "to": "primary"
+          }
+        ],
+        "connectionDiffs": [],
+        "interactionDiffs": [
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_users_to_gateway_fwd",
+            "from": "medium",
+            "to": "high"
+          },
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_gateway_to_limiter_fwd",
+            "from": "medium",
+            "to": "high"
+          },
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_limiter_to_server_fwd",
+            "from": "medium",
+            "to": "high"
+          },
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_server_to_db_fwd",
+            "from": "medium",
+            "to": "high"
+          }
+        ],
+        "cameraDiffs": [
+          {
+            "type": "camera_changed",
+            "from": {
+              "mode": "focus",
+              "target": "edge_api_gateway",
+              "zoom": 1
+            },
+            "to": {
+              "mode": "focus",
+              "target": "app_server",
+              "zoom": 1.04
+            }
+          }
+        ]
+      },
+      "hierarchyTransition": null,
+      "plan": {
+        "phaseOrder": [
+          "removals",
+          "moves",
+          "additions",
+          "connections",
+          "interactions",
+          "camera"
+        ],
+        "removals": [],
+        "moves": [],
+        "additions": [
+          {
+            "entityId": "app_server",
+            "elementIds": [
+              "app_server"
+            ],
+            "action": "add",
+            "enter": "zoom_in"
+          }
+        ],
+        "connections": [],
+        "interactions": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_gateway_fwd"
+          },
+          {
+            "entityId": "edge_api_gateway",
+            "elementIds": [
+              "edge_api_gateway"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_gateway_to_limiter_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "edge_rate_limiter",
+            "elementIds": [
+              "edge_rate_limiter"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_limiter_to_server_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "app_server",
+            "elementIds": [
+              "app_server"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_server_to_db_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "app_db",
+            "elementIds": [
+              "app_db"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_server_to_db_fwd"
+          }
+        ]
+      },
+      "animationPlan": {
+        "entities": [
+          {
+            "entityId": "app_server",
+            "action": "add",
+            "delay": 0.37399999999999994,
+            "duration": 0.62,
+            "easing": "cubic-bezier(0.4,0,0.2,1)",
+            "scale": 1.2,
+            "isPrimary": true
+          }
+        ],
+        "connections": [],
+        "camera": null
+      },
+      "cameraPlan": null,
+      "sceneDiff": {
+        "addedEntities": [],
+        "removedEntities": [],
+        "movedEntities": [],
+        "updatedEntities": [
+          {
+            "id": "edge_api_gateway",
             "changes": {
               "importance": {
                 "from": "primary",
@@ -2461,16 +3578,7 @@ const renderSpec = {
             }
           },
           {
-            "id": "app",
-            "changes": {
-              "status": {
-                "from": "normal",
-                "to": "active"
-              }
-            }
-          },
-          {
-            "id": "db",
+            "id": "app_server",
             "changes": {
               "status": {
                 "from": "normal",
@@ -2489,22 +3597,22 @@ const renderSpec = {
         "removedInteractions": [],
         "interactionIntensityChanged": [
           {
-            "id": "i_c_users_lb_req_fwd",
+            "id": "i_c_users_to_gateway_fwd",
             "from": "medium",
             "to": "high"
           },
           {
-            "id": "i_c_lb_app_req_fwd",
+            "id": "i_c_gateway_to_limiter_fwd",
             "from": "medium",
             "to": "high"
           },
           {
-            "id": "i_c_app_db_call_fwd",
+            "id": "i_c_limiter_to_server_fwd",
             "from": "medium",
             "to": "high"
           },
           {
-            "id": "i_c_app_db_call_rev",
+            "id": "i_c_server_to_db_fwd",
             "from": "medium",
             "to": "high"
           }
@@ -2512,845 +3620,12 @@ const renderSpec = {
         "cameraChanged": {
           "from": {
             "mode": "focus",
-            "target": "lb",
+            "target": "edge_api_gateway",
             "zoom": 1
           },
           "to": {
             "mode": "focus",
-            "target": "db",
-            "zoom": 1.08
-          }
-        }
-      }
-    },
-    {
-      "id": "s6",
-      "start": 30,
-      "end": 36,
-      "narration": "A Cache is added between the Servers and the Database so many requests do a cache_lookup and return quickly without hitting the Database.",
-      "camera": "wide",
-      "elements": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "sourceEntityId": "users",
-          "label": "Users",
-          "position": {
-            "x": 50,
-            "y": 12
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 72,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.6832815729997477,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 7.030400000000002,
-            "textColor": "#E8F6FF",
-            "fontSize": 22.400000000000002,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "lb",
-          "type": "load_balancer",
-          "sourceEntityId": "lb",
-          "label": "Load Balancer",
-          "position": {
-            "x": 50,
-            "y": 27
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 72,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.6832815729997477,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 7.030400000000002,
-            "textColor": "#E8F6FF",
-            "fontSize": 22.400000000000002,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_1",
-          "type": "server",
-          "sourceEntityId": "app",
-          "position": {
-            "x": 31.74074074074074,
-            "y": 42
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 72,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.6832815729997477,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 7.030400000000002,
-            "textColor": "#E8F6FF",
-            "fontSize": 22.400000000000002,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app",
-          "type": "server",
-          "sourceEntityId": "app",
-          "label": "Server",
-          "position": {
-            "x": 50,
-            "y": 42
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 72,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.6832815729997477,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 7.030400000000002,
-            "textColor": "#E8F6FF",
-            "fontSize": 22.400000000000002,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_3",
-          "type": "server",
-          "sourceEntityId": "app",
-          "position": {
-            "x": 68.25925925925927,
-            "y": 42
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 72,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.6832815729997477,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 7.030400000000002,
-            "textColor": "#E8F6FF",
-            "fontSize": 22.400000000000002,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "cache",
-          "type": "cache",
-          "sourceEntityId": "cache",
-          "label": "Cache",
-          "position": {
-            "x": 50,
-            "y": 57
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 72,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.6832815729997477,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 7.030400000000002,
-            "textColor": "#E8F6FF",
-            "fontSize": 22.400000000000002,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "db",
-          "type": "database",
-          "sourceEntityId": "db",
-          "label": "Database",
-          "position": {
-            "x": 50,
-            "y": 72
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 72,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.6832815729997477,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 7.030400000000002,
-            "textColor": "#E8F6FF",
-            "fontSize": 22.400000000000002,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        }
-      ],
-      "entities": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Users",
-          "layout": {
-            "x": 50,
-            "y": 12
-          }
-        },
-        {
-          "id": "lb",
-          "type": "load_balancer",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Load Balancer",
-          "layout": {
-            "x": 50,
-            "y": 27
-          }
-        },
-        {
-          "id": "app",
-          "type": "server",
-          "count": 3,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Server",
-          "layout": {
-            "x": 50,
-            "y": 42
-          }
-        },
-        {
-          "id": "cache",
-          "type": "cache",
-          "count": 1,
-          "importance": "primary",
-          "status": "normal",
-          "label": "Cache",
-          "layout": {
-            "x": 50,
-            "y": 57
-          }
-        },
-        {
-          "id": "db",
-          "type": "database",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Database",
-          "layout": {
-            "x": 50,
-            "y": 72
-          }
-        }
-      ],
-      "connections": [
-        {
-          "id": "c_users_lb_req",
-          "from": "users",
-          "to": "lb",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_lb_app_req",
-          "from": "lb",
-          "to": "app",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_app_cache_lookup",
-          "from": "app",
-          "to": "cache",
-          "direction": "bidirectional",
-          "style": "solid"
-        },
-        {
-          "id": "c_cache_db_call",
-          "from": "cache",
-          "to": "db",
-          "direction": "one_way",
-          "style": "solid"
-        }
-      ],
-      "interactions": [
-        {
-          "id": "i_c_users_lb_req_fwd",
-          "from": "users",
-          "to": "lb",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_lb_app_req_fwd",
-          "from": "lb",
-          "to": "app",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_app_cache_lookup_fwd",
-          "from": "app",
-          "to": "cache",
-          "type": "ping",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_app_cache_lookup_rev",
-          "from": "cache",
-          "to": "app",
-          "type": "ping",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_cache_db_call_fwd",
-          "from": "cache",
-          "to": "db",
-          "type": "flow",
-          "intensity": "low"
-        }
-      ],
-      "sourceCamera": {
-        "mode": "focus",
-        "target": "cache",
-        "zoom": 1.04
-      },
-      "directives": {
-        "camera": {
-          "mode": "follow_action",
-          "zoom": "medium",
-          "active_zone": "upper_third",
-          "reserve_bottom_percent": 25
-        },
-        "visual": {
-          "theme": "default",
-          "background_texture": "grid",
-          "glow_strength": "soft"
-        },
-        "motion": {
-          "entry_style": "elastic_pop",
-          "pacing": "balanced"
-        },
-        "flow": {
-          "renderer": "hybrid"
-        }
-      },
-      "source": {
-        "entities": [
-          {
-            "id": "users",
-            "type": "users_cluster",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Users",
-            "layout": {
-              "x": 50,
-              "y": 12
-            }
-          },
-          {
-            "id": "lb",
-            "type": "load_balancer",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Load Balancer",
-            "layout": {
-              "x": 50,
-              "y": 27
-            }
-          },
-          {
-            "id": "app",
-            "type": "server",
-            "count": 3,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Server",
-            "layout": {
-              "x": 50,
-              "y": 42
-            }
-          },
-          {
-            "id": "cache",
-            "type": "cache",
-            "count": 1,
-            "importance": "primary",
-            "status": "normal",
-            "label": "Cache",
-            "layout": {
-              "x": 50,
-              "y": 57
-            }
-          },
-          {
-            "id": "db",
-            "type": "database",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Database",
-            "layout": {
-              "x": 50,
-              "y": 72
-            }
-          }
-        ],
-        "connections": [
-          {
-            "id": "c_users_lb_req",
-            "from": "users",
-            "to": "lb",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_lb_app_req",
-            "from": "lb",
-            "to": "app",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_app_cache_lookup",
-            "from": "app",
-            "to": "cache",
-            "direction": "bidirectional",
-            "style": "solid"
-          },
-          {
-            "id": "c_cache_db_call",
-            "from": "cache",
-            "to": "db",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "interactions": [
-          {
-            "id": "i_c_users_lb_req_fwd",
-            "from": "users",
-            "to": "lb",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_lb_app_req_fwd",
-            "from": "lb",
-            "to": "app",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_app_cache_lookup_fwd",
-            "from": "app",
-            "to": "cache",
-            "type": "ping",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_app_cache_lookup_rev",
-            "from": "cache",
-            "to": "app",
-            "type": "ping",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_cache_db_call_fwd",
-            "from": "cache",
-            "to": "db",
-            "type": "flow",
-            "intensity": "low"
-          }
-        ],
-        "camera": {
-          "mode": "focus",
-          "target": "cache",
-          "zoom": 1.04
-        }
-      },
-      "staticScene": true,
-      "motionPersonality": "CALM",
-      "diff": {
-        "entityDiffs": [
-          {
-            "type": "entity_added",
-            "entityId": "cache"
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "users",
-            "from": {
-              "x": 50,
-              "y": 16.2
-            },
-            "to": {
-              "x": 50,
-              "y": 12
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "lb",
-            "from": {
-              "x": 50,
-              "y": 33.4
-            },
-            "to": {
-              "x": 50,
-              "y": 27
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "app",
-            "from": {
-              "x": 50,
-              "y": 50.599999999999994
-            },
-            "to": {
-              "x": 50,
-              "y": 42
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "db",
-            "from": {
-              "x": 50,
-              "y": 67.8
-            },
-            "to": {
-              "x": 50,
-              "y": 72
-            }
-          },
-          {
-            "type": "entity_status_changed",
-            "entityId": "users",
-            "from": "active",
-            "to": "normal"
-          },
-          {
-            "type": "entity_status_changed",
-            "entityId": "app",
-            "from": "active",
-            "to": "normal"
-          },
-          {
-            "type": "entity_status_changed",
-            "entityId": "db",
-            "from": "overloaded",
-            "to": "normal"
-          },
-          {
-            "type": "entity_importance_changed",
-            "entityId": "db",
-            "from": "primary",
-            "to": "secondary"
-          }
-        ],
-        "connectionDiffs": [
-          {
-            "type": "connection_added",
-            "connectionId": "c_app_cache_lookup"
-          },
-          {
-            "type": "connection_added",
-            "connectionId": "c_cache_db_call"
-          },
-          {
-            "type": "connection_removed",
-            "connectionId": "c_app_db_call"
-          }
-        ],
-        "interactionDiffs": [
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_app_cache_lookup_fwd"
-          },
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_app_cache_lookup_rev"
-          },
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_cache_db_call_fwd"
-          },
-          {
-            "type": "interaction_removed",
-            "interactionId": "i_c_app_db_call_fwd"
-          },
-          {
-            "type": "interaction_removed",
-            "interactionId": "i_c_app_db_call_rev"
-          },
-          {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_users_lb_req_fwd",
-            "from": "high",
-            "to": "medium"
-          },
-          {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_lb_app_req_fwd",
-            "from": "high",
-            "to": "medium"
-          }
-        ],
-        "cameraDiffs": [
-          {
-            "type": "camera_changed",
-            "from": {
-              "mode": "focus",
-              "target": "db",
-              "zoom": 1.08
-            },
-            "to": {
-              "mode": "focus",
-              "target": "cache",
-              "zoom": 1.04
-            }
-          }
-        ]
-      },
-      "hierarchy": {
-        "primaryId": "cache",
-        "entityStyles": {
-          "users": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "lb": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "app": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "cache": {
-            "scale": 1.2,
-            "opacity": 1,
-            "glow": true
-          },
-          "db": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          }
-        }
-      },
-      "hierarchyTransition": null,
-      "cameraPlan": null,
-      "sceneDiff": {
-        "addedEntities": [
-          {
-            "id": "cache",
-            "type": "cache",
-            "count": 1,
-            "importance": "primary",
-            "status": "normal",
-            "label": "Cache",
-            "layout": {
-              "x": 50,
-              "y": 57
-            }
-          }
-        ],
-        "removedEntities": [],
-        "movedEntities": [
-          {
-            "id": "users",
-            "from": {
-              "x": 50,
-              "y": 16.2
-            },
-            "to": {
-              "x": 50,
-              "y": 12
-            }
-          },
-          {
-            "id": "lb",
-            "from": {
-              "x": 50,
-              "y": 33.4
-            },
-            "to": {
-              "x": 50,
-              "y": 27
-            }
-          },
-          {
-            "id": "app",
-            "from": {
-              "x": 50,
-              "y": 50.599999999999994
-            },
-            "to": {
-              "x": 50,
-              "y": 42
-            }
-          },
-          {
-            "id": "db",
-            "from": {
-              "x": 50,
-              "y": 67.8
-            },
-            "to": {
-              "x": 50,
-              "y": 72
-            }
-          }
-        ],
-        "updatedEntities": [
-          {
-            "id": "users",
-            "changes": {
-              "status": {
-                "from": "active",
-                "to": "normal"
-              }
-            }
-          },
-          {
-            "id": "app",
-            "changes": {
-              "status": {
-                "from": "active",
-                "to": "normal"
-              }
-            }
-          },
-          {
-            "id": "db",
-            "changes": {
-              "status": {
-                "from": "overloaded",
-                "to": "normal"
-              },
-              "importance": {
-                "from": "primary",
-                "to": "secondary"
-              }
-            }
-          }
-        ],
-        "addedConnections": [
-          {
-            "id": "c_app_cache_lookup",
-            "from": "app",
-            "to": "cache",
-            "direction": "bidirectional",
-            "style": "solid"
-          },
-          {
-            "id": "c_cache_db_call",
-            "from": "cache",
-            "to": "db",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "removedConnections": [
-          {
-            "id": "c_app_db_call",
-            "from": "app",
-            "to": "db",
-            "direction": "bidirectional",
-            "style": "solid"
-          }
-        ],
-        "addedInteractions": [
-          {
-            "id": "i_c_app_cache_lookup_fwd",
-            "from": "app",
-            "to": "cache",
-            "type": "ping",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_app_cache_lookup_rev",
-            "from": "cache",
-            "to": "app",
-            "type": "ping",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_cache_db_call_fwd",
-            "from": "cache",
-            "to": "db",
-            "type": "flow",
-            "intensity": "low"
-          }
-        ],
-        "removedInteractions": [
-          {
-            "id": "i_c_app_db_call_fwd",
-            "from": "app",
-            "to": "db",
-            "type": "flow",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_app_db_call_rev",
-            "from": "db",
-            "to": "app",
-            "type": "flow",
-            "intensity": "high"
-          }
-        ],
-        "interactionIntensityChanged": [
-          {
-            "id": "i_c_users_lb_req_fwd",
-            "from": "high",
-            "to": "medium"
-          },
-          {
-            "id": "i_c_lb_app_req_fwd",
-            "from": "high",
-            "to": "medium"
-          }
-        ],
-        "cameraChanged": {
-          "from": {
-            "mode": "focus",
-            "target": "db",
-            "zoom": 1.08
-          },
-          "to": {
-            "mode": "focus",
-            "target": "cache",
+            "target": "app_server",
             "zoom": 1.04
           }
         }
@@ -3360,203 +3635,205 @@ const renderSpec = {
       "id": "s7",
       "start": 36,
       "end": 42,
-      "narration": "A Read Replica is added so Servers can send read traffic to the Read Replica while writes still go to the Primary Database.",
-      "camera": "wide",
+      "narration": "A Load Balancer is added after the Rate Limiter and the Server scales out so requests fan out across multiple servers before hitting the Database.",
       "elements": [
         {
           "id": "users",
           "type": "users_cluster",
           "sourceEntityId": "users",
           "label": "Users",
+          "icon": "users",
           "position": {
-            "x": 50,
-            "y": 12
+            "x": 74,
+            "y": 7
           },
-          "effects": [],
           "visualStyle": {
-            "size": 64.8,
+            "size": 95.4,
             "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.545584412271571,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 6.327360000000001,
+            "color": "#34D399",
+            "strokeWidth": 2.223856110453192,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 20.16,
+            "fontSize": 33.8352,
             "fontWeight": 600,
-            "status": "normal"
+            "status": "active"
           }
         },
         {
-          "id": "lb",
+          "id": "edge_api_gateway",
+          "type": "api_gateway",
+          "sourceEntityId": "edge_api_gateway",
+          "label": "API Gateway",
+          "icon": "route",
+          "position": {
+            "x": 26,
+            "y": 23.3
+          },
+          "visualStyle": {
+            "size": 95.4,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.223856110453192,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 33.8352,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "edge_rate_limiter",
+          "type": "rate_limiter",
+          "sourceEntityId": "edge_rate_limiter",
+          "label": "Rate Limiter",
+          "icon": "timer",
+          "position": {
+            "x": 74,
+            "y": 39.6
+          },
+          "visualStyle": {
+            "size": 95.4,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.223856110453192,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 33.8352,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "edge_load_balancer",
           "type": "load_balancer",
-          "sourceEntityId": "lb",
+          "sourceEntityId": "edge_load_balancer",
           "label": "Load Balancer",
+          "icon": "shuffle",
           "position": {
-            "x": 50,
-            "y": 24
+            "x": 26,
+            "y": 55.900000000000006
           },
-          "effects": [],
+          "enter": "zoom_in",
           "visualStyle": {
-            "size": 64.8,
+            "size": 95.4,
             "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.545584412271571,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 6.327360000000001,
+            "color": "#34D399",
+            "strokeWidth": 2.223856110453192,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 20.16,
+            "fontSize": 33.8352,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "app_server_1",
+          "type": "server",
+          "sourceEntityId": "app_server",
+          "icon": "server",
+          "position": {
+            "x": 25.80648148148148,
+            "y": 72.2
+          },
+          "enter": "zoom_in",
+          "visualStyle": {
+            "size": 95.4,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.223856110453192,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 33.8352,
             "fontWeight": 600,
             "status": "normal"
           }
         },
         {
-          "id": "app_1",
+          "id": "app_server",
           "type": "server",
-          "sourceEntityId": "app",
-          "position": {
-            "x": 33.56666666666667,
-            "y": 36
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 64.8,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.545584412271571,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 6.327360000000001,
-            "textColor": "#E8F6FF",
-            "fontSize": 20.16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app",
-          "type": "server",
-          "sourceEntityId": "app",
+          "sourceEntityId": "app_server",
           "label": "Server",
+          "icon": "server",
           "position": {
             "x": 50,
-            "y": 36
+            "y": 72.2
           },
-          "effects": [],
           "visualStyle": {
-            "size": 64.8,
+            "size": 95.4,
             "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.545584412271571,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 6.327360000000001,
+            "color": "#1F314D",
+            "strokeWidth": 2.223856110453192,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 20.16,
+            "fontSize": 33.8352,
             "fontWeight": 600,
             "status": "normal"
           }
         },
         {
-          "id": "app_3",
+          "id": "app_server_3",
           "type": "server",
-          "sourceEntityId": "app",
+          "sourceEntityId": "app_server",
+          "icon": "server",
           "position": {
-            "x": 66.43333333333334,
-            "y": 36
+            "x": 74.19351851851852,
+            "y": 72.2
           },
-          "effects": [],
+          "enter": "zoom_in",
           "visualStyle": {
-            "size": 64.8,
+            "size": 95.4,
             "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.545584412271571,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 6.327360000000001,
+            "color": "#1F314D",
+            "strokeWidth": 2.223856110453192,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 20.16,
+            "fontSize": 33.8352,
             "fontWeight": 600,
             "status": "normal"
           }
         },
         {
-          "id": "cache",
-          "type": "cache",
-          "sourceEntityId": "cache",
-          "label": "Cache",
+          "id": "app_db",
+          "type": "database",
+          "sourceEntityId": "app_db",
+          "label": "Database",
+          "icon": "database",
           "position": {
-            "x": 50,
-            "y": 48
+            "x": 74,
+            "y": 88.5
           },
-          "effects": [],
           "visualStyle": {
-            "size": 64.8,
+            "size": 95.4,
             "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.545584412271571,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 6.327360000000001,
+            "color": "#1F314D",
+            "strokeWidth": 2.223856110453192,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 20.16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "db_primary",
-          "type": "primary_database",
-          "sourceEntityId": "db_primary",
-          "label": "Primary Database",
-          "position": {
-            "x": 50,
-            "y": 60
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 64.8,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.545584412271571,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 6.327360000000001,
-            "textColor": "#E8F6FF",
-            "fontSize": 20.16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "db_replica",
-          "type": "read_replica",
-          "sourceEntityId": "db_replica",
-          "label": "Read Replica",
-          "position": {
-            "x": 50,
-            "y": 72
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 64.8,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.545584412271571,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 6.327360000000001,
-            "textColor": "#E8F6FF",
-            "fontSize": 20.16,
+            "fontSize": 33.8352,
             "fontWeight": 600,
             "status": "normal"
           }
@@ -3568,172 +3845,157 @@ const renderSpec = {
           "type": "users_cluster",
           "count": 1,
           "importance": "secondary",
-          "status": "normal",
+          "status": "active",
           "label": "Users",
+          "icon": "users",
           "layout": {
-            "x": 50,
-            "y": 12
+            "x": 74,
+            "y": 7
           }
         },
         {
-          "id": "lb",
-          "type": "load_balancer",
+          "id": "edge_api_gateway",
+          "type": "api_gateway",
           "count": 1,
           "importance": "secondary",
-          "status": "normal",
-          "label": "Load Balancer",
+          "status": "active",
+          "label": "API Gateway",
+          "icon": "route",
           "layout": {
-            "x": 50,
-            "y": 24
+            "x": 26,
+            "y": 23.3
           }
         },
         {
-          "id": "app",
+          "id": "edge_rate_limiter",
+          "type": "rate_limiter",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Rate Limiter",
+          "icon": "timer",
+          "layout": {
+            "x": 74,
+            "y": 39.6
+          }
+        },
+        {
+          "id": "edge_load_balancer",
+          "type": "load_balancer",
+          "count": 1,
+          "importance": "primary",
+          "status": "active",
+          "label": "Load Balancer",
+          "icon": "shuffle",
+          "layout": {
+            "x": 26,
+            "y": 55.900000000000006
+          }
+        },
+        {
+          "id": "app_server",
           "type": "server",
           "count": 3,
           "importance": "secondary",
           "status": "normal",
           "label": "Server",
+          "icon": "server",
           "layout": {
             "x": 50,
-            "y": 36
+            "y": 72.2
           }
         },
         {
-          "id": "cache",
-          "type": "cache",
+          "id": "app_db",
+          "type": "database",
           "count": 1,
           "importance": "secondary",
           "status": "normal",
-          "label": "Cache",
+          "label": "Database",
+          "icon": "database",
           "layout": {
-            "x": 50,
-            "y": 48
-          }
-        },
-        {
-          "id": "db_primary",
-          "type": "primary_database",
-          "count": 1,
-          "importance": "primary",
-          "status": "normal",
-          "label": "Primary Database",
-          "layout": {
-            "x": 50,
-            "y": 60
-          }
-        },
-        {
-          "id": "db_replica",
-          "type": "read_replica",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Read Replica",
-          "layout": {
-            "x": 50,
-            "y": 72
+            "x": 74,
+            "y": 88.5
           }
         }
       ],
       "connections": [
         {
-          "id": "c_users_lb_req",
+          "id": "c_users_to_gateway",
           "from": "users",
-          "to": "lb",
+          "to": "edge_api_gateway",
           "direction": "one_way",
           "style": "solid"
         },
         {
-          "id": "c_lb_app_req",
-          "from": "lb",
-          "to": "app",
+          "id": "c_gateway_to_limiter",
+          "from": "edge_api_gateway",
+          "to": "edge_rate_limiter",
           "direction": "one_way",
           "style": "solid"
         },
         {
-          "id": "c_app_cache_lookup",
-          "from": "app",
-          "to": "cache",
-          "direction": "bidirectional",
-          "style": "solid"
-        },
-        {
-          "id": "c_cache_db_replica_read",
-          "from": "cache",
-          "to": "db_replica",
+          "id": "c_limiter_to_lb",
+          "from": "edge_rate_limiter",
+          "to": "edge_load_balancer",
           "direction": "one_way",
           "style": "solid"
         },
         {
-          "id": "c_cache_db_primary_write",
-          "from": "cache",
-          "to": "db_primary",
+          "id": "c_lb_to_server",
+          "from": "edge_load_balancer",
+          "to": "app_server",
           "direction": "one_way",
           "style": "solid"
         },
         {
-          "id": "c_db_primary_replication",
-          "from": "db_primary",
-          "to": "db_replica",
+          "id": "c_server_to_db",
+          "from": "app_server",
+          "to": "app_db",
           "direction": "one_way",
-          "style": "dashed"
+          "style": "solid"
         }
       ],
       "interactions": [
         {
-          "id": "i_c_users_lb_req_fwd",
+          "id": "i_c_users_to_gateway_fwd",
           "from": "users",
-          "to": "lb",
+          "to": "edge_api_gateway",
           "type": "flow",
           "intensity": "medium"
         },
         {
-          "id": "i_c_lb_app_req_fwd",
-          "from": "lb",
-          "to": "app",
+          "id": "i_c_gateway_to_limiter_fwd",
+          "from": "edge_api_gateway",
+          "to": "edge_rate_limiter",
           "type": "flow",
           "intensity": "medium"
         },
         {
-          "id": "i_c_app_cache_lookup_fwd",
-          "from": "app",
-          "to": "cache",
-          "type": "ping",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_app_cache_lookup_rev",
-          "from": "cache",
-          "to": "app",
-          "type": "ping",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_cache_db_replica_read_fwd",
-          "from": "cache",
-          "to": "db_replica",
+          "id": "i_c_limiter_to_lb_fwd",
+          "from": "edge_rate_limiter",
+          "to": "edge_load_balancer",
           "type": "flow",
           "intensity": "medium"
         },
         {
-          "id": "i_c_cache_db_primary_write_fwd",
-          "from": "cache",
-          "to": "db_primary",
+          "id": "i_c_lb_to_server_fwd",
+          "from": "edge_load_balancer",
+          "to": "app_server",
           "type": "flow",
           "intensity": "medium"
         },
         {
-          "id": "i_c_db_primary_replication_fwd",
-          "from": "db_primary",
-          "to": "db_replica",
-          "type": "broadcast",
+          "id": "i_c_server_to_db_fwd",
+          "from": "app_server",
+          "to": "app_db",
+          "type": "flow",
           "intensity": "medium"
         }
       ],
       "sourceCamera": {
         "mode": "focus",
-        "target": "db_primary",
+        "target": "edge_load_balancer",
         "zoom": 1
       },
       "directives": {
@@ -3749,7 +4011,7 @@ const renderSpec = {
           "glow_strength": "soft"
         },
         "motion": {
-          "entry_style": "elastic_pop",
+          "entry_style": "draw_in",
           "pacing": "balanced"
         },
         "flow": {
@@ -3763,2002 +4025,230 @@ const renderSpec = {
             "type": "users_cluster",
             "count": 1,
             "importance": "secondary",
-            "status": "normal",
+            "status": "active",
             "label": "Users",
+            "icon": "users",
             "layout": {
-              "x": 50,
-              "y": 12
+              "x": 74,
+              "y": 7
             }
           },
           {
-            "id": "lb",
-            "type": "load_balancer",
+            "id": "edge_api_gateway",
+            "type": "api_gateway",
             "count": 1,
             "importance": "secondary",
-            "status": "normal",
-            "label": "Load Balancer",
+            "status": "active",
+            "label": "API Gateway",
+            "icon": "route",
             "layout": {
-              "x": 50,
-              "y": 24
+              "x": 26,
+              "y": 23.3
             }
           },
           {
-            "id": "app",
+            "id": "edge_rate_limiter",
+            "type": "rate_limiter",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Rate Limiter",
+            "icon": "timer",
+            "layout": {
+              "x": 74,
+              "y": 39.6
+            }
+          },
+          {
+            "id": "edge_load_balancer",
+            "type": "load_balancer",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "Load Balancer",
+            "icon": "shuffle",
+            "layout": {
+              "x": 26,
+              "y": 55.900000000000006
+            }
+          },
+          {
+            "id": "app_server",
             "type": "server",
             "count": 3,
             "importance": "secondary",
             "status": "normal",
             "label": "Server",
+            "icon": "server",
             "layout": {
               "x": 50,
-              "y": 36
+              "y": 72.2
             }
           },
           {
-            "id": "cache",
-            "type": "cache",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Cache",
-            "layout": {
-              "x": 50,
-              "y": 48
-            }
-          },
-          {
-            "id": "db_primary",
-            "type": "primary_database",
-            "count": 1,
-            "importance": "primary",
-            "status": "normal",
-            "label": "Primary Database",
-            "layout": {
-              "x": 50,
-              "y": 60
-            }
-          },
-          {
-            "id": "db_replica",
-            "type": "read_replica",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Read Replica",
-            "layout": {
-              "x": 50,
-              "y": 72
-            }
-          }
-        ],
-        "connections": [
-          {
-            "id": "c_users_lb_req",
-            "from": "users",
-            "to": "lb",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_lb_app_req",
-            "from": "lb",
-            "to": "app",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_app_cache_lookup",
-            "from": "app",
-            "to": "cache",
-            "direction": "bidirectional",
-            "style": "solid"
-          },
-          {
-            "id": "c_cache_db_replica_read",
-            "from": "cache",
-            "to": "db_replica",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_cache_db_primary_write",
-            "from": "cache",
-            "to": "db_primary",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_db_primary_replication",
-            "from": "db_primary",
-            "to": "db_replica",
-            "direction": "one_way",
-            "style": "dashed"
-          }
-        ],
-        "interactions": [
-          {
-            "id": "i_c_users_lb_req_fwd",
-            "from": "users",
-            "to": "lb",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_lb_app_req_fwd",
-            "from": "lb",
-            "to": "app",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_app_cache_lookup_fwd",
-            "from": "app",
-            "to": "cache",
-            "type": "ping",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_app_cache_lookup_rev",
-            "from": "cache",
-            "to": "app",
-            "type": "ping",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_cache_db_replica_read_fwd",
-            "from": "cache",
-            "to": "db_replica",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_cache_db_primary_write_fwd",
-            "from": "cache",
-            "to": "db_primary",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_db_primary_replication_fwd",
-            "from": "db_primary",
-            "to": "db_replica",
-            "type": "broadcast",
-            "intensity": "medium"
-          }
-        ],
-        "camera": {
-          "mode": "focus",
-          "target": "db_primary",
-          "zoom": 1
-        }
-      },
-      "staticScene": true,
-      "motionPersonality": "CALM",
-      "diff": {
-        "entityDiffs": [
-          {
-            "type": "entity_added",
-            "entityId": "db_primary"
-          },
-          {
-            "type": "entity_added",
-            "entityId": "db_replica"
-          },
-          {
-            "type": "entity_removed",
-            "entityId": "db"
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "lb",
-            "from": {
-              "x": 50,
-              "y": 27
-            },
-            "to": {
-              "x": 50,
-              "y": 24
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "app",
-            "from": {
-              "x": 50,
-              "y": 42
-            },
-            "to": {
-              "x": 50,
-              "y": 36
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "cache",
-            "from": {
-              "x": 50,
-              "y": 57
-            },
-            "to": {
-              "x": 50,
-              "y": 48
-            }
-          },
-          {
-            "type": "entity_importance_changed",
-            "entityId": "cache",
-            "from": "primary",
-            "to": "secondary"
-          }
-        ],
-        "connectionDiffs": [
-          {
-            "type": "connection_added",
-            "connectionId": "c_cache_db_replica_read"
-          },
-          {
-            "type": "connection_added",
-            "connectionId": "c_cache_db_primary_write"
-          },
-          {
-            "type": "connection_added",
-            "connectionId": "c_db_primary_replication"
-          },
-          {
-            "type": "connection_removed",
-            "connectionId": "c_cache_db_call"
-          }
-        ],
-        "interactionDiffs": [
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_cache_db_replica_read_fwd"
-          },
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_cache_db_primary_write_fwd"
-          },
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_db_primary_replication_fwd"
-          },
-          {
-            "type": "interaction_removed",
-            "interactionId": "i_c_cache_db_call_fwd"
-          }
-        ],
-        "cameraDiffs": [
-          {
-            "type": "camera_changed",
-            "from": {
-              "mode": "focus",
-              "target": "cache",
-              "zoom": 1.04
-            },
-            "to": {
-              "mode": "focus",
-              "target": "db_primary",
-              "zoom": 1
-            }
-          }
-        ]
-      },
-      "hierarchy": {
-        "primaryId": "db_primary",
-        "entityStyles": {
-          "users": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "lb": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "app": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "cache": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "db_primary": {
-            "scale": 1.2,
-            "opacity": 1,
-            "glow": true
-          },
-          "db_replica": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          }
-        }
-      },
-      "hierarchyTransition": null,
-      "cameraPlan": null,
-      "sceneDiff": {
-        "addedEntities": [
-          {
-            "id": "db_primary",
-            "type": "primary_database",
-            "count": 1,
-            "importance": "primary",
-            "status": "normal",
-            "label": "Primary Database",
-            "layout": {
-              "x": 50,
-              "y": 60
-            }
-          },
-          {
-            "id": "db_replica",
-            "type": "read_replica",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Read Replica",
-            "layout": {
-              "x": 50,
-              "y": 72
-            }
-          }
-        ],
-        "removedEntities": [
-          {
-            "id": "db",
+            "id": "app_db",
             "type": "database",
             "count": 1,
             "importance": "secondary",
             "status": "normal",
             "label": "Database",
+            "icon": "database",
             "layout": {
-              "x": 50,
-              "y": 72
-            }
-          }
-        ],
-        "movedEntities": [
-          {
-            "id": "lb",
-            "from": {
-              "x": 50,
-              "y": 27
-            },
-            "to": {
-              "x": 50,
-              "y": 24
-            }
-          },
-          {
-            "id": "app",
-            "from": {
-              "x": 50,
-              "y": 42
-            },
-            "to": {
-              "x": 50,
-              "y": 36
-            }
-          },
-          {
-            "id": "cache",
-            "from": {
-              "x": 50,
-              "y": 57
-            },
-            "to": {
-              "x": 50,
-              "y": 48
-            }
-          }
-        ],
-        "updatedEntities": [
-          {
-            "id": "cache",
-            "changes": {
-              "importance": {
-                "from": "primary",
-                "to": "secondary"
-              }
-            }
-          }
-        ],
-        "addedConnections": [
-          {
-            "id": "c_cache_db_replica_read",
-            "from": "cache",
-            "to": "db_replica",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_cache_db_primary_write",
-            "from": "cache",
-            "to": "db_primary",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_db_primary_replication",
-            "from": "db_primary",
-            "to": "db_replica",
-            "direction": "one_way",
-            "style": "dashed"
-          }
-        ],
-        "removedConnections": [
-          {
-            "id": "c_cache_db_call",
-            "from": "cache",
-            "to": "db",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "addedInteractions": [
-          {
-            "id": "i_c_cache_db_replica_read_fwd",
-            "from": "cache",
-            "to": "db_replica",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_cache_db_primary_write_fwd",
-            "from": "cache",
-            "to": "db_primary",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_db_primary_replication_fwd",
-            "from": "db_primary",
-            "to": "db_replica",
-            "type": "broadcast",
-            "intensity": "medium"
-          }
-        ],
-        "removedInteractions": [
-          {
-            "id": "i_c_cache_db_call_fwd",
-            "from": "cache",
-            "to": "db",
-            "type": "flow",
-            "intensity": "low"
-          }
-        ],
-        "interactionIntensityChanged": [],
-        "cameraChanged": {
-          "from": {
-            "mode": "focus",
-            "target": "cache",
-            "zoom": 1.04
-          },
-          "to": {
-            "mode": "focus",
-            "target": "db_primary",
-            "zoom": 1
-          }
-        }
-      }
-    },
-    {
-      "id": "s8",
-      "start": 42,
-      "end": 48,
-      "narration": "A Queue is added so the Server can enqueue bursty work and respond fast while the Queue buffers tasks instead of blocking on the Database.",
-      "camera": "wide",
-      "elements": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "sourceEntityId": "users",
-          "label": "Users",
-          "position": {
-            "x": 50,
-            "y": 12
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 64.8,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.545584412271571,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 6.327360000000001,
-            "textColor": "#E8F6FF",
-            "fontSize": 20.16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "lb",
-          "type": "load_balancer",
-          "sourceEntityId": "lb",
-          "label": "Load Balancer",
-          "position": {
-            "x": 50,
-            "y": 24
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 64.8,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.545584412271571,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 6.327360000000001,
-            "textColor": "#E8F6FF",
-            "fontSize": 20.16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_1",
-          "type": "server",
-          "sourceEntityId": "app",
-          "position": {
-            "x": 33.56666666666667,
-            "y": 36
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 64.8,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.545584412271571,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 6.327360000000001,
-            "textColor": "#E8F6FF",
-            "fontSize": 20.16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app",
-          "type": "server",
-          "sourceEntityId": "app",
-          "label": "Server",
-          "position": {
-            "x": 50,
-            "y": 36
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 64.8,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.545584412271571,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 6.327360000000001,
-            "textColor": "#E8F6FF",
-            "fontSize": 20.16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_3",
-          "type": "server",
-          "sourceEntityId": "app",
-          "position": {
-            "x": 66.43333333333334,
-            "y": 36
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 64.8,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.545584412271571,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 6.327360000000001,
-            "textColor": "#E8F6FF",
-            "fontSize": 20.16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "queue",
-          "type": "queue",
-          "sourceEntityId": "queue",
-          "label": "Queue",
-          "position": {
-            "x": 50,
-            "y": 48
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 64.8,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.545584412271571,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 6.327360000000001,
-            "textColor": "#E8F6FF",
-            "fontSize": 20.16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "db_primary",
-          "type": "primary_database",
-          "sourceEntityId": "db_primary",
-          "label": "Primary Database",
-          "position": {
-            "x": 50,
-            "y": 60
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 64.8,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.545584412271571,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 6.327360000000001,
-            "textColor": "#E8F6FF",
-            "fontSize": 20.16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "db_replica",
-          "type": "read_replica",
-          "sourceEntityId": "db_replica",
-          "label": "Read Replica",
-          "position": {
-            "x": 50,
-            "y": 72
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 64.8,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.545584412271571,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 6.327360000000001,
-            "textColor": "#E8F6FF",
-            "fontSize": 20.16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        }
-      ],
-      "entities": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Users",
-          "layout": {
-            "x": 50,
-            "y": 12
-          }
-        },
-        {
-          "id": "lb",
-          "type": "load_balancer",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Load Balancer",
-          "layout": {
-            "x": 50,
-            "y": 24
-          }
-        },
-        {
-          "id": "app",
-          "type": "server",
-          "count": 3,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Server",
-          "layout": {
-            "x": 50,
-            "y": 36
-          }
-        },
-        {
-          "id": "queue",
-          "type": "queue",
-          "count": 1,
-          "importance": "primary",
-          "status": "normal",
-          "label": "Queue",
-          "layout": {
-            "x": 50,
-            "y": 48
-          }
-        },
-        {
-          "id": "db_primary",
-          "type": "primary_database",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Primary Database",
-          "layout": {
-            "x": 50,
-            "y": 60
-          }
-        },
-        {
-          "id": "db_replica",
-          "type": "read_replica",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Read Replica",
-          "layout": {
-            "x": 50,
-            "y": 72
-          }
-        }
-      ],
-      "connections": [
-        {
-          "id": "c_users_lb_req",
-          "from": "users",
-          "to": "lb",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_lb_app_req",
-          "from": "lb",
-          "to": "app",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_app_queue_async",
-          "from": "app",
-          "to": "queue",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_app_db_replica_read",
-          "from": "app",
-          "to": "db_replica",
-          "direction": "one_way",
-          "style": "solid"
-        }
-      ],
-      "interactions": [
-        {
-          "id": "i_c_users_lb_req_fwd",
-          "from": "users",
-          "to": "lb",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_lb_app_req_fwd",
-          "from": "lb",
-          "to": "app",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_app_queue_async_fwd",
-          "from": "app",
-          "to": "queue",
-          "type": "broadcast",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_app_db_replica_read_fwd",
-          "from": "app",
-          "to": "db_replica",
-          "type": "flow",
-          "intensity": "medium"
-        }
-      ],
-      "sourceCamera": {
-        "mode": "focus",
-        "target": "queue",
-        "zoom": 1
-      },
-      "directives": {
-        "camera": {
-          "mode": "follow_action",
-          "zoom": "medium",
-          "active_zone": "upper_third",
-          "reserve_bottom_percent": 25
-        },
-        "visual": {
-          "theme": "default",
-          "background_texture": "grid",
-          "glow_strength": "soft"
-        },
-        "motion": {
-          "entry_style": "drop_bounce",
-          "pacing": "balanced"
-        },
-        "flow": {
-          "renderer": "packets"
-        }
-      },
-      "source": {
-        "entities": [
-          {
-            "id": "users",
-            "type": "users_cluster",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Users",
-            "layout": {
-              "x": 50,
-              "y": 12
-            }
-          },
-          {
-            "id": "lb",
-            "type": "load_balancer",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Load Balancer",
-            "layout": {
-              "x": 50,
-              "y": 24
-            }
-          },
-          {
-            "id": "app",
-            "type": "server",
-            "count": 3,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Server",
-            "layout": {
-              "x": 50,
-              "y": 36
-            }
-          },
-          {
-            "id": "queue",
-            "type": "queue",
-            "count": 1,
-            "importance": "primary",
-            "status": "normal",
-            "label": "Queue",
-            "layout": {
-              "x": 50,
-              "y": 48
-            }
-          },
-          {
-            "id": "db_primary",
-            "type": "primary_database",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Primary Database",
-            "layout": {
-              "x": 50,
-              "y": 60
-            }
-          },
-          {
-            "id": "db_replica",
-            "type": "read_replica",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Read Replica",
-            "layout": {
-              "x": 50,
-              "y": 72
+              "x": 74,
+              "y": 88.5
             }
           }
         ],
         "connections": [
           {
-            "id": "c_users_lb_req",
+            "id": "c_users_to_gateway",
             "from": "users",
-            "to": "lb",
+            "to": "edge_api_gateway",
             "direction": "one_way",
             "style": "solid"
           },
           {
-            "id": "c_lb_app_req",
-            "from": "lb",
-            "to": "app",
+            "id": "c_gateway_to_limiter",
+            "from": "edge_api_gateway",
+            "to": "edge_rate_limiter",
             "direction": "one_way",
             "style": "solid"
           },
           {
-            "id": "c_app_queue_async",
-            "from": "app",
-            "to": "queue",
+            "id": "c_limiter_to_lb",
+            "from": "edge_rate_limiter",
+            "to": "edge_load_balancer",
             "direction": "one_way",
             "style": "solid"
           },
           {
-            "id": "c_app_db_replica_read",
-            "from": "app",
-            "to": "db_replica",
+            "id": "c_lb_to_server",
+            "from": "edge_load_balancer",
+            "to": "app_server",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_server_to_db",
+            "from": "app_server",
+            "to": "app_db",
             "direction": "one_way",
             "style": "solid"
           }
         ],
         "interactions": [
           {
-            "id": "i_c_users_lb_req_fwd",
+            "id": "i_c_users_to_gateway_fwd",
             "from": "users",
-            "to": "lb",
+            "to": "edge_api_gateway",
             "type": "flow",
             "intensity": "medium"
           },
           {
-            "id": "i_c_lb_app_req_fwd",
-            "from": "lb",
-            "to": "app",
+            "id": "i_c_gateway_to_limiter_fwd",
+            "from": "edge_api_gateway",
+            "to": "edge_rate_limiter",
             "type": "flow",
             "intensity": "medium"
           },
           {
-            "id": "i_c_app_queue_async_fwd",
-            "from": "app",
-            "to": "queue",
-            "type": "broadcast",
-            "intensity": "high"
+            "id": "i_c_limiter_to_lb_fwd",
+            "from": "edge_rate_limiter",
+            "to": "edge_load_balancer",
+            "type": "flow",
+            "intensity": "medium"
           },
           {
-            "id": "i_c_app_db_replica_read_fwd",
-            "from": "app",
-            "to": "db_replica",
+            "id": "i_c_lb_to_server_fwd",
+            "from": "edge_load_balancer",
+            "to": "app_server",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_server_to_db_fwd",
+            "from": "app_server",
+            "to": "app_db",
             "type": "flow",
             "intensity": "medium"
           }
         ],
         "camera": {
           "mode": "focus",
-          "target": "queue",
+          "target": "edge_load_balancer",
           "zoom": 1
         }
       },
-      "staticScene": true,
-      "motionPersonality": "CALM",
+      "motionPersonality": "ENERGETIC",
       "diff": {
         "entityDiffs": [
           {
             "type": "entity_added",
-            "entityId": "queue"
-          },
-          {
-            "type": "entity_removed",
-            "entityId": "cache"
-          },
-          {
-            "type": "entity_importance_changed",
-            "entityId": "db_primary",
-            "from": "primary",
-            "to": "secondary"
-          }
-        ],
-        "connectionDiffs": [
-          {
-            "type": "connection_added",
-            "connectionId": "c_app_queue_async"
-          },
-          {
-            "type": "connection_added",
-            "connectionId": "c_app_db_replica_read"
-          },
-          {
-            "type": "connection_removed",
-            "connectionId": "c_app_cache_lookup"
-          },
-          {
-            "type": "connection_removed",
-            "connectionId": "c_cache_db_replica_read"
-          },
-          {
-            "type": "connection_removed",
-            "connectionId": "c_cache_db_primary_write"
-          },
-          {
-            "type": "connection_removed",
-            "connectionId": "c_db_primary_replication"
-          }
-        ],
-        "interactionDiffs": [
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_app_queue_async_fwd"
-          },
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_app_db_replica_read_fwd"
-          },
-          {
-            "type": "interaction_removed",
-            "interactionId": "i_c_app_cache_lookup_fwd"
-          },
-          {
-            "type": "interaction_removed",
-            "interactionId": "i_c_app_cache_lookup_rev"
-          },
-          {
-            "type": "interaction_removed",
-            "interactionId": "i_c_cache_db_replica_read_fwd"
-          },
-          {
-            "type": "interaction_removed",
-            "interactionId": "i_c_cache_db_primary_write_fwd"
-          },
-          {
-            "type": "interaction_removed",
-            "interactionId": "i_c_db_primary_replication_fwd"
-          }
-        ],
-        "cameraDiffs": [
-          {
-            "type": "camera_changed",
-            "from": {
-              "mode": "focus",
-              "target": "db_primary",
-              "zoom": 1
-            },
-            "to": {
-              "mode": "focus",
-              "target": "queue",
-              "zoom": 1
-            }
-          }
-        ]
-      },
-      "hierarchy": {
-        "primaryId": "queue",
-        "entityStyles": {
-          "users": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "lb": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "app": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "queue": {
-            "scale": 1.2,
-            "opacity": 1,
-            "glow": true
-          },
-          "db_primary": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "db_replica": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          }
-        }
-      },
-      "hierarchyTransition": null,
-      "cameraPlan": null,
-      "sceneDiff": {
-        "addedEntities": [
-          {
-            "id": "queue",
-            "type": "queue",
-            "count": 1,
-            "importance": "primary",
-            "status": "normal",
-            "label": "Queue",
-            "layout": {
-              "x": 50,
-              "y": 48
-            }
-          }
-        ],
-        "removedEntities": [
-          {
-            "id": "cache",
-            "type": "cache",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Cache",
-            "layout": {
-              "x": 50,
-              "y": 48
-            }
-          }
-        ],
-        "movedEntities": [],
-        "updatedEntities": [
-          {
-            "id": "db_primary",
-            "changes": {
-              "importance": {
-                "from": "primary",
-                "to": "secondary"
-              }
-            }
-          }
-        ],
-        "addedConnections": [
-          {
-            "id": "c_app_queue_async",
-            "from": "app",
-            "to": "queue",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_app_db_replica_read",
-            "from": "app",
-            "to": "db_replica",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "removedConnections": [
-          {
-            "id": "c_app_cache_lookup",
-            "from": "app",
-            "to": "cache",
-            "direction": "bidirectional",
-            "style": "solid"
-          },
-          {
-            "id": "c_cache_db_replica_read",
-            "from": "cache",
-            "to": "db_replica",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_cache_db_primary_write",
-            "from": "cache",
-            "to": "db_primary",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_db_primary_replication",
-            "from": "db_primary",
-            "to": "db_replica",
-            "direction": "one_way",
-            "style": "dashed"
-          }
-        ],
-        "addedInteractions": [
-          {
-            "id": "i_c_app_queue_async_fwd",
-            "from": "app",
-            "to": "queue",
-            "type": "broadcast",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_app_db_replica_read_fwd",
-            "from": "app",
-            "to": "db_replica",
-            "type": "flow",
-            "intensity": "medium"
-          }
-        ],
-        "removedInteractions": [
-          {
-            "id": "i_c_app_cache_lookup_fwd",
-            "from": "app",
-            "to": "cache",
-            "type": "ping",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_app_cache_lookup_rev",
-            "from": "cache",
-            "to": "app",
-            "type": "ping",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_cache_db_replica_read_fwd",
-            "from": "cache",
-            "to": "db_replica",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_cache_db_primary_write_fwd",
-            "from": "cache",
-            "to": "db_primary",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_db_primary_replication_fwd",
-            "from": "db_primary",
-            "to": "db_replica",
-            "type": "broadcast",
-            "intensity": "medium"
-          }
-        ],
-        "interactionIntensityChanged": [],
-        "cameraChanged": {
-          "from": {
-            "mode": "focus",
-            "target": "db_primary",
-            "zoom": 1
-          },
-          "to": {
-            "mode": "focus",
-            "target": "queue",
-            "zoom": 1
-          }
-        }
-      }
-    },
-    {
-      "id": "s9",
-      "start": 48,
-      "end": 54,
-      "narration": "Workers scale out to consume queue_dispatch traffic from the Queue and then worker_commit results into the Primary Database while reads stay on the Read Replica.",
-      "camera": "wide",
-      "elements": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "sourceEntityId": "users",
-          "label": "Users",
-          "position": {
-            "x": 50,
-            "y": 12
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 52,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.264950330581225,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 5.0091600000000005,
-            "textColor": "#E8F6FF",
-            "fontSize": 16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "lb",
-          "type": "load_balancer",
-          "sourceEntityId": "lb",
-          "label": "Load Balancer",
-          "position": {
-            "x": 50,
-            "y": 22
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 52,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.264950330581225,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 5.0091600000000005,
-            "textColor": "#E8F6FF",
-            "fontSize": 16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_1",
-          "type": "server",
-          "sourceEntityId": "app",
-          "position": {
-            "x": 36.99027777777778,
-            "y": 32
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 52,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.264950330581225,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 5.0091600000000005,
-            "textColor": "#E8F6FF",
-            "fontSize": 16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app",
-          "type": "server",
-          "sourceEntityId": "app",
-          "label": "Server",
-          "position": {
-            "x": 50,
-            "y": 32
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 52,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.264950330581225,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 5.0091600000000005,
-            "textColor": "#E8F6FF",
-            "fontSize": 16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_3",
-          "type": "server",
-          "sourceEntityId": "app",
-          "position": {
-            "x": 63.00972222222222,
-            "y": 32
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 52,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.264950330581225,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 5.0091600000000005,
-            "textColor": "#E8F6FF",
-            "fontSize": 16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "queue",
-          "type": "queue",
-          "sourceEntityId": "queue",
-          "label": "Queue",
-          "position": {
-            "x": 50,
-            "y": 42
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 52,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.264950330581225,
-            "strokeColor": "#34D399",
-            "glow": true,
-            "glowColor": "#34D399",
-            "glowBlur": 5.0091600000000005,
-            "textColor": "#E8F6FF",
-            "fontSize": 16,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "worker_1",
-          "type": "worker",
-          "sourceEntityId": "worker",
-          "position": {
-            "x": 38,
-            "y": 52
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 52,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.264950330581225,
-            "strokeColor": "#34D399",
-            "glow": true,
-            "glowColor": "#34D399",
-            "glowBlur": 5.0091600000000005,
-            "textColor": "#E8F6FF",
-            "fontSize": 16,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "worker",
-          "type": "worker",
-          "sourceEntityId": "worker",
-          "label": "Worker",
-          "position": {
-            "x": 50,
-            "y": 52
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 52,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.264950330581225,
-            "strokeColor": "#34D399",
-            "glow": true,
-            "glowColor": "#34D399",
-            "glowBlur": 5.0091600000000005,
-            "textColor": "#E8F6FF",
-            "fontSize": 16,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "worker_3",
-          "type": "worker",
-          "sourceEntityId": "worker",
-          "position": {
-            "x": 62,
-            "y": 52
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 52,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.264950330581225,
-            "strokeColor": "#34D399",
-            "glow": true,
-            "glowColor": "#34D399",
-            "glowBlur": 5.0091600000000005,
-            "textColor": "#E8F6FF",
-            "fontSize": 16,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "db_primary",
-          "type": "primary_database",
-          "sourceEntityId": "db_primary",
-          "label": "Primary Database",
-          "position": {
-            "x": 50,
-            "y": 62
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 52,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.264950330581225,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 5.0091600000000005,
-            "textColor": "#E8F6FF",
-            "fontSize": 16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "db_replica",
-          "type": "read_replica",
-          "sourceEntityId": "db_replica",
-          "label": "Read Replica",
-          "position": {
-            "x": 50,
-            "y": 72
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 52,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.264950330581225,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 5.0091600000000005,
-            "textColor": "#E8F6FF",
-            "fontSize": 16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        }
-      ],
-      "entities": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Users",
-          "layout": {
-            "x": 50,
-            "y": 12
-          }
-        },
-        {
-          "id": "lb",
-          "type": "load_balancer",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Load Balancer",
-          "layout": {
-            "x": 50,
-            "y": 22
-          }
-        },
-        {
-          "id": "app",
-          "type": "server",
-          "count": 3,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Server",
-          "layout": {
-            "x": 50,
-            "y": 32
-          }
-        },
-        {
-          "id": "queue",
-          "type": "queue",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "Queue",
-          "layout": {
-            "x": 50,
-            "y": 42
-          }
-        },
-        {
-          "id": "worker",
-          "type": "worker",
-          "count": 3,
-          "importance": "primary",
-          "status": "active",
-          "label": "Worker",
-          "layout": {
-            "x": 50,
-            "y": 52
-          }
-        },
-        {
-          "id": "db_primary",
-          "type": "primary_database",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Primary Database",
-          "layout": {
-            "x": 50,
-            "y": 62
-          }
-        },
-        {
-          "id": "db_replica",
-          "type": "read_replica",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Read Replica",
-          "layout": {
-            "x": 50,
-            "y": 72
-          }
-        }
-      ],
-      "connections": [
-        {
-          "id": "c_users_lb_req",
-          "from": "users",
-          "to": "lb",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_lb_app_req",
-          "from": "lb",
-          "to": "app",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_app_queue_async",
-          "from": "app",
-          "to": "queue",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_queue_worker_dispatch",
-          "from": "queue",
-          "to": "worker",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_worker_db_primary_commit",
-          "from": "worker",
-          "to": "db_primary",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_app_db_replica_read",
-          "from": "app",
-          "to": "db_replica",
-          "direction": "one_way",
-          "style": "solid"
-        }
-      ],
-      "interactions": [
-        {
-          "id": "i_c_users_lb_req_fwd",
-          "from": "users",
-          "to": "lb",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_lb_app_req_fwd",
-          "from": "lb",
-          "to": "app",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_app_queue_async_fwd",
-          "from": "app",
-          "to": "queue",
-          "type": "broadcast",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_queue_worker_dispatch_fwd",
-          "from": "queue",
-          "to": "worker",
-          "type": "broadcast",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_worker_db_primary_commit_fwd",
-          "from": "worker",
-          "to": "db_primary",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_app_db_replica_read_fwd",
-          "from": "app",
-          "to": "db_replica",
-          "type": "flow",
-          "intensity": "medium"
-        }
-      ],
-      "sourceCamera": {
-        "mode": "focus",
-        "target": "worker",
-        "zoom": 1
-      },
-      "directives": {
-        "camera": {
-          "mode": "follow_action",
-          "zoom": "wide",
-          "active_zone": "upper_third",
-          "reserve_bottom_percent": 25
-        },
-        "visual": {
-          "theme": "default",
-          "background_texture": "grid",
-          "glow_strength": "soft"
-        },
-        "motion": {
-          "entry_style": "elastic_pop",
-          "pacing": "reel_fast"
-        },
-        "flow": {
-          "renderer": "hybrid"
-        }
-      },
-      "source": {
-        "entities": [
-          {
-            "id": "users",
-            "type": "users_cluster",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Users",
-            "layout": {
-              "x": 50,
-              "y": 12
-            }
-          },
-          {
-            "id": "lb",
-            "type": "load_balancer",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Load Balancer",
-            "layout": {
-              "x": 50,
-              "y": 22
-            }
-          },
-          {
-            "id": "app",
-            "type": "server",
-            "count": 3,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Server",
-            "layout": {
-              "x": 50,
-              "y": 32
-            }
-          },
-          {
-            "id": "queue",
-            "type": "queue",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Queue",
-            "layout": {
-              "x": 50,
-              "y": 42
-            }
-          },
-          {
-            "id": "worker",
-            "type": "worker",
-            "count": 3,
-            "importance": "primary",
-            "status": "active",
-            "label": "Worker",
-            "layout": {
-              "x": 50,
-              "y": 52
-            }
-          },
-          {
-            "id": "db_primary",
-            "type": "primary_database",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Primary Database",
-            "layout": {
-              "x": 50,
-              "y": 62
-            }
-          },
-          {
-            "id": "db_replica",
-            "type": "read_replica",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Read Replica",
-            "layout": {
-              "x": 50,
-              "y": 72
-            }
-          }
-        ],
-        "connections": [
-          {
-            "id": "c_users_lb_req",
-            "from": "users",
-            "to": "lb",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_lb_app_req",
-            "from": "lb",
-            "to": "app",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_app_queue_async",
-            "from": "app",
-            "to": "queue",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_queue_worker_dispatch",
-            "from": "queue",
-            "to": "worker",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_worker_db_primary_commit",
-            "from": "worker",
-            "to": "db_primary",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_app_db_replica_read",
-            "from": "app",
-            "to": "db_replica",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "interactions": [
-          {
-            "id": "i_c_users_lb_req_fwd",
-            "from": "users",
-            "to": "lb",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_lb_app_req_fwd",
-            "from": "lb",
-            "to": "app",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_app_queue_async_fwd",
-            "from": "app",
-            "to": "queue",
-            "type": "broadcast",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_queue_worker_dispatch_fwd",
-            "from": "queue",
-            "to": "worker",
-            "type": "broadcast",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_worker_db_primary_commit_fwd",
-            "from": "worker",
-            "to": "db_primary",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_app_db_replica_read_fwd",
-            "from": "app",
-            "to": "db_replica",
-            "type": "flow",
-            "intensity": "medium"
-          }
-        ],
-        "camera": {
-          "mode": "focus",
-          "target": "worker",
-          "zoom": 1
-        }
-      },
-      "staticScene": true,
-      "motionPersonality": "CALM",
-      "diff": {
-        "entityDiffs": [
-          {
-            "type": "entity_added",
-            "entityId": "worker"
+            "entityId": "edge_load_balancer"
           },
           {
             "type": "entity_moved",
-            "entityId": "lb",
+            "entityId": "edge_api_gateway",
             "from": {
-              "x": 50,
-              "y": 24
+              "x": 26,
+              "y": 23.625
             },
             "to": {
-              "x": 50,
-              "y": 22
+              "x": 26,
+              "y": 23.3
             }
           },
           {
             "type": "entity_moved",
-            "entityId": "app",
+            "entityId": "edge_rate_limiter",
             "from": {
-              "x": 50,
-              "y": 36
+              "x": 74,
+              "y": 40.25
             },
             "to": {
-              "x": 50,
-              "y": 32
+              "x": 74,
+              "y": 39.6
             }
           },
           {
             "type": "entity_moved",
-            "entityId": "queue",
+            "entityId": "app_server",
             "from": {
-              "x": 50,
-              "y": 48
+              "x": 26,
+              "y": 56.875
             },
             "to": {
               "x": 50,
-              "y": 42
+              "y": 72.2
             }
           },
           {
             "type": "entity_moved",
-            "entityId": "db_primary",
+            "entityId": "app_db",
             "from": {
-              "x": 50,
-              "y": 60
+              "x": 74,
+              "y": 73.5
             },
             "to": {
-              "x": 50,
-              "y": 62
+              "x": 74,
+              "y": 88.5
             }
+          },
+          {
+            "type": "entity_count_changed",
+            "entityId": "app_server",
+            "from": 1,
+            "to": 3
           },
           {
             "type": "entity_status_changed",
-            "entityId": "queue",
-            "from": "normal",
-            "to": "active"
+            "entityId": "app_server",
+            "from": "overloaded",
+            "to": "normal"
           },
           {
             "type": "entity_importance_changed",
-            "entityId": "queue",
+            "entityId": "app_server",
             "from": "primary",
             "to": "secondary"
           }
@@ -5766,21 +4256,47 @@ const renderSpec = {
         "connectionDiffs": [
           {
             "type": "connection_added",
-            "connectionId": "c_queue_worker_dispatch"
+            "connectionId": "c_limiter_to_lb"
           },
           {
             "type": "connection_added",
-            "connectionId": "c_worker_db_primary_commit"
+            "connectionId": "c_lb_to_server"
+          },
+          {
+            "type": "connection_removed",
+            "connectionId": "c_limiter_to_server"
           }
         ],
         "interactionDiffs": [
           {
             "type": "interaction_added",
-            "interactionId": "i_c_queue_worker_dispatch_fwd"
+            "interactionId": "i_c_limiter_to_lb_fwd"
           },
           {
             "type": "interaction_added",
-            "interactionId": "i_c_worker_db_primary_commit_fwd"
+            "interactionId": "i_c_lb_to_server_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_limiter_to_server_fwd"
+          },
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_users_to_gateway_fwd",
+            "from": "high",
+            "to": "medium"
+          },
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_gateway_to_limiter_fwd",
+            "from": "high",
+            "to": "medium"
+          },
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_server_to_db_fwd",
+            "from": "high",
+            "to": "medium"
           }
         ],
         "cameraDiffs": [
@@ -5788,128 +4304,306 @@ const renderSpec = {
             "type": "camera_changed",
             "from": {
               "mode": "focus",
-              "target": "queue",
-              "zoom": 1
+              "target": "app_server",
+              "zoom": 1.04
             },
             "to": {
               "mode": "focus",
-              "target": "worker",
+              "target": "edge_load_balancer",
               "zoom": 1
             }
           }
         ]
       },
-      "hierarchy": {
-        "primaryId": "worker",
-        "entityStyles": {
-          "users": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "lb": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "app": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "queue": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "worker": {
-            "scale": 1.2,
-            "opacity": 1,
-            "glow": true
-          },
-          "db_primary": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "db_replica": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          }
-        }
-      },
       "hierarchyTransition": null,
+      "plan": {
+        "phaseOrder": [
+          "removals",
+          "moves",
+          "additions",
+          "connections",
+          "interactions",
+          "camera"
+        ],
+        "removals": [],
+        "moves": [
+          {
+            "entityId": "edge_api_gateway",
+            "elementIds": [
+              "edge_api_gateway"
+            ],
+            "action": "move"
+          },
+          {
+            "entityId": "edge_rate_limiter",
+            "elementIds": [
+              "edge_rate_limiter"
+            ],
+            "action": "move"
+          },
+          {
+            "entityId": "app_server",
+            "elementIds": [
+              "app_server_1",
+              "app_server",
+              "app_server_3"
+            ],
+            "action": "move"
+          },
+          {
+            "entityId": "app_db",
+            "elementIds": [
+              "app_db"
+            ],
+            "action": "move"
+          }
+        ],
+        "additions": [
+          {
+            "entityId": "edge_load_balancer",
+            "elementIds": [
+              "edge_load_balancer"
+            ],
+            "action": "add",
+            "enter": "zoom_in",
+            "cleanup": false
+          },
+          {
+            "entityId": "app_server",
+            "elementIds": [
+              "app_server_1",
+              "app_server",
+              "app_server_3"
+            ],
+            "action": "add",
+            "enter": "zoom_in"
+          }
+        ],
+        "connections": [
+          {
+            "entityId": "edge_rate_limiter",
+            "elementIds": [
+              "edge_rate_limiter"
+            ],
+            "action": "connect",
+            "connectionId": "c_limiter_to_server",
+            "cleanup": false
+          },
+          {
+            "entityId": "edge_load_balancer",
+            "elementIds": [
+              "edge_load_balancer"
+            ],
+            "action": "connect",
+            "connectionId": "c_lb_to_server",
+            "cleanup": false
+          },
+          {
+            "entityId": "app_server",
+            "elementIds": [
+              "app_server_1",
+              "app_server",
+              "app_server_3"
+            ],
+            "action": "connect",
+            "connectionId": "c_limiter_to_server",
+            "cleanup": false
+          }
+        ],
+        "interactions": [
+          {
+            "entityId": "edge_rate_limiter",
+            "elementIds": [
+              "edge_rate_limiter"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_gateway_to_limiter_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "edge_load_balancer",
+            "elementIds": [
+              "edge_load_balancer"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_lb_to_server_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "app_server",
+            "elementIds": [
+              "app_server_1",
+              "app_server",
+              "app_server_3"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_server_to_db_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_gateway_fwd"
+          },
+          {
+            "entityId": "edge_api_gateway",
+            "elementIds": [
+              "edge_api_gateway"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_gateway_to_limiter_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "app_db",
+            "elementIds": [
+              "app_db"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_server_to_db_fwd"
+          }
+        ]
+      },
+      "animationPlan": {
+        "entities": [
+          {
+            "entityId": "edge_api_gateway",
+            "action": "move",
+            "delay": 0.6000000000000001,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "edge_rate_limiter",
+            "action": "move",
+            "delay": 0.6400000000000001,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "app_server",
+            "action": "move",
+            "delay": 0.68,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "app_db",
+            "action": "move",
+            "delay": 0.7200000000000001,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "edge_load_balancer",
+            "action": "add",
+            "delay": 0.37399999999999994,
+            "duration": 0.62,
+            "easing": "cubic-bezier(0.4,0,0.2,1)",
+            "scale": 1.2,
+            "isPrimary": true
+          }
+        ],
+        "connections": [
+          {
+            "connectionId": "c_limiter_to_lb",
+            "delay": 0.504,
+            "duration": 0.42,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "connectionId": "c_lb_to_server",
+            "delay": 0.544,
+            "duration": 0.42,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "connectionId": "c_limiter_to_server",
+            "delay": 0.584,
+            "duration": 0.42,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          }
+        ],
+        "camera": null
+      },
       "cameraPlan": null,
       "sceneDiff": {
         "addedEntities": [
           {
-            "id": "worker",
-            "type": "worker",
-            "count": 3,
+            "id": "edge_load_balancer",
+            "type": "load_balancer",
+            "count": 1,
             "importance": "primary",
             "status": "active",
-            "label": "Worker",
+            "label": "Load Balancer",
+            "icon": "shuffle",
             "layout": {
-              "x": 50,
-              "y": 52
+              "x": 26,
+              "y": 55.900000000000006
             }
           }
         ],
         "removedEntities": [],
         "movedEntities": [
           {
-            "id": "lb",
+            "id": "edge_api_gateway",
             "from": {
-              "x": 50,
-              "y": 24
+              "x": 26,
+              "y": 23.625
             },
             "to": {
-              "x": 50,
-              "y": 22
+              "x": 26,
+              "y": 23.3
             }
           },
           {
-            "id": "app",
+            "id": "edge_rate_limiter",
             "from": {
-              "x": 50,
-              "y": 36
+              "x": 74,
+              "y": 40.25
             },
             "to": {
-              "x": 50,
-              "y": 32
+              "x": 74,
+              "y": 39.6
             }
           },
           {
-            "id": "queue",
+            "id": "app_server",
             "from": {
-              "x": 50,
-              "y": 48
+              "x": 26,
+              "y": 56.875
             },
             "to": {
               "x": 50,
-              "y": 42
+              "y": 72.2
             }
           },
           {
-            "id": "db_primary",
+            "id": "app_db",
             "from": {
-              "x": 50,
-              "y": 60
+              "x": 74,
+              "y": 73.5
             },
             "to": {
-              "x": 50,
-              "y": 62
+              "x": 74,
+              "y": 88.5
             }
           }
         ],
         "updatedEntities": [
           {
-            "id": "queue",
+            "id": "app_server",
             "changes": {
               "status": {
-                "from": "normal",
-                "to": "active"
+                "from": "overloaded",
+                "to": "normal"
+              },
+              "count": {
+                "from": 1,
+                "to": 3
               },
               "importance": {
                 "from": "primary",
@@ -5920,352 +4614,311 @@ const renderSpec = {
         ],
         "addedConnections": [
           {
-            "id": "c_queue_worker_dispatch",
-            "from": "queue",
-            "to": "worker",
+            "id": "c_limiter_to_lb",
+            "from": "edge_rate_limiter",
+            "to": "edge_load_balancer",
             "direction": "one_way",
             "style": "solid"
           },
           {
-            "id": "c_worker_db_primary_commit",
-            "from": "worker",
-            "to": "db_primary",
+            "id": "c_lb_to_server",
+            "from": "edge_load_balancer",
+            "to": "app_server",
             "direction": "one_way",
             "style": "solid"
           }
         ],
-        "removedConnections": [],
+        "removedConnections": [
+          {
+            "id": "c_limiter_to_server",
+            "from": "edge_rate_limiter",
+            "to": "app_server",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
         "addedInteractions": [
           {
-            "id": "i_c_queue_worker_dispatch_fwd",
-            "from": "queue",
-            "to": "worker",
-            "type": "broadcast",
-            "intensity": "high"
+            "id": "i_c_limiter_to_lb_fwd",
+            "from": "edge_rate_limiter",
+            "to": "edge_load_balancer",
+            "type": "flow",
+            "intensity": "medium"
           },
           {
-            "id": "i_c_worker_db_primary_commit_fwd",
-            "from": "worker",
-            "to": "db_primary",
+            "id": "i_c_lb_to_server_fwd",
+            "from": "edge_load_balancer",
+            "to": "app_server",
             "type": "flow",
             "intensity": "medium"
           }
         ],
-        "removedInteractions": [],
-        "interactionIntensityChanged": [],
+        "removedInteractions": [
+          {
+            "id": "i_c_limiter_to_server_fwd",
+            "from": "edge_rate_limiter",
+            "to": "app_server",
+            "type": "burst",
+            "intensity": "high"
+          }
+        ],
+        "interactionIntensityChanged": [
+          {
+            "id": "i_c_users_to_gateway_fwd",
+            "from": "high",
+            "to": "medium"
+          },
+          {
+            "id": "i_c_gateway_to_limiter_fwd",
+            "from": "high",
+            "to": "medium"
+          },
+          {
+            "id": "i_c_server_to_db_fwd",
+            "from": "high",
+            "to": "medium"
+          }
+        ],
         "cameraChanged": {
           "from": {
             "mode": "focus",
-            "target": "queue",
-            "zoom": 1
+            "target": "app_server",
+            "zoom": 1.04
           },
           "to": {
             "mode": "focus",
-            "target": "worker",
+            "target": "edge_load_balancer",
             "zoom": 1
           }
         }
       }
     },
     {
-      "id": "s10",
-      "start": 54,
-      "end": 60,
-      "narration": "At 1 million users, traffic flows from Users to the Load Balancer, fans out to Servers, hits Cache for fast reads, uses Read Replicas for scale, and uses a Queue plus Workers to absorb bursts before writing to the Primary Database.",
-      "camera": "wide",
+      "id": "s8",
+      "start": 42,
+      "end": 48,
+      "narration": "A Cache is added next to the Rate Limiter so the Rate Limiter can store counters and enforce the same limit consistently for all incoming requests.",
       "elements": [
         {
           "id": "users",
           "type": "users_cluster",
           "sourceEntityId": "users",
           "label": "Users",
+          "icon": "users",
           "position": {
-            "x": 50,
-            "y": 12
+            "x": 74,
+            "y": 7
           },
-          "effects": [],
           "visualStyle": {
-            "size": 52,
+            "size": 91.8,
             "opacity": 1,
             "color": "#34D399",
-            "strokeWidth": 2.244994432064365,
+            "strokeWidth": 2.181493066686209,
             "strokeColor": "#34D399",
-            "glow": true,
+            "glow": false,
             "glowColor": "#34D399",
-            "glowBlur": 4.921280000000001,
+            "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 16,
+            "fontSize": 32.5584,
             "fontWeight": 600,
             "status": "active"
           }
         },
         {
-          "id": "lb",
-          "type": "load_balancer",
-          "sourceEntityId": "lb",
-          "label": "Load Balancer",
+          "id": "edge_api_gateway",
+          "type": "api_gateway",
+          "sourceEntityId": "edge_api_gateway",
+          "label": "API Gateway",
+          "icon": "route",
           "position": {
-            "x": 50,
-            "y": 20.57142857142857
+            "x": 26,
+            "y": 20.583333333333336
           },
-          "effects": [],
           "visualStyle": {
-            "size": 52,
+            "size": 91.8,
             "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.244994432064365,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 4.921280000000001,
+            "color": "#34D399",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 16,
+            "fontSize": 32.5584,
             "fontWeight": 600,
-            "status": "normal"
+            "status": "active"
           }
         },
         {
-          "id": "app_1",
-          "type": "server",
-          "sourceEntityId": "app",
+          "id": "edge_rate_limiter",
+          "type": "rate_limiter",
+          "sourceEntityId": "edge_rate_limiter",
+          "label": "Rate Limiter",
+          "icon": "timer",
           "position": {
-            "x": 37.21851851851852,
-            "y": 29.142857142857142
+            "x": 74,
+            "y": 34.16666666666667
           },
-          "effects": [],
           "visualStyle": {
-            "size": 52,
+            "size": 91.8,
             "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.244994432064365,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 4.921280000000001,
+            "color": "#34D399",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 16,
+            "fontSize": 32.5584,
             "fontWeight": 600,
-            "status": "normal"
+            "status": "active"
           }
         },
         {
-          "id": "app",
-          "type": "server",
-          "sourceEntityId": "app",
-          "label": "Server",
-          "position": {
-            "x": 50,
-            "y": 29.142857142857142
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 52,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.244994432064365,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 4.921280000000001,
-            "textColor": "#E8F6FF",
-            "fontSize": 16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_3",
-          "type": "server",
-          "sourceEntityId": "app",
-          "position": {
-            "x": 62.78148148148148,
-            "y": 29.142857142857142
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 52,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.244994432064365,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 4.921280000000001,
-            "textColor": "#E8F6FF",
-            "fontSize": 16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "cache",
+          "id": "limiter_cache",
           "type": "cache",
-          "sourceEntityId": "cache",
+          "sourceEntityId": "limiter_cache",
           "label": "Cache",
+          "icon": "memory-stick",
+          "position": {
+            "x": 26,
+            "y": 47.75
+          },
+          "enter": "zoom_in",
+          "visualStyle": {
+            "size": 91.8,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 32.5584,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "edge_load_balancer",
+          "type": "load_balancer",
+          "sourceEntityId": "edge_load_balancer",
+          "label": "Load Balancer",
+          "icon": "shuffle",
+          "position": {
+            "x": 74,
+            "y": 61.333333333333336
+          },
+          "visualStyle": {
+            "size": 91.8,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 32.5584,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "app_server_1",
+          "type": "server",
+          "sourceEntityId": "app_server",
+          "icon": "server",
+          "position": {
+            "x": 26.71944444444444,
+            "y": 74.91666666666667
+          },
+          "visualStyle": {
+            "size": 91.8,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 32.5584,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        },
+        {
+          "id": "app_server",
+          "type": "server",
+          "sourceEntityId": "app_server",
+          "label": "Server",
+          "icon": "server",
           "position": {
             "x": 50,
-            "y": 37.714285714285715
+            "y": 74.91666666666667
           },
-          "effects": [],
           "visualStyle": {
-            "size": 52,
+            "size": 91.8,
             "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.244994432064365,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 4.921280000000001,
+            "color": "#1F314D",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 16,
+            "fontSize": 32.5584,
             "fontWeight": 600,
             "status": "normal"
           }
         },
         {
-          "id": "queue",
-          "type": "queue",
-          "sourceEntityId": "queue",
-          "label": "Queue",
+          "id": "app_server_3",
+          "type": "server",
+          "sourceEntityId": "app_server",
+          "icon": "server",
           "position": {
-            "x": 50,
-            "y": 46.285714285714285
+            "x": 73.28055555555557,
+            "y": 74.91666666666667
           },
-          "effects": [],
           "visualStyle": {
-            "size": 52,
+            "size": 91.8,
             "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.244994432064365,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 4.921280000000001,
+            "color": "#1F314D",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 16,
+            "fontSize": 32.5584,
             "fontWeight": 600,
             "status": "normal"
           }
         },
         {
-          "id": "worker_1",
-          "type": "worker",
-          "sourceEntityId": "worker",
+          "id": "app_db",
+          "type": "database",
+          "sourceEntityId": "app_db",
+          "label": "Database",
+          "icon": "database",
           "position": {
-            "x": 38,
-            "y": 54.857142857142854
+            "x": 26,
+            "y": 88.5
           },
-          "effects": [],
           "visualStyle": {
-            "size": 52,
+            "size": 91.8,
             "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.244994432064365,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 4.921280000000001,
+            "color": "#1F314D",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "worker",
-          "type": "worker",
-          "sourceEntityId": "worker",
-          "label": "Worker",
-          "position": {
-            "x": 50,
-            "y": 54.857142857142854
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 52,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.244994432064365,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 4.921280000000001,
-            "textColor": "#E8F6FF",
-            "fontSize": 16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "worker_3",
-          "type": "worker",
-          "sourceEntityId": "worker",
-          "position": {
-            "x": 62,
-            "y": 54.857142857142854
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 52,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.244994432064365,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 4.921280000000001,
-            "textColor": "#E8F6FF",
-            "fontSize": 16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "db_primary",
-          "type": "primary_database",
-          "sourceEntityId": "db_primary",
-          "label": "Primary Database",
-          "position": {
-            "x": 50,
-            "y": 63.42857142857143
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 52,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.244994432064365,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 4.921280000000001,
-            "textColor": "#E8F6FF",
-            "fontSize": 16,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "db_replica",
-          "type": "read_replica",
-          "sourceEntityId": "db_replica",
-          "label": "Read Replica",
-          "position": {
-            "x": 50,
-            "y": 72
-          },
-          "effects": [],
-          "visualStyle": {
-            "size": 52,
-            "opacity": 1,
-            "color": "#345F9F",
-            "strokeWidth": 2.244994432064365,
-            "strokeColor": "#8AA4C8",
-            "glow": true,
-            "glowColor": "#93C5FD",
-            "glowBlur": 4.921280000000001,
-            "textColor": "#E8F6FF",
-            "fontSize": 16,
+            "fontSize": 32.5584,
             "fontWeight": 600,
             "status": "normal"
           }
@@ -6279,216 +4932,2050 @@ const renderSpec = {
           "importance": "secondary",
           "status": "active",
           "label": "Users",
+          "icon": "users",
           "layout": {
-            "x": 50,
-            "y": 12
+            "x": 74,
+            "y": 7
           }
         },
         {
-          "id": "lb",
-          "type": "load_balancer",
+          "id": "edge_api_gateway",
+          "type": "api_gateway",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "API Gateway",
+          "icon": "route",
+          "layout": {
+            "x": 26,
+            "y": 20.583333333333336
+          }
+        },
+        {
+          "id": "edge_rate_limiter",
+          "type": "rate_limiter",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Rate Limiter",
+          "icon": "timer",
+          "layout": {
+            "x": 74,
+            "y": 34.16666666666667
+          }
+        },
+        {
+          "id": "limiter_cache",
+          "type": "cache",
           "count": 1,
           "importance": "primary",
-          "status": "normal",
-          "label": "Load Balancer",
+          "status": "active",
+          "label": "Cache",
+          "icon": "memory-stick",
           "layout": {
-            "x": 50,
-            "y": 20.57142857142857
+            "x": 26,
+            "y": 47.75
           }
         },
         {
-          "id": "app",
+          "id": "edge_load_balancer",
+          "type": "load_balancer",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Load Balancer",
+          "icon": "shuffle",
+          "layout": {
+            "x": 74,
+            "y": 61.333333333333336
+          }
+        },
+        {
+          "id": "app_server",
           "type": "server",
           "count": 3,
           "importance": "secondary",
           "status": "normal",
           "label": "Server",
+          "icon": "server",
           "layout": {
             "x": 50,
-            "y": 29.142857142857142
+            "y": 74.91666666666667
           }
         },
         {
-          "id": "cache",
-          "type": "cache",
+          "id": "app_db",
+          "type": "database",
           "count": 1,
           "importance": "secondary",
           "status": "normal",
-          "label": "Cache",
+          "label": "Database",
+          "icon": "database",
           "layout": {
-            "x": 50,
-            "y": 37.714285714285715
-          }
-        },
-        {
-          "id": "queue",
-          "type": "queue",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Queue",
-          "layout": {
-            "x": 50,
-            "y": 46.285714285714285
-          }
-        },
-        {
-          "id": "worker",
-          "type": "worker",
-          "count": 3,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Worker",
-          "layout": {
-            "x": 50,
-            "y": 54.857142857142854
-          }
-        },
-        {
-          "id": "db_primary",
-          "type": "primary_database",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Primary Database",
-          "layout": {
-            "x": 50,
-            "y": 63.42857142857143
-          }
-        },
-        {
-          "id": "db_replica",
-          "type": "read_replica",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Read Replica",
-          "layout": {
-            "x": 50,
-            "y": 72
+            "x": 26,
+            "y": 88.5
           }
         }
       ],
       "connections": [
         {
-          "id": "c_users_lb_req",
+          "id": "c_users_to_gateway",
           "from": "users",
-          "to": "lb",
+          "to": "edge_api_gateway",
           "direction": "one_way",
           "style": "solid"
         },
         {
-          "id": "c_lb_app_req",
-          "from": "lb",
-          "to": "app",
+          "id": "c_gateway_to_limiter",
+          "from": "edge_api_gateway",
+          "to": "edge_rate_limiter",
           "direction": "one_way",
           "style": "solid"
         },
         {
-          "id": "c_app_cache_lookup",
-          "from": "app",
-          "to": "cache",
+          "id": "c_limiter_to_cache",
+          "from": "edge_rate_limiter",
+          "to": "limiter_cache",
           "direction": "bidirectional",
           "style": "solid"
         },
         {
-          "id": "c_cache_db_replica_read",
-          "from": "cache",
-          "to": "db_replica",
+          "id": "c_limiter_to_lb",
+          "from": "edge_rate_limiter",
+          "to": "edge_load_balancer",
           "direction": "one_way",
           "style": "solid"
         },
         {
-          "id": "c_app_queue_async",
-          "from": "app",
-          "to": "queue",
+          "id": "c_lb_to_server",
+          "from": "edge_load_balancer",
+          "to": "app_server",
           "direction": "one_way",
           "style": "solid"
         },
         {
-          "id": "c_queue_worker_dispatch",
-          "from": "queue",
-          "to": "worker",
+          "id": "c_server_to_db",
+          "from": "app_server",
+          "to": "app_db",
           "direction": "one_way",
           "style": "solid"
-        },
-        {
-          "id": "c_worker_db_primary_commit",
-          "from": "worker",
-          "to": "db_primary",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_db_primary_replication",
-          "from": "db_primary",
-          "to": "db_replica",
-          "direction": "one_way",
-          "style": "dashed"
         }
       ],
       "interactions": [
         {
-          "id": "i_c_users_lb_req_fwd",
+          "id": "i_c_users_to_gateway_fwd",
           "from": "users",
-          "to": "lb",
-          "type": "flow",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_lb_app_req_fwd",
-          "from": "lb",
-          "to": "app",
-          "type": "flow",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_app_cache_lookup_fwd",
-          "from": "app",
-          "to": "cache",
-          "type": "ping",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_app_cache_lookup_rev",
-          "from": "cache",
-          "to": "app",
-          "type": "ping",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_cache_db_replica_read_fwd",
-          "from": "cache",
-          "to": "db_replica",
+          "to": "edge_api_gateway",
           "type": "flow",
           "intensity": "medium"
         },
         {
-          "id": "i_c_app_queue_async_fwd",
-          "from": "app",
-          "to": "queue",
-          "type": "broadcast",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_queue_worker_dispatch_fwd",
-          "from": "queue",
-          "to": "worker",
-          "type": "broadcast",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_worker_db_primary_commit_fwd",
-          "from": "worker",
-          "to": "db_primary",
+          "id": "i_c_gateway_to_limiter_fwd",
+          "from": "edge_api_gateway",
+          "to": "edge_rate_limiter",
           "type": "flow",
           "intensity": "medium"
         },
         {
-          "id": "i_c_db_primary_replication_fwd",
-          "from": "db_primary",
-          "to": "db_replica",
-          "type": "broadcast",
+          "id": "i_c_limiter_to_cache_fwd",
+          "from": "edge_rate_limiter",
+          "to": "limiter_cache",
+          "type": "ping",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_limiter_to_cache_rev",
+          "from": "limiter_cache",
+          "to": "edge_rate_limiter",
+          "type": "ping",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_limiter_to_lb_fwd",
+          "from": "edge_rate_limiter",
+          "to": "edge_load_balancer",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_lb_to_server_fwd",
+          "from": "edge_load_balancer",
+          "to": "app_server",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_server_to_db_fwd",
+          "from": "app_server",
+          "to": "app_db",
+          "type": "flow",
+          "intensity": "medium"
+        }
+      ],
+      "sourceCamera": {
+        "mode": "focus",
+        "target": "limiter_cache",
+        "zoom": 1
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "wide",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "default",
+          "background_texture": "grid",
+          "glow_strength": "soft"
+        },
+        "motion": {
+          "entry_style": "draw_in",
+          "pacing": "balanced"
+        },
+        "flow": {
+          "renderer": "hybrid"
+        }
+      },
+      "source": {
+        "entities": [
+          {
+            "id": "users",
+            "type": "users_cluster",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Users",
+            "icon": "users",
+            "layout": {
+              "x": 74,
+              "y": 7
+            }
+          },
+          {
+            "id": "edge_api_gateway",
+            "type": "api_gateway",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "API Gateway",
+            "icon": "route",
+            "layout": {
+              "x": 26,
+              "y": 20.583333333333336
+            }
+          },
+          {
+            "id": "edge_rate_limiter",
+            "type": "rate_limiter",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Rate Limiter",
+            "icon": "timer",
+            "layout": {
+              "x": 74,
+              "y": 34.16666666666667
+            }
+          },
+          {
+            "id": "limiter_cache",
+            "type": "cache",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "Cache",
+            "icon": "memory-stick",
+            "layout": {
+              "x": 26,
+              "y": 47.75
+            }
+          },
+          {
+            "id": "edge_load_balancer",
+            "type": "load_balancer",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Load Balancer",
+            "icon": "shuffle",
+            "layout": {
+              "x": 74,
+              "y": 61.333333333333336
+            }
+          },
+          {
+            "id": "app_server",
+            "type": "server",
+            "count": 3,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Server",
+            "icon": "server",
+            "layout": {
+              "x": 50,
+              "y": 74.91666666666667
+            }
+          },
+          {
+            "id": "app_db",
+            "type": "database",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Database",
+            "icon": "database",
+            "layout": {
+              "x": 26,
+              "y": 88.5
+            }
+          }
+        ],
+        "connections": [
+          {
+            "id": "c_users_to_gateway",
+            "from": "users",
+            "to": "edge_api_gateway",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_gateway_to_limiter",
+            "from": "edge_api_gateway",
+            "to": "edge_rate_limiter",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_limiter_to_cache",
+            "from": "edge_rate_limiter",
+            "to": "limiter_cache",
+            "direction": "bidirectional",
+            "style": "solid"
+          },
+          {
+            "id": "c_limiter_to_lb",
+            "from": "edge_rate_limiter",
+            "to": "edge_load_balancer",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_lb_to_server",
+            "from": "edge_load_balancer",
+            "to": "app_server",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_server_to_db",
+            "from": "app_server",
+            "to": "app_db",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "interactions": [
+          {
+            "id": "i_c_users_to_gateway_fwd",
+            "from": "users",
+            "to": "edge_api_gateway",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_gateway_to_limiter_fwd",
+            "from": "edge_api_gateway",
+            "to": "edge_rate_limiter",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_limiter_to_cache_fwd",
+            "from": "edge_rate_limiter",
+            "to": "limiter_cache",
+            "type": "ping",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_limiter_to_cache_rev",
+            "from": "limiter_cache",
+            "to": "edge_rate_limiter",
+            "type": "ping",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_limiter_to_lb_fwd",
+            "from": "edge_rate_limiter",
+            "to": "edge_load_balancer",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_lb_to_server_fwd",
+            "from": "edge_load_balancer",
+            "to": "app_server",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_server_to_db_fwd",
+            "from": "app_server",
+            "to": "app_db",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
+        "camera": {
+          "mode": "focus",
+          "target": "limiter_cache",
+          "zoom": 1
+        }
+      },
+      "motionPersonality": "ENERGETIC",
+      "diff": {
+        "entityDiffs": [
+          {
+            "type": "entity_added",
+            "entityId": "limiter_cache"
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "edge_api_gateway",
+            "from": {
+              "x": 26,
+              "y": 23.3
+            },
+            "to": {
+              "x": 26,
+              "y": 20.583333333333336
+            }
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "edge_rate_limiter",
+            "from": {
+              "x": 74,
+              "y": 39.6
+            },
+            "to": {
+              "x": 74,
+              "y": 34.16666666666667
+            }
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "edge_load_balancer",
+            "from": {
+              "x": 26,
+              "y": 55.900000000000006
+            },
+            "to": {
+              "x": 74,
+              "y": 61.333333333333336
+            }
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "app_server",
+            "from": {
+              "x": 50,
+              "y": 72.2
+            },
+            "to": {
+              "x": 50,
+              "y": 74.91666666666667
+            }
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "app_db",
+            "from": {
+              "x": 74,
+              "y": 88.5
+            },
+            "to": {
+              "x": 26,
+              "y": 88.5
+            }
+          },
+          {
+            "type": "entity_importance_changed",
+            "entityId": "edge_load_balancer",
+            "from": "primary",
+            "to": "secondary"
+          }
+        ],
+        "connectionDiffs": [
+          {
+            "type": "connection_added",
+            "connectionId": "c_limiter_to_cache"
+          }
+        ],
+        "interactionDiffs": [
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_limiter_to_cache_fwd"
+          },
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_limiter_to_cache_rev"
+          }
+        ],
+        "cameraDiffs": [
+          {
+            "type": "camera_changed",
+            "from": {
+              "mode": "focus",
+              "target": "edge_load_balancer",
+              "zoom": 1
+            },
+            "to": {
+              "mode": "focus",
+              "target": "limiter_cache",
+              "zoom": 1
+            }
+          }
+        ]
+      },
+      "hierarchyTransition": null,
+      "plan": {
+        "phaseOrder": [
+          "removals",
+          "moves",
+          "additions",
+          "connections",
+          "interactions",
+          "camera"
+        ],
+        "removals": [],
+        "moves": [
+          {
+            "entityId": "edge_api_gateway",
+            "elementIds": [
+              "edge_api_gateway"
+            ],
+            "action": "move"
+          },
+          {
+            "entityId": "edge_rate_limiter",
+            "elementIds": [
+              "edge_rate_limiter"
+            ],
+            "action": "move"
+          },
+          {
+            "entityId": "edge_load_balancer",
+            "elementIds": [
+              "edge_load_balancer"
+            ],
+            "action": "move"
+          },
+          {
+            "entityId": "app_server",
+            "elementIds": [
+              "app_server_1",
+              "app_server",
+              "app_server_3"
+            ],
+            "action": "move"
+          },
+          {
+            "entityId": "app_db",
+            "elementIds": [
+              "app_db"
+            ],
+            "action": "move"
+          }
+        ],
+        "additions": [
+          {
+            "entityId": "limiter_cache",
+            "elementIds": [
+              "limiter_cache"
+            ],
+            "action": "add",
+            "enter": "zoom_in",
+            "cleanup": false
+          }
+        ],
+        "connections": [
+          {
+            "entityId": "edge_rate_limiter",
+            "elementIds": [
+              "edge_rate_limiter"
+            ],
+            "action": "connect",
+            "connectionId": "c_limiter_to_cache"
+          },
+          {
+            "entityId": "limiter_cache",
+            "elementIds": [
+              "limiter_cache"
+            ],
+            "action": "connect",
+            "connectionId": "c_limiter_to_cache"
+          }
+        ],
+        "interactions": [
+          {
+            "entityId": "edge_rate_limiter",
+            "elementIds": [
+              "edge_rate_limiter"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_limiter_to_cache_rev",
+            "cleanup": false
+          },
+          {
+            "entityId": "limiter_cache",
+            "elementIds": [
+              "limiter_cache"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_limiter_to_cache_rev",
+            "cleanup": false
+          }
+        ]
+      },
+      "animationPlan": {
+        "entities": [
+          {
+            "entityId": "edge_api_gateway",
+            "action": "move",
+            "delay": 0.6000000000000001,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "edge_rate_limiter",
+            "action": "move",
+            "delay": 0.6400000000000001,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "edge_load_balancer",
+            "action": "move",
+            "delay": 0.68,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "app_server",
+            "action": "move",
+            "delay": 0.7200000000000001,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "app_db",
+            "action": "move",
+            "delay": 0.7600000000000001,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "limiter_cache",
+            "action": "add",
+            "delay": 0.37399999999999994,
+            "duration": 0.62,
+            "easing": "cubic-bezier(0.4,0,0.2,1)",
+            "scale": 1.2,
+            "isPrimary": true
+          }
+        ],
+        "connections": [
+          {
+            "connectionId": "c_limiter_to_cache",
+            "delay": 0.504,
+            "duration": 0.42,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          }
+        ],
+        "camera": null
+      },
+      "cameraPlan": null,
+      "sceneDiff": {
+        "addedEntities": [
+          {
+            "id": "limiter_cache",
+            "type": "cache",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "Cache",
+            "icon": "memory-stick",
+            "layout": {
+              "x": 26,
+              "y": 47.75
+            }
+          }
+        ],
+        "removedEntities": [],
+        "movedEntities": [
+          {
+            "id": "edge_api_gateway",
+            "from": {
+              "x": 26,
+              "y": 23.3
+            },
+            "to": {
+              "x": 26,
+              "y": 20.583333333333336
+            }
+          },
+          {
+            "id": "edge_rate_limiter",
+            "from": {
+              "x": 74,
+              "y": 39.6
+            },
+            "to": {
+              "x": 74,
+              "y": 34.16666666666667
+            }
+          },
+          {
+            "id": "edge_load_balancer",
+            "from": {
+              "x": 26,
+              "y": 55.900000000000006
+            },
+            "to": {
+              "x": 74,
+              "y": 61.333333333333336
+            }
+          },
+          {
+            "id": "app_server",
+            "from": {
+              "x": 50,
+              "y": 72.2
+            },
+            "to": {
+              "x": 50,
+              "y": 74.91666666666667
+            }
+          },
+          {
+            "id": "app_db",
+            "from": {
+              "x": 74,
+              "y": 88.5
+            },
+            "to": {
+              "x": 26,
+              "y": 88.5
+            }
+          }
+        ],
+        "updatedEntities": [
+          {
+            "id": "edge_load_balancer",
+            "changes": {
+              "importance": {
+                "from": "primary",
+                "to": "secondary"
+              }
+            }
+          }
+        ],
+        "addedConnections": [
+          {
+            "id": "c_limiter_to_cache",
+            "from": "edge_rate_limiter",
+            "to": "limiter_cache",
+            "direction": "bidirectional",
+            "style": "solid"
+          }
+        ],
+        "removedConnections": [],
+        "addedInteractions": [
+          {
+            "id": "i_c_limiter_to_cache_fwd",
+            "from": "edge_rate_limiter",
+            "to": "limiter_cache",
+            "type": "ping",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_limiter_to_cache_rev",
+            "from": "limiter_cache",
+            "to": "edge_rate_limiter",
+            "type": "ping",
+            "intensity": "medium"
+          }
+        ],
+        "removedInteractions": [],
+        "interactionIntensityChanged": [],
+        "cameraChanged": {
+          "from": {
+            "mode": "focus",
+            "target": "edge_load_balancer",
+            "zoom": 1
+          },
+          "to": {
+            "mode": "focus",
+            "target": "limiter_cache",
+            "zoom": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "s9",
+      "start": 48,
+      "end": 54,
+      "narration": "During a burst, the API Gateway feeds the Rate Limiter, allowed requests flow to the Load Balancer, and traffic stays smooth across the scaled Servers and the Database.",
+      "elements": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "sourceEntityId": "users",
+          "label": "Users",
+          "icon": "users",
+          "position": {
+            "x": 74,
+            "y": 7
+          },
+          "visualStyle": {
+            "size": 91.8,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 32.5584,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "edge_api_gateway",
+          "type": "api_gateway",
+          "sourceEntityId": "edge_api_gateway",
+          "label": "API Gateway",
+          "icon": "route",
+          "position": {
+            "x": 26,
+            "y": 20.583333333333336
+          },
+          "visualStyle": {
+            "size": 91.8,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 32.5584,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "edge_rate_limiter",
+          "type": "rate_limiter",
+          "sourceEntityId": "edge_rate_limiter",
+          "label": "Rate Limiter",
+          "icon": "timer",
+          "position": {
+            "x": 74,
+            "y": 34.16666666666667
+          },
+          "visualStyle": {
+            "size": 91.8,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 32.5584,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "limiter_cache",
+          "type": "cache",
+          "sourceEntityId": "limiter_cache",
+          "label": "Cache",
+          "icon": "memory-stick",
+          "position": {
+            "x": 26,
+            "y": 47.75
+          },
+          "visualStyle": {
+            "size": 91.8,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 32.5584,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "edge_load_balancer",
+          "type": "load_balancer",
+          "sourceEntityId": "edge_load_balancer",
+          "label": "Load Balancer",
+          "icon": "shuffle",
+          "position": {
+            "x": 74,
+            "y": 61.333333333333336
+          },
+          "visualStyle": {
+            "size": 91.8,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 32.5584,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "app_server_1",
+          "type": "server",
+          "sourceEntityId": "app_server",
+          "icon": "server",
+          "position": {
+            "x": 26.71944444444444,
+            "y": 74.91666666666667
+          },
+          "visualStyle": {
+            "size": 91.8,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 32.5584,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        },
+        {
+          "id": "app_server",
+          "type": "server",
+          "sourceEntityId": "app_server",
+          "label": "Server",
+          "icon": "server",
+          "position": {
+            "x": 50,
+            "y": 74.91666666666667
+          },
+          "visualStyle": {
+            "size": 91.8,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 32.5584,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        },
+        {
+          "id": "app_server_3",
+          "type": "server",
+          "sourceEntityId": "app_server",
+          "icon": "server",
+          "position": {
+            "x": 73.28055555555557,
+            "y": 74.91666666666667
+          },
+          "visualStyle": {
+            "size": 91.8,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 32.5584,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        },
+        {
+          "id": "app_db",
+          "type": "database",
+          "sourceEntityId": "app_db",
+          "label": "Database",
+          "icon": "database",
+          "position": {
+            "x": 26,
+            "y": 88.5
+          },
+          "visualStyle": {
+            "size": 91.8,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 32.5584,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        }
+      ],
+      "entities": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Users",
+          "icon": "users",
+          "layout": {
+            "x": 74,
+            "y": 7
+          }
+        },
+        {
+          "id": "edge_api_gateway",
+          "type": "api_gateway",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "API Gateway",
+          "icon": "route",
+          "layout": {
+            "x": 26,
+            "y": 20.583333333333336
+          }
+        },
+        {
+          "id": "edge_rate_limiter",
+          "type": "rate_limiter",
+          "count": 1,
+          "importance": "primary",
+          "status": "active",
+          "label": "Rate Limiter",
+          "icon": "timer",
+          "layout": {
+            "x": 74,
+            "y": 34.16666666666667
+          }
+        },
+        {
+          "id": "limiter_cache",
+          "type": "cache",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Cache",
+          "icon": "memory-stick",
+          "layout": {
+            "x": 26,
+            "y": 47.75
+          }
+        },
+        {
+          "id": "edge_load_balancer",
+          "type": "load_balancer",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Load Balancer",
+          "icon": "shuffle",
+          "layout": {
+            "x": 74,
+            "y": 61.333333333333336
+          }
+        },
+        {
+          "id": "app_server",
+          "type": "server",
+          "count": 3,
+          "importance": "secondary",
+          "status": "normal",
+          "label": "Server",
+          "icon": "server",
+          "layout": {
+            "x": 50,
+            "y": 74.91666666666667
+          }
+        },
+        {
+          "id": "app_db",
+          "type": "database",
+          "count": 1,
+          "importance": "secondary",
+          "status": "normal",
+          "label": "Database",
+          "icon": "database",
+          "layout": {
+            "x": 26,
+            "y": 88.5
+          }
+        }
+      ],
+      "connections": [
+        {
+          "id": "c_users_to_gateway",
+          "from": "users",
+          "to": "edge_api_gateway",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_gateway_to_limiter",
+          "from": "edge_api_gateway",
+          "to": "edge_rate_limiter",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_limiter_to_cache",
+          "from": "edge_rate_limiter",
+          "to": "limiter_cache",
+          "direction": "bidirectional",
+          "style": "solid"
+        },
+        {
+          "id": "c_limiter_to_lb",
+          "from": "edge_rate_limiter",
+          "to": "edge_load_balancer",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_lb_to_server",
+          "from": "edge_load_balancer",
+          "to": "app_server",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_server_to_db",
+          "from": "app_server",
+          "to": "app_db",
+          "direction": "one_way",
+          "style": "solid"
+        }
+      ],
+      "interactions": [
+        {
+          "id": "i_c_users_to_gateway_fwd",
+          "from": "users",
+          "to": "edge_api_gateway",
+          "type": "burst",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_gateway_to_limiter_fwd",
+          "from": "edge_api_gateway",
+          "to": "edge_rate_limiter",
+          "type": "burst",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_limiter_to_cache_fwd",
+          "from": "edge_rate_limiter",
+          "to": "limiter_cache",
+          "type": "ping",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_limiter_to_cache_rev",
+          "from": "limiter_cache",
+          "to": "edge_rate_limiter",
+          "type": "ping",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_limiter_to_lb_fwd",
+          "from": "edge_rate_limiter",
+          "to": "edge_load_balancer",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_lb_to_server_fwd",
+          "from": "edge_load_balancer",
+          "to": "app_server",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_server_to_db_fwd",
+          "from": "app_server",
+          "to": "app_db",
+          "type": "flow",
+          "intensity": "medium"
+        }
+      ],
+      "sourceCamera": {
+        "mode": "focus",
+        "target": "edge_rate_limiter",
+        "zoom": 1
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "wide",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "default",
+          "background_texture": "grid",
+          "glow_strength": "soft"
+        },
+        "motion": {
+          "entry_style": "draw_in",
+          "pacing": "balanced"
+        },
+        "flow": {
+          "renderer": "hybrid"
+        }
+      },
+      "source": {
+        "entities": [
+          {
+            "id": "users",
+            "type": "users_cluster",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Users",
+            "icon": "users",
+            "layout": {
+              "x": 74,
+              "y": 7
+            }
+          },
+          {
+            "id": "edge_api_gateway",
+            "type": "api_gateway",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "API Gateway",
+            "icon": "route",
+            "layout": {
+              "x": 26,
+              "y": 20.583333333333336
+            }
+          },
+          {
+            "id": "edge_rate_limiter",
+            "type": "rate_limiter",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "Rate Limiter",
+            "icon": "timer",
+            "layout": {
+              "x": 74,
+              "y": 34.16666666666667
+            }
+          },
+          {
+            "id": "limiter_cache",
+            "type": "cache",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Cache",
+            "icon": "memory-stick",
+            "layout": {
+              "x": 26,
+              "y": 47.75
+            }
+          },
+          {
+            "id": "edge_load_balancer",
+            "type": "load_balancer",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Load Balancer",
+            "icon": "shuffle",
+            "layout": {
+              "x": 74,
+              "y": 61.333333333333336
+            }
+          },
+          {
+            "id": "app_server",
+            "type": "server",
+            "count": 3,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Server",
+            "icon": "server",
+            "layout": {
+              "x": 50,
+              "y": 74.91666666666667
+            }
+          },
+          {
+            "id": "app_db",
+            "type": "database",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Database",
+            "icon": "database",
+            "layout": {
+              "x": 26,
+              "y": 88.5
+            }
+          }
+        ],
+        "connections": [
+          {
+            "id": "c_users_to_gateway",
+            "from": "users",
+            "to": "edge_api_gateway",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_gateway_to_limiter",
+            "from": "edge_api_gateway",
+            "to": "edge_rate_limiter",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_limiter_to_cache",
+            "from": "edge_rate_limiter",
+            "to": "limiter_cache",
+            "direction": "bidirectional",
+            "style": "solid"
+          },
+          {
+            "id": "c_limiter_to_lb",
+            "from": "edge_rate_limiter",
+            "to": "edge_load_balancer",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_lb_to_server",
+            "from": "edge_load_balancer",
+            "to": "app_server",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_server_to_db",
+            "from": "app_server",
+            "to": "app_db",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "interactions": [
+          {
+            "id": "i_c_users_to_gateway_fwd",
+            "from": "users",
+            "to": "edge_api_gateway",
+            "type": "burst",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_gateway_to_limiter_fwd",
+            "from": "edge_api_gateway",
+            "to": "edge_rate_limiter",
+            "type": "burst",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_limiter_to_cache_fwd",
+            "from": "edge_rate_limiter",
+            "to": "limiter_cache",
+            "type": "ping",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_limiter_to_cache_rev",
+            "from": "limiter_cache",
+            "to": "edge_rate_limiter",
+            "type": "ping",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_limiter_to_lb_fwd",
+            "from": "edge_rate_limiter",
+            "to": "edge_load_balancer",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_lb_to_server_fwd",
+            "from": "edge_load_balancer",
+            "to": "app_server",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_server_to_db_fwd",
+            "from": "app_server",
+            "to": "app_db",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
+        "camera": {
+          "mode": "focus",
+          "target": "edge_rate_limiter",
+          "zoom": 1
+        }
+      },
+      "motionPersonality": "ENERGETIC",
+      "diff": {
+        "entityDiffs": [
+          {
+            "type": "entity_importance_changed",
+            "entityId": "edge_rate_limiter",
+            "from": "secondary",
+            "to": "primary"
+          },
+          {
+            "type": "entity_importance_changed",
+            "entityId": "limiter_cache",
+            "from": "primary",
+            "to": "secondary"
+          }
+        ],
+        "connectionDiffs": [],
+        "interactionDiffs": [
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_users_to_gateway_fwd",
+            "from": "medium",
+            "to": "high"
+          },
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_gateway_to_limiter_fwd",
+            "from": "medium",
+            "to": "high"
+          },
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_limiter_to_cache_fwd",
+            "from": "medium",
+            "to": "high"
+          },
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_limiter_to_cache_rev",
+            "from": "medium",
+            "to": "high"
+          }
+        ],
+        "cameraDiffs": [
+          {
+            "type": "camera_changed",
+            "from": {
+              "mode": "focus",
+              "target": "limiter_cache",
+              "zoom": 1
+            },
+            "to": {
+              "mode": "focus",
+              "target": "edge_rate_limiter",
+              "zoom": 1
+            }
+          }
+        ]
+      },
+      "hierarchyTransition": null,
+      "plan": {
+        "phaseOrder": [
+          "removals",
+          "moves",
+          "additions",
+          "connections",
+          "interactions",
+          "camera"
+        ],
+        "removals": [],
+        "moves": [],
+        "additions": [
+          {
+            "entityId": "edge_rate_limiter",
+            "elementIds": [
+              "edge_rate_limiter"
+            ],
+            "action": "add",
+            "enter": "zoom_in"
+          }
+        ],
+        "connections": [],
+        "interactions": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_gateway_fwd"
+          },
+          {
+            "entityId": "edge_api_gateway",
+            "elementIds": [
+              "edge_api_gateway"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_gateway_to_limiter_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "edge_rate_limiter",
+            "elementIds": [
+              "edge_rate_limiter"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_limiter_to_cache_rev",
+            "cleanup": false
+          },
+          {
+            "entityId": "limiter_cache",
+            "elementIds": [
+              "limiter_cache"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_limiter_to_cache_rev",
+            "cleanup": false
+          }
+        ]
+      },
+      "animationPlan": {
+        "entities": [
+          {
+            "entityId": "edge_rate_limiter",
+            "action": "add",
+            "delay": 0.37399999999999994,
+            "duration": 0.62,
+            "easing": "cubic-bezier(0.4,0,0.2,1)",
+            "scale": 1.2,
+            "isPrimary": true
+          }
+        ],
+        "connections": [],
+        "camera": null
+      },
+      "cameraPlan": null,
+      "sceneDiff": {
+        "addedEntities": [],
+        "removedEntities": [],
+        "movedEntities": [],
+        "updatedEntities": [
+          {
+            "id": "edge_rate_limiter",
+            "changes": {
+              "importance": {
+                "from": "secondary",
+                "to": "primary"
+              }
+            }
+          },
+          {
+            "id": "limiter_cache",
+            "changes": {
+              "importance": {
+                "from": "primary",
+                "to": "secondary"
+              }
+            }
+          }
+        ],
+        "addedConnections": [],
+        "removedConnections": [],
+        "addedInteractions": [],
+        "removedInteractions": [],
+        "interactionIntensityChanged": [
+          {
+            "id": "i_c_users_to_gateway_fwd",
+            "from": "medium",
+            "to": "high"
+          },
+          {
+            "id": "i_c_gateway_to_limiter_fwd",
+            "from": "medium",
+            "to": "high"
+          },
+          {
+            "id": "i_c_limiter_to_cache_fwd",
+            "from": "medium",
+            "to": "high"
+          },
+          {
+            "id": "i_c_limiter_to_cache_rev",
+            "from": "medium",
+            "to": "high"
+          }
+        ],
+        "cameraChanged": {
+          "from": {
+            "mode": "focus",
+            "target": "limiter_cache",
+            "zoom": 1
+          },
+          "to": {
+            "mode": "focus",
+            "target": "edge_rate_limiter",
+            "zoom": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "s10",
+      "start": 54,
+      "end": 60,
+      "narration": "The final stack shows Users entering an API Gateway, then a Rate Limiter with a Cache for counters, then a Load Balancer spreading requests across Servers that read and write the Database.",
+      "elements": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "sourceEntityId": "users",
+          "label": "Users",
+          "icon": "users",
+          "position": {
+            "x": 74,
+            "y": 7
+          },
+          "visualStyle": {
+            "size": 91.8,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 32.5584,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "edge_api_gateway",
+          "type": "api_gateway",
+          "sourceEntityId": "edge_api_gateway",
+          "label": "API Gateway",
+          "icon": "route",
+          "position": {
+            "x": 26,
+            "y": 20.583333333333336
+          },
+          "visualStyle": {
+            "size": 91.8,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 32.5584,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "edge_rate_limiter",
+          "type": "rate_limiter",
+          "sourceEntityId": "edge_rate_limiter",
+          "label": "Rate Limiter",
+          "icon": "timer",
+          "position": {
+            "x": 74,
+            "y": 34.16666666666667
+          },
+          "visualStyle": {
+            "size": 91.8,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 32.5584,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "limiter_cache",
+          "type": "cache",
+          "sourceEntityId": "limiter_cache",
+          "label": "Cache",
+          "icon": "memory-stick",
+          "position": {
+            "x": 26,
+            "y": 47.75
+          },
+          "visualStyle": {
+            "size": 91.8,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 32.5584,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "edge_load_balancer",
+          "type": "load_balancer",
+          "sourceEntityId": "edge_load_balancer",
+          "label": "Load Balancer",
+          "icon": "shuffle",
+          "position": {
+            "x": 74,
+            "y": 61.333333333333336
+          },
+          "visualStyle": {
+            "size": 91.8,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 32.5584,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "app_server_1",
+          "type": "server",
+          "sourceEntityId": "app_server",
+          "icon": "server",
+          "position": {
+            "x": 26.71944444444444,
+            "y": 74.91666666666667
+          },
+          "visualStyle": {
+            "size": 91.8,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 32.5584,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        },
+        {
+          "id": "app_server",
+          "type": "server",
+          "sourceEntityId": "app_server",
+          "label": "Server",
+          "icon": "server",
+          "position": {
+            "x": 50,
+            "y": 74.91666666666667
+          },
+          "visualStyle": {
+            "size": 91.8,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 32.5584,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        },
+        {
+          "id": "app_server_3",
+          "type": "server",
+          "sourceEntityId": "app_server",
+          "icon": "server",
+          "position": {
+            "x": 73.28055555555557,
+            "y": 74.91666666666667
+          },
+          "visualStyle": {
+            "size": 91.8,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 32.5584,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        },
+        {
+          "id": "app_db",
+          "type": "database",
+          "sourceEntityId": "app_db",
+          "label": "Database",
+          "icon": "database",
+          "position": {
+            "x": 26,
+            "y": 88.5
+          },
+          "visualStyle": {
+            "size": 91.8,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.181493066686209,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 32.5584,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        }
+      ],
+      "entities": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Users",
+          "icon": "users",
+          "layout": {
+            "x": 74,
+            "y": 7
+          }
+        },
+        {
+          "id": "edge_api_gateway",
+          "type": "api_gateway",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "API Gateway",
+          "icon": "route",
+          "layout": {
+            "x": 26,
+            "y": 20.583333333333336
+          }
+        },
+        {
+          "id": "edge_rate_limiter",
+          "type": "rate_limiter",
+          "count": 1,
+          "importance": "primary",
+          "status": "active",
+          "label": "Rate Limiter",
+          "icon": "timer",
+          "layout": {
+            "x": 74,
+            "y": 34.16666666666667
+          }
+        },
+        {
+          "id": "limiter_cache",
+          "type": "cache",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Cache",
+          "icon": "memory-stick",
+          "layout": {
+            "x": 26,
+            "y": 47.75
+          }
+        },
+        {
+          "id": "edge_load_balancer",
+          "type": "load_balancer",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Load Balancer",
+          "icon": "shuffle",
+          "layout": {
+            "x": 74,
+            "y": 61.333333333333336
+          }
+        },
+        {
+          "id": "app_server",
+          "type": "server",
+          "count": 3,
+          "importance": "secondary",
+          "status": "normal",
+          "label": "Server",
+          "icon": "server",
+          "layout": {
+            "x": 50,
+            "y": 74.91666666666667
+          }
+        },
+        {
+          "id": "app_db",
+          "type": "database",
+          "count": 1,
+          "importance": "secondary",
+          "status": "normal",
+          "label": "Database",
+          "icon": "database",
+          "layout": {
+            "x": 26,
+            "y": 88.5
+          }
+        }
+      ],
+      "connections": [
+        {
+          "id": "c_users_to_gateway",
+          "from": "users",
+          "to": "edge_api_gateway",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_gateway_to_limiter",
+          "from": "edge_api_gateway",
+          "to": "edge_rate_limiter",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_limiter_to_cache",
+          "from": "edge_rate_limiter",
+          "to": "limiter_cache",
+          "direction": "bidirectional",
+          "style": "solid"
+        },
+        {
+          "id": "c_limiter_to_lb",
+          "from": "edge_rate_limiter",
+          "to": "edge_load_balancer",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_lb_to_server",
+          "from": "edge_load_balancer",
+          "to": "app_server",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_server_to_db",
+          "from": "app_server",
+          "to": "app_db",
+          "direction": "one_way",
+          "style": "solid"
+        }
+      ],
+      "interactions": [
+        {
+          "id": "i_c_users_to_gateway_fwd",
+          "from": "users",
+          "to": "edge_api_gateway",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_gateway_to_limiter_fwd",
+          "from": "edge_api_gateway",
+          "to": "edge_rate_limiter",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_limiter_to_cache_fwd",
+          "from": "edge_rate_limiter",
+          "to": "limiter_cache",
+          "type": "ping",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_limiter_to_cache_rev",
+          "from": "limiter_cache",
+          "to": "edge_rate_limiter",
+          "type": "ping",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_limiter_to_lb_fwd",
+          "from": "edge_rate_limiter",
+          "to": "edge_load_balancer",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_lb_to_server_fwd",
+          "from": "edge_load_balancer",
+          "to": "app_server",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_server_to_db_fwd",
+          "from": "app_server",
+          "to": "app_db",
+          "type": "flow",
           "intensity": "medium"
         }
       ],
@@ -6509,11 +6996,11 @@ const renderSpec = {
           "glow_strength": "soft"
         },
         "motion": {
-          "entry_style": "elastic_pop",
+          "entry_style": "draw_in",
           "pacing": "balanced"
         },
         "flow": {
-          "renderer": "hybrid"
+          "renderer": "dashed"
         }
       },
       "source": {
@@ -6525,216 +7012,183 @@ const renderSpec = {
             "importance": "secondary",
             "status": "active",
             "label": "Users",
+            "icon": "users",
             "layout": {
-              "x": 50,
-              "y": 12
+              "x": 74,
+              "y": 7
             }
           },
           {
-            "id": "lb",
-            "type": "load_balancer",
+            "id": "edge_api_gateway",
+            "type": "api_gateway",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "API Gateway",
+            "icon": "route",
+            "layout": {
+              "x": 26,
+              "y": 20.583333333333336
+            }
+          },
+          {
+            "id": "edge_rate_limiter",
+            "type": "rate_limiter",
             "count": 1,
             "importance": "primary",
-            "status": "normal",
-            "label": "Load Balancer",
+            "status": "active",
+            "label": "Rate Limiter",
+            "icon": "timer",
             "layout": {
-              "x": 50,
-              "y": 20.57142857142857
+              "x": 74,
+              "y": 34.16666666666667
             }
           },
           {
-            "id": "app",
+            "id": "limiter_cache",
+            "type": "cache",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Cache",
+            "icon": "memory-stick",
+            "layout": {
+              "x": 26,
+              "y": 47.75
+            }
+          },
+          {
+            "id": "edge_load_balancer",
+            "type": "load_balancer",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Load Balancer",
+            "icon": "shuffle",
+            "layout": {
+              "x": 74,
+              "y": 61.333333333333336
+            }
+          },
+          {
+            "id": "app_server",
             "type": "server",
             "count": 3,
             "importance": "secondary",
             "status": "normal",
             "label": "Server",
+            "icon": "server",
             "layout": {
               "x": 50,
-              "y": 29.142857142857142
+              "y": 74.91666666666667
             }
           },
           {
-            "id": "cache",
-            "type": "cache",
+            "id": "app_db",
+            "type": "database",
             "count": 1,
             "importance": "secondary",
             "status": "normal",
-            "label": "Cache",
+            "label": "Database",
+            "icon": "database",
             "layout": {
-              "x": 50,
-              "y": 37.714285714285715
-            }
-          },
-          {
-            "id": "queue",
-            "type": "queue",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Queue",
-            "layout": {
-              "x": 50,
-              "y": 46.285714285714285
-            }
-          },
-          {
-            "id": "worker",
-            "type": "worker",
-            "count": 3,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Worker",
-            "layout": {
-              "x": 50,
-              "y": 54.857142857142854
-            }
-          },
-          {
-            "id": "db_primary",
-            "type": "primary_database",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Primary Database",
-            "layout": {
-              "x": 50,
-              "y": 63.42857142857143
-            }
-          },
-          {
-            "id": "db_replica",
-            "type": "read_replica",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Read Replica",
-            "layout": {
-              "x": 50,
-              "y": 72
+              "x": 26,
+              "y": 88.5
             }
           }
         ],
         "connections": [
           {
-            "id": "c_users_lb_req",
+            "id": "c_users_to_gateway",
             "from": "users",
-            "to": "lb",
+            "to": "edge_api_gateway",
             "direction": "one_way",
             "style": "solid"
           },
           {
-            "id": "c_lb_app_req",
-            "from": "lb",
-            "to": "app",
+            "id": "c_gateway_to_limiter",
+            "from": "edge_api_gateway",
+            "to": "edge_rate_limiter",
             "direction": "one_way",
             "style": "solid"
           },
           {
-            "id": "c_app_cache_lookup",
-            "from": "app",
-            "to": "cache",
+            "id": "c_limiter_to_cache",
+            "from": "edge_rate_limiter",
+            "to": "limiter_cache",
             "direction": "bidirectional",
             "style": "solid"
           },
           {
-            "id": "c_cache_db_replica_read",
-            "from": "cache",
-            "to": "db_replica",
+            "id": "c_limiter_to_lb",
+            "from": "edge_rate_limiter",
+            "to": "edge_load_balancer",
             "direction": "one_way",
             "style": "solid"
           },
           {
-            "id": "c_app_queue_async",
-            "from": "app",
-            "to": "queue",
+            "id": "c_lb_to_server",
+            "from": "edge_load_balancer",
+            "to": "app_server",
             "direction": "one_way",
             "style": "solid"
           },
           {
-            "id": "c_queue_worker_dispatch",
-            "from": "queue",
-            "to": "worker",
+            "id": "c_server_to_db",
+            "from": "app_server",
+            "to": "app_db",
             "direction": "one_way",
             "style": "solid"
-          },
-          {
-            "id": "c_worker_db_primary_commit",
-            "from": "worker",
-            "to": "db_primary",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_db_primary_replication",
-            "from": "db_primary",
-            "to": "db_replica",
-            "direction": "one_way",
-            "style": "dashed"
           }
         ],
         "interactions": [
           {
-            "id": "i_c_users_lb_req_fwd",
+            "id": "i_c_users_to_gateway_fwd",
             "from": "users",
-            "to": "lb",
-            "type": "flow",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_lb_app_req_fwd",
-            "from": "lb",
-            "to": "app",
-            "type": "flow",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_app_cache_lookup_fwd",
-            "from": "app",
-            "to": "cache",
-            "type": "ping",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_app_cache_lookup_rev",
-            "from": "cache",
-            "to": "app",
-            "type": "ping",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_cache_db_replica_read_fwd",
-            "from": "cache",
-            "to": "db_replica",
+            "to": "edge_api_gateway",
             "type": "flow",
             "intensity": "medium"
           },
           {
-            "id": "i_c_app_queue_async_fwd",
-            "from": "app",
-            "to": "queue",
-            "type": "broadcast",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_queue_worker_dispatch_fwd",
-            "from": "queue",
-            "to": "worker",
-            "type": "broadcast",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_worker_db_primary_commit_fwd",
-            "from": "worker",
-            "to": "db_primary",
+            "id": "i_c_gateway_to_limiter_fwd",
+            "from": "edge_api_gateway",
+            "to": "edge_rate_limiter",
             "type": "flow",
             "intensity": "medium"
           },
           {
-            "id": "i_c_db_primary_replication_fwd",
-            "from": "db_primary",
-            "to": "db_replica",
-            "type": "broadcast",
+            "id": "i_c_limiter_to_cache_fwd",
+            "from": "edge_rate_limiter",
+            "to": "limiter_cache",
+            "type": "ping",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_limiter_to_cache_rev",
+            "from": "limiter_cache",
+            "to": "edge_rate_limiter",
+            "type": "ping",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_limiter_to_lb_fwd",
+            "from": "edge_rate_limiter",
+            "to": "edge_load_balancer",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_lb_to_server_fwd",
+            "from": "edge_load_balancer",
+            "to": "app_server",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_server_to_db_fwd",
+            "from": "app_server",
+            "to": "app_db",
+            "type": "flow",
             "intensity": "medium"
           }
         ],
@@ -6743,155 +7197,34 @@ const renderSpec = {
           "zoom": 1
         }
       },
-      "staticScene": true,
-      "motionPersonality": "CALM",
+      "motionPersonality": "ENERGETIC",
       "diff": {
-        "entityDiffs": [
-          {
-            "type": "entity_added",
-            "entityId": "cache"
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "lb",
-            "from": {
-              "x": 50,
-              "y": 22
-            },
-            "to": {
-              "x": 50,
-              "y": 20.57142857142857
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "app",
-            "from": {
-              "x": 50,
-              "y": 32
-            },
-            "to": {
-              "x": 50,
-              "y": 29.142857142857142
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "queue",
-            "from": {
-              "x": 50,
-              "y": 42
-            },
-            "to": {
-              "x": 50,
-              "y": 46.285714285714285
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "worker",
-            "from": {
-              "x": 50,
-              "y": 52
-            },
-            "to": {
-              "x": 50,
-              "y": 54.857142857142854
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "db_primary",
-            "from": {
-              "x": 50,
-              "y": 62
-            },
-            "to": {
-              "x": 50,
-              "y": 63.42857142857143
-            }
-          },
-          {
-            "type": "entity_status_changed",
-            "entityId": "users",
-            "from": "normal",
-            "to": "active"
-          },
-          {
-            "type": "entity_importance_changed",
-            "entityId": "lb",
-            "from": "secondary",
-            "to": "primary"
-          },
-          {
-            "type": "entity_status_changed",
-            "entityId": "queue",
-            "from": "active",
-            "to": "normal"
-          },
-          {
-            "type": "entity_status_changed",
-            "entityId": "worker",
-            "from": "active",
-            "to": "normal"
-          },
-          {
-            "type": "entity_importance_changed",
-            "entityId": "worker",
-            "from": "primary",
-            "to": "secondary"
-          }
-        ],
-        "connectionDiffs": [
-          {
-            "type": "connection_added",
-            "connectionId": "c_app_cache_lookup"
-          },
-          {
-            "type": "connection_added",
-            "connectionId": "c_cache_db_replica_read"
-          },
-          {
-            "type": "connection_added",
-            "connectionId": "c_db_primary_replication"
-          },
-          {
-            "type": "connection_removed",
-            "connectionId": "c_app_db_replica_read"
-          }
-        ],
+        "entityDiffs": [],
+        "connectionDiffs": [],
         "interactionDiffs": [
           {
-            "type": "interaction_added",
-            "interactionId": "i_c_app_cache_lookup_fwd"
-          },
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_app_cache_lookup_rev"
-          },
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_cache_db_replica_read_fwd"
-          },
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_db_primary_replication_fwd"
-          },
-          {
-            "type": "interaction_removed",
-            "interactionId": "i_c_app_db_replica_read_fwd"
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_users_to_gateway_fwd",
+            "from": "high",
+            "to": "medium"
           },
           {
             "type": "interaction_intensity_changed",
-            "interactionId": "i_c_users_lb_req_fwd",
-            "from": "medium",
-            "to": "high"
+            "interactionId": "i_c_gateway_to_limiter_fwd",
+            "from": "high",
+            "to": "medium"
           },
           {
             "type": "interaction_intensity_changed",
-            "interactionId": "i_c_lb_app_req_fwd",
-            "from": "medium",
-            "to": "high"
+            "interactionId": "i_c_limiter_to_cache_fwd",
+            "from": "high",
+            "to": "medium"
+          },
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_limiter_to_cache_rev",
+            "from": "high",
+            "to": "medium"
           }
         ],
         "cameraDiffs": [
@@ -6899,7 +7232,7 @@ const renderSpec = {
             "type": "camera_changed",
             "from": {
               "mode": "focus",
-              "target": "worker",
+              "target": "edge_rate_limiter",
               "zoom": 1
             },
             "to": {
@@ -6909,255 +7242,99 @@ const renderSpec = {
           }
         ]
       },
-      "hierarchy": {
-        "primaryId": "lb",
-        "entityStyles": {
-          "users": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "lb": {
-            "scale": 1.2,
-            "opacity": 1,
-            "glow": true
-          },
-          "app": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "cache": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "queue": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "worker": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "db_primary": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          },
-          "db_replica": {
-            "scale": 1,
-            "opacity": 0.55,
-            "glow": false
-          }
-        }
-      },
       "hierarchyTransition": null,
+      "plan": {
+        "phaseOrder": [
+          "removals",
+          "moves",
+          "additions",
+          "connections",
+          "interactions",
+          "camera"
+        ],
+        "removals": [],
+        "moves": [],
+        "additions": [],
+        "connections": [],
+        "interactions": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_gateway_fwd"
+          },
+          {
+            "entityId": "edge_api_gateway",
+            "elementIds": [
+              "edge_api_gateway"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_gateway_to_limiter_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "edge_rate_limiter",
+            "elementIds": [
+              "edge_rate_limiter"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_limiter_to_cache_rev",
+            "cleanup": false
+          },
+          {
+            "entityId": "limiter_cache",
+            "elementIds": [
+              "limiter_cache"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_limiter_to_cache_rev",
+            "cleanup": false
+          }
+        ]
+      },
+      "animationPlan": {
+        "entities": [],
+        "connections": [],
+        "camera": null
+      },
       "cameraPlan": null,
       "sceneDiff": {
-        "addedEntities": [
-          {
-            "id": "cache",
-            "type": "cache",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Cache",
-            "layout": {
-              "x": 50,
-              "y": 37.714285714285715
-            }
-          }
-        ],
+        "addedEntities": [],
         "removedEntities": [],
-        "movedEntities": [
-          {
-            "id": "lb",
-            "from": {
-              "x": 50,
-              "y": 22
-            },
-            "to": {
-              "x": 50,
-              "y": 20.57142857142857
-            }
-          },
-          {
-            "id": "app",
-            "from": {
-              "x": 50,
-              "y": 32
-            },
-            "to": {
-              "x": 50,
-              "y": 29.142857142857142
-            }
-          },
-          {
-            "id": "queue",
-            "from": {
-              "x": 50,
-              "y": 42
-            },
-            "to": {
-              "x": 50,
-              "y": 46.285714285714285
-            }
-          },
-          {
-            "id": "worker",
-            "from": {
-              "x": 50,
-              "y": 52
-            },
-            "to": {
-              "x": 50,
-              "y": 54.857142857142854
-            }
-          },
-          {
-            "id": "db_primary",
-            "from": {
-              "x": 50,
-              "y": 62
-            },
-            "to": {
-              "x": 50,
-              "y": 63.42857142857143
-            }
-          }
-        ],
-        "updatedEntities": [
-          {
-            "id": "users",
-            "changes": {
-              "status": {
-                "from": "normal",
-                "to": "active"
-              }
-            }
-          },
-          {
-            "id": "lb",
-            "changes": {
-              "importance": {
-                "from": "secondary",
-                "to": "primary"
-              }
-            }
-          },
-          {
-            "id": "queue",
-            "changes": {
-              "status": {
-                "from": "active",
-                "to": "normal"
-              }
-            }
-          },
-          {
-            "id": "worker",
-            "changes": {
-              "status": {
-                "from": "active",
-                "to": "normal"
-              },
-              "importance": {
-                "from": "primary",
-                "to": "secondary"
-              }
-            }
-          }
-        ],
-        "addedConnections": [
-          {
-            "id": "c_app_cache_lookup",
-            "from": "app",
-            "to": "cache",
-            "direction": "bidirectional",
-            "style": "solid"
-          },
-          {
-            "id": "c_cache_db_replica_read",
-            "from": "cache",
-            "to": "db_replica",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_db_primary_replication",
-            "from": "db_primary",
-            "to": "db_replica",
-            "direction": "one_way",
-            "style": "dashed"
-          }
-        ],
-        "removedConnections": [
-          {
-            "id": "c_app_db_replica_read",
-            "from": "app",
-            "to": "db_replica",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "addedInteractions": [
-          {
-            "id": "i_c_app_cache_lookup_fwd",
-            "from": "app",
-            "to": "cache",
-            "type": "ping",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_app_cache_lookup_rev",
-            "from": "cache",
-            "to": "app",
-            "type": "ping",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_cache_db_replica_read_fwd",
-            "from": "cache",
-            "to": "db_replica",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_db_primary_replication_fwd",
-            "from": "db_primary",
-            "to": "db_replica",
-            "type": "broadcast",
-            "intensity": "medium"
-          }
-        ],
-        "removedInteractions": [
-          {
-            "id": "i_c_app_db_replica_read_fwd",
-            "from": "app",
-            "to": "db_replica",
-            "type": "flow",
-            "intensity": "medium"
-          }
-        ],
+        "movedEntities": [],
+        "updatedEntities": [],
+        "addedConnections": [],
+        "removedConnections": [],
+        "addedInteractions": [],
+        "removedInteractions": [],
         "interactionIntensityChanged": [
           {
-            "id": "i_c_users_lb_req_fwd",
-            "from": "medium",
-            "to": "high"
+            "id": "i_c_users_to_gateway_fwd",
+            "from": "high",
+            "to": "medium"
           },
           {
-            "id": "i_c_lb_app_req_fwd",
-            "from": "medium",
-            "to": "high"
+            "id": "i_c_gateway_to_limiter_fwd",
+            "from": "high",
+            "to": "medium"
+          },
+          {
+            "id": "i_c_limiter_to_cache_fwd",
+            "from": "high",
+            "to": "medium"
+          },
+          {
+            "id": "i_c_limiter_to_cache_rev",
+            "from": "high",
+            "to": "medium"
           }
         ],
         "cameraChanged": {
           "from": {
             "mode": "focus",
-            "target": "worker",
+            "target": "edge_rate_limiter",
             "zoom": 1
           },
           "to": {
@@ -7171,9 +7348,9 @@ const renderSpec = {
 } as unknown as MotionRenderSpec;
 const TIMELINE_EPSILON = 0.001;
 const DEFAULT_VISUAL_DIRECTIVES = {
-  theme: 'neon',
+  theme: 'default',
   background_texture: 'grid',
-  glow_strength: 'strong',
+  glow_strength: 'soft',
 } as const;
 
 const resolveVisualDirectives = (scene: MotionRenderSpec['scenes'][number]) =>

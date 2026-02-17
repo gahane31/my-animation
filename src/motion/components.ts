@@ -1,12 +1,14 @@
-import {Circle, Layout, Line, Node, Rect, Txt} from '@motion-canvas/2d';
+import {Circle, Icon, Layout, Line, Node, Rect, Txt} from '@motion-canvas/2d';
 import {StyleTokens} from '../config/styleTokens.js';
 import type {EntityVisualStyle} from '../design/styleResolver.js';
 import {ComponentType} from '../schema/visualGrammar.js';
+import {resolveLucideIconForComponent} from '../v2/catalog/iconCatalog.js';
 
 export interface ComponentFactoryInput {
   id: string;
   position: {x: number; y: number};
   label?: string;
+  icon?: string;
   style?: EntityVisualStyle;
 }
 
@@ -41,7 +43,7 @@ const createLabel = (text: string, y: number, style: EntityVisualStyle): Txt =>
     y,
     fill: style.textColor,
     fontFamily: StyleTokens.text.fontFamily,
-    fontSize: Math.max(16, style.fontSize - 4),
+    fontSize: Math.max(20, style.fontSize),
     fontWeight: style.fontWeight,
   });
 
@@ -60,6 +62,21 @@ const findLastTextNode = (node: Node): Txt | undefined => {
   }
 
   return result;
+};
+
+const findFirstIconNode = (node: Node): Icon | undefined => {
+  if (node instanceof Icon) {
+    return node;
+  }
+
+  for (const child of node.children()) {
+    const nested = findFirstIconNode(child);
+    if (nested) {
+      return nested;
+    }
+  }
+
+  return undefined;
 };
 
 const createCard = (
@@ -106,7 +123,14 @@ export const applyComponentVisualStyle = (node: Node, styleInput?: EntityVisualS
   node.shadowColor(style.glow ? style.glowColor : NO_SHADOW_COLOR);
   node.shadowBlur(style.glow ? style.glowBlur : 0);
 
-  if (node instanceof Rect || node instanceof Circle) {
+  if (node instanceof Icon) {
+    // Icon inherits Rect in Motion Canvas; keep its geometry transparent
+    // so we render only glyph strokes and no square background panel.
+    node.color(style.strokeColor);
+    node.fill(null);
+    node.stroke(null);
+    node.lineWidth(0);
+  } else if (node instanceof Rect || node instanceof Circle) {
     node.fill(style.color);
     node.stroke(style.strokeColor);
     node.lineWidth(style.strokeWidth);
@@ -140,6 +164,27 @@ export const applyComponentLabel = (node: Node, label?: string): void => {
   }
 
   labelNode.text(label);
+};
+
+export const applyComponentIcon = (
+  node: Node,
+  type: ComponentType,
+  iconInput?: string,
+  styleInput?: EntityVisualStyle,
+): void => {
+  const style = resolveStyle(styleInput);
+  const iconName = resolveLucideIconForComponent(type, iconInput);
+  const iconNode = findFirstIconNode(node);
+  if (!iconNode) {
+    return;
+  }
+
+  iconNode.icon(`lucide:${iconName}`);
+  iconNode.color(style.strokeColor);
+  iconNode.fill(null);
+  iconNode.stroke(null);
+  iconNode.lineWidth(0);
+  iconNode.opacity(Math.min(1, style.opacity * 0.98));
 };
 
 export const createUsers = (input: ComponentFactoryInput): Node => {
@@ -442,6 +487,70 @@ export const createWorker = (input: ComponentFactoryInput): Node =>
     radius: 14,
   });
 
+const toDefaultLabel = (type: ComponentType): string =>
+  type
+    .split('_')
+    .map((part) => {
+      if (part === 'cdn') {
+        return 'CDN';
+      }
+      if (part === 'dns') {
+        return 'DNS';
+      }
+      if (part === 'waf') {
+        return 'WAF';
+      }
+      if (part === 'api') {
+        return 'API';
+      }
+      if (part === 'llm') {
+        return 'LLM';
+      }
+      if (part === 'jwt') {
+        return 'JWT';
+      }
+      if (part === 'tls') {
+        return 'TLS';
+      }
+      if (part === 'oauth') {
+        return 'OAuth';
+      }
+      return part.charAt(0).toUpperCase() + part.slice(1);
+    })
+    .join(' ');
+
+const createIconOnlyComponent = (type: ComponentType, input: ComponentFactoryInput): Node => {
+  const style = resolveStyle(input.style);
+  const iconName = resolveLucideIconForComponent(type, input.icon);
+  const iconSize = scaleByStyle(104, style);
+  const label = input.label;
+
+  const children: Node[] = [
+    new Icon({
+      icon: `lucide:${iconName}`,
+      size: iconSize,
+      y: 0,
+      color: style.strokeColor,
+      fill: null,
+      stroke: null,
+      lineWidth: 0,
+      opacity: Math.min(1, style.opacity * 0.98),
+    }),
+  ];
+  if (label) {
+    children.push(createLabel(label, iconSize / 2 + scaleByStyle(32, style), style));
+  }
+
+  return new Layout({
+    x: input.position.x,
+    y: input.position.y,
+    opacity: style.opacity,
+    shadowColor: style.glow ? style.glowColor : NO_SHADOW_COLOR,
+    shadowBlur: style.glow ? style.glowBlur : 0,
+    children,
+  });
+};
+
 export const componentFactoryMap: Partial<Record<ComponentType, ComponentFactory>> = {
   [ComponentType.UsersCluster]: createUsers,
   [ComponentType.SingleUser]: createUsers,
@@ -532,10 +641,10 @@ const fallbackFactory: ComponentFactory = (input) =>
   });
 
 export const createComponentNode = (type: ComponentType, input: ComponentFactoryInput): Node => {
-  const factory = componentFactoryMap[type] ?? fallbackFactory;
-  const node = factory(input);
+  const node = createIconOnlyComponent(type, input);
   if (input.style) {
     applyComponentVisualStyle(node, input.style);
   }
+  applyComponentIcon(node, type, input.icon, input.style);
   return node;
 };

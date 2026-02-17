@@ -16,8 +16,8 @@ const CANVAS_WIDTH = 1080;
 const CANVAS_HEIGHT = 1920;
 
 const STACK_CENTER_X = 50;
-const STACK_TOP_Y = 12;
-const STACK_BOTTOM_Y = 76;
+const STACK_TOP_Y = 7;
+const STACK_BOTTOM_Y = 95;
 
 const clamp = (value: number, min: number, max: number): number =>
   Math.min(max, Math.max(min, value));
@@ -42,9 +42,58 @@ const resolveChainPosition = (
   };
 };
 
+const resolveHorizontalBounds = (
+  scene: CompositionScene,
+): {leftX: number; centerX: number; rightX: number} => {
+  const maxHalfWidth = scene.visibleEntities.reduce((largestHalfWidth, entity) => {
+    const definition = COMPONENT_CATALOG[entity.type];
+    const width = definition?.dimensions.width ?? 150;
+    const halfWidth = normalizeDimension(width, 'x') / 2;
+    return Math.max(largestHalfWidth, halfWidth);
+  }, 0);
+
+  const leftLimit = maxHalfWidth + 6;
+  const rightLimit = 100 - maxHalfWidth - 6;
+  const maxOffset = Math.max(10, Math.min(24, 50 - leftLimit, rightLimit - 50));
+
+  return {
+    leftX: clamp(50 - maxOffset, leftLimit, 50),
+    centerX: STACK_CENTER_X,
+    rightX: clamp(50 + maxOffset, 50, rightLimit),
+  };
+};
+
+const resolveHorizontalPosition = (
+  scene: CompositionScene,
+  entity: CompositionScene['visibleEntities'][number],
+  nonReplicaRank: number,
+  total: number,
+): number => {
+  if (total < 5) {
+    return STACK_CENTER_X;
+  }
+
+  const bounds = resolveHorizontalBounds(scene);
+  if (Math.round(entity.count ?? 1) > 1) {
+    return STACK_CENTER_X;
+  }
+
+  return nonReplicaRank % 2 === 0 ? bounds.rightX : bounds.leftX;
+};
+
 const resolveVerticalBounds = (scene: CompositionScene): {minY: number; maxY: number} => {
-  const reserveBottomPercent = scene.directives?.camera.reserve_bottom_percent ?? 25;
-  const maxLayoutBottomY = clamp(100 - reserveBottomPercent - 3, 58, STACK_BOTTOM_Y);
+  const entityCount = scene.visibleEntities.length;
+  const requestedReserveBottomPercent = scene.directives?.camera.reserve_bottom_percent;
+  const reserveBottomPercent = clamp(
+    requestedReserveBottomPercent == null
+      ? 8
+      : entityCount >= 6
+        ? Math.min(requestedReserveBottomPercent, 10)
+        : requestedReserveBottomPercent,
+    0,
+    35,
+  );
+  const maxLayoutBottomY = clamp(100 - reserveBottomPercent - 1.5, 52, STACK_BOTTOM_Y);
   const maxHalfHeight = scene.visibleEntities.reduce((largestHalfHeight, entity) => {
     const definition = COMPONENT_CATALOG[entity.type];
     const height = definition?.dimensions.height ?? 120;
@@ -63,15 +112,14 @@ const resolveVerticalBounds = (scene: CompositionScene): {minY: number; maxY: nu
     };
   }
 
-  const entityCount = scene.visibleEntities.length;
   const span = boundedBottom - boundedTop;
   const spanFactor =
     entityCount <= 2
-      ? 0.62
+      ? 0.84
       : entityCount === 3
-        ? 0.74
+        ? 0.92
         : entityCount === 4
-          ? 0.86
+          ? 0.98
           : 1;
   const adjustedSpan = span * spanFactor;
   const centerY = (boundedTop + boundedBottom) / 2;
@@ -90,15 +138,29 @@ const placeScene = (scene: CompositionScene): LaidOutScene => {
   const orderedIndexById = new Map(
     orderedEntities.map((entity, index) => [entity.id, index]),
   );
+  const nonReplicaRankById = new Map<string, number>();
+  let nonReplicaRank = 0;
+  for (const entity of orderedEntities) {
+    if (Math.round(entity.count ?? 1) <= 1) {
+      nonReplicaRankById.set(entity.id, nonReplicaRank);
+      nonReplicaRank += 1;
+    }
+  }
 
   const laidOutEntities = orderedEntities.map((entity) => {
     const componentDefinition = COMPONENT_CATALOG[entity.type];
     const entityIndex = orderedIndexById.get(entity.id) ?? 0;
     const resolved = resolveChainPosition(entityIndex, orderedEntities.length, minY, maxY);
+    const resolvedX = resolveHorizontalPosition(
+      scene,
+      entity,
+      nonReplicaRankById.get(entity.id) ?? entityIndex,
+      orderedEntities.length,
+    );
 
     return {
       ...entity,
-      x: resolved.x,
+      x: resolvedX,
       y: resolved.y,
       width: componentDefinition.dimensions.width,
       height: componentDefinition.dimensions.height,

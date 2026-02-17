@@ -24,6 +24,7 @@ export interface MotionElementSpec {
   position: {x: number; y: number};
   sourceEntityId?: string;
   label?: string;
+  icon?: string;
   visualStyle?: EntityVisualStyle;
   enter?: AnimationType;
   exit?: AnimationType;
@@ -124,6 +125,7 @@ export interface RuntimeLogger {
 export interface ElementState {
   id: string;
   type: ComponentType;
+  icon?: string;
   styleSize: number;
   node: Node;
   position: PixelPosition;

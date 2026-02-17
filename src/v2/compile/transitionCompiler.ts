@@ -12,6 +12,10 @@ import {VIDEO_LIMITS} from '../../config/constants.js';
 import type {TemplateId} from '../../design/templates.js';
 import {ComponentType} from '../../schema/visualGrammar.js';
 import {COMPONENT_CATALOG} from '../catalog/componentCatalog.js';
+import {
+  resolveLucideIconForComponent,
+  type LucideIconName,
+} from '../catalog/iconCatalog.js';
 import type {LaidOutPlan, LaidOutScene} from '../schema/compiledPlan.schema.js';
 
 const TEMPLATE_BY_ARCHETYPE: Record<string, TemplateId> = {
@@ -122,6 +126,11 @@ const toStaticLabel = (
   label: string | undefined,
 ): string => label ?? COMPONENT_CATALOG[type]?.label ?? 'Component';
 
+const toStaticIcon = (
+  type: ComponentType,
+  icon: string | undefined,
+): LucideIconName => resolveLucideIconForComponent(type, icon);
+
 const toDesignedEntities = (scene: LaidOutScene): DesignedEntity[] => {
   const visibleIds = new Set(scene.laidOutEntities.map((entity) => entity.id));
   const focusEntityId = visibleIds.has(scene.focusEntityId)
@@ -132,6 +141,7 @@ const toDesignedEntities = (scene: LaidOutScene): DesignedEntity[] => {
     id: entity.id,
     type: entity.type,
     label: toStaticLabel(entity.type, entity.label),
+    icon: toStaticIcon(entity.type, entity.icon),
     count: Math.max(1, Math.round(entity.count ?? 1)),
     importance: entity.importance,
     status: entity.status,

@@ -3,6 +3,10 @@ import type {Logger} from '../../pipeline/logger.js';
 import {silentLogger} from '../../pipeline/logger.js';
 import {buildTopologyDirectorPrompt} from '../prompts/topologyDirectorPrompt.js';
 import {
+  formatIconValidationIssues,
+  validateTopologyLucideIcons,
+} from './lucideIconValidation.js';
+import {
   topologyPlanResponseFormat,
   topologyPlanSchema,
   type TopologyPlan,
@@ -26,6 +30,7 @@ export const createTopologyDirectorAgent = (
   dependencies: TopologyDirectorAgentDependencies,
 ): TopologyDirectorAgent => {
   const logger = dependencies.logger ?? silentLogger;
+  const maxIconRepairAttempts = 2;
 
   const generate = async (
     input: TopologyDirectorInput,
@@ -37,26 +42,55 @@ export const createTopologyDirectorAgent = (
       tone: input.storyIntent.tone,
     });
 
-    const prompt = buildTopologyDirectorPrompt(input);
+    const basePrompt = buildTopologyDirectorPrompt(input);
     const requestOptions: StructuredOutputOptions = {
       ...options,
       responseFormat: options.responseFormat ?? topologyPlanResponseFormat,
     };
 
-    const topologyPlan = await dependencies.structuredOutputHelper.generateStructuredOutput<TopologyPlan>(
-      prompt,
-      topologyPlanSchema,
-      requestOptions,
-    );
+    let repairPrompt = basePrompt;
+    for (let attempt = 1; attempt <= maxIconRepairAttempts; attempt += 1) {
+      const topologyPlan = await dependencies.structuredOutputHelper.generateStructuredOutput<TopologyPlan>(
+        repairPrompt,
+        topologyPlanSchema,
+        requestOptions,
+      );
 
-    logger.info('V2 topology director agent: output validated', {
-      scenes: topologyPlan.scenes.length,
-      duration: topologyPlan.duration,
-    });
+      const iconValidation = await validateTopologyLucideIcons(topologyPlan, {logger});
+      if (iconValidation.valid || iconValidation.skipped) {
+        logger.info('V2 topology director agent: output validated', {
+          scenes: topologyPlan.scenes.length,
+          duration: topologyPlan.duration,
+          iconValidationSkipped: iconValidation.skipped,
+        });
+        return topologyPlan;
+      }
 
-    return topologyPlan;
+      const issueText = formatIconValidationIssues(iconValidation.issues);
+      logger.warn('V2 topology director agent: invalid Lucide icon tokens, requesting repair', {
+        attempt,
+        maxAttempts: maxIconRepairAttempts,
+        issues: iconValidation.issues.length,
+      });
+
+      if (attempt === maxIconRepairAttempts) {
+        throw new Error(
+          `Topology icon validation failed after ${maxIconRepairAttempts} attempts:\n${issueText}`,
+        );
+      }
+
+      repairPrompt = `${basePrompt}
+
+Icon validation feedback from previous response:
+${issueText}
+
+Fix only entities[].icon values.
+Keep scene ids/timings/narration/entities/connections/operations/transition/directives aligned with StoryIntent.
+Return full strict JSON only.`;
+    }
+
+    throw new Error('Topology generation failed unexpectedly');
   };
 
   return {generate};
 };
-

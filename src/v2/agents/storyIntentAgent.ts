@@ -6,6 +6,10 @@ import {
   type StoryIntentPromptInput,
 } from '../prompts/storyIntentPrompt.js';
 import {
+  formatIconValidationIssues,
+  validateStoryIntentLucideIcons,
+} from './lucideIconValidation.js';
+import {
   storyIntentResponseFormat,
   storyIntentSchema,
   type StoryIntent,
@@ -24,6 +28,7 @@ export const createStoryIntentAgent = (
   dependencies: StoryIntentAgentDependencies,
 ): StoryIntentAgent => {
   const logger = dependencies.logger ?? silentLogger;
+  const maxIconRepairAttempts = 2;
 
   const generate = async (
     input: StoryIntentPromptInput,
@@ -35,27 +40,56 @@ export const createStoryIntentAgent = (
       duration: input.duration,
     });
 
-    const prompt = buildStoryIntentPrompt(input);
+    const basePrompt = buildStoryIntentPrompt(input);
     const requestOptions: StructuredOutputOptions = {
       ...options,
       responseFormat: options.responseFormat ?? storyIntentResponseFormat,
     };
 
-    const storyIntent = await dependencies.structuredOutputHelper.generateStructuredOutput<StoryIntent>(
-      prompt,
-      storyIntentSchema,
-      requestOptions,
-    );
+    let repairPrompt = basePrompt;
+    for (let attempt = 1; attempt <= maxIconRepairAttempts; attempt += 1) {
+      const storyIntent = await dependencies.structuredOutputHelper.generateStructuredOutput<StoryIntent>(
+        repairPrompt,
+        storyIntentSchema,
+        requestOptions,
+      );
 
-    logger.info('V2 story intent agent: output validated', {
-      scenes: storyIntent.scenes.length,
-      duration: storyIntent.duration,
-      tone: storyIntent.tone,
-    });
+      const iconValidation = await validateStoryIntentLucideIcons(storyIntent, {logger});
+      if (iconValidation.valid || iconValidation.skipped) {
+        logger.info('V2 story intent agent: output validated', {
+          scenes: storyIntent.scenes.length,
+          duration: storyIntent.duration,
+          tone: storyIntent.tone,
+          iconValidationSkipped: iconValidation.skipped,
+        });
+        return storyIntent;
+      }
 
-    return storyIntent;
+      const issueText = formatIconValidationIssues(iconValidation.issues);
+      logger.warn('V2 story intent agent: invalid Lucide icon tokens, requesting repair', {
+        attempt,
+        maxAttempts: maxIconRepairAttempts,
+        issues: iconValidation.issues.length,
+      });
+
+      if (attempt === maxIconRepairAttempts) {
+        throw new Error(
+          `StoryIntent icon validation failed after ${maxIconRepairAttempts} attempts:\n${issueText}`,
+        );
+      }
+
+      repairPrompt = `${basePrompt}
+
+Icon validation feedback from previous response:
+${issueText}
+
+Fix only icon_hints.icon values.
+Keep scene timing, archetypes, required_component_types, focus_component_types, transition_goal, and narration unchanged unless needed for consistency.
+Return full strict JSON only.`;
+    }
+
+    throw new Error('StoryIntent generation failed unexpectedly');
   };
 
   return {generate};
 };
-

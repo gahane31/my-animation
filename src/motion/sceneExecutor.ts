@@ -1,4 +1,4 @@
-import {Circle, Rect, type Node, type Txt} from '@motion-canvas/2d';
+import {Circle, Icon, Line, Rect, Txt, type Node} from '@motion-canvas/2d';
 import {
   all,
   easeInCubic,
@@ -285,14 +285,14 @@ const resolveElementSourceId = (
 };
 
 const COMPONENT_CONNECTION_BOUNDS: Partial<Record<ComponentType, {width: number; height: number}>> = {
-  [ComponentType.UsersCluster]: {width: 188, height: 96},
-  [ComponentType.Server]: {width: 170, height: 128},
-  [ComponentType.LoadBalancer]: {width: 176, height: 176},
-  [ComponentType.Database]: {width: 170, height: 144},
-  [ComponentType.Cache]: {width: 160, height: 116},
-  [ComponentType.Queue]: {width: 148, height: 120},
-  [ComponentType.Cdn]: {width: 170, height: 130},
-  [ComponentType.Worker]: {width: 136, height: 136},
+  [ComponentType.UsersCluster]: {width: 86, height: 86},
+  [ComponentType.Server]: {width: 86, height: 86},
+  [ComponentType.LoadBalancer]: {width: 88, height: 88},
+  [ComponentType.Database]: {width: 90, height: 90},
+  [ComponentType.Cache]: {width: 86, height: 86},
+  [ComponentType.Queue]: {width: 84, height: 84},
+  [ComponentType.Cdn]: {width: 88, height: 88},
+  [ComponentType.Worker]: {width: 84, height: 84},
 };
 
 const resolveAnchorSize = (
@@ -301,8 +301,8 @@ const resolveAnchorSize = (
   const styleSize = element?.visualStyle?.size ?? StyleTokens.sizes.medium;
   const scale = styleSize / StyleTokens.sizes.medium;
   const base = element
-    ? COMPONENT_CONNECTION_BOUNDS[element.type] ?? {width: 160, height: 116}
-    : {width: 140, height: 100};
+    ? COMPONENT_CONNECTION_BOUNDS[element.type] ?? {width: 84, height: 84}
+    : {width: 84, height: 84};
 
   return {
     halfWidth: Math.max(28, (base.width * scale) / 2),
@@ -454,6 +454,8 @@ const syncSceneConnections = (
       const line = createConnection(fromAnchor, toAnchor, style, bidirectional, baseLaneOffset);
       line.lineDash(resolveLineDashPattern(connection.style));
       line.lineDashOffset(0);
+      line.start(0);
+      line.end(1);
       line.opacity(0);
       view.add(line);
       state.connections.set(connection.id, line);
@@ -464,6 +466,8 @@ const syncSceneConnections = (
     updateConnection(existingNode, fromAnchor, toAnchor, style, bidirectional, baseLaneOffset);
     existingNode.lineDash(resolveLineDashPattern(connection.style));
     existingNode.lineDashOffset(0);
+    existingNode.start(0);
+    existingNode.end(1);
     updated += 1;
   }
 
@@ -593,6 +597,7 @@ const executeRemovalsPhase = (
   sceneDuration: number,
   state: SceneState,
   entityTimingByKey: Map<string, EntityTimingPlan>,
+  entryStyle: 'drop_bounce' | 'elastic_pop' | 'draw_in',
 ): PhaseExecutionPlan => {
   const phase = getScenePhases(sceneDuration).exit;
   const fallbackDuration = Math.max(DEFAULT_REMOVAL_DURATION, phase.end - phase.start);
@@ -628,6 +633,8 @@ const executeRemovalsPhase = (
               duration: timing.duration,
               timingFunction,
             });
+          } else if (entryStyle === 'draw_in') {
+            yield* runDrawOutExit(elementState.node, timing.duration, timingFunction);
           } else {
             yield* elementState.node.opacity(0, timing.duration, timingFunction);
           }
@@ -726,13 +733,219 @@ const runElasticPopEntry = (
     yield* node.scale(scaleTarget, phaseTwoDuration, timingFunction);
   })();
 
+interface DrawNodeCollection {
+  curves: Array<Rect | Circle | Line>;
+  icons: Icon[];
+  labels: Txt[];
+}
+
+const collectDrawNodes = (root: Node): DrawNodeCollection => {
+  const collection: DrawNodeCollection = {
+    curves: [],
+    icons: [],
+    labels: [],
+  };
+
+  const visit = (node: Node): void => {
+    if (node instanceof Icon) {
+      collection.icons.push(node);
+    } else if (node instanceof Rect || node instanceof Circle || node instanceof Line) {
+      collection.curves.push(node);
+    }
+
+    if (node instanceof Txt) {
+      collection.labels.push(node);
+    }
+
+    for (const child of node.children()) {
+      visit(child);
+    }
+  };
+
+  visit(root);
+  return collection;
+};
+
+const resolveIconSize = (icon: Icon): number => {
+  const width = icon.width();
+  if (typeof width === 'number' && Number.isFinite(width)) {
+    return Math.abs(width);
+  }
+
+  const height = icon.height();
+  if (typeof height === 'number' && Number.isFinite(height)) {
+    return Math.abs(height);
+  }
+
+  return 84;
+};
+
+const runDrawInEntry = (
+  node: Node,
+  duration: number,
+  timingFunction: TimingFunction,
+  scaleTarget = 1,
+): ThreadGenerator =>
+  (function* drawInEntryThread() {
+    const strokeDuration = Math.max(0.1, duration * 0.68);
+    const settleDuration = Math.max(0.08, duration - strokeDuration);
+    const drawNodes = collectDrawNodes(node);
+
+    if (
+      drawNodes.curves.length === 0 &&
+      drawNodes.icons.length === 0 &&
+      drawNodes.labels.length === 0
+    ) {
+      yield* runElasticPopEntry(node, duration, timingFunction, scaleTarget);
+      return;
+    }
+
+    const fillByCurve = new Map<Rect | Circle, string>();
+    const lineWidthByCurve = new Map<Rect | Circle | Line, number>();
+    const iconTraces: Line[] = [];
+
+    for (const curve of drawNodes.curves) {
+      const baseWidth = Math.max(1, curve.lineWidth());
+      lineWidthByCurve.set(curve, baseWidth);
+      curve.start(0);
+      curve.end(0);
+      curve.lineWidth(Math.max(0.8, baseWidth * 0.62));
+      curve.opacity(1);
+
+      if (curve instanceof Rect || curve instanceof Circle) {
+        const currentFill = curve.fill();
+        fillByCurve.set(curve, currentFill == null ? '#00000000' : String(currentFill));
+        curve.fill('#00000000');
+      }
+    }
+
+    for (const icon of drawNodes.icons) {
+      const iconSize = resolveIconSize(icon);
+      const trace = new Line({
+        points: [
+          [-iconSize * 0.46, iconSize * 0.22],
+          [-iconSize * 0.08, -iconSize * 0.06],
+          [iconSize * 0.44, -iconSize * 0.4],
+        ],
+        stroke: '#E8F6FF',
+        lineWidth: Math.max(1.3, iconSize * 0.032),
+        lineCap: 'round',
+        lineJoin: 'round',
+        opacity: 0.9,
+      });
+      trace.end(0);
+      icon.add(trace);
+      iconTraces.push(trace);
+
+      icon.opacity(0);
+      icon.scale(0.78);
+    }
+
+    for (const label of drawNodes.labels) {
+      label.opacity(0);
+    }
+
+    node.opacity(1);
+    node.scale(Math.max(0.78, scaleTarget * 0.92));
+
+    const drawThreads: ThreadGenerator[] = [];
+    for (const curve of drawNodes.curves) {
+      const baseWidth = lineWidthByCurve.get(curve) ?? Math.max(1, curve.lineWidth());
+      drawThreads.push(
+        all(
+          curve.end(1, strokeDuration, linear),
+          curve.lineWidth(baseWidth, strokeDuration, timingFunction),
+        ),
+      );
+    }
+    for (const icon of drawNodes.icons) {
+      drawThreads.push(
+        all(
+          icon.opacity(0.94, Math.max(0.08, strokeDuration * 0.7), timingFunction),
+          icon.scale(1, Math.max(0.08, strokeDuration * 0.7), easeOutCubic),
+        ),
+      );
+    }
+    for (const trace of iconTraces) {
+      drawThreads.push(
+        all(
+          trace.end(1, Math.max(0.08, strokeDuration * 0.6), linear),
+          trace.opacity(0, Math.max(0.08, strokeDuration * 0.62), easeOutCubic),
+        ),
+      );
+    }
+
+    yield* all(...drawThreads, node.scale(scaleTarget, strokeDuration, timingFunction));
+
+    const settleThreads: ThreadGenerator[] = [];
+    for (const [shape, fill] of fillByCurve.entries()) {
+      settleThreads.push(shape.fill(fill, settleDuration, timingFunction));
+    }
+    for (const label of drawNodes.labels) {
+      settleThreads.push(label.opacity(1, settleDuration, timingFunction));
+    }
+    for (const icon of drawNodes.icons) {
+      settleThreads.push(icon.opacity(1, Math.max(0.05, settleDuration * 0.8), timingFunction));
+    }
+
+    if (settleThreads.length > 0) {
+      yield* all(...settleThreads);
+    }
+
+    for (const trace of iconTraces) {
+      trace.remove();
+    }
+  })();
+
+const runDrawOutExit = (
+  node: Node,
+  duration: number,
+  timingFunction: TimingFunction,
+): ThreadGenerator =>
+  (function* drawOutExitThread() {
+    const drawNodes = collectDrawNodes(node);
+    if (
+      drawNodes.curves.length === 0 &&
+      drawNodes.icons.length === 0 &&
+      drawNodes.labels.length === 0
+    ) {
+      yield* node.opacity(0, duration, timingFunction);
+      return;
+    }
+
+    const vanishDuration = Math.max(0.08, duration * 0.46);
+    const traceDuration = Math.max(0.1, duration - vanishDuration);
+    const threads: ThreadGenerator[] = [];
+
+    for (const label of drawNodes.labels) {
+      threads.push(label.opacity(0, vanishDuration, timingFunction));
+    }
+    for (const icon of drawNodes.icons) {
+      threads.push(
+        all(
+          icon.opacity(0, vanishDuration, timingFunction),
+          icon.scale(0.78, vanishDuration, easeInOutCubic),
+        ),
+      );
+    }
+    for (const curve of drawNodes.curves) {
+      threads.push(curve.start(1, traceDuration, linear));
+    }
+
+    yield* all(
+      ...threads,
+      node.scale(0.86, duration, timingFunction),
+      node.opacity(0, duration, timingFunction),
+    );
+  })();
+
 const executeAdditionsPhase = (
   intents: ElementAnimationIntent[],
   sceneDuration: number,
   lifecycleById: Map<string, LifecycleResult>,
   sceneElementById: Map<string, MotionElementSpec>,
   entityTimingByKey: Map<string, EntityTimingPlan>,
-  entryStyle: 'drop_bounce' | 'elastic_pop',
+  entryStyle: 'drop_bounce' | 'elastic_pop' | 'draw_in',
 ): PhaseExecutionPlan => {
   const phase = getScenePhases(sceneDuration).enter;
   const fallbackDuration = Math.max(DEFAULT_ENTRY_FADE_DURATION, phase.end - phase.start);
@@ -775,6 +988,13 @@ const executeAdditionsPhase = (
                 timingFunction,
                 scaleTarget: timing.scale,
               });
+            } else if (entryStyle === 'draw_in') {
+              yield* runDrawInEntry(
+                lifecycle.node,
+                timing.duration,
+                timingFunction,
+                timing.scale ?? 1,
+              );
             } else {
               yield* runElasticPopEntry(
                 lifecycle.node,
@@ -849,12 +1069,17 @@ const executeConnectionLineTransitions = (
     maxEnd = Math.max(maxEnd, timing.delay + timing.duration);
 
     if (diff.type === 'connection_added') {
-      line.opacity(0);
+      line.start(0);
+      line.end(0);
+      line.opacity(0.92);
       threads.push(
         createDelayedThread(
           timing.delay,
           (function* connectionAddedThread() {
-            yield* line.opacity(0.9, timing.duration, timingFunction);
+            yield* all(
+              line.end(1, timing.duration, linear),
+              line.opacity(0.9, Math.max(0.08, timing.duration * 0.7), timingFunction),
+            );
           })(),
         ),
       );
@@ -865,7 +1090,10 @@ const executeConnectionLineTransitions = (
       createDelayedThread(
         timing.delay,
         (function* connectionRemovedThread() {
-          yield* line.opacity(0, timing.duration, timingFunction);
+          yield* all(
+            line.start(1, timing.duration, linear),
+            line.opacity(0, timing.duration, timingFunction),
+          );
           line.remove();
           state.connections.delete(diff.connectionId);
         })(),
@@ -1103,6 +1331,7 @@ const executeInteractionFlowsPhase = (
   const threads: ThreadGenerator[] = [];
   let maxEnd = 0;
   const flowRenderer = scene.directives?.flow.renderer ?? 'hybrid';
+  const entryStyle = scene.directives?.motion.entry_style ?? 'draw_in';
 
   const resolveConnectionVisibleTime = (connectionId: string): number => {
     const diffIndex = addedConnectionIndexById.get(connectionId);
@@ -1113,7 +1342,10 @@ const executeInteractionFlowsPhase = (
     const timing =
       connectionTimingById.get(connectionId) ?? fallbackConnectionTiming(sceneDuration, diffIndex);
 
-    const connectionReveal = timing.delay + Math.max(0.03, timing.duration * 0.2);
+    const connectionReveal =
+      entryStyle === 'draw_in'
+        ? timing.delay + Math.max(0.06, timing.duration * 0.88)
+        : timing.delay + Math.max(0.03, timing.duration * 0.2);
     const connection = connectionById.get(connectionId);
     const fromReveal = connection ? resolveEntityRevealTime(connection.from) : 0;
     const toReveal = connection ? resolveEntityRevealTime(connection.to) : 0;
@@ -1366,6 +1598,7 @@ const executePlanDrivenScene = (
           sceneDuration,
           sceneState,
           entityTimingByKey,
+          scene.directives?.motion.entry_style ?? 'draw_in',
         );
         break;
       case 'moves':
@@ -1383,7 +1616,7 @@ const executePlanDrivenScene = (
           lifecycleById,
           sceneElementById,
           entityTimingByKey,
-          scene.directives?.motion.entry_style ?? 'elastic_pop',
+          scene.directives?.motion.entry_style ?? 'draw_in',
         );
         break;
       case 'connections':

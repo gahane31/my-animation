@@ -2,6 +2,7 @@ import {z} from 'zod';
 import {VIDEO_LIMITS} from '../config/constants.js';
 import {TEMPLATE_IDS} from '../design/templates.js';
 import {ComponentType} from './visualGrammar.js';
+import {normalizeLucideIconName} from '../v2/catalog/iconCatalog.js';
 
 const nullToUndefined = (value: unknown): unknown => (value === null ? undefined : value);
 
@@ -145,6 +146,10 @@ const optionalStatusSchema = z.preprocess(
 );
 
 const optionalLabelSchema = z.preprocess(nullToUndefined, z.string().min(1).optional());
+const optionalIconSchema = z.preprocess(
+  (value) => normalizeLucideIconName(nullToUndefined(value)),
+  z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).optional(),
+);
 
 const optionalDirectionSchema = z.preprocess(
   nullToUndefined,
@@ -179,6 +184,7 @@ export const EntitySchema = z.object({
   importance: optionalImportanceSchema,
   status: optionalStatusSchema,
   label: optionalLabelSchema,
+  icon: optionalIconSchema,
 });
 
 export const ConnectionSchema = z.object({
@@ -291,22 +297,22 @@ export const SceneDirectivesSchema = z.object({
     }),
   visual: z
     .object({
-      theme: z.enum(['default', 'neon']).default('neon'),
+      theme: z.enum(['default', 'neon']).default('default'),
       background_texture: z.enum(['none', 'grid']).default('grid'),
-      glow_strength: z.enum(['soft', 'strong']).default('strong'),
+      glow_strength: z.enum(['soft', 'strong']).default('soft'),
     })
     .default({
-      theme: 'neon',
+      theme: 'default',
       background_texture: 'grid',
-      glow_strength: 'strong',
+      glow_strength: 'soft',
     }),
   motion: z
     .object({
-      entry_style: z.enum(['drop_bounce', 'elastic_pop']).default('elastic_pop'),
+      entry_style: z.enum(['drop_bounce', 'elastic_pop', 'draw_in']).default('draw_in'),
       pacing: z.enum(['balanced', 'reel_fast']).default('reel_fast'),
     })
     .default({
-      entry_style: 'elastic_pop',
+      entry_style: 'draw_in',
       pacing: 'reel_fast',
     }),
   flow: z

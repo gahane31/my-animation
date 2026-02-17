@@ -1,6 +1,7 @@
 import {z} from 'zod';
 import {VIDEO_LIMITS} from '../../config/constants.js';
 import {ComponentType} from '../../schema/visualGrammar.js';
+import {normalizeLucideIconName} from '../catalog/iconCatalog.js';
 
 const SCENE_ARCHETYPES = [
   'hook',
@@ -20,6 +21,18 @@ const sceneComplexityBudgetSchema = z.object({
   max_simultaneous_motions: z.number().int().min(1).max(6),
 });
 
+const nullToUndefined = (value: unknown): unknown => (value === null ? undefined : value);
+
+const optionalIconSchema = z.preprocess(
+  (value) => normalizeLucideIconName(nullToUndefined(value)),
+  z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).optional(),
+);
+
+const storyIconHintSchema = z.object({
+  component_type: z.nativeEnum(ComponentType),
+  icon: optionalIconSchema,
+});
+
 export const storyIntentSceneSchema = z.object({
   id: z.string().min(1),
   start: z.number().min(0),
@@ -28,6 +41,7 @@ export const storyIntentSceneSchema = z.object({
   narrative_goal: z.string().min(1),
   narration: z.string().min(1),
   required_component_types: z.array(z.nativeEnum(ComponentType)).min(1).max(8),
+  icon_hints: z.array(storyIconHintSchema).default([]),
   focus_component_types: z.array(z.nativeEnum(ComponentType)).min(1).max(3),
   transition_goal: z.string().min(1),
   complexity_budget: sceneComplexityBudgetSchema,
@@ -99,6 +113,27 @@ export const storyIntentSchema = z
         }
       }
 
+      const hintedTypes = new Set(scene.icon_hints.map((hint) => hint.component_type));
+      for (const requiredType of requiredTypes) {
+        if (!hintedTypes.has(requiredType)) {
+          context.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: `Scene "${scene.id}" icon_hints must include required_component_type "${requiredType}"`,
+            path: ['scenes'],
+          });
+        }
+      }
+
+      for (const hint of scene.icon_hints) {
+        if (!requiredTypes.has(hint.component_type)) {
+          context.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: `Scene "${scene.id}" icon_hints component_type "${hint.component_type}" must be in required_component_types`,
+            path: ['scenes'],
+          });
+        }
+      }
+
       if (scene.complexity_budget.max_visible_components < scene.required_component_types.length) {
         context.addIssue({
           code: z.ZodIssueCode.custom,
@@ -149,6 +184,7 @@ export const storyIntentResponseFormat = {
             'narrative_goal',
             'narration',
             'required_component_types',
+            'icon_hints',
             'focus_component_types',
             'transition_goal',
             'complexity_budget',
@@ -165,6 +201,27 @@ export const storyIntentResponseFormat = {
               minItems: 1,
               maxItems: 8,
               items: {type: 'string', enum: Object.values(ComponentType)},
+            },
+            icon_hints: {
+              type: 'array',
+              items: {
+                type: 'object',
+                additionalProperties: false,
+                required: ['component_type', 'icon'],
+                properties: {
+                  component_type: {type: 'string', enum: Object.values(ComponentType)},
+                  icon: {
+                    anyOf: [
+                      {
+                        type: 'string',
+                        minLength: 1,
+                        pattern: '^[a-z0-9]+(?:-[a-z0-9]+)*$',
+                      },
+                      {type: 'null'},
+                    ],
+                  },
+                },
+              },
             },
             focus_component_types: {
               type: 'array',

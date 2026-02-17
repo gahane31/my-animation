@@ -101,39 +101,45 @@ const scaledVisualStyle = (
 
 const resolveSceneScaleFactor = (moment: DesignedMoment): number => {
   const renderUnitCount = moment.entities.reduce((total, entity) => {
-    const replicas = Math.max(1, Math.min(MAX_CLUSTER_SIZE, Math.round(entity.count ?? 1)));
+    const roundedCount = Math.round(entity.count ?? 1);
+    const shouldRenderAsReplicas =
+      entity.type === ComponentType.Server ||
+      entity.type === ComponentType.Worker;
+    const replicas = shouldRenderAsReplicas
+      ? Math.max(1, Math.min(MAX_CLUSTER_SIZE, roundedCount))
+      : 1;
     return total + replicas;
   }, 0);
 
   if (renderUnitCount <= 2) {
-    return 1.45;
+    return 1.8;
   }
 
   if (renderUnitCount === 3) {
-    return 1.28;
+    return 1.66;
   }
 
   if (renderUnitCount === 4) {
-    return 1.14;
+    return 1.5;
   }
 
   if (renderUnitCount === 5) {
-    return 1.0;
+    return 1.36;
   }
 
   if (renderUnitCount === 6) {
-    return 0.9;
+    return 1.24;
   }
 
   if (renderUnitCount === 7) {
-    return 0.8;
+    return 1.14;
   }
 
   if (renderUnitCount === 8) {
-    return 0.72;
+    return 1.06;
   }
 
-  return Math.max(0.56, 0.72 - (renderUnitCount - 8) * 0.05);
+  return Math.max(0.9, 1.06 - (renderUnitCount - 8) * 0.04);
 };
 
 const componentNormalizedWidth = (type: ComponentType): number => {
@@ -197,7 +203,12 @@ const expandEntityInstances = (
 ): EntityInstance[] => {
   const basePosition = resolveBasePosition(entity);
   const roundedCount = Math.round(entity.count ?? 1);
-  const count = Math.max(1, Math.min(MAX_CLUSTER_SIZE, roundedCount));
+  const shouldRenderAsReplicas =
+    entity.type === ComponentType.Server ||
+    entity.type === ComponentType.Worker;
+  const count = shouldRenderAsReplicas
+    ? Math.max(1, Math.min(MAX_CLUSTER_SIZE, roundedCount))
+    : 1;
 
   if (count === 1) {
     return [
@@ -547,16 +558,9 @@ const attachDiffAndPlan = (
     sceneCameraPlan = explicitCameraPlan;
   }
 
-  const sceneCameraAction = stableLayout
-    ? hasExplicitFollowCamera
-      ? scene.camera
-      : undefined
-    : stablePlan.cameraAction ?? scene.camera;
-  const resolvedSceneCameraPlan = stableLayout
-    ? hasExplicitFollowCamera
-      ? sceneCameraPlan
-      : null
-    : sceneCameraPlan;
+  // Stable layout means no camera chase between scenes; keep framing locked.
+  const sceneCameraAction = stableLayout ? undefined : stablePlan.cameraAction ?? scene.camera;
+  const resolvedSceneCameraPlan = stableLayout ? null : sceneCameraPlan;
 
   return {
     scene: {
@@ -613,6 +617,7 @@ const toMotionScene = (
         type: entity.type,
         sourceEntityId: instance.sourceEntityId,
         label: instance.isLead ? entity.label : undefined,
+        icon: entity.icon,
         position: instance.position,
         enter,
       });

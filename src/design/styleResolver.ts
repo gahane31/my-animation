@@ -45,10 +45,10 @@ const DEFAULT_THEME_COLORS = {
 } as const;
 
 const CLASSIC_THEME_COLORS = {
-  primary: '#345F9F',
-  connection: '#8AA4C8',
-  flow: '#60A5FA',
-  glow: '#93C5FD',
+  primary: '#1F314D',
+  connection: '#35C4C8',
+  flow: '#FACC15',
+  glow: '#35C4C8',
 } as const;
 
 const resolveThemeColors = (visual: VisualDirectives) =>
@@ -79,6 +79,8 @@ export const resolveEntityStyle = (
   const statusColor = STATUS_COLOR_MAP[status];
   const themeColors = resolveThemeColors(visual);
   const glowMultiplier = resolveGlowMultiplier(visual);
+  const glowEnabled =
+    (visual?.theme ?? 'default') === 'neon' && (visual?.glow_strength ?? 'soft') === 'strong';
   const size = StyleTokens.sizes.medium;
   const baseGlowBlur =
     status === 'overloaded' || status === 'error'
@@ -89,13 +91,13 @@ export const resolveEntityStyle = (
     size,
     opacity: StyleTokens.opacity.primary,
     color: status === 'normal' ? themeColors.primary : statusColor,
-    strokeWidth: StyleTokens.stroke.normal,
+    strokeWidth: Math.max(1.8, StyleTokens.stroke.normal * 0.72),
     strokeColor: status === 'normal' ? themeColors.connection : statusColor,
-    glow: true,
+    glow: glowEnabled,
     glowColor: status === 'normal' ? themeColors.glow : statusColor,
-    glowBlur: Math.max(8, baseGlowBlur * glowMultiplier),
+    glowBlur: glowEnabled ? Math.max(8, baseGlowBlur * glowMultiplier) : 0,
     textColor: StyleTokens.colors.text,
-    fontSize: StyleTokens.text.fontSizeSecondary,
+    fontSize: StyleTokens.text.fontSizeSecondary * 1.14,
     fontWeight: StyleTokens.text.fontWeight,
     status,
   };
@@ -110,9 +112,9 @@ export const resolveConnectionStyle = (
 
   return {
     color: themeColors.connection,
-    width: Math.max(2, StyleTokens.connections.thickness * (0.85 + glowMultiplier * 0.15)),
+    width: Math.max(1.9, StyleTokens.connections.thickness * (0.58 + glowMultiplier * 0.12)),
     curved: StyleTokens.connections.curve,
-    arrowSize: StyleTokens.connections.arrowSize,
+    arrowSize: Math.max(7, StyleTokens.connections.arrowSize - 2),
   };
 };
 

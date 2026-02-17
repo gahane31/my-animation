@@ -1,6 +1,7 @@
 import type {Node} from '@motion-canvas/2d';
 import {all, easeInOutCubic, type ThreadGenerator} from '@motion-canvas/core';
 import {
+  applyComponentIcon,
   applyComponentLabel,
   applyComponentVisualStyle,
   createComponentNode,
@@ -54,6 +55,7 @@ export const ensureElementLifecycle = (
       id: element.id,
       position: targetPosition,
       label: element.label,
+      icon: element.icon,
       style: element.visualStyle,
     });
 
@@ -63,6 +65,7 @@ export const ensureElementLifecycle = (
     const elementState: ElementState = {
       id: element.id,
       type: element.type,
+      icon: element.icon,
       styleSize: targetStyleSize,
       node,
       position: targetPosition,
@@ -84,13 +87,16 @@ export const ensureElementLifecycle = (
   }
 
   const requiresNodeRebuild =
-    existing.type !== element.type || Math.abs(existing.styleSize - targetStyleSize) > 0.5;
+    existing.type !== element.type ||
+    existing.icon !== element.icon ||
+    Math.abs(existing.styleSize - targetStyleSize) > 0.5;
 
   if (requiresNodeRebuild) {
     const rebuiltNode = createComponentNode(element.type, {
       id: element.id,
       position: targetPosition,
       label: element.label,
+      icon: element.icon,
       style: element.visualStyle,
     });
 
@@ -100,6 +106,7 @@ export const ensureElementLifecycle = (
 
     existing.node = rebuiltNode;
     existing.type = element.type;
+    existing.icon = element.icon;
     existing.styleSize = targetStyleSize;
     existing.position = targetPosition;
   }
@@ -109,6 +116,7 @@ export const ensureElementLifecycle = (
     applyComponentVisualStyle(existing.node, element.visualStyle);
   }
   applyComponentLabel(existing.node, element.label);
+  applyComponentIcon(existing.node, element.type, element.icon, element.visualStyle);
 
   existing.lastSeenSceneIndex = context.sceneIndex;
 

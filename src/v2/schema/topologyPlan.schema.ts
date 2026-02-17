@@ -1,11 +1,20 @@
 import {z} from 'zod';
 import {VIDEO_LIMITS} from '../../config/constants.js';
 import {ComponentType} from '../../schema/visualGrammar.js';
-import {CONNECTION_KINDS, FLOW_PATTERNS, TRANSITION_OPERATION_TYPES} from '../catalog/index.js';
+import {
+  CONNECTION_KINDS,
+  FLOW_PATTERNS,
+  TRANSITION_OPERATION_TYPES,
+  normalizeLucideIconName,
+} from '../catalog/index.js';
 
 const nullToUndefined = (value: unknown): unknown => (value === null ? undefined : value);
 
 const optionalLabelSchema = z.preprocess(nullToUndefined, z.string().min(1).optional());
+const optionalIconSchema = z.preprocess(
+  (value) => normalizeLucideIconName(nullToUndefined(value)),
+  z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).optional(),
+);
 const optionalCountSchema = z.preprocess(nullToUndefined, z.number().positive().optional());
 const optionalImportanceSchema = z.preprocess(
   nullToUndefined,
@@ -60,13 +69,13 @@ export const topologyCameraDirectivesSchema = z.object({
 });
 
 export const topologyVisualDirectivesSchema = z.object({
-  theme: z.enum(['default', 'neon']).default('neon'),
+  theme: z.enum(['default', 'neon']).default('default'),
   background_texture: z.enum(['none', 'grid']).default('grid'),
-  glow_strength: z.enum(['soft', 'strong']).default('strong'),
+  glow_strength: z.enum(['soft', 'strong']).default('soft'),
 });
 
 export const topologyMotionDirectivesSchema = z.object({
-  entry_style: z.enum(['drop_bounce', 'elastic_pop']).default('elastic_pop'),
+  entry_style: z.enum(['drop_bounce', 'elastic_pop', 'draw_in']).default('draw_in'),
   pacing: z.enum(['balanced', 'reel_fast']).default('reel_fast'),
 });
 
@@ -82,12 +91,12 @@ export const topologySceneDirectivesSchema = z.object({
     reserve_bottom_percent: 25,
   }),
   visual: topologyVisualDirectivesSchema.default({
-    theme: 'neon',
+    theme: 'default',
     background_texture: 'grid',
-    glow_strength: 'strong',
+    glow_strength: 'soft',
   }),
   motion: topologyMotionDirectivesSchema.default({
-    entry_style: 'elastic_pop',
+    entry_style: 'draw_in',
     pacing: 'reel_fast',
   }),
   flow: topologyFlowDirectivesSchema.default({
@@ -104,6 +113,7 @@ export const topologyEntitySchema = z.object({
   id: z.string().min(1),
   type: z.nativeEnum(ComponentType),
   label: optionalLabelSchema,
+  icon: optionalIconSchema,
   count: optionalCountSchema,
   importance: optionalImportanceSchema,
   status: optionalStatusSchema,
@@ -452,11 +462,21 @@ export const topologyPlanResponseFormat = {
               items: {
                 type: 'object',
                 additionalProperties: false,
-                required: ['id', 'type', 'label', 'count', 'importance', 'status'],
+                required: ['id', 'type', 'label', 'icon', 'count', 'importance', 'status'],
                 properties: {
                   id: {type: 'string', minLength: 1},
                   type: {type: 'string', enum: Object.values(ComponentType)},
                   label: {anyOf: [{type: 'string', minLength: 1}, {type: 'null'}]},
+                  icon: {
+                    anyOf: [
+                      {
+                        type: 'string',
+                        minLength: 1,
+                        pattern: '^[a-z0-9]+(?:-[a-z0-9]+)*$',
+                      },
+                      {type: 'null'},
+                    ],
+                  },
                   count: {anyOf: [{type: 'number', exclusiveMinimum: 0}, {type: 'null'}]},
                   importance: {
                     anyOf: [{type: 'string', enum: ['primary', 'secondary']}, {type: 'null'}],
@@ -702,7 +722,10 @@ export const topologyPlanResponseFormat = {
                       additionalProperties: false,
                       required: ['entry_style', 'pacing'],
                       properties: {
-                        entry_style: {type: 'string', enum: ['drop_bounce', 'elastic_pop']},
+                        entry_style: {
+                          type: 'string',
+                          enum: ['drop_bounce', 'elastic_pop', 'draw_in'],
+                        },
                         pacing: {type: 'string', enum: ['balanced', 'reel_fast']},
                       },
                     },

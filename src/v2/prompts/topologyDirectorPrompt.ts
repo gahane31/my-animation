@@ -2,10 +2,10 @@ import type {StoryIntent} from '../schema/storyIntent.schema.js';
 import {
   CONNECTION_KINDS,
   FLOW_PATTERNS,
+  summarizeLucideIconCatalog,
   summarizeActionCatalog,
   summarizeComponentCatalog,
   summarizeConnectionCatalog,
-  summarizeMinimalComponentKit,
   summarizeMotionCatalog,
 } from '../catalog/index.js';
 import {ComponentType} from '../../schema/visualGrammar.js';
@@ -22,7 +22,7 @@ export const buildTopologyDirectorPrompt = ({
   const connections = summarizeConnectionCatalog();
   const actions = summarizeActionCatalog();
   const motions = summarizeMotionCatalog();
-  const minimalKit = summarizeMinimalComponentKit();
+  const icons = summarizeLucideIconCatalog();
   const componentTypeValues = Object.values(ComponentType).join(' | ');
   const connectionKindValues = CONNECTION_KINDS.join(' | ');
   const flowPatternValues = FLOW_PATTERNS.join(' | ');
@@ -44,31 +44,52 @@ Rules:
    - Order from top to bottom (source to sink).
    - Example order: users -> load_balancer -> server -> database.
 6. For scale-out, use one entity id with count > 1 (do NOT create separate ids like server1/server2/server3).
-7. Use canonical stable ids for recurring entities whenever possible:
-   - users, app, db, lb, cache, queue, worker, cdn
-8. Use labels from the component catalog for each type.
-   - For core components prefer: Users, Server, Load Balancer, Database, Cache, Queue, Worker, CDN.
-9. Build connections[] using only allowed kinds/patterns.
-10. Only output connections explicitly needed for scene clarity:
+6.1 Actor grouping rule:
+   - For users_cluster scale-up, keep a single users entity and increase count.
+   - Do NOT create multiple standalone users entities for load growth.
+7. Topology must be driven by StoryIntent scene data:
+   - For each scene, entities[].type must come from that scene's required_component_types.
+   - Do NOT introduce component types that are not in required_component_types for that scene.
+   - If StoryIntent uses uncommon types (for example api_gateway, microservice, nosql_database),
+     preserve those exact types in topology.
+8. Entity id policy:
+   - ids must be stable for the same logical component across scenes.
+   - Use deterministic semantic ids based on role/type context in StoryIntent scenes.
+   - Do NOT rely on fixed hardcoded canonical ids from examples.
+   - Keep ids concise and readable (snake_case).
+9. Use labels from the component catalog for each type unless StoryIntent wording requires a better in-scene label.
+9.1 Set entity icon token for every entity:
+    - Use valid Lucide icon names (any Lucide icon is allowed).
+    - The "Available Lucide icon tokens" section is suggestive, not exhaustive.
+    - Use semantic matches (example: users -> users, database -> database, cache -> memory-stick).
+    - Prefer clean line icons; avoid container-style tokens like square-*, layout-*, panel-*.
+    - Do NOT use Material icons, Heroicons, FontAwesome, emoji, or free-form icon names.
+   - icon values must be plain Lucide names (example: "server"), not URLs, SVG paths, or JSX.
+   - If unsure, set icon to null (renderer fallback will use component default).
+9.2 Prefer StoryIntent icon_hints when available:
+   - If a scene provides icon_hints for a component type, reuse that icon for matching entity.type in topology.
+   - Only deviate if there is a clear semantic mismatch.
+10. Build connections[] using only allowed kinds/patterns.
+11. Only output connections explicitly needed for scene clarity:
     - Do NOT invent inferred edges.
     - Do NOT output reverse duplicates for the same pair.
-11. Connection direction should follow entity order:
+12. Connection direction should follow entity order:
     - Prefer from earlier entity to later entity in the scene entities[] array.
-11.1 Set connection_type for every connection:
+12.1 Set connection_type for every connection:
     - "static": line only, no flow particles.
     - "flowing": one-way flow from from -> to.
     - "both_ways": flow in both directions.
-11.2 For visually engaging reels, avoid fully static scenes:
+12.2 For visually engaging reels, avoid fully static scenes:
     - In scenes with connections, at least one key path should be "flowing" or "both_ways".
     - Prefer "flowing" for request/service paths.
     - Use "both_ways" for cache lookups or ping-like exchanges.
-12. Respect required_component_types and transition_goal from StoryIntent:
+13. Respect required_component_types and transition_goal from StoryIntent:
     - Do not add unrelated entities.
     - Keep progression mostly additive unless StoryIntent explicitly teaches removal.
-13. Set focus_entity_id to the key teaching component of that scene.
-14. Copy complexity_budget from StoryIntent scene unchanged.
-15. camera_intent should be "wide" for most scenes; use "focus" only when needed.
-16. Add directives for runtime behavior:
+14. Set focus_entity_id to the key teaching component of that scene.
+15. Copy complexity_budget from StoryIntent scene unchanged.
+16. camera_intent should be "wide" for most scenes; use "focus" only when needed.
+17. Add directives for runtime behavior:
     - directives.camera:
       mode ("auto" | "follow_action" | "wide_recap" | "steady")
       zoom ("tight" | "medium" | "wide")
@@ -79,60 +100,60 @@ Rules:
       background_texture ("none" | "grid")
       glow_strength ("soft" | "strong")
     - directives.motion:
-      entry_style ("drop_bounce" | "elastic_pop")
+      entry_style ("draw_in" | "drop_bounce" | "elastic_pop")
       pacing ("balanced" | "reel_fast")
     - directives.flow:
       renderer ("dashed" | "packets" | "hybrid")
     Prefer follow_action + upper_third + reserve_bottom_percent=25 for mobile reels.
-17. For recap/final scenes, use directives.camera.mode = "wide_recap".
-18. operations[] are metadata for change explanation:
+17.1 For clean technical style (preferred default):
+    - visual.theme = "default"
+    - visual.glow_strength = "soft"
+    - motion.entry_style = "draw_in"
+    - flow.renderer = "hybrid" or "dashed"
+    Use "neon"/"strong" only when StoryIntent explicitly asks for it.
+18. For recap/final scenes, use directives.camera.mode = "wide_recap".
+19. operations[] are metadata for change explanation:
     - Keep minimal.
     - Use [] when no clear structural change.
     - If provided, use only allowed operation types:
       add_entity, remove_entity, insert_between, reroute_connection,
       scale_entity, change_status, emphasize_entity, de_emphasize_entity, reveal_group.
-19. Scene-to-scene deltas must be explicit:
+20. Scene-to-scene deltas must be explicit:
     - If a component is added/inserted/scaled/status-changed, reflect that in operations[].
     - If an entity is newly inserted between two entities, prefer transition.type = "insert_between".
     - If a single new entity is introduced, prefer transition.type = "add_entity".
-20. IMPORTANT: Output must be valid against strict schema:
+21. IMPORTANT: Output must be valid against strict schema:
     - No unknown fields.
     - Use every required key exactly as defined.
     - For nullable required keys, use null when not applicable.
     - Do NOT omit required keys.
     - This includes required nullable fields such as focus_entity_id, transition, camera_intent,
       label/count/importance/status on entities, intensity on connections, and
+      icon on entities,
       newFromId/newToId for reroute_connection operations.
-21. Respect per-scene complexity limits from StoryIntent exactly.
-22. Entities and connections must use only supported enums listed below.
-23. Do not infer hidden architecture. If not explicitly in StoryIntent, do not invent it.
-24. Keep output deterministic and reusable across reruns.
-25. Pattern guidance (use when semantically appropriate):
+22. Respect per-scene complexity limits from StoryIntent exactly.
+23. Entities and connections must use only supported enums listed below.
+24. Do not infer hidden architecture. If not explicitly in StoryIntent, do not invent it.
+25. Keep output deterministic and reusable across reruns.
+26. Pattern guidance (use when semantically appropriate):
     - request/service_call/auth_request -> pattern "steady", intensity "medium"
     - async_event/queue_dispatch/replication -> pattern "broadcast"
     - failover/retry -> pattern "burst"
     - health_check/trace/cache_lookup -> pattern "ping" or "steady"
-26. Motion readability guidance:
+27. Motion readability guidance:
     - scenes with transition_goal that inserts/adds components should usually include transition object
       and non-static connection_type on the main path.
-27. Keep scenes visually alive but clear: avoid setting all connections to "static" unless StoryIntent
+28. Keep scenes visually alive but clear: avoid setting all connections to "static" unless StoryIntent
     explicitly asks for an idle/static comparison frame.
-
-Canonical entity ids (preferred):
-- users (users_cluster)
-- app (server)
-- lb (load_balancer)
-- db (database)
-- cache (cache)
-- queue (queue)
-- worker (worker)
-- cdn (cdn)
+29. Avoid repetitive default structures:
+    - Do not blindly output the same fixed component chain across different topics.
+    - StoryIntent scene components are the source of truth; topology must reflect them scene by scene.
 
 Available components:
 ${components}
 
-Recommended minimal kit for fast production:
-${minimalKit}
+Available Lucide icon tokens:
+${icons}
 
 Available connection kinds:
 ${connections}
@@ -143,6 +164,22 @@ ${actions}
 Runtime motion catalog (reference):
 ${motions}
 
+Renderer behavior reference (deterministic):
+- entry_style = draw_in:
+  new entities are traced in (icon/shape reveal), and newly added connections are line-traced.
+- entry_style = drop_bounce:
+  new entities drop from above with bounce.
+- entry_style = elastic_pop:
+  quick pop/overshoot reveal.
+- flow.renderer = dashed:
+  marching dashed flow line.
+- flow.renderer = packets:
+  packet-like movement along edge.
+- flow.renderer = hybrid:
+  dashed line with stronger motion accents.
+- visual.theme = default + glow_strength = soft:
+  clean diagram aesthetic (recommended baseline).
+
 Allowed enums and values (strict):
 - archetype:
   hook | setup | problem | escalation | solution | expansion | climax | recap | ending
@@ -152,6 +189,10 @@ Allowed enums and values (strict):
   primary | secondary
 - entity.status:
   normal | active | overloaded | error | down
+- entity.icon:
+  MUST be a valid Lucide token in kebab-case (for example: "server", "database", "shield-check").
+  The provided icon list is guidance, not a hard whitelist.
+  Invalid examples: "material-symbols:dns", "fa-server", "https://...", "<svg...>".
 - connection.kind:
   ${connectionKindValues}
 - connection.pattern:
@@ -175,7 +216,7 @@ Allowed enums and values (strict):
 - directives.visual.glow_strength:
   soft | strong
 - directives.motion.entry_style:
-  drop_bounce | elastic_pop
+  draw_in | drop_bounce | elastic_pop
 - directives.motion.pacing:
   balanced | reel_fast
 - directives.flow.renderer:
@@ -199,45 +240,6 @@ Operation object contracts:
 - de_emphasize_entity: {type, entityId}
 - reveal_group: {type, entityIds[]}
 
-FORMAT EXAMPLE ONLY (DO NOT COPY THIS LITERALLY):
-- This is only a schema-shape example for one mini scene.
-- Do NOT reuse ids/timings/narration/components blindly.
-- Actual output must be generated from StoryIntent above.
-{
-  "duration": 6,
-  "scenes": [
-    {
-      "id": "scene_example_01",
-      "start": 0,
-      "end": 6,
-      "archetype": "setup",
-      "narration": "Users send requests to a single Server.",
-      "focus_entity_id": "app",
-      "entities": [
-        {"id": "users", "type": "users_cluster", "label": "Users", "count": 1, "importance": "secondary", "status": "normal"},
-        {"id": "app", "type": "server", "label": "Server", "count": 1, "importance": "primary", "status": "normal"}
-      ],
-      "connections": [
-        {"id": "c_users_app_req", "from": "users", "to": "app", "kind": "request", "pattern": "steady", "intensity": "medium", "connection_type": "flowing"}
-      ],
-      "operations": [],
-      "transition": null,
-      "complexity_budget": {
-        "max_visible_components": 2,
-        "max_visible_connections": 1,
-        "max_simultaneous_motions": 1
-      },
-      "camera_intent": "introduce",
-      "directives": {
-        "camera": {"mode": "follow_action", "zoom": "tight", "active_zone": "upper_third", "reserve_bottom_percent": 25},
-        "visual": {"theme": "neon", "background_texture": "grid", "glow_strength": "strong"},
-        "motion": {"entry_style": "elastic_pop", "pacing": "reel_fast"},
-        "flow": {"renderer": "hybrid"}
-      }
-    }
-  ]
-}
-
 Output:
 Return strict JSON with fields:
 - duration
@@ -252,6 +254,7 @@ Return strict JSON with fields:
     - id
     - type
     - label
+    - icon
     - count
     - importance
     - status

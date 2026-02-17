@@ -24,9 +24,9 @@ import type {MotionRenderSpec} from '../motion/types.js';
 const renderSpec = ${renderSpecLiteral} as unknown as MotionRenderSpec;
 const TIMELINE_EPSILON = 0.001;
 const DEFAULT_VISUAL_DIRECTIVES = {
-  theme: 'neon',
+  theme: 'default',
   background_texture: 'grid',
-  glow_strength: 'strong',
+  glow_strength: 'soft',
 } as const;
 
 const resolveVisualDirectives = (scene: MotionRenderSpec['scenes'][number]) =>
