@@ -154,6 +154,12 @@ export const resolveFlowStyle = (
     color = (visual?.theme ?? 'neon') === 'default' ? '#4ADE80' : '#34D399';
   }
 
+  if (interaction.type === 'blocked') {
+    speed *= 0.82;
+    particleSize += 0.9;
+    color = '#EF4444';
+  }
+
   return {
     color,
     particleSize: Math.max(3.5, particleSize * (0.85 + glowMultiplier * 0.2)),

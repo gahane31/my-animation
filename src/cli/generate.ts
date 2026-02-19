@@ -84,7 +84,7 @@ async function main() {
             storyIntentInputPath,
             animate,
             stableLayout,
-            personality: personalityArg as 'CALM' | 'ENERGETIC' | 'PREMIUM' | undefined,
+            personality: personalityArg,
             model,
             outputPath,
             storyIntentOutputPath: storyIntentOutputPath ?? storyPlanOutputPath,

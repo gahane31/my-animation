@@ -79,10 +79,29 @@ Rules:
     - "static": line only, no flow particles.
     - "flowing": one-way flow from from -> to.
     - "both_ways": flow in both directions.
-12.2 For visually engaging reels, avoid fully static scenes:
+12.2 Set traffic_outcome for every connection:
+    - "normal": standard flow, no explicit allow/block storytelling.
+    - "allow": explicitly admitted traffic path.
+    - "block": explicitly rejected/blocked traffic path.
+    - "allow_and_block": mixed outcome on the same edge (some passes, some gets blocked).
+12.3 When narration mentions blocked/rejected/throttled traffic:
+    - At least one connection in that scene MUST have traffic_outcome = "block" or "allow_and_block".
+    - If narration contrasts allow vs block, also keep at least one allowed non-static path.
+12.4 For visually engaging reels, avoid fully static scenes:
     - In scenes with connections, at least one key path should be "flowing" or "both_ways".
     - Prefer "flowing" for request/service paths.
     - Use "both_ways" for cache lookups or ping-like exchanges.
+12.5 Mixed allow/block modeling rule:
+    - For the SAME edge (same from + same to), emit exactly ONE connection.
+    - Use traffic_outcome = "allow_and_block" on that single connection.
+    - Do NOT emit two separate connections for the same pair (for example one "allow" and one "block").
+12.6 Blocked-flow connection rule:
+    - If traffic_outcome is "block" or "allow_and_block", connection_type MUST be "flowing" or "both_ways".
+    - Never use connection_type = "static" for blocked outcomes.
+12.7 Prefer adjacent-chain readability:
+    - Prefer edges between neighboring entities in entities[] order.
+    - Add skip-level edges only when the story explicitly requires direct bypass behavior.
+    - If skip-level edges are necessary, keep them minimal to preserve readability.
 13. Respect required_component_types and transition_goal from StoryIntent:
     - Do not add unrelated entities.
     - Keep progression mostly additive unless StoryIntent explicitly teaches removal.
@@ -122,6 +141,10 @@ Rules:
     - If a component is added/inserted/scaled/status-changed, reflect that in operations[].
     - If an entity is newly inserted between two entities, prefer transition.type = "insert_between".
     - If a single new entity is introduced, prefer transition.type = "add_entity".
+20.1 Transition reference integrity:
+    - transition.entityId MUST match an entity.id that exists in this SAME scene.entities[].
+    - For insert_between, transition.fromId and transition.toId MUST also exist in this SAME scene.entities[].
+    - Do not reference future/past ids that are not present in the current scene.
 21. IMPORTANT: Output must be valid against strict schema:
     - No unknown fields.
     - Use every required key exactly as defined.
@@ -131,6 +154,11 @@ Rules:
       label/count/importance/status on entities, intensity on connections, and
       icon on entities,
       newFromId/newToId for reroute_connection operations.
+21.1 Final self-check before returning JSON (must all be true):
+    - Every transition entity id reference exists in the same scene.entities[].
+    - No duplicate connection pairs by (from,to) within a scene.
+    - Any blocked or mixed blocked outcome is non-static.
+    - All connection from/to ids exist in scene.entities[].
 22. Respect per-scene complexity limits from StoryIntent exactly.
 23. Entities and connections must use only supported enums listed below.
 24. Do not infer hidden architecture. If not explicitly in StoryIntent, do not invent it.
@@ -140,6 +168,23 @@ Rules:
     - async_event/queue_dispatch/replication -> pattern "broadcast"
     - failover/retry -> pattern "burst"
     - health_check/trace/cache_lookup -> pattern "ping" or "steady"
+    - blocked/denied/throttled path -> traffic_outcome "block" (or "allow_and_block" on mixed edge)
+26.1 Semantic encoding guidance (renderer-supported):
+    - allow vs block outcomes:
+      encode with traffic_outcome on the same edge (prefer "allow_and_block" for mixed outcomes).
+    - state/counter/token/window semantics:
+      encode with a decision/processing component linked to a state-holding component
+      using kinds such as cache_lookup/cache_fill/replication and meaningful pattern/intensity.
+    - atomicity/race semantics:
+      include a coordination/guard component and explicit coordination relationships
+      (for example auth_request/control/cache_fill when available in-scene).
+    - hot-key/skew semantics:
+      include shard_indicator and mark stressed ingress edges with high intensity + burst pattern.
+26.2 Scale-spike encoding rule:
+    - If narration describes a traffic/load spike (for example: burst, surge, overload, sudden traffic),
+      mark the main ingress path from actor/source to first processing component as:
+      pattern = "burst", intensity = "high", connection_type = "flowing".
+    - Keep at least one normal or allow path visible for contrast unless the scene is full outage/failure.
 27. Motion readability guidance:
     - scenes with transition_goal that inserts/adds components should usually include transition object
       and non-static connection_type on the main path.
@@ -201,6 +246,8 @@ Allowed enums and values (strict):
   low | medium | high
 - connection.connection_type:
   static | flowing | both_ways
+- connection.traffic_outcome:
+  normal | allow | block | allow_and_block
 - camera_intent:
   wide | focus | introduce | steady
 - directives.camera.mode:
@@ -266,6 +313,7 @@ Return strict JSON with fields:
     - pattern
     - intensity
     - connection_type ("static" | "flowing" | "both_ways")
+    - traffic_outcome ("normal" | "allow" | "block" | "allow_and_block")
   - operations[]
   - transition (object or null)
   - complexity_budget

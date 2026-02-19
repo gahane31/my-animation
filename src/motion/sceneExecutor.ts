@@ -137,6 +137,60 @@ const hasAmbientVisualActivity = (scene: MotionSceneSpec): boolean =>
 const hasVisualActivitySignal = (scene: MotionSceneSpec): boolean =>
   hasMotionEvent(scene) || hasAmbientVisualActivity(scene);
 
+const LOAD_SPIKE_NARRATION_PATTERN =
+  /\b(massive|sudden|spike|load spike|surge|burst|flood|overload|overloaded|high traffic|incoming traffic|increase load|load increase|traffic increase|increase in traffic|user load)\b/i;
+
+const ACTOR_COMPONENT_TYPES = new Set<ComponentType>([
+  ComponentType.UsersCluster,
+  ComponentType.SingleUser,
+  ComponentType.MobileApp,
+  ComponentType.WebBrowser,
+  ComponentType.AdminUser,
+  ComponentType.ThirdPartyService,
+  ComponentType.IotDevices,
+]);
+
+const sceneIndicatesTrafficSpike = (scene: MotionSceneSpec): boolean => {
+  if (LOAD_SPIKE_NARRATION_PATTERN.test(scene.narration)) {
+    return true;
+  }
+
+  const interactions = scene.interactions ?? scene.source?.interactions ?? [];
+  return interactions.some(
+    (interaction) => interaction.type === 'burst' && interaction.intensity === 'high',
+  );
+};
+
+const buildEntityTypeById = (scene: MotionSceneSpec): Map<string, ComponentType> => {
+  const entityTypeById = new Map<string, ComponentType>();
+  const entities = scene.entities ?? scene.source?.entities ?? [];
+  for (const entity of entities) {
+    entityTypeById.set(entity.id, entity.type);
+  }
+
+  return entityTypeById;
+};
+
+const buildEntityStatusById = (scene: MotionSceneSpec): Map<string, string> => {
+  const statusByEntityId = new Map<string, string>();
+  const entities = scene.entities ?? scene.source?.entities ?? [];
+  for (const entity of entities) {
+    if (entity.status) {
+      statusByEntityId.set(entity.id, entity.status);
+    }
+  }
+
+  for (const element of scene.elements) {
+    const sourceEntityId = element.sourceEntityId ?? element.id;
+    const status = element.visualStyle?.status;
+    if (status) {
+      statusByEntityId.set(sourceEntityId, status);
+    }
+  }
+
+  return statusByEntityId;
+};
+
 export const validateSceneForRuntime = (scene: MotionSceneSpec, logger: RuntimeLogger): void => {
   const duration = scene.end - scene.start;
 
@@ -383,6 +437,108 @@ const resolveLineDashPattern = (style?: 'solid' | 'dashed' | 'dotted'): number[]
     default:
       return [];
   }
+};
+
+const BURST_TRAFFIC_LANE_COUNT = 3;
+const BURST_TRAFFIC_LANE_SPACING = 18;
+
+type NumericPoint = [number, number];
+
+const toNumericLinePoints = (rawPoints: unknown): NumericPoint[] => {
+  if (!Array.isArray(rawPoints)) {
+    return [];
+  }
+
+  const normalized: NumericPoint[] = [];
+  for (const point of rawPoints) {
+    if (Array.isArray(point) && point.length >= 2) {
+      const [x, y] = point;
+      if (typeof x === 'number' && typeof y === 'number') {
+        normalized.push([x, y]);
+      }
+      continue;
+    }
+
+    if (point && typeof point === 'object') {
+      const candidate = point as Record<string, unknown>;
+      const x = candidate.x;
+      const y = candidate.y;
+      if (typeof x === 'number' && typeof y === 'number') {
+        normalized.push([x, y]);
+      }
+    }
+  }
+
+  return normalized;
+};
+
+const createBurstTrafficOverlayLanes = (
+  view: Node,
+  baseLine: Line,
+  fromAnchor?: ConnectionAnchor,
+  toAnchor?: ConnectionAnchor,
+): Line[] => {
+  const basePoints = toNumericLinePoints(baseLine.points() as unknown);
+  if (basePoints.length < 2 || BURST_TRAFFIC_LANE_COUNT < 2) {
+    return [];
+  }
+
+  const first = basePoints[0];
+  const last = basePoints[basePoints.length - 1];
+  if (!first || !last) {
+    return [];
+  }
+
+  const isVerticalRoute = Math.abs(last[1] - first[1]) >= Math.abs(last[0] - first[0]);
+  const proportionalLaneSpacing =
+    fromAnchor && toAnchor
+      ? Math.min(
+          76,
+          Math.max(
+            12,
+            (isVerticalRoute
+              ? Math.min(fromAnchor.halfWidth, toAnchor.halfWidth)
+              : Math.min(fromAnchor.halfHeight, toAnchor.halfHeight)) * 0.8,
+          ),
+        )
+      : BURST_TRAFFIC_LANE_SPACING;
+  const laneOffsets = [-1, 1];
+  const baseWidth = baseLine.lineWidth();
+  const baseArrowSize = baseLine.arrowSize();
+  const baseZIndex = baseLine.zIndex();
+  const baseDash = baseLine.lineDash();
+  const baseDashOffset = baseLine.lineDashOffset();
+  const baseStroke = baseLine.stroke();
+  const startArrow = baseLine.startArrow();
+  const endArrow = baseLine.endArrow();
+
+  const lanes: Line[] = [];
+  for (const laneOffset of laneOffsets) {
+    const shiftedPoints: NumericPoint[] = basePoints.map(([x, y]) =>
+      isVerticalRoute
+        ? [x + laneOffset * proportionalLaneSpacing, y]
+        : [x, y + laneOffset * proportionalLaneSpacing],
+    );
+
+    const lane = new Line({
+      points: shiftedPoints,
+      stroke: baseStroke,
+      lineWidth: Math.max(1.6, baseWidth * 0.76),
+      startArrow,
+      endArrow,
+      arrowSize: Math.max(6, baseArrowSize * 0.82),
+      opacity: 0,
+      zIndex: baseZIndex - 0.2,
+    });
+    lane.lineDash(baseDash);
+    lane.lineDashOffset(baseDashOffset);
+    lane.start(0);
+    lane.end(1);
+    view.add(lane);
+    lanes.push(lane);
+  }
+
+  return lanes;
 };
 
 const findLbSpinnerNode = (root: Node): Node | undefined => {
@@ -1057,6 +1213,20 @@ const executeConnectionLineTransitions = (
 
   const threads: ThreadGenerator[] = [];
   let maxEnd = 0;
+  const connectionById = new Map(
+    (scene.connections ?? scene.source?.connections ?? []).map((connection) => [
+      connection.id,
+      connection,
+    ]),
+  );
+  const additionTimings = (scene.animationPlan?.entities ?? []).filter(
+    (timing) => timing.action === 'add',
+  );
+  const additionRevealByEntityId = new Map(
+    additionTimings.map((timing) => [timing.entityId, timing.delay + timing.duration * 0.68]),
+  );
+  const resolveEntityRevealTime = (entityId: string): number =>
+    additionRevealByEntityId.get(entityId) ?? 0;
 
   connectionDiffs.forEach((diff, index) => {
     const line = state.connections.get(diff.connectionId);
@@ -1066,15 +1236,20 @@ const executeConnectionLineTransitions = (
 
     const timing = connectionTimingById.get(diff.connectionId) ?? fallbackConnectionTiming(sceneDuration, index);
     const timingFunction = resolveTimingFunction(timing.easing);
-    maxEnd = Math.max(maxEnd, timing.delay + timing.duration);
+    const connection = connectionById.get(diff.connectionId);
+    const endpointRevealTime = connection
+      ? Math.max(resolveEntityRevealTime(connection.from), resolveEntityRevealTime(connection.to))
+      : 0;
 
     if (diff.type === 'connection_added') {
+      const drawDelay = Math.max(timing.delay, endpointRevealTime + 0.02);
+      maxEnd = Math.max(maxEnd, drawDelay + timing.duration);
       line.start(0);
       line.end(0);
       line.opacity(0.92);
       threads.push(
         createDelayedThread(
-          timing.delay,
+          drawDelay,
           (function* connectionAddedThread() {
             yield* all(
               line.end(1, timing.duration, linear),
@@ -1086,6 +1261,7 @@ const executeConnectionLineTransitions = (
       return;
     }
 
+    maxEnd = Math.max(maxEnd, timing.delay + timing.duration);
     threads.push(
       createDelayedThread(
         timing.delay,
@@ -1223,10 +1399,12 @@ const executeEffectsPhase = (
 };
 
 const executeInteractionFlowsPhase = (
+  view: Node,
   scene: MotionSceneSpec,
   sceneDuration: number,
   state: SceneState,
   connectionTimingById: Map<string, ConnectionTimingPlan>,
+  entityAnchorsById: Map<string, ConnectionAnchor>,
 ): PhaseExecutionPlan => {
   const connections = scene.connections ?? scene.source?.connections ?? [];
   if (connections.length === 0) {
@@ -1253,7 +1431,8 @@ const executeInteractionFlowsPhase = (
     {
       directionMultiplier: number;
       flowStyle: ReturnType<typeof resolveFlowStyle>;
-      interactionType: 'flow' | 'burst' | 'broadcast' | 'ping';
+      interactionType: 'flow' | 'burst' | 'broadcast' | 'ping' | 'blocked';
+      interactionIntensity: 'low' | 'medium' | 'high';
     }
   >();
 
@@ -1282,6 +1461,7 @@ const executeInteractionFlowsPhase = (
         directionMultiplier,
         flowStyle: resolvedStyle,
         interactionType: interaction.type,
+        interactionIntensity: interaction.intensity ?? 'medium',
       });
       continue;
     }
@@ -1291,6 +1471,7 @@ const executeInteractionFlowsPhase = (
         directionMultiplier: 1,
         flowStyle: resolvedStyle,
         interactionType: interaction.type,
+        interactionIntensity: interaction.intensity ?? existingTarget.interactionIntensity,
       });
     }
   }
@@ -1315,7 +1496,7 @@ const executeInteractionFlowsPhase = (
     (timing) => timing.action === 'add',
   );
   const additionRevealByEntityId = new Map(
-    additionTimings.map((timing) => [timing.entityId, timing.delay + timing.duration * 0.55]),
+    additionTimings.map((timing) => [timing.entityId, timing.delay + timing.duration * 0.68]),
   );
   const resolveEntityRevealTime = (entityId: string): number =>
     additionRevealByEntityId.get(entityId) ?? 0;
@@ -1332,6 +1513,44 @@ const executeInteractionFlowsPhase = (
   let maxEnd = 0;
   const flowRenderer = scene.directives?.flow.renderer ?? 'hybrid';
   const entryStyle = scene.directives?.motion.entry_style ?? 'draw_in';
+  const sceneHasTrafficSpike = sceneIndicatesTrafficSpike(scene);
+  const entityTypeById = buildEntityTypeById(scene);
+  const entityStatusById = buildEntityStatusById(scene);
+  const stressedStatuses = new Set(['overloaded', 'error']);
+  const isIngressConnection = (connection: {from: string; to: string}): boolean => {
+    const fromType = entityTypeById.get(connection.from);
+    const toType = entityTypeById.get(connection.to);
+    const fromIsActor = fromType ? ACTOR_COMPONENT_TYPES.has(fromType) : false;
+    const toIsActor = toType ? ACTOR_COMPONENT_TYPES.has(toType) : false;
+    return fromIsActor && !toIsActor;
+  };
+  const isStressedTargetConnection = (connection: {to: string}): boolean =>
+    stressedStatuses.has(entityStatusById.get(connection.to) ?? '');
+
+  // Fallback: if topology marks a target overloaded/error but didn't explicitly declare
+  // burst/high interaction, still animate ingress as a visual traffic surge.
+  for (const connection of connectionById.values()) {
+    if (flowTargets.has(connection.id)) {
+      continue;
+    }
+    if (!isIngressConnection(connection) || !isStressedTargetConnection(connection)) {
+      continue;
+    }
+
+    const fallbackInteraction = {
+      id: `i_${connection.id}_stress_fallback`,
+      from: connection.from,
+      to: connection.to,
+      type: 'burst' as const,
+      intensity: 'high' as const,
+    };
+    flowTargets.set(connection.id, {
+      directionMultiplier: -1,
+      flowStyle: resolveFlowStyle(fallbackInteraction, scene.directives?.visual),
+      interactionType: 'burst',
+      interactionIntensity: 'high',
+    });
+  }
 
   const resolveConnectionVisibleTime = (connectionId: string): number => {
     const diffIndex = addedConnectionIndexById.get(connectionId);
@@ -1341,14 +1560,22 @@ const executeInteractionFlowsPhase = (
 
     const timing =
       connectionTimingById.get(connectionId) ?? fallbackConnectionTiming(sceneDuration, diffIndex);
-
-    const connectionReveal =
-      entryStyle === 'draw_in'
-        ? timing.delay + Math.max(0.06, timing.duration * 0.88)
-        : timing.delay + Math.max(0.03, timing.duration * 0.2);
     const connection = connectionById.get(connectionId);
     const fromReveal = connection ? resolveEntityRevealTime(connection.from) : 0;
     const toReveal = connection ? resolveEntityRevealTime(connection.to) : 0;
+
+    const connectionReveal =
+      entryStyle === 'draw_in'
+        ? Math.max(
+            timing.delay + Math.max(0.06, timing.duration * 0.88),
+            fromReveal + 0.02,
+            toReveal + 0.02,
+          )
+        : Math.max(
+            timing.delay + Math.max(0.03, timing.duration * 0.2),
+            fromReveal + 0.02,
+            toReveal + 0.02,
+          );
 
     return Math.max(connectionReveal, fromReveal, toReveal);
   };
@@ -1362,6 +1589,8 @@ const executeInteractionFlowsPhase = (
 
     const flowStyle = target.flowStyle;
     const flowMode = target.interactionType;
+    const interactionIntensity = target.interactionIntensity;
+    const stressedTargetConnection = isIngressConnection(connection) && isStressedTargetConnection(connection);
     const flowSpeedBoost =
       flowMode === 'burst'
         ? 1.25
@@ -1369,31 +1598,42 @@ const executeInteractionFlowsPhase = (
           ? 1.08
           : flowMode === 'ping'
             ? 1.35
-            : 1;
-    const flowSpeed = Math.max(0.45, flowStyle.speed * flowSpeedBoost);
+            : flowMode === 'blocked'
+              ? 0.86
+              : 1;
+    const surgeEnabled =
+      (sceneHasTrafficSpike || stressedTargetConnection) &&
+      flowMode !== 'blocked' &&
+      (flowMode === 'burst' || isIngressConnection(connection));
+    const flowSpeed = Math.max(
+      0.45,
+      flowStyle.speed * flowSpeedBoost * (surgeEnabled ? 1.18 : 1),
+    );
     const dashLength =
       flowRenderer === 'packets'
         ? 3
         : flowRenderer === 'dashed'
           ? 18
-          :
-      flowMode === 'broadcast'
-        ? 12
-        : connection.direction === 'bidirectional'
-          ? 10
-          : 14;
+          : flowMode === 'blocked'
+            ? 9
+            : flowMode === 'broadcast'
+              ? 12
+              : connection.direction === 'bidirectional'
+                ? 10
+                : 14;
     const gapLength =
       flowRenderer === 'packets'
         ? 14
         : flowRenderer === 'dashed'
           ? 9
-          :
-      flowMode === 'burst'
-        ? 7
-        : connection.direction === 'bidirectional'
-          ? 8
-          : 10;
-    const dashPattern = [dashLength, gapLength];
+          : flowMode === 'blocked'
+            ? 12
+            : flowMode === 'burst'
+              ? 7
+              : connection.direction === 'bidirectional'
+                ? 8
+                : 10;
+    const dashPattern = [dashLength, gapLength] as [number, number];
     line.lineDash(dashPattern);
     line.lineDashOffset(0);
 
@@ -1407,6 +1647,19 @@ const executeInteractionFlowsPhase = (
 
     const baseStroke = line.stroke();
     const baseWidth = line.lineWidth();
+    const needsBurstTrafficLanes =
+      (flowMode === 'burst' ||
+        interactionIntensity === 'high' ||
+        stressedTargetConnection) &&
+      isIngressConnection(connection);
+    const fromAnchor = entityAnchorsById.get(connection.from);
+    const toAnchor = entityAnchorsById.get(connection.to);
+    const overlayLanes = needsBurstTrafficLanes
+      ? createBurstTrafficOverlayLanes(view, line, fromAnchor, toAnchor)
+      : [];
+    const laneLines = [line, ...overlayLanes];
+    const overlayWidth = Math.max(1.5, baseWidth * 0.74);
+    const overlayOpacity = 0.82;
     const linePulseWidth =
       baseWidth +
       (flowMode === 'burst'
@@ -1418,51 +1671,167 @@ const executeInteractionFlowsPhase = (
     const thread = createDelayedThread(
       delay,
       (function* interactionFlowThread() {
-        line.lineDash(dashPattern);
-        line.lineDashOffset(0);
-
-        yield* all(
-          line.stroke(flowStyle.color, introDuration, timingFunction),
-          line.lineWidth(linePulseWidth, introDuration, timingFunction),
-          line.opacity(1, introDuration, timingFunction),
-        );
-
-        if (flowMode === 'ping') {
-          const pingHalf = Math.max(0.08, activeDuration / 2);
-          yield* line
-            .lineDashOffset(-dashTravel, pingHalf, linear)
-            .to(0, pingHalf, linear);
-        } else if (connection.direction === 'bidirectional') {
-          const swingAmplitude = Math.max(42, dashTravel * 0.2);
-          const cycleDuration = Math.max(0.14, 0.3 / flowSpeed);
-          let elapsed = 0;
-          let sign = -1;
-
-          while (elapsed + cycleDuration <= activeDuration) {
-            const halfCycle = cycleDuration / 2;
-            yield* line
-              .lineDashOffset(sign * swingAmplitude, halfCycle, linear)
-              .to(-sign * swingAmplitude, halfCycle, linear);
-            elapsed += cycleDuration;
-            sign *= -1;
-          }
-
-          const remaining = activeDuration - elapsed;
-          if (remaining > 0.01) {
-            yield* line.lineDashOffset(swingAmplitude * sign, remaining, linear);
-          }
-        } else {
-          yield* line.lineDashOffset(
-            target.directionMultiplier * dashTravel,
-            activeDuration,
-            linear,
-          );
+        for (const lane of laneLines) {
+          lane.lineDash(dashPattern);
+          lane.lineDashOffset(0);
         }
 
-        yield* all(
-          line.stroke(baseStroke, Math.min(0.06, activeDuration * 0.15), timingFunction),
-          line.lineWidth(baseWidth, Math.min(0.06, activeDuration * 0.15), timingFunction),
-        );
+        try {
+          yield* all(
+            ...laneLines.flatMap((lane, laneIndex) => {
+              const laneTargetWidth = laneIndex === 0 ? linePulseWidth : overlayWidth;
+              const laneTargetOpacity = laneIndex === 0 ? 1 : overlayOpacity;
+              return [
+                lane.stroke(flowStyle.color, introDuration, timingFunction),
+                lane.lineWidth(laneTargetWidth, introDuration, timingFunction),
+                lane.opacity(laneTargetOpacity, introDuration, timingFunction),
+              ];
+            }),
+          );
+
+          const canRunSurgeRamp =
+            surgeEnabled &&
+            activeDuration >= 0.28 &&
+            connection.direction !== 'bidirectional' &&
+            flowMode !== 'ping';
+
+          if (canRunSurgeRamp) {
+            const stageOneDuration = activeDuration * 0.28;
+            const stageTwoDuration = activeDuration * 0.33;
+            const stageThreeDuration = Math.max(
+              0.06,
+              activeDuration - stageOneDuration - stageTwoDuration,
+            );
+            const surgePatterns: Array<[number, number]> = [
+              dashPattern,
+              [
+                Math.max(3, Math.round(dashLength * 0.74)),
+                Math.max(2, Math.round(gapLength * 0.64)),
+              ],
+              [
+                Math.max(2, Math.round(dashLength * 0.56)),
+                Math.max(2, Math.round(gapLength * 0.46)),
+              ],
+            ];
+            const surgeDurations = [stageOneDuration, stageTwoDuration, stageThreeDuration];
+            const surgeDistances = [dashTravel * 0.2, dashTravel * 0.33, dashTravel * 0.47];
+            const surgeWidths = [
+              linePulseWidth,
+              linePulseWidth + Math.max(0.4, flowStyle.particleSize * 0.08),
+              linePulseWidth + Math.max(0.9, flowStyle.particleSize * 0.16),
+            ];
+
+            let accumulatedOffset = 0;
+            for (let stageIndex = 0; stageIndex < surgeDurations.length; stageIndex += 1) {
+              const stageDuration = surgeDurations[stageIndex];
+              const stagePattern = surgePatterns[stageIndex] ?? dashPattern;
+              const stageDistance = surgeDistances[stageIndex] ?? dashTravel / 3;
+              const stageWidth = surgeWidths[stageIndex] ?? linePulseWidth;
+
+              for (const lane of laneLines) {
+                lane.lineDash(stagePattern);
+              }
+              yield* all(
+                ...laneLines.map((lane, laneIndex) =>
+                  lane.lineWidth(
+                    laneIndex === 0 ? stageWidth : overlayWidth,
+                    Math.min(0.06, stageDuration * 0.35),
+                    timingFunction,
+                  )),
+              );
+              accumulatedOffset += target.directionMultiplier * stageDistance;
+              yield* all(
+                ...laneLines.map((lane, laneIndex) =>
+                  lane.lineDashOffset(
+                    accumulatedOffset + laneIndex * target.directionMultiplier * 8,
+                    stageDuration,
+                    linear,
+                  )),
+              );
+            }
+          } else if (flowMode === 'ping') {
+            const pingHalf = Math.max(0.08, activeDuration / 2);
+            yield* all(
+              ...laneLines.map((lane, laneIndex) =>
+                lane
+                  .lineDashOffset(-dashTravel - laneIndex * 6, pingHalf, linear)
+                  .to(laneIndex * 4, pingHalf, linear)),
+            );
+          } else if (flowMode === 'blocked') {
+            const pulseCount = Math.max(2, Math.round(activeDuration / 0.24));
+            const pulseDuration = activeDuration / pulseCount;
+            const blockedTravel = target.directionMultiplier * Math.max(30, dashTravel * 0.36);
+
+            for (let pulseIndex = 0; pulseIndex < pulseCount; pulseIndex += 1) {
+              const forwardDuration = pulseDuration * 0.58;
+              const returnDuration = Math.max(0.05, pulseDuration - forwardDuration);
+              yield* all(
+                ...laneLines.map((lane, laneIndex) =>
+                  lane
+                    .lineDashOffset(
+                      blockedTravel + laneIndex * target.directionMultiplier * 6,
+                      forwardDuration,
+                      linear,
+                    )
+                    .to(laneIndex * 3, returnDuration, linear)),
+              );
+            }
+          } else if (connection.direction === 'bidirectional') {
+            const swingAmplitude = Math.max(42, dashTravel * 0.2);
+            const cycleDuration = Math.max(0.14, 0.3 / flowSpeed);
+            let elapsed = 0;
+            let sign = -1;
+
+            while (elapsed + cycleDuration <= activeDuration) {
+              const halfCycle = cycleDuration / 2;
+              yield* all(
+                ...laneLines.map((lane, laneIndex) =>
+                  lane
+                    .lineDashOffset(sign * swingAmplitude + laneIndex * 4, halfCycle, linear)
+                    .to(-sign * swingAmplitude + laneIndex * 4, halfCycle, linear)),
+              );
+              elapsed += cycleDuration;
+              sign *= -1;
+            }
+
+            const remaining = activeDuration - elapsed;
+            if (remaining > 0.01) {
+              yield* all(
+                ...laneLines.map((lane, laneIndex) =>
+                  lane.lineDashOffset(swingAmplitude * sign + laneIndex * 4, remaining, linear)),
+              );
+            }
+          } else {
+            yield* all(
+              ...laneLines.map((lane, laneIndex) =>
+                lane.lineDashOffset(
+                  target.directionMultiplier * dashTravel + laneIndex * target.directionMultiplier * 6,
+                  activeDuration,
+                  linear,
+                )),
+            );
+          }
+
+          yield* all(
+            ...laneLines.flatMap((lane, laneIndex) => [
+              lane.stroke(baseStroke, Math.min(0.06, activeDuration * 0.15), timingFunction),
+              lane.lineWidth(
+                laneIndex === 0 ? baseWidth : overlayWidth,
+                Math.min(0.06, activeDuration * 0.15),
+                timingFunction,
+              ),
+              lane.opacity(
+                laneIndex === 0 ? 0.9 : 0.72,
+                Math.min(0.06, activeDuration * 0.15),
+                timingFunction,
+              ),
+            ]),
+          );
+        } finally {
+          for (const overlayLane of overlayLanes) {
+            overlayLane.remove();
+          }
+        }
       })(),
     );
 
@@ -1562,6 +1931,7 @@ const executeLegacyScene = (
 };
 
 const executePlanDrivenScene = (
+  view: Node,
   scene: MotionSceneSpec,
   lifecycleResults: LifecycleResult[],
   sceneState: SceneState,
@@ -1569,6 +1939,7 @@ const executePlanDrivenScene = (
 ): PhaseExecutionPlan => {
   const lifecycleById = toLifecycleMap(lifecycleResults);
   const sceneElementById = toElementSpecMap(scene.elements);
+  const entityAnchorsById = collectEntityAnchors(lifecycleResults, sceneElementById);
 
   const entityTimingByKey = new Map<string, EntityTimingPlan>(
     (scene.animationPlan?.entities ?? []).map((timing) => [
@@ -1658,10 +2029,12 @@ const executePlanDrivenScene = (
             scene,
           );
           const interactionFlows = executeInteractionFlowsPhase(
+            view,
             scene,
             sceneDuration,
             sceneState,
             connectionTimingById,
+            entityAnchorsById,
           );
           phasePlan = {
             thread: toThread(
@@ -1706,7 +2079,9 @@ const executeStatusEffects = (
 
     const status = style.status;
     const baseDelay =
-      status === 'down' || status === 'error' ? phases.connect.start : phases.enter.start;
+      status === 'down' || status === 'error' || status === 'overloaded'
+        ? phases.connect.start
+        : phases.enter.start;
     const localDelay = baseDelay + index * 0.02;
     const duration = Math.max(0.18, Math.min(0.45, phases.connect.end - phases.connect.start));
     const timingFunction = resolveTimingFunction(MotionTokens.easing.standard);
@@ -2069,7 +2444,7 @@ export function* executeScene(
   );
 
   const motionExecution = scene.plan
-    ? executePlanDrivenScene(scene, lifecycleResults, state, sceneDuration)
+    ? executePlanDrivenScene(view, scene, lifecycleResults, state, sceneDuration)
     : executeLegacyScene(scene, lifecycleResults, state);
 
   const cameraTiming = resolveCameraTiming(scene, sceneDuration);

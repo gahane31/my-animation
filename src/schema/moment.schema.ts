@@ -199,7 +199,7 @@ export const InteractionSchema = z.object({
   id: z.string().min(1),
   from: z.string().min(1),
   to: z.string().min(1),
-  type: z.enum(['flow', 'burst', 'broadcast', 'ping']),
+  type: z.enum(['flow', 'burst', 'broadcast', 'ping', 'blocked']),
   intensity: optionalIntensitySchema,
 });
 

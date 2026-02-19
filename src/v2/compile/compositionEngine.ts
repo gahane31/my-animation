@@ -130,10 +130,40 @@ const buildCompositionScene = (scene: TopologyScene): CompositionScene => {
   };
 };
 
+const stabilizeEntityIcons = (scenes: TopologyScene[]): TopologyScene[] => {
+  const iconByEntityId = new Map<string, string | undefined>();
+  const typeByEntityId = new Map<string, string>();
+
+  return scenes.map((scene) => ({
+    ...scene,
+    entities: scene.entities.map((entity) => {
+      const previousType = typeByEntityId.get(entity.id);
+      if (previousType && previousType !== entity.type) {
+        iconByEntityId.delete(entity.id);
+      }
+
+      const previousIcon = iconByEntityId.get(entity.id);
+      const resolvedIcon = previousIcon ?? entity.icon;
+      if (resolvedIcon) {
+        iconByEntityId.set(entity.id, resolvedIcon);
+      }
+      typeByEntityId.set(entity.id, entity.type);
+
+      return {
+        ...entity,
+        icon: resolvedIcon,
+      };
+    }),
+  }));
+};
+
 export const composeTopologyPlan = (topologyPlan: TopologyPlan): CompositionPlan =>
-  compositionPlanSchema.parse({
-    duration: topologyPlan.duration,
-    scenes: topologyPlan.scenes
-      .sort((left, right) => left.start - right.start)
-      .map(buildCompositionScene),
-  });
+  compositionPlanSchema.parse((() => {
+    const orderedScenes = [...topologyPlan.scenes].sort((left, right) => left.start - right.start);
+    const iconStabilizedScenes = stabilizeEntityIcons(orderedScenes);
+
+    return {
+      duration: topologyPlan.duration,
+      scenes: iconStabilizedScenes.map(buildCompositionScene),
+    };
+  })());

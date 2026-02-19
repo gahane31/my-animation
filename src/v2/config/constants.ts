@@ -3,7 +3,7 @@ export const V2_PIPELINE_DEFAULTS = {
   topologyPath: 'output/v2/topology.llm.json',
   compositionPath: 'output/v2/composition.debug.json',
   layoutPath: 'output/v2/layout.debug.json',
+  gapAnalysisPath: 'output/v2/gap-analysis.debug.json',
   designedMomentsPath: 'output/v2/moments.designed.json',
   renderSpecPath: 'output/v2/renderspec.debug.json',
 } as const;
-

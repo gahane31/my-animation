@@ -12,6 +12,17 @@ interface Position {
   y: number;
 }
 
+interface PixelPoint {
+  x: number;
+  y: number;
+}
+
+interface PixelAnchor {
+  position: PixelPoint;
+  halfWidth: number;
+  halfHeight: number;
+}
+
 const CANVAS_WIDTH = 1080;
 const CANVAS_HEIGHT = 1920;
 
@@ -132,6 +143,344 @@ const resolveVerticalBounds = (scene: CompositionScene): {minY: number; maxY: nu
   };
 };
 
+type Segment = [PixelPoint, PixelPoint];
+
+const toPixelPoint = (position: Position): PixelPoint => ({
+  x: (position.x / 100) * CANVAS_WIDTH,
+  y: (position.y / 100) * CANVAS_HEIGHT,
+});
+
+const toPixelAnchor = (
+  entity: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  },
+  overrideX?: number,
+): PixelAnchor => ({
+  position: toPixelPoint({
+    x: overrideX ?? entity.x,
+    y: entity.y,
+  }),
+  halfWidth: Math.max(22, entity.width / 2),
+  halfHeight: Math.max(22, entity.height / 2),
+});
+
+const routeConnectionPoints = (
+  from: PixelAnchor,
+  to: PixelAnchor,
+  laneOffset = 0,
+): PixelPoint[] => {
+  const deltaXRaw = to.position.x - from.position.x;
+  const deltaYRaw = to.position.y - from.position.y;
+  const isVerticalRoute = Math.abs(deltaYRaw) >= Math.abs(deltaXRaw);
+
+  if (isVerticalRoute) {
+    const direction = to.position.y >= from.position.y ? 1 : -1;
+    const start: PixelPoint = {
+      x: from.position.x,
+      y: from.position.y + direction * from.halfHeight,
+    };
+    const end: PixelPoint = {
+      x: to.position.x,
+      y: to.position.y - direction * to.halfHeight,
+    };
+    const deltaX = end.x - start.x;
+
+    if (laneOffset === 0) {
+      return [start, end];
+    }
+
+    if (Math.abs(deltaX) <= 24) {
+      const laneX = start.x + laneOffset;
+      const midY = (start.y + end.y) / 2;
+      return [start, {x: laneX, y: midY}, end];
+    }
+
+    const turnY = (start.y + end.y) / 2;
+    return [start, {x: start.x, y: turnY}, {x: end.x, y: turnY}, end];
+  }
+
+  const direction = to.position.x >= from.position.x ? 1 : -1;
+  const start: PixelPoint = {
+    x: from.position.x + direction * from.halfWidth,
+    y: from.position.y,
+  };
+  const end: PixelPoint = {
+    x: to.position.x - direction * to.halfWidth,
+    y: to.position.y,
+  };
+  const deltaY = end.y - start.y;
+
+  if (laneOffset === 0 && Math.abs(deltaY) <= 24) {
+    return [start, end];
+  }
+
+  if (Math.abs(deltaY) <= 24) {
+    const midX = (start.x + end.x) / 2;
+    const laneY = start.y + laneOffset;
+    return [start, {x: midX, y: laneY}, end];
+  }
+
+  const turnX = (start.x + end.x) / 2;
+  return [start, {x: turnX, y: start.y}, {x: turnX, y: end.y}, end];
+};
+
+const toSegments = (points: PixelPoint[]): Segment[] => {
+  const segments: Segment[] = [];
+
+  for (let index = 1; index < points.length; index += 1) {
+    const previous = points[index - 1];
+    const current = points[index];
+
+    if (previous && current) {
+      segments.push([previous, current]);
+    }
+  }
+
+  return segments;
+};
+
+const orientation = (left: PixelPoint, middle: PixelPoint, right: PixelPoint): number => {
+  const value =
+    (middle.x - left.x) * (right.y - left.y) -
+    (middle.y - left.y) * (right.x - left.x);
+
+  if (Math.abs(value) < 1e-6) {
+    return 0;
+  }
+
+  return value > 0 ? 1 : -1;
+};
+
+const onSegment = (left: PixelPoint, right: PixelPoint, candidate: PixelPoint): boolean =>
+  candidate.x >= Math.min(left.x, right.x) - 1e-6 &&
+  candidate.x <= Math.max(left.x, right.x) + 1e-6 &&
+  candidate.y >= Math.min(left.y, right.y) - 1e-6 &&
+  candidate.y <= Math.max(left.y, right.y) + 1e-6;
+
+const segmentsIntersect = (left: Segment, right: Segment): boolean => {
+  const [a1, a2] = left;
+  const [b1, b2] = right;
+
+  if (!a1 || !a2 || !b1 || !b2) {
+    return false;
+  }
+
+  const o1 = orientation(a1, a2, b1);
+  const o2 = orientation(a1, a2, b2);
+  const o3 = orientation(b1, b2, a1);
+  const o4 = orientation(b1, b2, a2);
+
+  if (o1 !== o2 && o3 !== o4) {
+    return true;
+  }
+
+  if (o1 === 0 && onSegment(a1, a2, b1)) {
+    return true;
+  }
+  if (o2 === 0 && onSegment(a1, a2, b2)) {
+    return true;
+  }
+  if (o3 === 0 && onSegment(b1, b2, a1)) {
+    return true;
+  }
+  if (o4 === 0 && onSegment(b1, b2, a2)) {
+    return true;
+  }
+
+  return false;
+};
+
+interface RoutedConnection {
+  id: string;
+  from: string;
+  to: string;
+  points: PixelPoint[];
+}
+
+const routeVisibleConnections = (
+  scene: CompositionScene,
+  entitiesById: Map<
+    string,
+    {
+      id: string;
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    }
+  >,
+  xById: Map<string, number>,
+): RoutedConnection[] => {
+  const routed: RoutedConnection[] = [];
+
+  for (const connection of scene.visibleConnections) {
+    const fromEntity = entitiesById.get(connection.from);
+    const toEntity = entitiesById.get(connection.to);
+    if (!fromEntity || !toEntity) {
+      continue;
+    }
+
+    const fromAnchor = toPixelAnchor(fromEntity, xById.get(fromEntity.id));
+    const toAnchor = toPixelAnchor(toEntity, xById.get(toEntity.id));
+    routed.push({
+      id: connection.id,
+      from: connection.from,
+      to: connection.to,
+      points: routeConnectionPoints(fromAnchor, toAnchor, 0),
+    });
+  }
+
+  return routed;
+};
+
+const computeLayoutCost = (
+  scene: CompositionScene,
+  entitiesById: Map<
+    string,
+    {
+      id: string;
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    }
+  >,
+  xById: Map<string, number>,
+  initialXById: Map<string, number>,
+): number => {
+  const routedConnections = routeVisibleConnections(scene, entitiesById, xById);
+
+  let totalPolylineLength = 0;
+  for (const routed of routedConnections) {
+    const segments = toSegments(routed.points);
+    for (const [start, end] of segments) {
+      if (!start || !end) {
+        continue;
+      }
+      totalPolylineLength += Math.hypot(end.x - start.x, end.y - start.y);
+    }
+  }
+
+  let crossingCount = 0;
+  for (let leftIndex = 0; leftIndex < routedConnections.length; leftIndex += 1) {
+    const left = routedConnections[leftIndex];
+    if (!left) {
+      continue;
+    }
+
+    for (let rightIndex = leftIndex + 1; rightIndex < routedConnections.length; rightIndex += 1) {
+      const right = routedConnections[rightIndex];
+      if (!right) {
+        continue;
+      }
+
+      const sharesEndpoint =
+        left.from === right.from ||
+        left.from === right.to ||
+        left.to === right.from ||
+        left.to === right.to;
+      if (sharesEndpoint) {
+        continue;
+      }
+
+      const leftSegments = toSegments(left.points);
+      const rightSegments = toSegments(right.points);
+      const intersects = leftSegments.some((leftSegment) =>
+        rightSegments.some((rightSegment) => segmentsIntersect(leftSegment, rightSegment)),
+      );
+
+      if (intersects) {
+        crossingCount += 1;
+      }
+    }
+  }
+
+  let deviation = 0;
+  for (const [entityId, initialX] of initialXById.entries()) {
+    deviation += Math.abs((xById.get(entityId) ?? initialX) - initialX);
+  }
+
+  // Strongly prefer no crossings, then shorter routes, then stable x drift.
+  return crossingCount * 1_000_000 + totalPolylineLength + deviation * 90;
+};
+
+const optimizeHorizontalPositions = (
+  scene: CompositionScene,
+  laidOutEntities: Array<{
+    id: string;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    count?: number;
+  }>,
+): Map<string, number> => {
+  if (laidOutEntities.length < 5 || scene.visibleConnections.length < 3) {
+    return new Map(laidOutEntities.map((entity) => [entity.id, entity.x]));
+  }
+
+  const bounds = resolveHorizontalBounds(scene);
+  const candidateXs = Array.from(
+    new Set([
+      bounds.leftX,
+      (bounds.leftX + bounds.centerX) / 2,
+      bounds.centerX,
+      (bounds.centerX + bounds.rightX) / 2,
+      bounds.rightX,
+    ]),
+  ).sort((left, right) => left - right);
+
+  const entitiesById = new Map(laidOutEntities.map((entity) => [entity.id, entity]));
+  const initialXById = new Map(laidOutEntities.map((entity) => [entity.id, entity.x]));
+  const xById = new Map(initialXById);
+
+  const movableEntityIds = laidOutEntities
+    .filter((entity, index) => index > 0 && Math.round(entity.count ?? 1) <= 1)
+    .map((entity) => entity.id);
+
+  for (let pass = 0; pass < 4; pass += 1) {
+    let improvedInPass = false;
+
+    for (const entityId of movableEntityIds) {
+      const currentX = xById.get(entityId);
+      if (currentX == null) {
+        continue;
+      }
+
+      let bestX = currentX;
+      let bestCost = computeLayoutCost(scene, entitiesById, xById, initialXById);
+      const sortedCandidates = [...candidateXs].sort(
+        (left, right) => Math.abs(left - currentX) - Math.abs(right - currentX),
+      );
+
+      for (const candidateX of sortedCandidates) {
+        if (Math.abs(candidateX - currentX) < 1e-3) {
+          continue;
+        }
+
+        xById.set(entityId, candidateX);
+        const candidateCost = computeLayoutCost(scene, entitiesById, xById, initialXById);
+        if (candidateCost + 1e-3 < bestCost) {
+          bestCost = candidateCost;
+          bestX = candidateX;
+          improvedInPass = true;
+        }
+      }
+
+      xById.set(entityId, bestX);
+    }
+
+    if (!improvedInPass) {
+      break;
+    }
+  }
+
+  return xById;
+};
+
 const placeScene = (scene: CompositionScene): LaidOutScene => {
   const orderedEntities = [...scene.visibleEntities];
   const {minY, maxY} = resolveVerticalBounds(scene);
@@ -167,9 +516,15 @@ const placeScene = (scene: CompositionScene): LaidOutScene => {
     };
   });
 
+  const optimizedXById = optimizeHorizontalPositions(scene, laidOutEntities);
+  const optimizedEntities = laidOutEntities.map((entity) => ({
+    ...entity,
+    x: optimizedXById.get(entity.id) ?? entity.x,
+  }));
+
   return {
     ...scene,
-    laidOutEntities,
+    laidOutEntities: optimizedEntities,
   };
 };
 

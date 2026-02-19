@@ -80,7 +80,25 @@ const CLUSTER_HORIZONTAL_SPACING = 12;
 const DEFAULT_PRIMARY_POSITION = {x: 50, y: 55};
 const DEFAULT_SECONDARY_POSITION = {x: 50, y: 70};
 
+const REPLICA_RENDER_TYPES = new Set<ComponentType>([
+  ComponentType.Server,
+  ComponentType.Worker,
+  ComponentType.MessageQueue,
+  ComponentType.Queue,
+  ComponentType.DeadLetterQueue,
+]);
+
 const clampPercent = (value: number): number => Math.min(100, Math.max(0, value));
+
+const clampToRange = (value: number, min: number, max: number): number => {
+  if (min >= max) {
+    return (min + max) / 2;
+  }
+  return Math.min(max, Math.max(min, value));
+};
+
+const shouldRenderAsReplicas = (type: ComponentType): boolean =>
+  REPLICA_RENDER_TYPES.has(type);
 
 const scaledVisualStyle = (
   style: EntityVisualStyle | undefined,
@@ -102,10 +120,7 @@ const scaledVisualStyle = (
 const resolveSceneScaleFactor = (moment: DesignedMoment): number => {
   const renderUnitCount = moment.entities.reduce((total, entity) => {
     const roundedCount = Math.round(entity.count ?? 1);
-    const shouldRenderAsReplicas =
-      entity.type === ComponentType.Server ||
-      entity.type === ComponentType.Worker;
-    const replicas = shouldRenderAsReplicas
+    const replicas = shouldRenderAsReplicas(entity.type)
       ? Math.max(1, Math.min(MAX_CLUSTER_SIZE, roundedCount))
       : 1;
     return total + replicas;
@@ -155,6 +170,8 @@ const componentNormalizedWidth = (type: ComponentType): number => {
     case ComponentType.Cache:
       return 160 / 1080 * 100;
     case ComponentType.Queue:
+    case ComponentType.MessageQueue:
+    case ComponentType.DeadLetterQueue:
       return 148 / 1080 * 100;
     case ComponentType.Cdn:
       return 170 / 1080 * 100;
@@ -163,6 +180,49 @@ const componentNormalizedWidth = (type: ComponentType): number => {
     default:
       return 150 / 1080 * 100;
   }
+};
+
+const componentNormalizedHeight = (type: ComponentType): number => {
+  switch (type) {
+    case ComponentType.UsersCluster:
+      return 120 / 1920 * 100;
+    case ComponentType.Server:
+      return 128 / 1920 * 100;
+    case ComponentType.LoadBalancer:
+      return 128 / 1920 * 100;
+    case ComponentType.Database:
+      return 144 / 1920 * 100;
+    case ComponentType.Cache:
+      return 116 / 1920 * 100;
+    case ComponentType.Queue:
+    case ComponentType.MessageQueue:
+    case ComponentType.DeadLetterQueue:
+      return 120 / 1920 * 100;
+    case ComponentType.Cdn:
+      return 130 / 1920 * 100;
+    case ComponentType.Worker:
+      return 136 / 1920 * 100;
+    default:
+      return 120 / 1920 * 100;
+  }
+};
+
+const clampEntityPosition = (
+  type: ComponentType,
+  position: {x: number; y: number},
+  sceneScaleFactor: number,
+): {x: number; y: number} => {
+  const halfWidth = (componentNormalizedWidth(type) * sceneScaleFactor) / 2;
+  const halfHeight = (componentNormalizedHeight(type) * sceneScaleFactor) / 2;
+  const minX = halfWidth + 2.5;
+  const maxX = 100 - halfWidth - 2.5;
+  const minY = halfHeight + 2.5;
+  const maxY = 100 - halfHeight - 5;
+
+  return {
+    x: clampToRange(position.x, minX, maxX),
+    y: clampToRange(position.y, minY, maxY),
+  };
 };
 
 const toCameraAction = (moment: DesignedMoment): CameraActionType | undefined => {
@@ -203,22 +263,25 @@ const expandEntityInstances = (
 ): EntityInstance[] => {
   const basePosition = resolveBasePosition(entity);
   const roundedCount = Math.round(entity.count ?? 1);
-  const shouldRenderAsReplicas =
-    entity.type === ComponentType.Server ||
-    entity.type === ComponentType.Worker;
-  const count = shouldRenderAsReplicas
+  const count = shouldRenderAsReplicas(entity.type)
     ? Math.max(1, Math.min(MAX_CLUSTER_SIZE, roundedCount))
     : 1;
 
   if (count === 1) {
+    const clampedPosition = clampEntityPosition(
+      entity.type,
+      {
+        x: clampPercent(basePosition.x),
+        y: clampPercent(basePosition.y),
+      },
+      sceneScaleFactor,
+    );
+
     return [
       {
         sourceEntityId: entity.id,
         id: entity.id,
-        position: {
-          x: clampPercent(basePosition.x),
-          y: clampPercent(basePosition.y),
-        },
+        position: clampedPosition,
         isHero: entity.id === heroEntityId,
         isLead: true,
       },
@@ -226,12 +289,16 @@ const expandEntityInstances = (
   }
 
   const centerOffset = (count - 1) / 2;
-  const spreadAcrossX =
-    entity.type === ComponentType.Server ||
-    entity.type === ComponentType.Worker;
+  const spreadAcrossX = shouldRenderAsReplicas(entity.type);
   // Keep replicated horizontal groups (server xN / worker xN) visually separated
   // even after hierarchy emphasis scales nodes up at runtime.
-  const widthDrivenSpacing = componentNormalizedWidth(entity.type) * sceneScaleFactor * 1.45;
+  const spacingMultiplier =
+    entity.type === ComponentType.MessageQueue ||
+    entity.type === ComponentType.Queue ||
+    entity.type === ComponentType.DeadLetterQueue
+      ? 1.2
+      : 1.45;
+  const widthDrivenSpacing = componentNormalizedWidth(entity.type) * sceneScaleFactor * spacingMultiplier;
   const spacing = spreadAcrossX
     ? Math.max(CLUSTER_HORIZONTAL_SPACING, widthDrivenSpacing)
     : CLUSTER_VERTICAL_SPACING;
@@ -239,21 +306,21 @@ const expandEntityInstances = (
 
   return Array.from({length: count}, (_, index) => {
     const offsetFromCenter = index - centerOffset;
-    const x = spreadAcrossX
-      ? clampPercent(basePosition.x + offsetFromCenter * spacing)
-      : clampPercent(basePosition.x);
-    const y = spreadAcrossX
-      ? clampPercent(basePosition.y)
-      : clampPercent(basePosition.y + offsetFromCenter * spacing);
+    const unclampedPosition = {
+      x: spreadAcrossX
+        ? clampPercent(basePosition.x + offsetFromCenter * spacing)
+        : clampPercent(basePosition.x),
+      y: spreadAcrossX
+        ? clampPercent(basePosition.y)
+        : clampPercent(basePosition.y + offsetFromCenter * spacing),
+    };
+    const clampedPosition = clampEntityPosition(entity.type, unclampedPosition, sceneScaleFactor);
     const elementId = index === leadIndex ? entity.id : `${entity.id}_${index + 1}`;
 
     return {
       sourceEntityId: entity.id,
       id: elementId,
-      position: {
-        x,
-        y,
-      },
+      position: clampedPosition,
       isHero: entity.id === heroEntityId && index === leadIndex,
       isLead: index === leadIndex,
     };

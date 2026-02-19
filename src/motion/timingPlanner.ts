@@ -70,7 +70,6 @@ const entityDiffIsPromotedPrimary = (
 const clampTimingDuration = (value: number, min: number, max: number): number =>
   Math.min(max, Math.max(min, value));
 
-const ADDITION_DELAY_MULTIPLIER = 0.18;
 const ADDITION_STAGGER_MULTIPLIER = 0.4;
 const ADDITION_DURATION_MULTIPLIER = 0.62;
 
@@ -95,7 +94,8 @@ export const planEntityTimings = (
   isHook = false,
   transition?: MomentTransition,
 ): EntityTimingPlan[] => {
-  const personalityTokens = MotionPersonalities[personality];
+  const personalityTokens =
+    MotionPersonalities[personality] ?? MotionPersonalities[DEFAULT_MOTION_PERSONALITY];
   const hookSpeedMultiplier = isHook ? HookTokens.motionBoost.speedMultiplier : 1;
   const hookStaggerMultiplier = isHook ? HookTokens.motionBoost.staggerMultiplier : 1;
   const effectiveSpeedMultiplier = personalityTokens.speedMultiplier * hookSpeedMultiplier;
@@ -144,6 +144,20 @@ export const planEntityTimings = (
     (entry) => entityDiffIsAdd(entry.type) || entityDiffIsPromotedPrimary(entry),
   );
 
+  // Keep entering entities from colliding with outgoing/moving entities.
+  // We let removals/moves visibly clear first, then start additions.
+  const latestRemovalClear = timings
+    .filter((timing) => timing.action === 'remove')
+    .reduce((maxClear, timing) => Math.max(maxClear, timing.delay + timing.duration * 0.75), 0);
+  const latestMoveClear = timings
+    .filter((timing) => timing.action === 'move')
+    .reduce((maxClear, timing) => Math.max(maxClear, timing.delay + timing.duration * 0.55), 0);
+  const additionDelayFloor = Math.max(phases.enter.start, latestRemovalClear, latestMoveClear);
+  const additionDelayCap = Math.max(
+    additionDelayFloor + 0.02,
+    Math.min(sceneDuration * 0.82, phases.connect.start),
+  );
+
   const additionsOrdered = [...additionCandidates].sort((left, right) => {
     const leftIsPrimary =
       (primaryEntityIds?.has(left.entityId) ?? false) || entityDiffIsPromotedPrimary(left);
@@ -162,9 +176,8 @@ export const planEntityTimings = (
     const isPrimary =
       (primaryEntityIds?.has(entry.entityId) ?? false) || entityDiffIsPromotedPrimary(entry);
     const baseDelay =
-      phases.enter.start * ADDITION_DELAY_MULTIPLIER +
-      index * Math.max(0.03, effectiveStagger * ADDITION_STAGGER_MULTIPLIER);
-    const delay = clampDelay(baseDelay + (isPrimary ? 0.05 : 0), phases.enter.end * 0.85);
+      additionDelayFloor + index * Math.max(0.03, effectiveStagger * ADDITION_STAGGER_MULTIPLIER);
+    const delay = clampDelay(baseDelay + (isPrimary ? 0.05 : 0), additionDelayCap);
     const baseDuration = phaseDuration(phases.enter);
     const duration = clampTimingDuration(
       (isPrimary ? baseDuration * 1.05 : baseDuration) *
@@ -196,7 +209,8 @@ export const planConnectionTimings = (
   isHook = false,
   transition?: MomentTransition,
 ): ConnectionTimingPlan[] => {
-  const personalityTokens = MotionPersonalities[personality];
+  const personalityTokens =
+    MotionPersonalities[personality] ?? MotionPersonalities[DEFAULT_MOTION_PERSONALITY];
   const hookSpeedMultiplier = isHook ? HookTokens.motionBoost.speedMultiplier : 1;
   const hookStaggerMultiplier = isHook ? HookTokens.motionBoost.staggerMultiplier : 1;
   const effectiveSpeedMultiplier = personalityTokens.speedMultiplier * hookSpeedMultiplier;
@@ -223,7 +237,8 @@ export const planCameraTiming = (
   personality: MotionPersonalityId = DEFAULT_MOTION_PERSONALITY,
   isHook = false,
 ): CameraTimingPlan | null => {
-  const personalityTokens = MotionPersonalities[personality];
+  const personalityTokens =
+    MotionPersonalities[personality] ?? MotionPersonalities[DEFAULT_MOTION_PERSONALITY];
   const hookSpeedMultiplier = isHook ? HookTokens.motionBoost.speedMultiplier : 1;
   const effectiveSpeedMultiplier = personalityTokens.speedMultiplier * hookSpeedMultiplier;
   const phases = getScenePhases(sceneDuration);

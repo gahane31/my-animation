@@ -177,5 +177,6 @@ export const summarizeLucideIconCatalog = (): string =>
     '- avoid container-style variants like square-*/layout-* when clean diagram icons are preferred.',
     '- Suggested commonly useful Lucide tokens:',
     `  ${LUCIDE_ICON_NAMES.join(', ')}`,
+    '- These are just suggestions, Use any valid lucid icon applicable',
     '- If icon is null, renderer falls back to a component-type default.',
   ].join('\n');

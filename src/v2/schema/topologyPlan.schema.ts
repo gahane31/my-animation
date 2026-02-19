@@ -28,6 +28,10 @@ const optionalIntensitySchema = z.preprocess(
   nullToUndefined,
   z.enum(['low', 'medium', 'high']).optional(),
 );
+const connectionTrafficOutcomeSchema = z.preprocess(
+  nullToUndefined,
+  z.enum(['normal', 'allow', 'block', 'allow_and_block']).default('normal'),
+);
 
 const normalizeConnectionTypeInput = (value: unknown): unknown => {
   if (typeof value !== 'string') {
@@ -127,6 +131,7 @@ export const topologyConnectionSchema = z.object({
   pattern: z.enum(FLOW_PATTERNS),
   intensity: optionalIntensitySchema,
   connection_type: connectionTypeSchema,
+  traffic_outcome: connectionTrafficOutcomeSchema,
 });
 
 const addEntityOperationSchema = z.object({
@@ -243,6 +248,8 @@ export const topologySceneSchema = z
     directives: optionalSceneDirectivesSchema,
   })
   .superRefine((scene, context) => {
+    const BLOCKED_NARRATION_PATTERN = /\b(block|blocked|throttle|throttled|reject|rejected|drop|dropped|deny|denied)\b/i;
+    const ALLOW_NARRATION_PATTERN = /\b(allow|allowed|permit|permitted|pass|passes|passing)\b/i;
     const entityIds = new Set<string>();
     const entityIndexById = new Map<string, number>();
     scene.entities.forEach((entity, index) => {
@@ -317,6 +324,49 @@ export const topologySceneSchema = z
       } else {
         seenUndirectedPairs.add(pairKey);
       }
+
+      if (
+        connection.connection_type === 'static' &&
+        (connection.traffic_outcome === 'block' ||
+          connection.traffic_outcome === 'allow_and_block')
+      ) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Connection "${connection.id}" with traffic_outcome "${connection.traffic_outcome}" cannot be static`,
+          path: ['connections'],
+        });
+      }
+    }
+
+    const narrationHasBlockedSemantics = BLOCKED_NARRATION_PATTERN.test(scene.narration);
+    const narrationHasAllowSemantics = ALLOW_NARRATION_PATTERN.test(scene.narration);
+    const hasBlockedOutcome = scene.connections.some(
+      (connection) =>
+        connection.traffic_outcome === 'block' ||
+        connection.traffic_outcome === 'allow_and_block',
+    );
+    const hasAllowedFlowOutcome = scene.connections.some(
+      (connection) =>
+        connection.connection_type !== 'static' &&
+        (connection.traffic_outcome === 'normal' ||
+          connection.traffic_outcome === 'allow' ||
+          connection.traffic_outcome === 'allow_and_block'),
+    );
+
+    if (narrationHasBlockedSemantics && !hasBlockedOutcome) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Scene "${scene.id}" narration implies blocked traffic but no connection has traffic_outcome "block" or "allow_and_block"`,
+        path: ['connections'],
+      });
+    }
+
+    if (narrationHasBlockedSemantics && narrationHasAllowSemantics && !hasAllowedFlowOutcome) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Scene "${scene.id}" narration implies allow-vs-block outcome but no non-static allowed flow path is defined`,
+        path: ['connections'],
+      });
     }
 
     if (scene.transition) {
@@ -495,7 +545,7 @@ export const topologyPlanResponseFormat = {
               items: {
                 type: 'object',
                 additionalProperties: false,
-                required: ['id', 'from', 'to', 'kind', 'pattern', 'intensity', 'connection_type'],
+                required: ['id', 'from', 'to', 'kind', 'pattern', 'intensity', 'connection_type', 'traffic_outcome'],
                 properties: {
                   id: {type: 'string', minLength: 1},
                   from: {type: 'string', minLength: 1},
@@ -506,6 +556,12 @@ export const topologyPlanResponseFormat = {
                     anyOf: [{type: 'string', enum: ['low', 'medium', 'high']}, {type: 'null'}],
                   },
                   connection_type: {type: 'string', enum: ['static', 'flowing', 'both_ways']},
+                  traffic_outcome: {
+                    anyOf: [
+                      {type: 'string', enum: ['normal', 'allow', 'block', 'allow_and_block']},
+                      {type: 'null'},
+                    ],
+                  },
                 },
               },
             },

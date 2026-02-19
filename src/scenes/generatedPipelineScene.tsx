@@ -15,10 +15,10 @@ const renderSpec = {
   "duration": 60,
   "scenes": [
     {
-      "id": "s1",
+      "id": "s1-baseline-direct",
       "start": 0,
       "end": 6,
-      "narration": "A Users cluster sends steady API requests straight into one Server, and the Server talks to a Database to answer them.",
+      "narration": "Users send requests straight to a worker, and work starts immediately.",
       "elements": [
         {
           "id": "users",
@@ -28,74 +28,48 @@ const renderSpec = {
           "icon": "users",
           "position": {
             "x": 50,
-            "y": 9.66
+            "y": 12.32
           },
           "enter": "zoom_in",
           "visualStyle": {
-            "size": 149.4,
+            "size": 162,
             "opacity": 1,
             "color": "#34D399",
-            "strokeWidth": 2.7829653249726274,
+            "strokeWidth": 2.897944098839728,
             "strokeColor": "#34D399",
             "glow": false,
             "glowColor": "#34D399",
             "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 52.987199999999994,
+            "fontSize": 57.455999999999996,
             "fontWeight": 600,
             "status": "active"
           }
         },
         {
-          "id": "app_server",
-          "type": "server",
-          "sourceEntityId": "app_server",
-          "label": "Server",
-          "icon": "server",
+          "id": "worker",
+          "type": "worker",
+          "sourceEntityId": "worker",
+          "label": "Worker",
+          "icon": "cpu",
           "position": {
             "x": 50,
-            "y": 40.25
+            "y": 68.18
           },
           "enter": "zoom_in",
           "visualStyle": {
-            "size": 149.4,
+            "size": 162,
             "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.7829653249726274,
-            "strokeColor": "#35C4C8",
+            "color": "#34D399",
+            "strokeWidth": 2.897944098839728,
+            "strokeColor": "#34D399",
             "glow": false,
-            "glowColor": "#35C4C8",
+            "glowColor": "#34D399",
             "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 52.987199999999994,
+            "fontSize": 57.455999999999996,
             "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_db",
-          "type": "database",
-          "sourceEntityId": "app_db",
-          "label": "Database",
-          "icon": "database",
-          "position": {
-            "x": 50,
-            "y": 70.84
-          },
-          "enter": "zoom_in",
-          "visualStyle": {
-            "size": 149.4,
-            "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.7829653249726274,
-            "strokeColor": "#35C4C8",
-            "glow": false,
-            "glowColor": "#35C4C8",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 52.987199999999994,
-            "fontWeight": 600,
-            "status": "normal"
+            "status": "active"
           }
         }
       ],
@@ -104,77 +78,50 @@ const renderSpec = {
           "id": "users",
           "type": "users_cluster",
           "count": 1,
-          "importance": "primary",
+          "importance": "secondary",
           "status": "active",
           "label": "Users",
           "icon": "users",
           "layout": {
             "x": 50,
-            "y": 9.66
+            "y": 12.32
           }
         },
         {
-          "id": "app_server",
-          "type": "server",
+          "id": "worker",
+          "type": "worker",
           "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Server",
-          "icon": "server",
+          "importance": "primary",
+          "status": "active",
+          "label": "Worker",
+          "icon": "cpu",
           "layout": {
             "x": 50,
-            "y": 40.25
-          }
-        },
-        {
-          "id": "app_db",
-          "type": "database",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Database",
-          "icon": "database",
-          "layout": {
-            "x": 50,
-            "y": 70.84
+            "y": 68.18
           }
         }
       ],
       "connections": [
         {
-          "id": "c_users_to_server",
+          "id": "c_users_to_worker_request",
           "from": "users",
-          "to": "app_server",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_server_to_db",
-          "from": "app_server",
-          "to": "app_db",
+          "to": "worker",
           "direction": "one_way",
           "style": "solid"
         }
       ],
       "interactions": [
         {
-          "id": "i_c_users_to_server_fwd",
+          "id": "i_c_users_to_worker_request_fwd",
           "from": "users",
-          "to": "app_server",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_server_to_db_fwd",
-          "from": "app_server",
-          "to": "app_db",
+          "to": "worker",
           "type": "flow",
           "intensity": "medium"
         }
       ],
       "sourceCamera": {
         "mode": "focus",
-        "target": "users",
+        "target": "worker",
         "zoom": 1
       },
       "directives": {
@@ -203,81 +150,54 @@ const renderSpec = {
             "id": "users",
             "type": "users_cluster",
             "count": 1,
-            "importance": "primary",
+            "importance": "secondary",
             "status": "active",
             "label": "Users",
             "icon": "users",
             "layout": {
               "x": 50,
-              "y": 9.66
+              "y": 12.32
             }
           },
           {
-            "id": "app_server",
-            "type": "server",
+            "id": "worker",
+            "type": "worker",
             "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Server",
-            "icon": "server",
+            "importance": "primary",
+            "status": "active",
+            "label": "Worker",
+            "icon": "cpu",
             "layout": {
               "x": 50,
-              "y": 40.25
-            }
-          },
-          {
-            "id": "app_db",
-            "type": "database",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Database",
-            "icon": "database",
-            "layout": {
-              "x": 50,
-              "y": 70.84
+              "y": 68.18
             }
           }
         ],
         "connections": [
           {
-            "id": "c_users_to_server",
+            "id": "c_users_to_worker_request",
             "from": "users",
-            "to": "app_server",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_server_to_db",
-            "from": "app_server",
-            "to": "app_db",
+            "to": "worker",
             "direction": "one_way",
             "style": "solid"
           }
         ],
         "interactions": [
           {
-            "id": "i_c_users_to_server_fwd",
+            "id": "i_c_users_to_worker_request_fwd",
             "from": "users",
-            "to": "app_server",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_server_to_db_fwd",
-            "from": "app_server",
-            "to": "app_db",
+            "to": "worker",
             "type": "flow",
             "intensity": "medium"
           }
         ],
         "camera": {
           "mode": "focus",
-          "target": "users",
+          "target": "worker",
           "zoom": 1
         }
       },
-      "motionPersonality": "ENERGETIC",
+      "motionPersonality": "CALM",
       "diff": {
         "entityDiffs": [
           {
@@ -286,31 +206,19 @@ const renderSpec = {
           },
           {
             "type": "entity_added",
-            "entityId": "app_server"
-          },
-          {
-            "type": "entity_added",
-            "entityId": "app_db"
+            "entityId": "worker"
           }
         ],
         "connectionDiffs": [
           {
             "type": "connection_added",
-            "connectionId": "c_users_to_server"
-          },
-          {
-            "type": "connection_added",
-            "connectionId": "c_server_to_db"
+            "connectionId": "c_users_to_worker_request"
           }
         ],
         "interactionDiffs": [
           {
             "type": "interaction_added",
-            "interactionId": "i_c_users_to_server_fwd"
-          },
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_server_to_db_fwd"
+            "interactionId": "i_c_users_to_worker_request_fwd"
           }
         ],
         "cameraDiffs": [
@@ -319,7 +227,7 @@ const renderSpec = {
             "from": null,
             "to": {
               "mode": "focus",
-              "target": "users",
+              "target": "worker",
               "zoom": 1
             }
           }
@@ -347,17 +255,9 @@ const renderSpec = {
             "enter": "zoom_in"
           },
           {
-            "entityId": "app_server",
+            "entityId": "worker",
             "elementIds": [
-              "app_server"
-            ],
-            "action": "add",
-            "enter": "zoom_in"
-          },
-          {
-            "entityId": "app_db",
-            "elementIds": [
-              "app_db"
+              "worker"
             ],
             "action": "add",
             "enter": "zoom_in"
@@ -370,24 +270,15 @@ const renderSpec = {
               "users"
             ],
             "action": "connect",
-            "connectionId": "c_users_to_server"
+            "connectionId": "c_users_to_worker_request"
           },
           {
-            "entityId": "app_server",
+            "entityId": "worker",
             "elementIds": [
-              "app_server"
+              "worker"
             ],
             "action": "connect",
-            "connectionId": "c_server_to_db",
-            "cleanup": false
-          },
-          {
-            "entityId": "app_db",
-            "elementIds": [
-              "app_db"
-            ],
-            "action": "connect",
-            "connectionId": "c_server_to_db"
+            "connectionId": "c_users_to_worker_request"
           }
         ],
         "interactions": [
@@ -397,67 +288,44 @@ const renderSpec = {
               "users"
             ],
             "action": "interact",
-            "interactionId": "i_c_users_to_server_fwd"
+            "interactionId": "i_c_users_to_worker_request_fwd"
           },
           {
-            "entityId": "app_server",
+            "entityId": "worker",
             "elementIds": [
-              "app_server"
+              "worker"
             ],
             "action": "interact",
-            "interactionId": "i_c_server_to_db_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "app_db",
-            "elementIds": [
-              "app_db"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_server_to_db_fwd"
+            "interactionId": "i_c_users_to_worker_request_fwd"
           }
         ]
       },
       "animationPlan": {
         "entities": [
           {
-            "entityId": "app_db",
-            "action": "add",
-            "delay": 0.32399999999999995,
-            "duration": 0.54,
-            "easing": "cubic-bezier(0.4,0,0.2,1)",
-            "isPrimary": false
-          },
-          {
-            "entityId": "app_server",
-            "action": "add",
-            "delay": 0.354,
-            "duration": 0.54,
-            "easing": "cubic-bezier(0.4,0,0.2,1)",
-            "isPrimary": false
-          },
-          {
             "entityId": "users",
             "action": "add",
-            "delay": 0.43399999999999994,
+            "delay": 1.7999999999999998,
+            "duration": 0.54,
+            "easing": "cubic-bezier(0.2,0,0,1)",
+            "isPrimary": false
+          },
+          {
+            "entityId": "worker",
+            "action": "add",
+            "delay": 1.882,
             "duration": 0.62,
-            "easing": "cubic-bezier(0.4,0,0.2,1)",
+            "easing": "cubic-bezier(0.2,0,0,1)",
             "scale": 1.2,
             "isPrimary": true
           }
         ],
         "connections": [
           {
-            "connectionId": "c_users_to_server",
+            "connectionId": "c_users_to_worker_request",
             "delay": 0.504,
             "duration": 0.42,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          },
-          {
-            "connectionId": "c_server_to_db",
-            "delay": 0.544,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
+            "easing": "cubic-bezier(0.2,0,0,1)"
           }
         ],
         "camera": null
@@ -469,39 +337,26 @@ const renderSpec = {
             "id": "users",
             "type": "users_cluster",
             "count": 1,
-            "importance": "primary",
+            "importance": "secondary",
             "status": "active",
             "label": "Users",
             "icon": "users",
             "layout": {
               "x": 50,
-              "y": 9.66
+              "y": 12.32
             }
           },
           {
-            "id": "app_server",
-            "type": "server",
+            "id": "worker",
+            "type": "worker",
             "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Server",
-            "icon": "server",
+            "importance": "primary",
+            "status": "active",
+            "label": "Worker",
+            "icon": "cpu",
             "layout": {
               "x": 50,
-              "y": 40.25
-            }
-          },
-          {
-            "id": "app_db",
-            "type": "database",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Database",
-            "icon": "database",
-            "layout": {
-              "x": 50,
-              "y": 70.84
+              "y": 68.18
             }
           }
         ],
@@ -510,16 +365,9 @@ const renderSpec = {
         "updatedEntities": [],
         "addedConnections": [
           {
-            "id": "c_users_to_server",
+            "id": "c_users_to_worker_request",
             "from": "users",
-            "to": "app_server",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_server_to_db",
-            "from": "app_server",
-            "to": "app_db",
+            "to": "worker",
             "direction": "one_way",
             "style": "solid"
           }
@@ -527,16 +375,9 @@ const renderSpec = {
         "removedConnections": [],
         "addedInteractions": [
           {
-            "id": "i_c_users_to_server_fwd",
+            "id": "i_c_users_to_worker_request_fwd",
             "from": "users",
-            "to": "app_server",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_server_to_db_fwd",
-            "from": "app_server",
-            "to": "app_db",
+            "to": "worker",
             "type": "flow",
             "intensity": "medium"
           }
@@ -547,17 +388,312 @@ const renderSpec = {
           "from": null,
           "to": {
             "mode": "focus",
-            "target": "users",
+            "target": "worker",
             "zoom": 1
           }
         }
       }
     },
     {
-      "id": "s2",
+      "id": "s2-spike-overload",
       "start": 6,
       "end": 12,
-      "narration": "The same Users cluster now sends a burst of requests that overwhelms the single Server, and the Database becomes a bottleneck behind it.",
+      "narration": "A traffic spike hits, and the worker overloads under the burst.",
+      "elements": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "sourceEntityId": "users",
+          "label": "Users",
+          "icon": "users",
+          "position": {
+            "x": 50,
+            "y": 12.32
+          },
+          "visualStyle": {
+            "size": 162,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.897944098839728,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 57.455999999999996,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "worker",
+          "type": "worker",
+          "sourceEntityId": "worker",
+          "label": "Worker",
+          "icon": "cpu",
+          "position": {
+            "x": 50,
+            "y": 68.18
+          },
+          "visualStyle": {
+            "size": 162,
+            "opacity": 1,
+            "color": "#EF4444",
+            "strokeWidth": 2.897944098839728,
+            "strokeColor": "#EF4444",
+            "glow": false,
+            "glowColor": "#EF4444",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 57.455999999999996,
+            "fontWeight": 600,
+            "status": "overloaded"
+          }
+        }
+      ],
+      "entities": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Users",
+          "icon": "users",
+          "layout": {
+            "x": 50,
+            "y": 12.32
+          }
+        },
+        {
+          "id": "worker",
+          "type": "worker",
+          "count": 1,
+          "importance": "primary",
+          "status": "overloaded",
+          "label": "Worker",
+          "icon": "cpu",
+          "layout": {
+            "x": 50,
+            "y": 68.18
+          }
+        }
+      ],
+      "connections": [
+        {
+          "id": "c_users_to_worker_request",
+          "from": "users",
+          "to": "worker",
+          "direction": "one_way",
+          "style": "solid"
+        }
+      ],
+      "interactions": [
+        {
+          "id": "i_c_users_to_worker_request_fwd",
+          "from": "users",
+          "to": "worker",
+          "type": "burst",
+          "intensity": "high"
+        }
+      ],
+      "sourceCamera": {
+        "mode": "focus",
+        "target": "worker",
+        "zoom": 1.1
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "medium",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "default",
+          "background_texture": "grid",
+          "glow_strength": "soft"
+        },
+        "motion": {
+          "entry_style": "draw_in",
+          "pacing": "balanced"
+        },
+        "flow": {
+          "renderer": "hybrid"
+        }
+      },
+      "source": {
+        "entities": [
+          {
+            "id": "users",
+            "type": "users_cluster",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Users",
+            "icon": "users",
+            "layout": {
+              "x": 50,
+              "y": 12.32
+            }
+          },
+          {
+            "id": "worker",
+            "type": "worker",
+            "count": 1,
+            "importance": "primary",
+            "status": "overloaded",
+            "label": "Worker",
+            "icon": "cpu",
+            "layout": {
+              "x": 50,
+              "y": 68.18
+            }
+          }
+        ],
+        "connections": [
+          {
+            "id": "c_users_to_worker_request",
+            "from": "users",
+            "to": "worker",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "interactions": [
+          {
+            "id": "i_c_users_to_worker_request_fwd",
+            "from": "users",
+            "to": "worker",
+            "type": "burst",
+            "intensity": "high"
+          }
+        ],
+        "camera": {
+          "mode": "focus",
+          "target": "worker",
+          "zoom": 1.1
+        }
+      },
+      "motionPersonality": "CALM",
+      "diff": {
+        "entityDiffs": [
+          {
+            "type": "entity_status_changed",
+            "entityId": "worker",
+            "from": "active",
+            "to": "overloaded"
+          }
+        ],
+        "connectionDiffs": [],
+        "interactionDiffs": [
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_users_to_worker_request_fwd",
+            "from": "medium",
+            "to": "high"
+          }
+        ],
+        "cameraDiffs": [
+          {
+            "type": "camera_changed",
+            "from": {
+              "mode": "focus",
+              "target": "worker",
+              "zoom": 1
+            },
+            "to": {
+              "mode": "focus",
+              "target": "worker",
+              "zoom": 1.1
+            }
+          }
+        ]
+      },
+      "hierarchyTransition": null,
+      "plan": {
+        "phaseOrder": [
+          "removals",
+          "moves",
+          "additions",
+          "connections",
+          "interactions",
+          "camera"
+        ],
+        "removals": [],
+        "moves": [],
+        "additions": [],
+        "connections": [],
+        "interactions": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_worker_request_fwd"
+          },
+          {
+            "entityId": "worker",
+            "elementIds": [
+              "worker"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_worker_request_fwd"
+          }
+        ]
+      },
+      "animationPlan": {
+        "entities": [],
+        "connections": [],
+        "camera": null
+      },
+      "cameraPlan": null,
+      "sceneDiff": {
+        "addedEntities": [],
+        "removedEntities": [],
+        "movedEntities": [],
+        "updatedEntities": [
+          {
+            "id": "worker",
+            "changes": {
+              "status": {
+                "from": "active",
+                "to": "overloaded"
+              }
+            }
+          }
+        ],
+        "addedConnections": [],
+        "removedConnections": [],
+        "addedInteractions": [],
+        "removedInteractions": [],
+        "interactionIntensityChanged": [
+          {
+            "id": "i_c_users_to_worker_request_fwd",
+            "from": "medium",
+            "to": "high"
+          }
+        ],
+        "cameraChanged": {
+          "from": {
+            "mode": "focus",
+            "target": "worker",
+            "zoom": 1
+          },
+          "to": {
+            "mode": "focus",
+            "target": "worker",
+            "zoom": 1.1
+          }
+        }
+      }
+    },
+    {
+      "id": "s3-insert-queue-buffer",
+      "start": 12,
+      "end": 18,
+      "narration": "A message queue is inserted, so requests become queued tasks.",
       "elements": [
         {
           "id": "users",
@@ -585,36 +721,37 @@ const renderSpec = {
           }
         },
         {
-          "id": "app_server",
-          "type": "server",
-          "sourceEntityId": "app_server",
-          "label": "Server",
-          "icon": "server",
+          "id": "message_queue",
+          "type": "message_queue",
+          "sourceEntityId": "message_queue",
+          "label": "Message Queue",
+          "icon": "inbox",
           "position": {
             "x": 50,
             "y": 40.25
           },
+          "enter": "zoom_in",
           "visualStyle": {
             "size": 149.4,
             "opacity": 1,
-            "color": "#EF4444",
+            "color": "#34D399",
             "strokeWidth": 2.7829653249726274,
-            "strokeColor": "#EF4444",
+            "strokeColor": "#34D399",
             "glow": false,
-            "glowColor": "#EF4444",
+            "glowColor": "#34D399",
             "glowBlur": 0,
             "textColor": "#E8F6FF",
             "fontSize": 52.987199999999994,
             "fontWeight": 600,
-            "status": "overloaded"
+            "status": "active"
           }
         },
         {
-          "id": "app_db",
-          "type": "database",
-          "sourceEntityId": "app_db",
-          "label": "Database",
-          "icon": "database",
+          "id": "worker",
+          "type": "worker",
+          "sourceEntityId": "worker",
+          "label": "Worker",
+          "icon": "cpu",
           "position": {
             "x": 50,
             "y": 70.84
@@ -622,16 +759,16 @@ const renderSpec = {
           "visualStyle": {
             "size": 149.4,
             "opacity": 1,
-            "color": "#EF4444",
+            "color": "#34D399",
             "strokeWidth": 2.7829653249726274,
-            "strokeColor": "#EF4444",
+            "strokeColor": "#34D399",
             "glow": false,
-            "glowColor": "#EF4444",
+            "glowColor": "#34D399",
             "glowBlur": 0,
             "textColor": "#E8F6FF",
             "fontSize": 52.987199999999994,
             "fontWeight": 600,
-            "status": "overloaded"
+            "status": "active"
           }
         }
       ],
@@ -650,26 +787,26 @@ const renderSpec = {
           }
         },
         {
-          "id": "app_server",
-          "type": "server",
+          "id": "message_queue",
+          "type": "message_queue",
           "count": 1,
           "importance": "primary",
-          "status": "overloaded",
-          "label": "Server",
-          "icon": "server",
+          "status": "active",
+          "label": "Message Queue",
+          "icon": "inbox",
           "layout": {
             "x": 50,
             "y": 40.25
           }
         },
         {
-          "id": "app_db",
-          "type": "database",
+          "id": "worker",
+          "type": "worker",
           "count": 1,
           "importance": "secondary",
-          "status": "overloaded",
-          "label": "Database",
-          "icon": "database",
+          "status": "active",
+          "label": "Worker",
+          "icon": "cpu",
           "layout": {
             "x": 50,
             "y": 70.84
@@ -678,39 +815,654 @@ const renderSpec = {
       ],
       "connections": [
         {
-          "id": "c_users_to_server",
+          "id": "c_users_to_queue_ingestion",
           "from": "users",
-          "to": "app_server",
+          "to": "message_queue",
           "direction": "one_way",
           "style": "solid"
         },
         {
-          "id": "c_server_to_db",
-          "from": "app_server",
-          "to": "app_db",
+          "id": "c_queue_to_worker_dispatch",
+          "from": "message_queue",
+          "to": "worker",
           "direction": "one_way",
           "style": "solid"
         }
       ],
       "interactions": [
         {
-          "id": "i_c_users_to_server_fwd",
+          "id": "i_c_users_to_queue_ingestion_fwd",
           "from": "users",
-          "to": "app_server",
-          "type": "burst",
-          "intensity": "high"
+          "to": "message_queue",
+          "type": "flow",
+          "intensity": "medium"
         },
         {
-          "id": "i_c_server_to_db_fwd",
-          "from": "app_server",
-          "to": "app_db",
-          "type": "flow",
-          "intensity": "high"
+          "id": "i_c_queue_to_worker_dispatch_fwd",
+          "from": "message_queue",
+          "to": "worker",
+          "type": "broadcast",
+          "intensity": "medium"
         }
       ],
       "sourceCamera": {
         "mode": "focus",
-        "target": "app_server",
+        "target": "message_queue",
+        "zoom": 1
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "wide",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "default",
+          "background_texture": "grid",
+          "glow_strength": "soft"
+        },
+        "motion": {
+          "entry_style": "draw_in",
+          "pacing": "balanced"
+        },
+        "flow": {
+          "renderer": "hybrid"
+        }
+      },
+      "source": {
+        "entities": [
+          {
+            "id": "users",
+            "type": "users_cluster",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Users",
+            "icon": "users",
+            "layout": {
+              "x": 50,
+              "y": 9.66
+            }
+          },
+          {
+            "id": "message_queue",
+            "type": "message_queue",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "Message Queue",
+            "icon": "inbox",
+            "layout": {
+              "x": 50,
+              "y": 40.25
+            }
+          },
+          {
+            "id": "worker",
+            "type": "worker",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Worker",
+            "icon": "cpu",
+            "layout": {
+              "x": 50,
+              "y": 70.84
+            }
+          }
+        ],
+        "connections": [
+          {
+            "id": "c_users_to_queue_ingestion",
+            "from": "users",
+            "to": "message_queue",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_queue_to_worker_dispatch",
+            "from": "message_queue",
+            "to": "worker",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "interactions": [
+          {
+            "id": "i_c_users_to_queue_ingestion_fwd",
+            "from": "users",
+            "to": "message_queue",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_queue_to_worker_dispatch_fwd",
+            "from": "message_queue",
+            "to": "worker",
+            "type": "broadcast",
+            "intensity": "medium"
+          }
+        ],
+        "camera": {
+          "mode": "focus",
+          "target": "message_queue",
+          "zoom": 1
+        }
+      },
+      "motionPersonality": "CALM",
+      "diff": {
+        "entityDiffs": [
+          {
+            "type": "entity_added",
+            "entityId": "message_queue"
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "users",
+            "from": {
+              "x": 50,
+              "y": 12.32
+            },
+            "to": {
+              "x": 50,
+              "y": 9.66
+            }
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "worker",
+            "from": {
+              "x": 50,
+              "y": 68.18
+            },
+            "to": {
+              "x": 50,
+              "y": 70.84
+            }
+          },
+          {
+            "type": "entity_status_changed",
+            "entityId": "worker",
+            "from": "overloaded",
+            "to": "active"
+          },
+          {
+            "type": "entity_importance_changed",
+            "entityId": "worker",
+            "from": "primary",
+            "to": "secondary"
+          }
+        ],
+        "connectionDiffs": [
+          {
+            "type": "connection_added",
+            "connectionId": "c_users_to_queue_ingestion"
+          },
+          {
+            "type": "connection_added",
+            "connectionId": "c_queue_to_worker_dispatch"
+          },
+          {
+            "type": "connection_removed",
+            "connectionId": "c_users_to_worker_request"
+          }
+        ],
+        "interactionDiffs": [
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+          },
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_queue_to_worker_dispatch_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_users_to_worker_request_fwd"
+          }
+        ],
+        "cameraDiffs": [
+          {
+            "type": "camera_changed",
+            "from": {
+              "mode": "focus",
+              "target": "worker",
+              "zoom": 1.1
+            },
+            "to": {
+              "mode": "focus",
+              "target": "message_queue",
+              "zoom": 1
+            }
+          }
+        ]
+      },
+      "hierarchyTransition": null,
+      "plan": {
+        "phaseOrder": [
+          "removals",
+          "moves",
+          "additions",
+          "connections",
+          "interactions",
+          "camera"
+        ],
+        "removals": [],
+        "moves": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "move"
+          },
+          {
+            "entityId": "worker",
+            "elementIds": [
+              "worker"
+            ],
+            "action": "move"
+          }
+        ],
+        "additions": [
+          {
+            "entityId": "message_queue",
+            "elementIds": [
+              "message_queue"
+            ],
+            "action": "add",
+            "enter": "zoom_in",
+            "cleanup": false
+          }
+        ],
+        "connections": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "connect",
+            "connectionId": "c_users_to_worker_request",
+            "cleanup": false
+          },
+          {
+            "entityId": "message_queue",
+            "elementIds": [
+              "message_queue"
+            ],
+            "action": "connect",
+            "connectionId": "c_queue_to_worker_dispatch",
+            "cleanup": false
+          },
+          {
+            "entityId": "worker",
+            "elementIds": [
+              "worker"
+            ],
+            "action": "connect",
+            "connectionId": "c_users_to_worker_request",
+            "cleanup": false
+          }
+        ],
+        "interactions": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_worker_request_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "message_queue",
+            "elementIds": [
+              "message_queue"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_queue_to_worker_dispatch_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "worker",
+            "elementIds": [
+              "worker"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_worker_request_fwd",
+            "cleanup": false
+          }
+        ]
+      },
+      "animationPlan": {
+        "entities": [
+          {
+            "entityId": "users",
+            "action": "move",
+            "delay": 0.6000000000000001,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          },
+          {
+            "entityId": "worker",
+            "action": "move",
+            "delay": 0.68,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          },
+          {
+            "entityId": "message_queue",
+            "action": "add",
+            "delay": 1.8499999999999999,
+            "duration": 0.62,
+            "easing": "cubic-bezier(0.2,0,0,1)",
+            "scale": 1.2,
+            "isPrimary": true
+          }
+        ],
+        "connections": [
+          {
+            "connectionId": "c_users_to_queue_ingestion",
+            "delay": 0.504,
+            "duration": 0.42,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          },
+          {
+            "connectionId": "c_queue_to_worker_dispatch",
+            "delay": 0.584,
+            "duration": 0.42,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          },
+          {
+            "connectionId": "c_users_to_worker_request",
+            "delay": 0.664,
+            "duration": 0.42,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          }
+        ],
+        "camera": null
+      },
+      "cameraPlan": null,
+      "sceneDiff": {
+        "addedEntities": [
+          {
+            "id": "message_queue",
+            "type": "message_queue",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "Message Queue",
+            "icon": "inbox",
+            "layout": {
+              "x": 50,
+              "y": 40.25
+            }
+          }
+        ],
+        "removedEntities": [],
+        "movedEntities": [
+          {
+            "id": "users",
+            "from": {
+              "x": 50,
+              "y": 12.32
+            },
+            "to": {
+              "x": 50,
+              "y": 9.66
+            }
+          },
+          {
+            "id": "worker",
+            "from": {
+              "x": 50,
+              "y": 68.18
+            },
+            "to": {
+              "x": 50,
+              "y": 70.84
+            }
+          }
+        ],
+        "updatedEntities": [
+          {
+            "id": "worker",
+            "changes": {
+              "status": {
+                "from": "overloaded",
+                "to": "active"
+              },
+              "importance": {
+                "from": "primary",
+                "to": "secondary"
+              }
+            }
+          }
+        ],
+        "addedConnections": [
+          {
+            "id": "c_users_to_queue_ingestion",
+            "from": "users",
+            "to": "message_queue",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_queue_to_worker_dispatch",
+            "from": "message_queue",
+            "to": "worker",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "removedConnections": [
+          {
+            "id": "c_users_to_worker_request",
+            "from": "users",
+            "to": "worker",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "addedInteractions": [
+          {
+            "id": "i_c_users_to_queue_ingestion_fwd",
+            "from": "users",
+            "to": "message_queue",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_queue_to_worker_dispatch_fwd",
+            "from": "message_queue",
+            "to": "worker",
+            "type": "broadcast",
+            "intensity": "medium"
+          }
+        ],
+        "removedInteractions": [
+          {
+            "id": "i_c_users_to_worker_request_fwd",
+            "from": "users",
+            "to": "worker",
+            "type": "burst",
+            "intensity": "high"
+          }
+        ],
+        "interactionIntensityChanged": [],
+        "cameraChanged": {
+          "from": {
+            "mode": "focus",
+            "target": "worker",
+            "zoom": 1.1
+          },
+          "to": {
+            "mode": "focus",
+            "target": "message_queue",
+            "zoom": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "s4-burst-piles-into-queue",
+      "start": 18,
+      "end": 24,
+      "narration": "The burst piles up safely inside the queue as a growing backlog.",
+      "elements": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "sourceEntityId": "users",
+          "label": "Users",
+          "icon": "users",
+          "position": {
+            "x": 50,
+            "y": 9.66
+          },
+          "visualStyle": {
+            "size": 149.4,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.7829653249726274,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 52.987199999999994,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "message_queue",
+          "type": "message_queue",
+          "sourceEntityId": "message_queue",
+          "label": "Message Queue",
+          "icon": "inbox",
+          "position": {
+            "x": 50,
+            "y": 40.25
+          },
+          "visualStyle": {
+            "size": 149.4,
+            "opacity": 1,
+            "color": "#EF4444",
+            "strokeWidth": 2.7829653249726274,
+            "strokeColor": "#EF4444",
+            "glow": false,
+            "glowColor": "#EF4444",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 52.987199999999994,
+            "fontWeight": 600,
+            "status": "overloaded"
+          }
+        },
+        {
+          "id": "worker",
+          "type": "worker",
+          "sourceEntityId": "worker",
+          "label": "Worker",
+          "icon": "cpu",
+          "position": {
+            "x": 50,
+            "y": 70.84
+          },
+          "visualStyle": {
+            "size": 149.4,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.7829653249726274,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 52.987199999999994,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        }
+      ],
+      "entities": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Users",
+          "icon": "users",
+          "layout": {
+            "x": 50,
+            "y": 9.66
+          }
+        },
+        {
+          "id": "message_queue",
+          "type": "message_queue",
+          "count": 1,
+          "importance": "primary",
+          "status": "overloaded",
+          "label": "Message Queue",
+          "icon": "inbox",
+          "layout": {
+            "x": 50,
+            "y": 40.25
+          }
+        },
+        {
+          "id": "worker",
+          "type": "worker",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Worker",
+          "icon": "cpu",
+          "layout": {
+            "x": 50,
+            "y": 70.84
+          }
+        }
+      ],
+      "connections": [
+        {
+          "id": "c_users_to_queue_ingestion",
+          "from": "users",
+          "to": "message_queue",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_queue_to_worker_dispatch",
+          "from": "message_queue",
+          "to": "worker",
+          "direction": "one_way",
+          "style": "solid"
+        }
+      ],
+      "interactions": [
+        {
+          "id": "i_c_users_to_queue_ingestion_fwd",
+          "from": "users",
+          "to": "message_queue",
+          "type": "burst",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_queue_to_worker_dispatch_fwd",
+          "from": "message_queue",
+          "to": "worker",
+          "type": "broadcast",
+          "intensity": "medium"
+        }
+      ],
+      "sourceCamera": {
+        "mode": "focus",
+        "target": "message_queue",
         "zoom": 1.1
       },
       "directives": {
@@ -749,26 +1501,26 @@ const renderSpec = {
             }
           },
           {
-            "id": "app_server",
-            "type": "server",
+            "id": "message_queue",
+            "type": "message_queue",
             "count": 1,
             "importance": "primary",
             "status": "overloaded",
-            "label": "Server",
-            "icon": "server",
+            "label": "Message Queue",
+            "icon": "inbox",
             "layout": {
               "x": 50,
               "y": 40.25
             }
           },
           {
-            "id": "app_db",
-            "type": "database",
+            "id": "worker",
+            "type": "worker",
             "count": 1,
             "importance": "secondary",
-            "status": "overloaded",
-            "label": "Database",
-            "icon": "database",
+            "status": "active",
+            "label": "Worker",
+            "icon": "cpu",
             "layout": {
               "x": 50,
               "y": 70.84
@@ -777,67 +1529,49 @@ const renderSpec = {
         ],
         "connections": [
           {
-            "id": "c_users_to_server",
+            "id": "c_users_to_queue_ingestion",
             "from": "users",
-            "to": "app_server",
+            "to": "message_queue",
             "direction": "one_way",
             "style": "solid"
           },
           {
-            "id": "c_server_to_db",
-            "from": "app_server",
-            "to": "app_db",
+            "id": "c_queue_to_worker_dispatch",
+            "from": "message_queue",
+            "to": "worker",
             "direction": "one_way",
             "style": "solid"
           }
         ],
         "interactions": [
           {
-            "id": "i_c_users_to_server_fwd",
+            "id": "i_c_users_to_queue_ingestion_fwd",
             "from": "users",
-            "to": "app_server",
+            "to": "message_queue",
             "type": "burst",
             "intensity": "high"
           },
           {
-            "id": "i_c_server_to_db_fwd",
-            "from": "app_server",
-            "to": "app_db",
-            "type": "flow",
-            "intensity": "high"
+            "id": "i_c_queue_to_worker_dispatch_fwd",
+            "from": "message_queue",
+            "to": "worker",
+            "type": "broadcast",
+            "intensity": "medium"
           }
         ],
         "camera": {
           "mode": "focus",
-          "target": "app_server",
+          "target": "message_queue",
           "zoom": 1.1
         }
       },
-      "motionPersonality": "ENERGETIC",
+      "motionPersonality": "CALM",
       "diff": {
         "entityDiffs": [
           {
-            "type": "entity_importance_changed",
-            "entityId": "users",
-            "from": "primary",
-            "to": "secondary"
-          },
-          {
             "type": "entity_status_changed",
-            "entityId": "app_server",
-            "from": "normal",
-            "to": "overloaded"
-          },
-          {
-            "type": "entity_importance_changed",
-            "entityId": "app_server",
-            "from": "secondary",
-            "to": "primary"
-          },
-          {
-            "type": "entity_status_changed",
-            "entityId": "app_db",
-            "from": "normal",
+            "entityId": "message_queue",
+            "from": "active",
             "to": "overloaded"
           }
         ],
@@ -845,13 +1579,7 @@ const renderSpec = {
         "interactionDiffs": [
           {
             "type": "interaction_intensity_changed",
-            "interactionId": "i_c_users_to_server_fwd",
-            "from": "medium",
-            "to": "high"
-          },
-          {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_server_to_db_fwd",
+            "interactionId": "i_c_users_to_queue_ingestion_fwd",
             "from": "medium",
             "to": "high"
           }
@@ -861,1266 +1589,16 @@ const renderSpec = {
             "type": "camera_changed",
             "from": {
               "mode": "focus",
-              "target": "users",
+              "target": "message_queue",
               "zoom": 1
             },
             "to": {
               "mode": "focus",
-              "target": "app_server",
+              "target": "message_queue",
               "zoom": 1.1
             }
           }
         ]
-      },
-      "hierarchyTransition": null,
-      "plan": {
-        "phaseOrder": [
-          "removals",
-          "moves",
-          "additions",
-          "connections",
-          "interactions",
-          "camera"
-        ],
-        "removals": [],
-        "moves": [],
-        "additions": [
-          {
-            "entityId": "app_server",
-            "elementIds": [
-              "app_server"
-            ],
-            "action": "add",
-            "enter": "zoom_in"
-          }
-        ],
-        "connections": [],
-        "interactions": [
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_users_to_server_fwd"
-          },
-          {
-            "entityId": "app_server",
-            "elementIds": [
-              "app_server"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_server_to_db_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "app_db",
-            "elementIds": [
-              "app_db"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_server_to_db_fwd"
-          }
-        ]
-      },
-      "animationPlan": {
-        "entities": [
-          {
-            "entityId": "app_server",
-            "action": "add",
-            "delay": 0.37399999999999994,
-            "duration": 0.62,
-            "easing": "cubic-bezier(0.4,0,0.2,1)",
-            "scale": 1.2,
-            "isPrimary": true
-          }
-        ],
-        "connections": [],
-        "camera": null
-      },
-      "cameraPlan": null,
-      "sceneDiff": {
-        "addedEntities": [],
-        "removedEntities": [],
-        "movedEntities": [],
-        "updatedEntities": [
-          {
-            "id": "users",
-            "changes": {
-              "importance": {
-                "from": "primary",
-                "to": "secondary"
-              }
-            }
-          },
-          {
-            "id": "app_server",
-            "changes": {
-              "status": {
-                "from": "normal",
-                "to": "overloaded"
-              },
-              "importance": {
-                "from": "secondary",
-                "to": "primary"
-              }
-            }
-          },
-          {
-            "id": "app_db",
-            "changes": {
-              "status": {
-                "from": "normal",
-                "to": "overloaded"
-              }
-            }
-          }
-        ],
-        "addedConnections": [],
-        "removedConnections": [],
-        "addedInteractions": [],
-        "removedInteractions": [],
-        "interactionIntensityChanged": [
-          {
-            "id": "i_c_users_to_server_fwd",
-            "from": "medium",
-            "to": "high"
-          },
-          {
-            "id": "i_c_server_to_db_fwd",
-            "from": "medium",
-            "to": "high"
-          }
-        ],
-        "cameraChanged": {
-          "from": {
-            "mode": "focus",
-            "target": "users",
-            "zoom": 1
-          },
-          "to": {
-            "mode": "focus",
-            "target": "app_server",
-            "zoom": 1.1
-          }
-        }
-      }
-    },
-    {
-      "id": "s3",
-      "start": 12,
-      "end": 18,
-      "narration": "A Rate Limiter is inserted between Users and the Server so only a controlled number of requests per time window can pass through.",
-      "elements": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "sourceEntityId": "users",
-          "label": "Users",
-          "icon": "users",
-          "position": {
-            "x": 50,
-            "y": 7.664999999999999
-          },
-          "visualStyle": {
-            "size": 135,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.645448922205832,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 47.879999999999995,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "edge_rate_limiter",
-          "type": "rate_limiter",
-          "sourceEntityId": "edge_rate_limiter",
-          "label": "Rate Limiter",
-          "icon": "timer",
-          "position": {
-            "x": 50,
-            "y": 29.38833333333334
-          },
-          "enter": "zoom_in",
-          "visualStyle": {
-            "size": 135,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.645448922205832,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 47.879999999999995,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "app_server",
-          "type": "server",
-          "sourceEntityId": "app_server",
-          "label": "Server",
-          "icon": "server",
-          "position": {
-            "x": 50,
-            "y": 51.11166666666668
-          },
-          "visualStyle": {
-            "size": 135,
-            "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.645448922205832,
-            "strokeColor": "#35C4C8",
-            "glow": false,
-            "glowColor": "#35C4C8",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 47.879999999999995,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_db",
-          "type": "database",
-          "sourceEntityId": "app_db",
-          "label": "Database",
-          "icon": "database",
-          "position": {
-            "x": 50,
-            "y": 72.83500000000001
-          },
-          "visualStyle": {
-            "size": 135,
-            "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.645448922205832,
-            "strokeColor": "#35C4C8",
-            "glow": false,
-            "glowColor": "#35C4C8",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 47.879999999999995,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        }
-      ],
-      "entities": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "Users",
-          "icon": "users",
-          "layout": {
-            "x": 50,
-            "y": 7.664999999999999
-          }
-        },
-        {
-          "id": "edge_rate_limiter",
-          "type": "rate_limiter",
-          "count": 1,
-          "importance": "primary",
-          "status": "active",
-          "label": "Rate Limiter",
-          "icon": "timer",
-          "layout": {
-            "x": 50,
-            "y": 29.38833333333334
-          }
-        },
-        {
-          "id": "app_server",
-          "type": "server",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Server",
-          "icon": "server",
-          "layout": {
-            "x": 50,
-            "y": 51.11166666666668
-          }
-        },
-        {
-          "id": "app_db",
-          "type": "database",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Database",
-          "icon": "database",
-          "layout": {
-            "x": 50,
-            "y": 72.83500000000001
-          }
-        }
-      ],
-      "connections": [
-        {
-          "id": "c_users_to_limiter",
-          "from": "users",
-          "to": "edge_rate_limiter",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_limiter_to_server",
-          "from": "edge_rate_limiter",
-          "to": "app_server",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_server_to_db",
-          "from": "app_server",
-          "to": "app_db",
-          "direction": "one_way",
-          "style": "solid"
-        }
-      ],
-      "interactions": [
-        {
-          "id": "i_c_users_to_limiter_fwd",
-          "from": "users",
-          "to": "edge_rate_limiter",
-          "type": "flow",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_limiter_to_server_fwd",
-          "from": "edge_rate_limiter",
-          "to": "app_server",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_server_to_db_fwd",
-          "from": "app_server",
-          "to": "app_db",
-          "type": "flow",
-          "intensity": "medium"
-        }
-      ],
-      "sourceCamera": {
-        "mode": "focus",
-        "target": "edge_rate_limiter",
-        "zoom": 1.08
-      },
-      "directives": {
-        "camera": {
-          "mode": "follow_action",
-          "zoom": "medium",
-          "active_zone": "upper_third",
-          "reserve_bottom_percent": 25
-        },
-        "visual": {
-          "theme": "default",
-          "background_texture": "grid",
-          "glow_strength": "soft"
-        },
-        "motion": {
-          "entry_style": "draw_in",
-          "pacing": "balanced"
-        },
-        "flow": {
-          "renderer": "hybrid"
-        }
-      },
-      "source": {
-        "entities": [
-          {
-            "id": "users",
-            "type": "users_cluster",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Users",
-            "icon": "users",
-            "layout": {
-              "x": 50,
-              "y": 7.664999999999999
-            }
-          },
-          {
-            "id": "edge_rate_limiter",
-            "type": "rate_limiter",
-            "count": 1,
-            "importance": "primary",
-            "status": "active",
-            "label": "Rate Limiter",
-            "icon": "timer",
-            "layout": {
-              "x": 50,
-              "y": 29.38833333333334
-            }
-          },
-          {
-            "id": "app_server",
-            "type": "server",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Server",
-            "icon": "server",
-            "layout": {
-              "x": 50,
-              "y": 51.11166666666668
-            }
-          },
-          {
-            "id": "app_db",
-            "type": "database",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Database",
-            "icon": "database",
-            "layout": {
-              "x": 50,
-              "y": 72.83500000000001
-            }
-          }
-        ],
-        "connections": [
-          {
-            "id": "c_users_to_limiter",
-            "from": "users",
-            "to": "edge_rate_limiter",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_limiter_to_server",
-            "from": "edge_rate_limiter",
-            "to": "app_server",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_server_to_db",
-            "from": "app_server",
-            "to": "app_db",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "interactions": [
-          {
-            "id": "i_c_users_to_limiter_fwd",
-            "from": "users",
-            "to": "edge_rate_limiter",
-            "type": "flow",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_limiter_to_server_fwd",
-            "from": "edge_rate_limiter",
-            "to": "app_server",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_server_to_db_fwd",
-            "from": "app_server",
-            "to": "app_db",
-            "type": "flow",
-            "intensity": "medium"
-          }
-        ],
-        "camera": {
-          "mode": "focus",
-          "target": "edge_rate_limiter",
-          "zoom": 1.08
-        }
-      },
-      "motionPersonality": "ENERGETIC",
-      "diff": {
-        "entityDiffs": [
-          {
-            "type": "entity_added",
-            "entityId": "edge_rate_limiter"
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "users",
-            "from": {
-              "x": 50,
-              "y": 9.66
-            },
-            "to": {
-              "x": 50,
-              "y": 7.664999999999999
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "app_server",
-            "from": {
-              "x": 50,
-              "y": 40.25
-            },
-            "to": {
-              "x": 50,
-              "y": 51.11166666666668
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "app_db",
-            "from": {
-              "x": 50,
-              "y": 70.84
-            },
-            "to": {
-              "x": 50,
-              "y": 72.83500000000001
-            }
-          },
-          {
-            "type": "entity_status_changed",
-            "entityId": "app_server",
-            "from": "overloaded",
-            "to": "normal"
-          },
-          {
-            "type": "entity_importance_changed",
-            "entityId": "app_server",
-            "from": "primary",
-            "to": "secondary"
-          },
-          {
-            "type": "entity_status_changed",
-            "entityId": "app_db",
-            "from": "overloaded",
-            "to": "normal"
-          }
-        ],
-        "connectionDiffs": [
-          {
-            "type": "connection_added",
-            "connectionId": "c_users_to_limiter"
-          },
-          {
-            "type": "connection_added",
-            "connectionId": "c_limiter_to_server"
-          },
-          {
-            "type": "connection_removed",
-            "connectionId": "c_users_to_server"
-          }
-        ],
-        "interactionDiffs": [
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_users_to_limiter_fwd"
-          },
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_limiter_to_server_fwd"
-          },
-          {
-            "type": "interaction_removed",
-            "interactionId": "i_c_users_to_server_fwd"
-          },
-          {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_server_to_db_fwd",
-            "from": "high",
-            "to": "medium"
-          }
-        ],
-        "cameraDiffs": [
-          {
-            "type": "camera_changed",
-            "from": {
-              "mode": "focus",
-              "target": "app_server",
-              "zoom": 1.1
-            },
-            "to": {
-              "mode": "focus",
-              "target": "edge_rate_limiter",
-              "zoom": 1.08
-            }
-          }
-        ]
-      },
-      "hierarchyTransition": null,
-      "plan": {
-        "phaseOrder": [
-          "removals",
-          "moves",
-          "additions",
-          "connections",
-          "interactions",
-          "camera"
-        ],
-        "removals": [],
-        "moves": [
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "move"
-          },
-          {
-            "entityId": "app_server",
-            "elementIds": [
-              "app_server"
-            ],
-            "action": "move"
-          },
-          {
-            "entityId": "app_db",
-            "elementIds": [
-              "app_db"
-            ],
-            "action": "move"
-          }
-        ],
-        "additions": [
-          {
-            "entityId": "edge_rate_limiter",
-            "elementIds": [
-              "edge_rate_limiter"
-            ],
-            "action": "add",
-            "enter": "zoom_in",
-            "cleanup": false
-          }
-        ],
-        "connections": [
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "connect",
-            "connectionId": "c_users_to_server",
-            "cleanup": false
-          },
-          {
-            "entityId": "edge_rate_limiter",
-            "elementIds": [
-              "edge_rate_limiter"
-            ],
-            "action": "connect",
-            "connectionId": "c_limiter_to_server",
-            "cleanup": false
-          },
-          {
-            "entityId": "app_server",
-            "elementIds": [
-              "app_server"
-            ],
-            "action": "connect",
-            "connectionId": "c_users_to_server",
-            "cleanup": false
-          }
-        ],
-        "interactions": [
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_users_to_server_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "edge_rate_limiter",
-            "elementIds": [
-              "edge_rate_limiter"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_limiter_to_server_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "app_server",
-            "elementIds": [
-              "app_server"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_server_to_db_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "app_db",
-            "elementIds": [
-              "app_db"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_server_to_db_fwd"
-          }
-        ]
-      },
-      "animationPlan": {
-        "entities": [
-          {
-            "entityId": "users",
-            "action": "move",
-            "delay": 0.6000000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          },
-          {
-            "entityId": "app_server",
-            "action": "move",
-            "delay": 0.6400000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          },
-          {
-            "entityId": "app_db",
-            "action": "move",
-            "delay": 0.68,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          },
-          {
-            "entityId": "edge_rate_limiter",
-            "action": "add",
-            "delay": 0.37399999999999994,
-            "duration": 0.62,
-            "easing": "cubic-bezier(0.4,0,0.2,1)",
-            "scale": 1.2,
-            "isPrimary": true
-          }
-        ],
-        "connections": [
-          {
-            "connectionId": "c_users_to_limiter",
-            "delay": 0.504,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          },
-          {
-            "connectionId": "c_limiter_to_server",
-            "delay": 0.544,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          },
-          {
-            "connectionId": "c_users_to_server",
-            "delay": 0.584,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          }
-        ],
-        "camera": null
-      },
-      "cameraPlan": null,
-      "sceneDiff": {
-        "addedEntities": [
-          {
-            "id": "edge_rate_limiter",
-            "type": "rate_limiter",
-            "count": 1,
-            "importance": "primary",
-            "status": "active",
-            "label": "Rate Limiter",
-            "icon": "timer",
-            "layout": {
-              "x": 50,
-              "y": 29.38833333333334
-            }
-          }
-        ],
-        "removedEntities": [],
-        "movedEntities": [
-          {
-            "id": "users",
-            "from": {
-              "x": 50,
-              "y": 9.66
-            },
-            "to": {
-              "x": 50,
-              "y": 7.664999999999999
-            }
-          },
-          {
-            "id": "app_server",
-            "from": {
-              "x": 50,
-              "y": 40.25
-            },
-            "to": {
-              "x": 50,
-              "y": 51.11166666666668
-            }
-          },
-          {
-            "id": "app_db",
-            "from": {
-              "x": 50,
-              "y": 70.84
-            },
-            "to": {
-              "x": 50,
-              "y": 72.83500000000001
-            }
-          }
-        ],
-        "updatedEntities": [
-          {
-            "id": "app_server",
-            "changes": {
-              "status": {
-                "from": "overloaded",
-                "to": "normal"
-              },
-              "importance": {
-                "from": "primary",
-                "to": "secondary"
-              }
-            }
-          },
-          {
-            "id": "app_db",
-            "changes": {
-              "status": {
-                "from": "overloaded",
-                "to": "normal"
-              }
-            }
-          }
-        ],
-        "addedConnections": [
-          {
-            "id": "c_users_to_limiter",
-            "from": "users",
-            "to": "edge_rate_limiter",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_limiter_to_server",
-            "from": "edge_rate_limiter",
-            "to": "app_server",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "removedConnections": [
-          {
-            "id": "c_users_to_server",
-            "from": "users",
-            "to": "app_server",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "addedInteractions": [
-          {
-            "id": "i_c_users_to_limiter_fwd",
-            "from": "users",
-            "to": "edge_rate_limiter",
-            "type": "flow",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_limiter_to_server_fwd",
-            "from": "edge_rate_limiter",
-            "to": "app_server",
-            "type": "flow",
-            "intensity": "medium"
-          }
-        ],
-        "removedInteractions": [
-          {
-            "id": "i_c_users_to_server_fwd",
-            "from": "users",
-            "to": "app_server",
-            "type": "burst",
-            "intensity": "high"
-          }
-        ],
-        "interactionIntensityChanged": [
-          {
-            "id": "i_c_server_to_db_fwd",
-            "from": "high",
-            "to": "medium"
-          }
-        ],
-        "cameraChanged": {
-          "from": {
-            "mode": "focus",
-            "target": "app_server",
-            "zoom": 1.1
-          },
-          "to": {
-            "mode": "focus",
-            "target": "edge_rate_limiter",
-            "zoom": 1.08
-          }
-        }
-      }
-    },
-    {
-      "id": "s4",
-      "start": 18,
-      "end": 24,
-      "narration": "Some requests flow from the Rate Limiter to the Server while extra requests are visibly blocked at the Rate Limiter instead of reaching the Database.",
-      "elements": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "sourceEntityId": "users",
-          "label": "Users",
-          "icon": "users",
-          "position": {
-            "x": 50,
-            "y": 7.664999999999999
-          },
-          "visualStyle": {
-            "size": 135,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.645448922205832,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 47.879999999999995,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "edge_rate_limiter",
-          "type": "rate_limiter",
-          "sourceEntityId": "edge_rate_limiter",
-          "label": "Rate Limiter",
-          "icon": "timer",
-          "position": {
-            "x": 50,
-            "y": 29.38833333333334
-          },
-          "visualStyle": {
-            "size": 135,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.645448922205832,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 47.879999999999995,
-            "fontWeight": 600,
-            "status": "active"
-          },
-          "effects": [
-            "focus"
-          ]
-        },
-        {
-          "id": "app_server",
-          "type": "server",
-          "sourceEntityId": "app_server",
-          "label": "Server",
-          "icon": "server",
-          "position": {
-            "x": 50,
-            "y": 51.11166666666668
-          },
-          "visualStyle": {
-            "size": 135,
-            "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.645448922205832,
-            "strokeColor": "#35C4C8",
-            "glow": false,
-            "glowColor": "#35C4C8",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 47.879999999999995,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_db",
-          "type": "database",
-          "sourceEntityId": "app_db",
-          "label": "Database",
-          "icon": "database",
-          "position": {
-            "x": 50,
-            "y": 72.83500000000001
-          },
-          "visualStyle": {
-            "size": 135,
-            "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.645448922205832,
-            "strokeColor": "#35C4C8",
-            "glow": false,
-            "glowColor": "#35C4C8",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 47.879999999999995,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        }
-      ],
-      "entities": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "Users",
-          "icon": "users",
-          "layout": {
-            "x": 50,
-            "y": 7.664999999999999
-          }
-        },
-        {
-          "id": "edge_rate_limiter",
-          "type": "rate_limiter",
-          "count": 1,
-          "importance": "primary",
-          "status": "active",
-          "label": "Rate Limiter",
-          "icon": "timer",
-          "layout": {
-            "x": 50,
-            "y": 29.38833333333334
-          }
-        },
-        {
-          "id": "app_server",
-          "type": "server",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Server",
-          "icon": "server",
-          "layout": {
-            "x": 50,
-            "y": 51.11166666666668
-          }
-        },
-        {
-          "id": "app_db",
-          "type": "database",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Database",
-          "icon": "database",
-          "layout": {
-            "x": 50,
-            "y": 72.83500000000001
-          }
-        }
-      ],
-      "connections": [
-        {
-          "id": "c_users_to_limiter",
-          "from": "users",
-          "to": "edge_rate_limiter",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_limiter_to_server",
-          "from": "edge_rate_limiter",
-          "to": "app_server",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_server_to_db",
-          "from": "app_server",
-          "to": "app_db",
-          "direction": "one_way",
-          "style": "solid"
-        }
-      ],
-      "interactions": [
-        {
-          "id": "i_c_users_to_limiter_fwd",
-          "from": "users",
-          "to": "edge_rate_limiter",
-          "type": "burst",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_limiter_to_server_fwd",
-          "from": "edge_rate_limiter",
-          "to": "app_server",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_server_to_db_fwd",
-          "from": "app_server",
-          "to": "app_db",
-          "type": "flow",
-          "intensity": "medium"
-        }
-      ],
-      "sourceCamera": {
-        "mode": "focus",
-        "target": "edge_rate_limiter",
-        "zoom": 1.08
-      },
-      "directives": {
-        "camera": {
-          "mode": "follow_action",
-          "zoom": "medium",
-          "active_zone": "upper_third",
-          "reserve_bottom_percent": 25
-        },
-        "visual": {
-          "theme": "default",
-          "background_texture": "grid",
-          "glow_strength": "soft"
-        },
-        "motion": {
-          "entry_style": "draw_in",
-          "pacing": "balanced"
-        },
-        "flow": {
-          "renderer": "hybrid"
-        }
-      },
-      "source": {
-        "entities": [
-          {
-            "id": "users",
-            "type": "users_cluster",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Users",
-            "icon": "users",
-            "layout": {
-              "x": 50,
-              "y": 7.664999999999999
-            }
-          },
-          {
-            "id": "edge_rate_limiter",
-            "type": "rate_limiter",
-            "count": 1,
-            "importance": "primary",
-            "status": "active",
-            "label": "Rate Limiter",
-            "icon": "timer",
-            "layout": {
-              "x": 50,
-              "y": 29.38833333333334
-            }
-          },
-          {
-            "id": "app_server",
-            "type": "server",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Server",
-            "icon": "server",
-            "layout": {
-              "x": 50,
-              "y": 51.11166666666668
-            }
-          },
-          {
-            "id": "app_db",
-            "type": "database",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Database",
-            "icon": "database",
-            "layout": {
-              "x": 50,
-              "y": 72.83500000000001
-            }
-          }
-        ],
-        "connections": [
-          {
-            "id": "c_users_to_limiter",
-            "from": "users",
-            "to": "edge_rate_limiter",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_limiter_to_server",
-            "from": "edge_rate_limiter",
-            "to": "app_server",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_server_to_db",
-            "from": "app_server",
-            "to": "app_db",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "interactions": [
-          {
-            "id": "i_c_users_to_limiter_fwd",
-            "from": "users",
-            "to": "edge_rate_limiter",
-            "type": "burst",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_limiter_to_server_fwd",
-            "from": "edge_rate_limiter",
-            "to": "app_server",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_server_to_db_fwd",
-            "from": "app_server",
-            "to": "app_db",
-            "type": "flow",
-            "intensity": "medium"
-          }
-        ],
-        "camera": {
-          "mode": "focus",
-          "target": "edge_rate_limiter",
-          "zoom": 1.08
-        }
-      },
-      "motionPersonality": "ENERGETIC",
-      "diff": {
-        "entityDiffs": [],
-        "connectionDiffs": [],
-        "interactionDiffs": [],
-        "cameraDiffs": []
       },
       "hierarchyTransition": null,
       "plan": {
@@ -2136,7 +1614,24 @@ const renderSpec = {
         "moves": [],
         "additions": [],
         "connections": [],
-        "interactions": []
+        "interactions": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+          },
+          {
+            "entityId": "message_queue",
+            "elementIds": [
+              "message_queue"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+          }
+        ]
       },
       "animationPlan": {
         "entities": [],
@@ -2148,3586 +1643,2688 @@ const renderSpec = {
         "addedEntities": [],
         "removedEntities": [],
         "movedEntities": [],
-        "updatedEntities": [],
+        "updatedEntities": [
+          {
+            "id": "message_queue",
+            "changes": {
+              "status": {
+                "from": "active",
+                "to": "overloaded"
+              }
+            }
+          }
+        ],
         "addedConnections": [],
         "removedConnections": [],
         "addedInteractions": [],
         "removedInteractions": [],
+        "interactionIntensityChanged": [
+          {
+            "id": "i_c_users_to_queue_ingestion_fwd",
+            "from": "medium",
+            "to": "high"
+          }
+        ],
+        "cameraChanged": {
+          "from": {
+            "mode": "focus",
+            "target": "message_queue",
+            "zoom": 1
+          },
+          "to": {
+            "mode": "focus",
+            "target": "message_queue",
+            "zoom": 1.1
+          }
+        }
+      }
+    },
+    {
+      "id": "s5-workers-pull-steady",
+      "start": 24,
+      "end": 30,
+      "narration": "Workers pull from the queue at a steady, controlled rate.",
+      "elements": [
+        {
+          "id": "message_queue",
+          "type": "message_queue",
+          "sourceEntityId": "message_queue",
+          "label": "Message Queue",
+          "icon": "inbox",
+          "position": {
+            "x": 50,
+            "y": 12.32
+          },
+          "visualStyle": {
+            "size": 162,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.897944098839728,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 57.455999999999996,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "worker",
+          "type": "worker",
+          "sourceEntityId": "worker",
+          "label": "Worker",
+          "icon": "cpu",
+          "position": {
+            "x": 50,
+            "y": 68.18
+          },
+          "visualStyle": {
+            "size": 162,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.897944098839728,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 57.455999999999996,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        }
+      ],
+      "entities": [
+        {
+          "id": "message_queue",
+          "type": "message_queue",
+          "count": 1,
+          "importance": "primary",
+          "status": "active",
+          "label": "Message Queue",
+          "icon": "inbox",
+          "layout": {
+            "x": 50,
+            "y": 12.32
+          }
+        },
+        {
+          "id": "worker",
+          "type": "worker",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Worker",
+          "icon": "cpu",
+          "layout": {
+            "x": 50,
+            "y": 68.18
+          }
+        }
+      ],
+      "connections": [
+        {
+          "id": "c_queue_to_worker_dispatch",
+          "from": "message_queue",
+          "to": "worker",
+          "direction": "one_way",
+          "style": "solid"
+        }
+      ],
+      "interactions": [
+        {
+          "id": "i_c_queue_to_worker_dispatch_fwd",
+          "from": "message_queue",
+          "to": "worker",
+          "type": "flow",
+          "intensity": "medium"
+        }
+      ],
+      "sourceCamera": {
+        "mode": "focus",
+        "target": "message_queue",
+        "zoom": 1.18
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "tight",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "default",
+          "background_texture": "grid",
+          "glow_strength": "soft"
+        },
+        "motion": {
+          "entry_style": "draw_in",
+          "pacing": "balanced"
+        },
+        "flow": {
+          "renderer": "hybrid"
+        }
+      },
+      "source": {
+        "entities": [
+          {
+            "id": "message_queue",
+            "type": "message_queue",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "Message Queue",
+            "icon": "inbox",
+            "layout": {
+              "x": 50,
+              "y": 12.32
+            }
+          },
+          {
+            "id": "worker",
+            "type": "worker",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Worker",
+            "icon": "cpu",
+            "layout": {
+              "x": 50,
+              "y": 68.18
+            }
+          }
+        ],
+        "connections": [
+          {
+            "id": "c_queue_to_worker_dispatch",
+            "from": "message_queue",
+            "to": "worker",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "interactions": [
+          {
+            "id": "i_c_queue_to_worker_dispatch_fwd",
+            "from": "message_queue",
+            "to": "worker",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
+        "camera": {
+          "mode": "focus",
+          "target": "message_queue",
+          "zoom": 1.18
+        }
+      },
+      "motionPersonality": "CALM",
+      "diff": {
+        "entityDiffs": [
+          {
+            "type": "entity_removed",
+            "entityId": "users"
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "message_queue",
+            "from": {
+              "x": 50,
+              "y": 40.25
+            },
+            "to": {
+              "x": 50,
+              "y": 12.32
+            }
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "worker",
+            "from": {
+              "x": 50,
+              "y": 70.84
+            },
+            "to": {
+              "x": 50,
+              "y": 68.18
+            }
+          },
+          {
+            "type": "entity_status_changed",
+            "entityId": "message_queue",
+            "from": "overloaded",
+            "to": "active"
+          }
+        ],
+        "connectionDiffs": [
+          {
+            "type": "connection_removed",
+            "connectionId": "c_users_to_queue_ingestion"
+          }
+        ],
+        "interactionDiffs": [
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+          }
+        ],
+        "cameraDiffs": [
+          {
+            "type": "camera_changed",
+            "from": {
+              "mode": "focus",
+              "target": "message_queue",
+              "zoom": 1.1
+            },
+            "to": {
+              "mode": "focus",
+              "target": "message_queue",
+              "zoom": 1.18
+            }
+          }
+        ]
+      },
+      "hierarchyTransition": null,
+      "plan": {
+        "phaseOrder": [
+          "removals",
+          "moves",
+          "additions",
+          "connections",
+          "interactions",
+          "camera"
+        ],
+        "removals": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "remove",
+            "exit": "zoom_out",
+            "cleanup": true
+          }
+        ],
+        "moves": [
+          {
+            "entityId": "message_queue",
+            "elementIds": [
+              "message_queue"
+            ],
+            "action": "move"
+          },
+          {
+            "entityId": "worker",
+            "elementIds": [
+              "worker"
+            ],
+            "action": "move"
+          }
+        ],
+        "additions": [],
+        "connections": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "connect",
+            "connectionId": "c_users_to_queue_ingestion"
+          },
+          {
+            "entityId": "message_queue",
+            "elementIds": [
+              "message_queue"
+            ],
+            "action": "connect",
+            "connectionId": "c_users_to_queue_ingestion"
+          }
+        ],
+        "interactions": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+          },
+          {
+            "entityId": "message_queue",
+            "elementIds": [
+              "message_queue"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+          }
+        ]
+      },
+      "animationPlan": {
+        "entities": [
+          {
+            "entityId": "users",
+            "action": "remove",
+            "delay": 0,
+            "duration": 0.9,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          },
+          {
+            "entityId": "message_queue",
+            "action": "move",
+            "delay": 0.6000000000000001,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          },
+          {
+            "entityId": "worker",
+            "action": "move",
+            "delay": 0.68,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          }
+        ],
+        "connections": [
+          {
+            "connectionId": "c_users_to_queue_ingestion",
+            "delay": 0.504,
+            "duration": 0.42,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          }
+        ],
+        "camera": null
+      },
+      "cameraPlan": null,
+      "sceneDiff": {
+        "addedEntities": [],
+        "removedEntities": [
+          {
+            "id": "users",
+            "type": "users_cluster",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Users",
+            "icon": "users",
+            "layout": {
+              "x": 50,
+              "y": 9.66
+            }
+          }
+        ],
+        "movedEntities": [
+          {
+            "id": "message_queue",
+            "from": {
+              "x": 50,
+              "y": 40.25
+            },
+            "to": {
+              "x": 50,
+              "y": 12.32
+            }
+          },
+          {
+            "id": "worker",
+            "from": {
+              "x": 50,
+              "y": 70.84
+            },
+            "to": {
+              "x": 50,
+              "y": 68.18
+            }
+          }
+        ],
+        "updatedEntities": [
+          {
+            "id": "message_queue",
+            "changes": {
+              "status": {
+                "from": "overloaded",
+                "to": "active"
+              }
+            }
+          }
+        ],
+        "addedConnections": [],
+        "removedConnections": [
+          {
+            "id": "c_users_to_queue_ingestion",
+            "from": "users",
+            "to": "message_queue",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "addedInteractions": [],
+        "removedInteractions": [
+          {
+            "id": "i_c_users_to_queue_ingestion_fwd",
+            "from": "users",
+            "to": "message_queue",
+            "type": "burst",
+            "intensity": "high"
+          }
+        ],
+        "interactionIntensityChanged": [],
+        "cameraChanged": {
+          "from": {
+            "mode": "focus",
+            "target": "message_queue",
+            "zoom": 1.1
+          },
+          "to": {
+            "mode": "focus",
+            "target": "message_queue",
+            "zoom": 1.18
+          }
+        }
+      }
+    },
+    {
+      "id": "s6-scale-queue-brokers",
+      "start": 30,
+      "end": 36,
+      "narration": "We scale out the message queue so buffering capacity grows.",
+      "elements": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "sourceEntityId": "users",
+          "label": "Users",
+          "icon": "users",
+          "position": {
+            "x": 50,
+            "y": 9.66
+          },
+          "visualStyle": {
+            "size": 122.4,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.5189712185731703,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 43.4112,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "message_queue_1",
+          "type": "message_queue",
+          "sourceEntityId": "message_queue",
+          "icon": "inbox",
+          "position": {
+            "x": 27.635555555555552,
+            "y": 40.25
+          },
+          "enter": "zoom_in",
+          "visualStyle": {
+            "size": 122.4,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.5189712185731703,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 43.4112,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "message_queue",
+          "type": "message_queue",
+          "sourceEntityId": "message_queue",
+          "label": "Message Queue",
+          "icon": "inbox",
+          "position": {
+            "x": 50,
+            "y": 40.25
+          },
+          "visualStyle": {
+            "size": 122.4,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.5189712185731703,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 43.4112,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "message_queue_3",
+          "type": "message_queue",
+          "sourceEntityId": "message_queue",
+          "icon": "inbox",
+          "position": {
+            "x": 72.36444444444444,
+            "y": 40.25
+          },
+          "enter": "zoom_in",
+          "visualStyle": {
+            "size": 122.4,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.5189712185731703,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 43.4112,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "worker",
+          "type": "worker",
+          "sourceEntityId": "worker",
+          "label": "Worker",
+          "icon": "cpu",
+          "position": {
+            "x": 50,
+            "y": 70.84
+          },
+          "visualStyle": {
+            "size": 122.4,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.5189712185731703,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 43.4112,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        }
+      ],
+      "entities": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Users",
+          "icon": "users",
+          "layout": {
+            "x": 50,
+            "y": 9.66
+          }
+        },
+        {
+          "id": "message_queue",
+          "type": "message_queue",
+          "count": 3,
+          "importance": "primary",
+          "status": "active",
+          "label": "Message Queue",
+          "icon": "inbox",
+          "layout": {
+            "x": 50,
+            "y": 40.25
+          }
+        },
+        {
+          "id": "worker",
+          "type": "worker",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Worker",
+          "icon": "cpu",
+          "layout": {
+            "x": 50,
+            "y": 70.84
+          }
+        }
+      ],
+      "connections": [
+        {
+          "id": "c_users_to_queue_ingestion",
+          "from": "users",
+          "to": "message_queue",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_queue_to_worker_dispatch",
+          "from": "message_queue",
+          "to": "worker",
+          "direction": "one_way",
+          "style": "solid"
+        }
+      ],
+      "interactions": [
+        {
+          "id": "i_c_users_to_queue_ingestion_fwd",
+          "from": "users",
+          "to": "message_queue",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_queue_to_worker_dispatch_fwd",
+          "from": "message_queue",
+          "to": "worker",
+          "type": "broadcast",
+          "intensity": "medium"
+        }
+      ],
+      "sourceCamera": {
+        "mode": "focus",
+        "target": "message_queue",
+        "zoom": 1
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "wide",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "default",
+          "background_texture": "grid",
+          "glow_strength": "soft"
+        },
+        "motion": {
+          "entry_style": "draw_in",
+          "pacing": "balanced"
+        },
+        "flow": {
+          "renderer": "hybrid"
+        }
+      },
+      "source": {
+        "entities": [
+          {
+            "id": "users",
+            "type": "users_cluster",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Users",
+            "icon": "users",
+            "layout": {
+              "x": 50,
+              "y": 9.66
+            }
+          },
+          {
+            "id": "message_queue",
+            "type": "message_queue",
+            "count": 3,
+            "importance": "primary",
+            "status": "active",
+            "label": "Message Queue",
+            "icon": "inbox",
+            "layout": {
+              "x": 50,
+              "y": 40.25
+            }
+          },
+          {
+            "id": "worker",
+            "type": "worker",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Worker",
+            "icon": "cpu",
+            "layout": {
+              "x": 50,
+              "y": 70.84
+            }
+          }
+        ],
+        "connections": [
+          {
+            "id": "c_users_to_queue_ingestion",
+            "from": "users",
+            "to": "message_queue",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_queue_to_worker_dispatch",
+            "from": "message_queue",
+            "to": "worker",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "interactions": [
+          {
+            "id": "i_c_users_to_queue_ingestion_fwd",
+            "from": "users",
+            "to": "message_queue",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_queue_to_worker_dispatch_fwd",
+            "from": "message_queue",
+            "to": "worker",
+            "type": "broadcast",
+            "intensity": "medium"
+          }
+        ],
+        "camera": {
+          "mode": "focus",
+          "target": "message_queue",
+          "zoom": 1
+        }
+      },
+      "motionPersonality": "CALM",
+      "diff": {
+        "entityDiffs": [
+          {
+            "type": "entity_added",
+            "entityId": "users"
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "message_queue",
+            "from": {
+              "x": 50,
+              "y": 12.32
+            },
+            "to": {
+              "x": 50,
+              "y": 40.25
+            }
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "worker",
+            "from": {
+              "x": 50,
+              "y": 68.18
+            },
+            "to": {
+              "x": 50,
+              "y": 70.84
+            }
+          },
+          {
+            "type": "entity_count_changed",
+            "entityId": "message_queue",
+            "from": 1,
+            "to": 3
+          }
+        ],
+        "connectionDiffs": [
+          {
+            "type": "connection_added",
+            "connectionId": "c_users_to_queue_ingestion"
+          }
+        ],
+        "interactionDiffs": [
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+          }
+        ],
+        "cameraDiffs": [
+          {
+            "type": "camera_changed",
+            "from": {
+              "mode": "focus",
+              "target": "message_queue",
+              "zoom": 1.18
+            },
+            "to": {
+              "mode": "focus",
+              "target": "message_queue",
+              "zoom": 1
+            }
+          }
+        ]
+      },
+      "hierarchyTransition": null,
+      "plan": {
+        "phaseOrder": [
+          "removals",
+          "moves",
+          "additions",
+          "connections",
+          "interactions",
+          "camera"
+        ],
+        "removals": [],
+        "moves": [
+          {
+            "entityId": "message_queue",
+            "elementIds": [
+              "message_queue_1",
+              "message_queue",
+              "message_queue_3"
+            ],
+            "action": "move"
+          },
+          {
+            "entityId": "worker",
+            "elementIds": [
+              "worker"
+            ],
+            "action": "move"
+          }
+        ],
+        "additions": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "add",
+            "enter": "zoom_in"
+          },
+          {
+            "entityId": "message_queue",
+            "elementIds": [
+              "message_queue_1",
+              "message_queue",
+              "message_queue_3"
+            ],
+            "action": "add",
+            "enter": "zoom_in"
+          }
+        ],
+        "connections": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "connect",
+            "connectionId": "c_users_to_queue_ingestion"
+          },
+          {
+            "entityId": "message_queue",
+            "elementIds": [
+              "message_queue_1",
+              "message_queue",
+              "message_queue_3"
+            ],
+            "action": "connect",
+            "connectionId": "c_users_to_queue_ingestion"
+          }
+        ],
+        "interactions": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+          },
+          {
+            "entityId": "message_queue",
+            "elementIds": [
+              "message_queue_1",
+              "message_queue",
+              "message_queue_3"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+          }
+        ]
+      },
+      "animationPlan": {
+        "entities": [
+          {
+            "entityId": "message_queue",
+            "action": "move",
+            "delay": 0.6000000000000001,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          },
+          {
+            "entityId": "worker",
+            "action": "move",
+            "delay": 0.68,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          },
+          {
+            "entityId": "users",
+            "action": "add",
+            "delay": 1.7999999999999998,
+            "duration": 0.54,
+            "easing": "cubic-bezier(0.2,0,0,1)",
+            "isPrimary": false
+          }
+        ],
+        "connections": [
+          {
+            "connectionId": "c_users_to_queue_ingestion",
+            "delay": 0.504,
+            "duration": 0.42,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          }
+        ],
+        "camera": null
+      },
+      "cameraPlan": null,
+      "sceneDiff": {
+        "addedEntities": [
+          {
+            "id": "users",
+            "type": "users_cluster",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Users",
+            "icon": "users",
+            "layout": {
+              "x": 50,
+              "y": 9.66
+            }
+          }
+        ],
+        "removedEntities": [],
+        "movedEntities": [
+          {
+            "id": "message_queue",
+            "from": {
+              "x": 50,
+              "y": 12.32
+            },
+            "to": {
+              "x": 50,
+              "y": 40.25
+            }
+          },
+          {
+            "id": "worker",
+            "from": {
+              "x": 50,
+              "y": 68.18
+            },
+            "to": {
+              "x": 50,
+              "y": 70.84
+            }
+          }
+        ],
+        "updatedEntities": [
+          {
+            "id": "message_queue",
+            "changes": {
+              "count": {
+                "from": 1,
+                "to": 3
+              }
+            }
+          }
+        ],
+        "addedConnections": [
+          {
+            "id": "c_users_to_queue_ingestion",
+            "from": "users",
+            "to": "message_queue",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "removedConnections": [],
+        "addedInteractions": [
+          {
+            "id": "i_c_users_to_queue_ingestion_fwd",
+            "from": "users",
+            "to": "message_queue",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
+        "removedInteractions": [],
+        "interactionIntensityChanged": [],
+        "cameraChanged": {
+          "from": {
+            "mode": "focus",
+            "target": "message_queue",
+            "zoom": 1.18
+          },
+          "to": {
+            "mode": "focus",
+            "target": "message_queue",
+            "zoom": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "s7-retry-to-dlq",
+      "start": 36,
+      "end": 42,
+      "narration": "Failed tasks are retried, and stubborn ones go to a dead letter queue.",
+      "elements": [
+        {
+          "id": "message_queue",
+          "type": "message_queue",
+          "sourceEntityId": "message_queue",
+          "label": "Message Queue",
+          "icon": "inbox",
+          "position": {
+            "x": 50,
+            "y": 7.664999999999999
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "worker",
+          "type": "worker",
+          "sourceEntityId": "worker",
+          "label": "Worker",
+          "icon": "cpu",
+          "position": {
+            "x": 50,
+            "y": 29.38833333333334
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "retry_policy",
+          "type": "retry_policy",
+          "sourceEntityId": "retry_policy",
+          "label": "Retry Policy",
+          "icon": "rotate-cw",
+          "position": {
+            "x": 50,
+            "y": 51.11166666666668
+          },
+          "enter": "zoom_in",
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "dead_letter_queue",
+          "type": "dead_letter_queue",
+          "sourceEntityId": "dead_letter_queue",
+          "label": "Dead Letter Queue",
+          "icon": "archive",
+          "position": {
+            "x": 50,
+            "y": 72.83500000000001
+          },
+          "enter": "zoom_in",
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        }
+      ],
+      "entities": [
+        {
+          "id": "message_queue",
+          "type": "message_queue",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Message Queue",
+          "icon": "inbox",
+          "layout": {
+            "x": 50,
+            "y": 7.664999999999999
+          }
+        },
+        {
+          "id": "worker",
+          "type": "worker",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Worker",
+          "icon": "cpu",
+          "layout": {
+            "x": 50,
+            "y": 29.38833333333334
+          }
+        },
+        {
+          "id": "retry_policy",
+          "type": "retry_policy",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Retry Policy",
+          "icon": "rotate-cw",
+          "layout": {
+            "x": 50,
+            "y": 51.11166666666668
+          }
+        },
+        {
+          "id": "dead_letter_queue",
+          "type": "dead_letter_queue",
+          "count": 1,
+          "importance": "primary",
+          "status": "active",
+          "label": "Dead Letter Queue",
+          "icon": "archive",
+          "layout": {
+            "x": 50,
+            "y": 72.83500000000001
+          }
+        }
+      ],
+      "connections": [
+        {
+          "id": "c_queue_to_worker_dispatch",
+          "from": "message_queue",
+          "to": "worker",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_worker_to_retry_policy_retry",
+          "from": "worker",
+          "to": "retry_policy",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_retry_policy_to_dlq_retry",
+          "from": "retry_policy",
+          "to": "dead_letter_queue",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_worker_to_dlq_async_event",
+          "from": "worker",
+          "to": "dead_letter_queue",
+          "direction": "one_way",
+          "style": "solid"
+        }
+      ],
+      "interactions": [
+        {
+          "id": "i_c_queue_to_worker_dispatch_fwd",
+          "from": "message_queue",
+          "to": "worker",
+          "type": "broadcast",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_worker_to_retry_policy_retry_fwd",
+          "from": "worker",
+          "to": "retry_policy",
+          "type": "burst",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_retry_policy_to_dlq_retry_fwd",
+          "from": "retry_policy",
+          "to": "dead_letter_queue",
+          "type": "burst",
+          "intensity": "low"
+        },
+        {
+          "id": "i_c_worker_to_dlq_async_event_fwd",
+          "from": "worker",
+          "to": "dead_letter_queue",
+          "type": "broadcast",
+          "intensity": "low"
+        }
+      ],
+      "sourceCamera": {
+        "mode": "wide",
+        "zoom": 1
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "wide",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "default",
+          "background_texture": "grid",
+          "glow_strength": "soft"
+        },
+        "motion": {
+          "entry_style": "draw_in",
+          "pacing": "balanced"
+        },
+        "flow": {
+          "renderer": "hybrid"
+        }
+      },
+      "source": {
+        "entities": [
+          {
+            "id": "message_queue",
+            "type": "message_queue",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Message Queue",
+            "icon": "inbox",
+            "layout": {
+              "x": 50,
+              "y": 7.664999999999999
+            }
+          },
+          {
+            "id": "worker",
+            "type": "worker",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Worker",
+            "icon": "cpu",
+            "layout": {
+              "x": 50,
+              "y": 29.38833333333334
+            }
+          },
+          {
+            "id": "retry_policy",
+            "type": "retry_policy",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Retry Policy",
+            "icon": "rotate-cw",
+            "layout": {
+              "x": 50,
+              "y": 51.11166666666668
+            }
+          },
+          {
+            "id": "dead_letter_queue",
+            "type": "dead_letter_queue",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "Dead Letter Queue",
+            "icon": "archive",
+            "layout": {
+              "x": 50,
+              "y": 72.83500000000001
+            }
+          }
+        ],
+        "connections": [
+          {
+            "id": "c_queue_to_worker_dispatch",
+            "from": "message_queue",
+            "to": "worker",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_worker_to_retry_policy_retry",
+            "from": "worker",
+            "to": "retry_policy",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_retry_policy_to_dlq_retry",
+            "from": "retry_policy",
+            "to": "dead_letter_queue",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_worker_to_dlq_async_event",
+            "from": "worker",
+            "to": "dead_letter_queue",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "interactions": [
+          {
+            "id": "i_c_queue_to_worker_dispatch_fwd",
+            "from": "message_queue",
+            "to": "worker",
+            "type": "broadcast",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_worker_to_retry_policy_retry_fwd",
+            "from": "worker",
+            "to": "retry_policy",
+            "type": "burst",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_retry_policy_to_dlq_retry_fwd",
+            "from": "retry_policy",
+            "to": "dead_letter_queue",
+            "type": "burst",
+            "intensity": "low"
+          },
+          {
+            "id": "i_c_worker_to_dlq_async_event_fwd",
+            "from": "worker",
+            "to": "dead_letter_queue",
+            "type": "broadcast",
+            "intensity": "low"
+          }
+        ],
+        "camera": {
+          "mode": "wide",
+          "zoom": 1
+        }
+      },
+      "motionPersonality": "CALM",
+      "diff": {
+        "entityDiffs": [
+          {
+            "type": "entity_added",
+            "entityId": "retry_policy"
+          },
+          {
+            "type": "entity_added",
+            "entityId": "dead_letter_queue"
+          },
+          {
+            "type": "entity_removed",
+            "entityId": "users"
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "message_queue",
+            "from": {
+              "x": 50,
+              "y": 40.25
+            },
+            "to": {
+              "x": 50,
+              "y": 7.664999999999999
+            }
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "worker",
+            "from": {
+              "x": 50,
+              "y": 70.84
+            },
+            "to": {
+              "x": 50,
+              "y": 29.38833333333334
+            }
+          },
+          {
+            "type": "entity_count_changed",
+            "entityId": "message_queue",
+            "from": 3,
+            "to": 1
+          },
+          {
+            "type": "entity_importance_changed",
+            "entityId": "message_queue",
+            "from": "primary",
+            "to": "secondary"
+          }
+        ],
+        "connectionDiffs": [
+          {
+            "type": "connection_added",
+            "connectionId": "c_worker_to_retry_policy_retry"
+          },
+          {
+            "type": "connection_added",
+            "connectionId": "c_retry_policy_to_dlq_retry"
+          },
+          {
+            "type": "connection_added",
+            "connectionId": "c_worker_to_dlq_async_event"
+          },
+          {
+            "type": "connection_removed",
+            "connectionId": "c_users_to_queue_ingestion"
+          }
+        ],
+        "interactionDiffs": [
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_worker_to_retry_policy_retry_fwd"
+          },
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_retry_policy_to_dlq_retry_fwd"
+          },
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_worker_to_dlq_async_event_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+          }
+        ],
+        "cameraDiffs": [
+          {
+            "type": "camera_changed",
+            "from": {
+              "mode": "focus",
+              "target": "message_queue",
+              "zoom": 1
+            },
+            "to": {
+              "mode": "wide",
+              "zoom": 1
+            }
+          }
+        ]
+      },
+      "hierarchyTransition": null,
+      "plan": {
+        "phaseOrder": [
+          "removals",
+          "moves",
+          "additions",
+          "connections",
+          "interactions",
+          "camera"
+        ],
+        "removals": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "remove",
+            "exit": "zoom_out",
+            "cleanup": true
+          },
+          {
+            "entityId": "message_queue",
+            "elementIds": [
+              "message_queue_1",
+              "message_queue_3"
+            ],
+            "action": "remove",
+            "exit": "zoom_out",
+            "cleanup": true
+          }
+        ],
+        "moves": [
+          {
+            "entityId": "message_queue",
+            "elementIds": [
+              "message_queue"
+            ],
+            "action": "move"
+          },
+          {
+            "entityId": "worker",
+            "elementIds": [
+              "worker"
+            ],
+            "action": "move"
+          }
+        ],
+        "additions": [
+          {
+            "entityId": "retry_policy",
+            "elementIds": [
+              "retry_policy"
+            ],
+            "action": "add",
+            "enter": "zoom_in"
+          },
+          {
+            "entityId": "dead_letter_queue",
+            "elementIds": [
+              "dead_letter_queue"
+            ],
+            "action": "add",
+            "enter": "zoom_in",
+            "cleanup": false
+          }
+        ],
+        "connections": [
+          {
+            "entityId": "worker",
+            "elementIds": [
+              "worker"
+            ],
+            "action": "connect",
+            "connectionId": "c_worker_to_dlq_async_event",
+            "cleanup": false
+          },
+          {
+            "entityId": "retry_policy",
+            "elementIds": [
+              "retry_policy"
+            ],
+            "action": "connect",
+            "connectionId": "c_retry_policy_to_dlq_retry",
+            "cleanup": false
+          },
+          {
+            "entityId": "dead_letter_queue",
+            "elementIds": [
+              "dead_letter_queue"
+            ],
+            "action": "connect",
+            "connectionId": "c_worker_to_dlq_async_event",
+            "cleanup": false
+          },
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "connect",
+            "connectionId": "c_users_to_queue_ingestion"
+          },
+          {
+            "entityId": "message_queue",
+            "elementIds": [
+              "message_queue"
+            ],
+            "action": "connect",
+            "connectionId": "c_users_to_queue_ingestion"
+          }
+        ],
+        "interactions": [
+          {
+            "entityId": "worker",
+            "elementIds": [
+              "worker"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_worker_to_dlq_async_event_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "retry_policy",
+            "elementIds": [
+              "retry_policy"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_retry_policy_to_dlq_retry_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "dead_letter_queue",
+            "elementIds": [
+              "dead_letter_queue"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_worker_to_dlq_async_event_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+          },
+          {
+            "entityId": "message_queue",
+            "elementIds": [
+              "message_queue"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+          }
+        ]
+      },
+      "animationPlan": {
+        "entities": [
+          {
+            "entityId": "users",
+            "action": "remove",
+            "delay": 0,
+            "duration": 0.9,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          },
+          {
+            "entityId": "message_queue",
+            "action": "move",
+            "delay": 0.6000000000000001,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          },
+          {
+            "entityId": "worker",
+            "action": "move",
+            "delay": 0.68,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          },
+          {
+            "entityId": "retry_policy",
+            "action": "add",
+            "delay": 1.7999999999999998,
+            "duration": 0.54,
+            "easing": "cubic-bezier(0.2,0,0,1)",
+            "isPrimary": false
+          },
+          {
+            "entityId": "dead_letter_queue",
+            "action": "add",
+            "delay": 1.882,
+            "duration": 0.62,
+            "easing": "cubic-bezier(0.2,0,0,1)",
+            "scale": 1.2,
+            "isPrimary": true
+          }
+        ],
+        "connections": [
+          {
+            "connectionId": "c_worker_to_retry_policy_retry",
+            "delay": 0.504,
+            "duration": 0.42,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          },
+          {
+            "connectionId": "c_retry_policy_to_dlq_retry",
+            "delay": 0.584,
+            "duration": 0.42,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          },
+          {
+            "connectionId": "c_worker_to_dlq_async_event",
+            "delay": 0.664,
+            "duration": 0.42,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          },
+          {
+            "connectionId": "c_users_to_queue_ingestion",
+            "delay": 0.744,
+            "duration": 0.42,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          }
+        ],
+        "camera": null
+      },
+      "cameraPlan": null,
+      "sceneDiff": {
+        "addedEntities": [
+          {
+            "id": "retry_policy",
+            "type": "retry_policy",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Retry Policy",
+            "icon": "rotate-cw",
+            "layout": {
+              "x": 50,
+              "y": 51.11166666666668
+            }
+          },
+          {
+            "id": "dead_letter_queue",
+            "type": "dead_letter_queue",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "Dead Letter Queue",
+            "icon": "archive",
+            "layout": {
+              "x": 50,
+              "y": 72.83500000000001
+            }
+          }
+        ],
+        "removedEntities": [
+          {
+            "id": "users",
+            "type": "users_cluster",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Users",
+            "icon": "users",
+            "layout": {
+              "x": 50,
+              "y": 9.66
+            }
+          }
+        ],
+        "movedEntities": [
+          {
+            "id": "message_queue",
+            "from": {
+              "x": 50,
+              "y": 40.25
+            },
+            "to": {
+              "x": 50,
+              "y": 7.664999999999999
+            }
+          },
+          {
+            "id": "worker",
+            "from": {
+              "x": 50,
+              "y": 70.84
+            },
+            "to": {
+              "x": 50,
+              "y": 29.38833333333334
+            }
+          }
+        ],
+        "updatedEntities": [
+          {
+            "id": "message_queue",
+            "changes": {
+              "count": {
+                "from": 3,
+                "to": 1
+              },
+              "importance": {
+                "from": "primary",
+                "to": "secondary"
+              }
+            }
+          }
+        ],
+        "addedConnections": [
+          {
+            "id": "c_worker_to_retry_policy_retry",
+            "from": "worker",
+            "to": "retry_policy",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_retry_policy_to_dlq_retry",
+            "from": "retry_policy",
+            "to": "dead_letter_queue",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_worker_to_dlq_async_event",
+            "from": "worker",
+            "to": "dead_letter_queue",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "removedConnections": [
+          {
+            "id": "c_users_to_queue_ingestion",
+            "from": "users",
+            "to": "message_queue",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "addedInteractions": [
+          {
+            "id": "i_c_worker_to_retry_policy_retry_fwd",
+            "from": "worker",
+            "to": "retry_policy",
+            "type": "burst",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_retry_policy_to_dlq_retry_fwd",
+            "from": "retry_policy",
+            "to": "dead_letter_queue",
+            "type": "burst",
+            "intensity": "low"
+          },
+          {
+            "id": "i_c_worker_to_dlq_async_event_fwd",
+            "from": "worker",
+            "to": "dead_letter_queue",
+            "type": "broadcast",
+            "intensity": "low"
+          }
+        ],
+        "removedInteractions": [
+          {
+            "id": "i_c_users_to_queue_ingestion_fwd",
+            "from": "users",
+            "to": "message_queue",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
+        "interactionIntensityChanged": [],
+        "cameraChanged": {
+          "from": {
+            "mode": "focus",
+            "target": "message_queue",
+            "zoom": 1
+          },
+          "to": {
+            "mode": "wide",
+            "zoom": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "s8-backlog-drains",
+      "start": 42,
+      "end": 48,
+      "narration": "The spike ends, and the queue backlog drains smoothly over time.",
+      "elements": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "sourceEntityId": "users",
+          "label": "Users",
+          "icon": "users",
+          "position": {
+            "x": 50,
+            "y": 7.664999999999999
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        },
+        {
+          "id": "message_queue",
+          "type": "message_queue",
+          "sourceEntityId": "message_queue",
+          "label": "Message Queue",
+          "icon": "inbox",
+          "position": {
+            "x": 50,
+            "y": 29.38833333333334
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "worker",
+          "type": "worker",
+          "sourceEntityId": "worker",
+          "label": "Worker",
+          "icon": "cpu",
+          "position": {
+            "x": 50,
+            "y": 51.11166666666668
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "dead_letter_queue",
+          "type": "dead_letter_queue",
+          "sourceEntityId": "dead_letter_queue",
+          "label": "Dead Letter Queue",
+          "icon": "archive",
+          "position": {
+            "x": 50,
+            "y": 72.83500000000001
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        }
+      ],
+      "entities": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "count": 1,
+          "importance": "secondary",
+          "status": "normal",
+          "label": "Users",
+          "icon": "users",
+          "layout": {
+            "x": 50,
+            "y": 7.664999999999999
+          }
+        },
+        {
+          "id": "message_queue",
+          "type": "message_queue",
+          "count": 1,
+          "importance": "primary",
+          "status": "active",
+          "label": "Message Queue",
+          "icon": "inbox",
+          "layout": {
+            "x": 50,
+            "y": 29.38833333333334
+          }
+        },
+        {
+          "id": "worker",
+          "type": "worker",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Worker",
+          "icon": "cpu",
+          "layout": {
+            "x": 50,
+            "y": 51.11166666666668
+          }
+        },
+        {
+          "id": "dead_letter_queue",
+          "type": "dead_letter_queue",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Dead Letter Queue",
+          "icon": "archive",
+          "layout": {
+            "x": 50,
+            "y": 72.83500000000001
+          }
+        }
+      ],
+      "connections": [
+        {
+          "id": "c_users_to_queue_ingestion",
+          "from": "users",
+          "to": "message_queue",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_queue_to_worker_dispatch",
+          "from": "message_queue",
+          "to": "worker",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_worker_to_dlq_async_event",
+          "from": "worker",
+          "to": "dead_letter_queue",
+          "direction": "one_way",
+          "style": "solid"
+        }
+      ],
+      "interactions": [
+        {
+          "id": "i_c_users_to_queue_ingestion_fwd",
+          "from": "users",
+          "to": "message_queue",
+          "type": "flow",
+          "intensity": "low"
+        },
+        {
+          "id": "i_c_queue_to_worker_dispatch_fwd",
+          "from": "message_queue",
+          "to": "worker",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_worker_to_dlq_async_event_fwd",
+          "from": "worker",
+          "to": "dead_letter_queue",
+          "type": "broadcast",
+          "intensity": "low"
+        }
+      ],
+      "sourceCamera": {
+        "mode": "wide",
+        "zoom": 1
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "wide",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "default",
+          "background_texture": "grid",
+          "glow_strength": "soft"
+        },
+        "motion": {
+          "entry_style": "draw_in",
+          "pacing": "balanced"
+        },
+        "flow": {
+          "renderer": "hybrid"
+        }
+      },
+      "source": {
+        "entities": [
+          {
+            "id": "users",
+            "type": "users_cluster",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Users",
+            "icon": "users",
+            "layout": {
+              "x": 50,
+              "y": 7.664999999999999
+            }
+          },
+          {
+            "id": "message_queue",
+            "type": "message_queue",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "Message Queue",
+            "icon": "inbox",
+            "layout": {
+              "x": 50,
+              "y": 29.38833333333334
+            }
+          },
+          {
+            "id": "worker",
+            "type": "worker",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Worker",
+            "icon": "cpu",
+            "layout": {
+              "x": 50,
+              "y": 51.11166666666668
+            }
+          },
+          {
+            "id": "dead_letter_queue",
+            "type": "dead_letter_queue",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Dead Letter Queue",
+            "icon": "archive",
+            "layout": {
+              "x": 50,
+              "y": 72.83500000000001
+            }
+          }
+        ],
+        "connections": [
+          {
+            "id": "c_users_to_queue_ingestion",
+            "from": "users",
+            "to": "message_queue",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_queue_to_worker_dispatch",
+            "from": "message_queue",
+            "to": "worker",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_worker_to_dlq_async_event",
+            "from": "worker",
+            "to": "dead_letter_queue",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "interactions": [
+          {
+            "id": "i_c_users_to_queue_ingestion_fwd",
+            "from": "users",
+            "to": "message_queue",
+            "type": "flow",
+            "intensity": "low"
+          },
+          {
+            "id": "i_c_queue_to_worker_dispatch_fwd",
+            "from": "message_queue",
+            "to": "worker",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_worker_to_dlq_async_event_fwd",
+            "from": "worker",
+            "to": "dead_letter_queue",
+            "type": "broadcast",
+            "intensity": "low"
+          }
+        ],
+        "camera": {
+          "mode": "wide",
+          "zoom": 1
+        }
+      },
+      "motionPersonality": "CALM",
+      "diff": {
+        "entityDiffs": [
+          {
+            "type": "entity_added",
+            "entityId": "users"
+          },
+          {
+            "type": "entity_removed",
+            "entityId": "retry_policy"
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "message_queue",
+            "from": {
+              "x": 50,
+              "y": 7.664999999999999
+            },
+            "to": {
+              "x": 50,
+              "y": 29.38833333333334
+            }
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "worker",
+            "from": {
+              "x": 50,
+              "y": 29.38833333333334
+            },
+            "to": {
+              "x": 50,
+              "y": 51.11166666666668
+            }
+          },
+          {
+            "type": "entity_importance_changed",
+            "entityId": "message_queue",
+            "from": "secondary",
+            "to": "primary"
+          },
+          {
+            "type": "entity_importance_changed",
+            "entityId": "dead_letter_queue",
+            "from": "primary",
+            "to": "secondary"
+          }
+        ],
+        "connectionDiffs": [
+          {
+            "type": "connection_added",
+            "connectionId": "c_users_to_queue_ingestion"
+          },
+          {
+            "type": "connection_removed",
+            "connectionId": "c_worker_to_retry_policy_retry"
+          },
+          {
+            "type": "connection_removed",
+            "connectionId": "c_retry_policy_to_dlq_retry"
+          }
+        ],
+        "interactionDiffs": [
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_worker_to_retry_policy_retry_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_retry_policy_to_dlq_retry_fwd"
+          }
+        ],
+        "cameraDiffs": []
+      },
+      "hierarchyTransition": null,
+      "plan": {
+        "phaseOrder": [
+          "removals",
+          "moves",
+          "additions",
+          "connections",
+          "interactions",
+          "camera"
+        ],
+        "removals": [
+          {
+            "entityId": "retry_policy",
+            "elementIds": [
+              "retry_policy"
+            ],
+            "action": "remove",
+            "exit": "zoom_out",
+            "cleanup": true
+          }
+        ],
+        "moves": [
+          {
+            "entityId": "message_queue",
+            "elementIds": [
+              "message_queue"
+            ],
+            "action": "move"
+          },
+          {
+            "entityId": "worker",
+            "elementIds": [
+              "worker"
+            ],
+            "action": "move"
+          }
+        ],
+        "additions": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "add",
+            "enter": "zoom_in"
+          },
+          {
+            "entityId": "message_queue",
+            "elementIds": [
+              "message_queue"
+            ],
+            "action": "add",
+            "enter": "zoom_in"
+          }
+        ],
+        "connections": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "connect",
+            "connectionId": "c_users_to_queue_ingestion"
+          },
+          {
+            "entityId": "message_queue",
+            "elementIds": [
+              "message_queue"
+            ],
+            "action": "connect",
+            "connectionId": "c_users_to_queue_ingestion"
+          },
+          {
+            "entityId": "worker",
+            "elementIds": [
+              "worker"
+            ],
+            "action": "connect",
+            "connectionId": "c_worker_to_retry_policy_retry"
+          },
+          {
+            "entityId": "retry_policy",
+            "elementIds": [
+              "retry_policy"
+            ],
+            "action": "connect",
+            "connectionId": "c_retry_policy_to_dlq_retry",
+            "cleanup": false
+          },
+          {
+            "entityId": "dead_letter_queue",
+            "elementIds": [
+              "dead_letter_queue"
+            ],
+            "action": "connect",
+            "connectionId": "c_retry_policy_to_dlq_retry"
+          }
+        ],
+        "interactions": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+          },
+          {
+            "entityId": "message_queue",
+            "elementIds": [
+              "message_queue"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+          },
+          {
+            "entityId": "worker",
+            "elementIds": [
+              "worker"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_worker_to_retry_policy_retry_fwd"
+          },
+          {
+            "entityId": "retry_policy",
+            "elementIds": [
+              "retry_policy"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_retry_policy_to_dlq_retry_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "dead_letter_queue",
+            "elementIds": [
+              "dead_letter_queue"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_retry_policy_to_dlq_retry_fwd"
+          }
+        ]
+      },
+      "animationPlan": {
+        "entities": [
+          {
+            "entityId": "retry_policy",
+            "action": "remove",
+            "delay": 0,
+            "duration": 0.9,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          },
+          {
+            "entityId": "message_queue",
+            "action": "move",
+            "delay": 0.6000000000000001,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          },
+          {
+            "entityId": "worker",
+            "action": "move",
+            "delay": 0.68,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          },
+          {
+            "entityId": "users",
+            "action": "add",
+            "delay": 1.7999999999999998,
+            "duration": 0.54,
+            "easing": "cubic-bezier(0.2,0,0,1)",
+            "isPrimary": false
+          },
+          {
+            "entityId": "message_queue",
+            "action": "add",
+            "delay": 1.882,
+            "duration": 0.62,
+            "easing": "cubic-bezier(0.2,0,0,1)",
+            "scale": 1.2,
+            "isPrimary": true
+          }
+        ],
+        "connections": [
+          {
+            "connectionId": "c_users_to_queue_ingestion",
+            "delay": 0.504,
+            "duration": 0.42,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          },
+          {
+            "connectionId": "c_worker_to_retry_policy_retry",
+            "delay": 0.584,
+            "duration": 0.42,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          },
+          {
+            "connectionId": "c_retry_policy_to_dlq_retry",
+            "delay": 0.664,
+            "duration": 0.42,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          }
+        ],
+        "camera": null
+      },
+      "cameraPlan": null,
+      "sceneDiff": {
+        "addedEntities": [
+          {
+            "id": "users",
+            "type": "users_cluster",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Users",
+            "icon": "users",
+            "layout": {
+              "x": 50,
+              "y": 7.664999999999999
+            }
+          }
+        ],
+        "removedEntities": [
+          {
+            "id": "retry_policy",
+            "type": "retry_policy",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Retry Policy",
+            "icon": "rotate-cw",
+            "layout": {
+              "x": 50,
+              "y": 51.11166666666668
+            }
+          }
+        ],
+        "movedEntities": [
+          {
+            "id": "message_queue",
+            "from": {
+              "x": 50,
+              "y": 7.664999999999999
+            },
+            "to": {
+              "x": 50,
+              "y": 29.38833333333334
+            }
+          },
+          {
+            "id": "worker",
+            "from": {
+              "x": 50,
+              "y": 29.38833333333334
+            },
+            "to": {
+              "x": 50,
+              "y": 51.11166666666668
+            }
+          }
+        ],
+        "updatedEntities": [
+          {
+            "id": "message_queue",
+            "changes": {
+              "importance": {
+                "from": "secondary",
+                "to": "primary"
+              }
+            }
+          },
+          {
+            "id": "dead_letter_queue",
+            "changes": {
+              "importance": {
+                "from": "primary",
+                "to": "secondary"
+              }
+            }
+          }
+        ],
+        "addedConnections": [
+          {
+            "id": "c_users_to_queue_ingestion",
+            "from": "users",
+            "to": "message_queue",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "removedConnections": [
+          {
+            "id": "c_worker_to_retry_policy_retry",
+            "from": "worker",
+            "to": "retry_policy",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_retry_policy_to_dlq_retry",
+            "from": "retry_policy",
+            "to": "dead_letter_queue",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "addedInteractions": [
+          {
+            "id": "i_c_users_to_queue_ingestion_fwd",
+            "from": "users",
+            "to": "message_queue",
+            "type": "flow",
+            "intensity": "low"
+          }
+        ],
+        "removedInteractions": [
+          {
+            "id": "i_c_worker_to_retry_policy_retry_fwd",
+            "from": "worker",
+            "to": "retry_policy",
+            "type": "burst",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_retry_policy_to_dlq_retry_fwd",
+            "from": "retry_policy",
+            "to": "dead_letter_queue",
+            "type": "burst",
+            "intensity": "low"
+          }
+        ],
         "interactionIntensityChanged": [],
         "cameraChanged": null
       }
     },
     {
-      "id": "s5",
-      "start": 24,
-      "end": 30,
-      "narration": "An API Gateway appears in front of the Rate Limiter so all client traffic enters through one managed API entry point.",
-      "elements": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "sourceEntityId": "users",
-          "label": "Users",
-          "icon": "users",
-          "position": {
-            "x": 74,
-            "y": 7
-          },
-          "visualStyle": {
-            "size": 122.4,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.5189712185731703,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 43.4112,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "edge_api_gateway",
-          "type": "api_gateway",
-          "sourceEntityId": "edge_api_gateway",
-          "label": "API Gateway",
-          "icon": "route",
-          "position": {
-            "x": 26,
-            "y": 23.625
-          },
-          "enter": "zoom_in",
-          "visualStyle": {
-            "size": 122.4,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.5189712185731703,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 43.4112,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "edge_rate_limiter",
-          "type": "rate_limiter",
-          "sourceEntityId": "edge_rate_limiter",
-          "label": "Rate Limiter",
-          "icon": "timer",
-          "position": {
-            "x": 74,
-            "y": 40.25
-          },
-          "visualStyle": {
-            "size": 122.4,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.5189712185731703,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 43.4112,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "app_server",
-          "type": "server",
-          "sourceEntityId": "app_server",
-          "label": "Server",
-          "icon": "server",
-          "position": {
-            "x": 26,
-            "y": 56.875
-          },
-          "visualStyle": {
-            "size": 122.4,
-            "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.5189712185731703,
-            "strokeColor": "#35C4C8",
-            "glow": false,
-            "glowColor": "#35C4C8",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 43.4112,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_db",
-          "type": "database",
-          "sourceEntityId": "app_db",
-          "label": "Database",
-          "icon": "database",
-          "position": {
-            "x": 74,
-            "y": 73.5
-          },
-          "visualStyle": {
-            "size": 122.4,
-            "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.5189712185731703,
-            "strokeColor": "#35C4C8",
-            "glow": false,
-            "glowColor": "#35C4C8",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 43.4112,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        }
-      ],
-      "entities": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "Users",
-          "icon": "users",
-          "layout": {
-            "x": 74,
-            "y": 7
-          }
-        },
-        {
-          "id": "edge_api_gateway",
-          "type": "api_gateway",
-          "count": 1,
-          "importance": "primary",
-          "status": "active",
-          "label": "API Gateway",
-          "icon": "route",
-          "layout": {
-            "x": 26,
-            "y": 23.625
-          }
-        },
-        {
-          "id": "edge_rate_limiter",
-          "type": "rate_limiter",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "Rate Limiter",
-          "icon": "timer",
-          "layout": {
-            "x": 74,
-            "y": 40.25
-          }
-        },
-        {
-          "id": "app_server",
-          "type": "server",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Server",
-          "icon": "server",
-          "layout": {
-            "x": 26,
-            "y": 56.875
-          }
-        },
-        {
-          "id": "app_db",
-          "type": "database",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Database",
-          "icon": "database",
-          "layout": {
-            "x": 74,
-            "y": 73.5
-          }
-        }
-      ],
-      "connections": [
-        {
-          "id": "c_users_to_gateway",
-          "from": "users",
-          "to": "edge_api_gateway",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_gateway_to_limiter",
-          "from": "edge_api_gateway",
-          "to": "edge_rate_limiter",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_limiter_to_server",
-          "from": "edge_rate_limiter",
-          "to": "app_server",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_server_to_db",
-          "from": "app_server",
-          "to": "app_db",
-          "direction": "one_way",
-          "style": "solid"
-        }
-      ],
-      "interactions": [
-        {
-          "id": "i_c_users_to_gateway_fwd",
-          "from": "users",
-          "to": "edge_api_gateway",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_gateway_to_limiter_fwd",
-          "from": "edge_api_gateway",
-          "to": "edge_rate_limiter",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_limiter_to_server_fwd",
-          "from": "edge_rate_limiter",
-          "to": "app_server",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_server_to_db_fwd",
-          "from": "app_server",
-          "to": "app_db",
-          "type": "flow",
-          "intensity": "medium"
-        }
-      ],
-      "sourceCamera": {
-        "mode": "focus",
-        "target": "edge_api_gateway",
-        "zoom": 1
-      },
-      "directives": {
-        "camera": {
-          "mode": "follow_action",
-          "zoom": "wide",
-          "active_zone": "upper_third",
-          "reserve_bottom_percent": 25
-        },
-        "visual": {
-          "theme": "default",
-          "background_texture": "grid",
-          "glow_strength": "soft"
-        },
-        "motion": {
-          "entry_style": "draw_in",
-          "pacing": "balanced"
-        },
-        "flow": {
-          "renderer": "hybrid"
-        }
-      },
-      "source": {
-        "entities": [
-          {
-            "id": "users",
-            "type": "users_cluster",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Users",
-            "icon": "users",
-            "layout": {
-              "x": 74,
-              "y": 7
-            }
-          },
-          {
-            "id": "edge_api_gateway",
-            "type": "api_gateway",
-            "count": 1,
-            "importance": "primary",
-            "status": "active",
-            "label": "API Gateway",
-            "icon": "route",
-            "layout": {
-              "x": 26,
-              "y": 23.625
-            }
-          },
-          {
-            "id": "edge_rate_limiter",
-            "type": "rate_limiter",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Rate Limiter",
-            "icon": "timer",
-            "layout": {
-              "x": 74,
-              "y": 40.25
-            }
-          },
-          {
-            "id": "app_server",
-            "type": "server",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Server",
-            "icon": "server",
-            "layout": {
-              "x": 26,
-              "y": 56.875
-            }
-          },
-          {
-            "id": "app_db",
-            "type": "database",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Database",
-            "icon": "database",
-            "layout": {
-              "x": 74,
-              "y": 73.5
-            }
-          }
-        ],
-        "connections": [
-          {
-            "id": "c_users_to_gateway",
-            "from": "users",
-            "to": "edge_api_gateway",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_gateway_to_limiter",
-            "from": "edge_api_gateway",
-            "to": "edge_rate_limiter",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_limiter_to_server",
-            "from": "edge_rate_limiter",
-            "to": "app_server",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_server_to_db",
-            "from": "app_server",
-            "to": "app_db",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "interactions": [
-          {
-            "id": "i_c_users_to_gateway_fwd",
-            "from": "users",
-            "to": "edge_api_gateway",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_gateway_to_limiter_fwd",
-            "from": "edge_api_gateway",
-            "to": "edge_rate_limiter",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_limiter_to_server_fwd",
-            "from": "edge_rate_limiter",
-            "to": "app_server",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_server_to_db_fwd",
-            "from": "app_server",
-            "to": "app_db",
-            "type": "flow",
-            "intensity": "medium"
-          }
-        ],
-        "camera": {
-          "mode": "focus",
-          "target": "edge_api_gateway",
-          "zoom": 1
-        }
-      },
-      "motionPersonality": "ENERGETIC",
-      "diff": {
-        "entityDiffs": [
-          {
-            "type": "entity_added",
-            "entityId": "edge_api_gateway"
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "users",
-            "from": {
-              "x": 50,
-              "y": 7.664999999999999
-            },
-            "to": {
-              "x": 74,
-              "y": 7
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "edge_rate_limiter",
-            "from": {
-              "x": 50,
-              "y": 29.38833333333334
-            },
-            "to": {
-              "x": 74,
-              "y": 40.25
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "app_server",
-            "from": {
-              "x": 50,
-              "y": 51.11166666666668
-            },
-            "to": {
-              "x": 26,
-              "y": 56.875
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "app_db",
-            "from": {
-              "x": 50,
-              "y": 72.83500000000001
-            },
-            "to": {
-              "x": 74,
-              "y": 73.5
-            }
-          },
-          {
-            "type": "entity_importance_changed",
-            "entityId": "edge_rate_limiter",
-            "from": "primary",
-            "to": "secondary"
-          }
-        ],
-        "connectionDiffs": [
-          {
-            "type": "connection_added",
-            "connectionId": "c_users_to_gateway"
-          },
-          {
-            "type": "connection_added",
-            "connectionId": "c_gateway_to_limiter"
-          },
-          {
-            "type": "connection_removed",
-            "connectionId": "c_users_to_limiter"
-          }
-        ],
-        "interactionDiffs": [
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_users_to_gateway_fwd"
-          },
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_gateway_to_limiter_fwd"
-          },
-          {
-            "type": "interaction_removed",
-            "interactionId": "i_c_users_to_limiter_fwd"
-          }
-        ],
-        "cameraDiffs": [
-          {
-            "type": "camera_changed",
-            "from": {
-              "mode": "focus",
-              "target": "edge_rate_limiter",
-              "zoom": 1.08
-            },
-            "to": {
-              "mode": "focus",
-              "target": "edge_api_gateway",
-              "zoom": 1
-            }
-          }
-        ]
-      },
-      "hierarchyTransition": null,
-      "plan": {
-        "phaseOrder": [
-          "removals",
-          "moves",
-          "additions",
-          "connections",
-          "interactions",
-          "camera"
-        ],
-        "removals": [],
-        "moves": [
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "move"
-          },
-          {
-            "entityId": "edge_rate_limiter",
-            "elementIds": [
-              "edge_rate_limiter"
-            ],
-            "action": "move"
-          },
-          {
-            "entityId": "app_server",
-            "elementIds": [
-              "app_server"
-            ],
-            "action": "move"
-          },
-          {
-            "entityId": "app_db",
-            "elementIds": [
-              "app_db"
-            ],
-            "action": "move"
-          }
-        ],
-        "additions": [
-          {
-            "entityId": "edge_api_gateway",
-            "elementIds": [
-              "edge_api_gateway"
-            ],
-            "action": "add",
-            "enter": "zoom_in",
-            "cleanup": false
-          }
-        ],
-        "connections": [
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "connect",
-            "connectionId": "c_users_to_limiter",
-            "cleanup": false
-          },
-          {
-            "entityId": "edge_api_gateway",
-            "elementIds": [
-              "edge_api_gateway"
-            ],
-            "action": "connect",
-            "connectionId": "c_gateway_to_limiter",
-            "cleanup": false
-          },
-          {
-            "entityId": "edge_rate_limiter",
-            "elementIds": [
-              "edge_rate_limiter"
-            ],
-            "action": "connect",
-            "connectionId": "c_users_to_limiter",
-            "cleanup": false
-          }
-        ],
-        "interactions": [
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_users_to_limiter_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "edge_api_gateway",
-            "elementIds": [
-              "edge_api_gateway"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_gateway_to_limiter_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "edge_rate_limiter",
-            "elementIds": [
-              "edge_rate_limiter"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_users_to_limiter_fwd",
-            "cleanup": false
-          }
-        ]
-      },
-      "animationPlan": {
-        "entities": [
-          {
-            "entityId": "users",
-            "action": "move",
-            "delay": 0.6000000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          },
-          {
-            "entityId": "edge_rate_limiter",
-            "action": "move",
-            "delay": 0.6400000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          },
-          {
-            "entityId": "app_server",
-            "action": "move",
-            "delay": 0.68,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          },
-          {
-            "entityId": "app_db",
-            "action": "move",
-            "delay": 0.7200000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          },
-          {
-            "entityId": "edge_api_gateway",
-            "action": "add",
-            "delay": 0.37399999999999994,
-            "duration": 0.62,
-            "easing": "cubic-bezier(0.4,0,0.2,1)",
-            "scale": 1.2,
-            "isPrimary": true
-          }
-        ],
-        "connections": [
-          {
-            "connectionId": "c_users_to_gateway",
-            "delay": 0.504,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          },
-          {
-            "connectionId": "c_gateway_to_limiter",
-            "delay": 0.544,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          },
-          {
-            "connectionId": "c_users_to_limiter",
-            "delay": 0.584,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          }
-        ],
-        "camera": null
-      },
-      "cameraPlan": null,
-      "sceneDiff": {
-        "addedEntities": [
-          {
-            "id": "edge_api_gateway",
-            "type": "api_gateway",
-            "count": 1,
-            "importance": "primary",
-            "status": "active",
-            "label": "API Gateway",
-            "icon": "route",
-            "layout": {
-              "x": 26,
-              "y": 23.625
-            }
-          }
-        ],
-        "removedEntities": [],
-        "movedEntities": [
-          {
-            "id": "users",
-            "from": {
-              "x": 50,
-              "y": 7.664999999999999
-            },
-            "to": {
-              "x": 74,
-              "y": 7
-            }
-          },
-          {
-            "id": "edge_rate_limiter",
-            "from": {
-              "x": 50,
-              "y": 29.38833333333334
-            },
-            "to": {
-              "x": 74,
-              "y": 40.25
-            }
-          },
-          {
-            "id": "app_server",
-            "from": {
-              "x": 50,
-              "y": 51.11166666666668
-            },
-            "to": {
-              "x": 26,
-              "y": 56.875
-            }
-          },
-          {
-            "id": "app_db",
-            "from": {
-              "x": 50,
-              "y": 72.83500000000001
-            },
-            "to": {
-              "x": 74,
-              "y": 73.5
-            }
-          }
-        ],
-        "updatedEntities": [
-          {
-            "id": "edge_rate_limiter",
-            "changes": {
-              "importance": {
-                "from": "primary",
-                "to": "secondary"
-              }
-            }
-          }
-        ],
-        "addedConnections": [
-          {
-            "id": "c_users_to_gateway",
-            "from": "users",
-            "to": "edge_api_gateway",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_gateway_to_limiter",
-            "from": "edge_api_gateway",
-            "to": "edge_rate_limiter",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "removedConnections": [
-          {
-            "id": "c_users_to_limiter",
-            "from": "users",
-            "to": "edge_rate_limiter",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "addedInteractions": [
-          {
-            "id": "i_c_users_to_gateway_fwd",
-            "from": "users",
-            "to": "edge_api_gateway",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_gateway_to_limiter_fwd",
-            "from": "edge_api_gateway",
-            "to": "edge_rate_limiter",
-            "type": "flow",
-            "intensity": "medium"
-          }
-        ],
-        "removedInteractions": [
-          {
-            "id": "i_c_users_to_limiter_fwd",
-            "from": "users",
-            "to": "edge_rate_limiter",
-            "type": "burst",
-            "intensity": "high"
-          }
-        ],
-        "interactionIntensityChanged": [],
-        "cameraChanged": {
-          "from": {
-            "mode": "focus",
-            "target": "edge_rate_limiter",
-            "zoom": 1.08
-          },
-          "to": {
-            "mode": "focus",
-            "target": "edge_api_gateway",
-            "zoom": 1
-          }
-        }
-      }
-    },
-    {
-      "id": "s6",
-      "start": 30,
-      "end": 36,
-      "narration": "Even with the Rate Limiter, allowed traffic still spikes, so the Server shows overload again as it tries to keep up.",
-      "elements": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "sourceEntityId": "users",
-          "label": "Users",
-          "icon": "users",
-          "position": {
-            "x": 74,
-            "y": 7
-          },
-          "visualStyle": {
-            "size": 122.4,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.5189712185731703,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 43.4112,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "edge_api_gateway",
-          "type": "api_gateway",
-          "sourceEntityId": "edge_api_gateway",
-          "label": "API Gateway",
-          "icon": "route",
-          "position": {
-            "x": 26,
-            "y": 23.625
-          },
-          "visualStyle": {
-            "size": 122.4,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.5189712185731703,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 43.4112,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "edge_rate_limiter",
-          "type": "rate_limiter",
-          "sourceEntityId": "edge_rate_limiter",
-          "label": "Rate Limiter",
-          "icon": "timer",
-          "position": {
-            "x": 74,
-            "y": 40.25
-          },
-          "visualStyle": {
-            "size": 122.4,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.5189712185731703,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 43.4112,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "app_server",
-          "type": "server",
-          "sourceEntityId": "app_server",
-          "label": "Server",
-          "icon": "server",
-          "position": {
-            "x": 26,
-            "y": 56.875
-          },
-          "visualStyle": {
-            "size": 122.4,
-            "opacity": 1,
-            "color": "#EF4444",
-            "strokeWidth": 2.5189712185731703,
-            "strokeColor": "#EF4444",
-            "glow": false,
-            "glowColor": "#EF4444",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 43.4112,
-            "fontWeight": 600,
-            "status": "overloaded"
-          }
-        },
-        {
-          "id": "app_db",
-          "type": "database",
-          "sourceEntityId": "app_db",
-          "label": "Database",
-          "icon": "database",
-          "position": {
-            "x": 74,
-            "y": 73.5
-          },
-          "visualStyle": {
-            "size": 122.4,
-            "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.5189712185731703,
-            "strokeColor": "#35C4C8",
-            "glow": false,
-            "glowColor": "#35C4C8",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 43.4112,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        }
-      ],
-      "entities": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "Users",
-          "icon": "users",
-          "layout": {
-            "x": 74,
-            "y": 7
-          }
-        },
-        {
-          "id": "edge_api_gateway",
-          "type": "api_gateway",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "API Gateway",
-          "icon": "route",
-          "layout": {
-            "x": 26,
-            "y": 23.625
-          }
-        },
-        {
-          "id": "edge_rate_limiter",
-          "type": "rate_limiter",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "Rate Limiter",
-          "icon": "timer",
-          "layout": {
-            "x": 74,
-            "y": 40.25
-          }
-        },
-        {
-          "id": "app_server",
-          "type": "server",
-          "count": 1,
-          "importance": "primary",
-          "status": "overloaded",
-          "label": "Server",
-          "icon": "server",
-          "layout": {
-            "x": 26,
-            "y": 56.875
-          }
-        },
-        {
-          "id": "app_db",
-          "type": "database",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Database",
-          "icon": "database",
-          "layout": {
-            "x": 74,
-            "y": 73.5
-          }
-        }
-      ],
-      "connections": [
-        {
-          "id": "c_users_to_gateway",
-          "from": "users",
-          "to": "edge_api_gateway",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_gateway_to_limiter",
-          "from": "edge_api_gateway",
-          "to": "edge_rate_limiter",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_limiter_to_server",
-          "from": "edge_rate_limiter",
-          "to": "app_server",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_server_to_db",
-          "from": "app_server",
-          "to": "app_db",
-          "direction": "one_way",
-          "style": "solid"
-        }
-      ],
-      "interactions": [
-        {
-          "id": "i_c_users_to_gateway_fwd",
-          "from": "users",
-          "to": "edge_api_gateway",
-          "type": "burst",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_gateway_to_limiter_fwd",
-          "from": "edge_api_gateway",
-          "to": "edge_rate_limiter",
-          "type": "flow",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_limiter_to_server_fwd",
-          "from": "edge_rate_limiter",
-          "to": "app_server",
-          "type": "burst",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_server_to_db_fwd",
-          "from": "app_server",
-          "to": "app_db",
-          "type": "flow",
-          "intensity": "high"
-        }
-      ],
-      "sourceCamera": {
-        "mode": "focus",
-        "target": "app_server",
-        "zoom": 1.04
-      },
-      "directives": {
-        "camera": {
-          "mode": "follow_action",
-          "zoom": "medium",
-          "active_zone": "upper_third",
-          "reserve_bottom_percent": 25
-        },
-        "visual": {
-          "theme": "default",
-          "background_texture": "grid",
-          "glow_strength": "soft"
-        },
-        "motion": {
-          "entry_style": "draw_in",
-          "pacing": "balanced"
-        },
-        "flow": {
-          "renderer": "hybrid"
-        }
-      },
-      "source": {
-        "entities": [
-          {
-            "id": "users",
-            "type": "users_cluster",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Users",
-            "icon": "users",
-            "layout": {
-              "x": 74,
-              "y": 7
-            }
-          },
-          {
-            "id": "edge_api_gateway",
-            "type": "api_gateway",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "API Gateway",
-            "icon": "route",
-            "layout": {
-              "x": 26,
-              "y": 23.625
-            }
-          },
-          {
-            "id": "edge_rate_limiter",
-            "type": "rate_limiter",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Rate Limiter",
-            "icon": "timer",
-            "layout": {
-              "x": 74,
-              "y": 40.25
-            }
-          },
-          {
-            "id": "app_server",
-            "type": "server",
-            "count": 1,
-            "importance": "primary",
-            "status": "overloaded",
-            "label": "Server",
-            "icon": "server",
-            "layout": {
-              "x": 26,
-              "y": 56.875
-            }
-          },
-          {
-            "id": "app_db",
-            "type": "database",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Database",
-            "icon": "database",
-            "layout": {
-              "x": 74,
-              "y": 73.5
-            }
-          }
-        ],
-        "connections": [
-          {
-            "id": "c_users_to_gateway",
-            "from": "users",
-            "to": "edge_api_gateway",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_gateway_to_limiter",
-            "from": "edge_api_gateway",
-            "to": "edge_rate_limiter",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_limiter_to_server",
-            "from": "edge_rate_limiter",
-            "to": "app_server",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_server_to_db",
-            "from": "app_server",
-            "to": "app_db",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "interactions": [
-          {
-            "id": "i_c_users_to_gateway_fwd",
-            "from": "users",
-            "to": "edge_api_gateway",
-            "type": "burst",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_gateway_to_limiter_fwd",
-            "from": "edge_api_gateway",
-            "to": "edge_rate_limiter",
-            "type": "flow",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_limiter_to_server_fwd",
-            "from": "edge_rate_limiter",
-            "to": "app_server",
-            "type": "burst",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_server_to_db_fwd",
-            "from": "app_server",
-            "to": "app_db",
-            "type": "flow",
-            "intensity": "high"
-          }
-        ],
-        "camera": {
-          "mode": "focus",
-          "target": "app_server",
-          "zoom": 1.04
-        }
-      },
-      "motionPersonality": "ENERGETIC",
-      "diff": {
-        "entityDiffs": [
-          {
-            "type": "entity_importance_changed",
-            "entityId": "edge_api_gateway",
-            "from": "primary",
-            "to": "secondary"
-          },
-          {
-            "type": "entity_status_changed",
-            "entityId": "app_server",
-            "from": "normal",
-            "to": "overloaded"
-          },
-          {
-            "type": "entity_importance_changed",
-            "entityId": "app_server",
-            "from": "secondary",
-            "to": "primary"
-          }
-        ],
-        "connectionDiffs": [],
-        "interactionDiffs": [
-          {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_users_to_gateway_fwd",
-            "from": "medium",
-            "to": "high"
-          },
-          {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_gateway_to_limiter_fwd",
-            "from": "medium",
-            "to": "high"
-          },
-          {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_limiter_to_server_fwd",
-            "from": "medium",
-            "to": "high"
-          },
-          {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_server_to_db_fwd",
-            "from": "medium",
-            "to": "high"
-          }
-        ],
-        "cameraDiffs": [
-          {
-            "type": "camera_changed",
-            "from": {
-              "mode": "focus",
-              "target": "edge_api_gateway",
-              "zoom": 1
-            },
-            "to": {
-              "mode": "focus",
-              "target": "app_server",
-              "zoom": 1.04
-            }
-          }
-        ]
-      },
-      "hierarchyTransition": null,
-      "plan": {
-        "phaseOrder": [
-          "removals",
-          "moves",
-          "additions",
-          "connections",
-          "interactions",
-          "camera"
-        ],
-        "removals": [],
-        "moves": [],
-        "additions": [
-          {
-            "entityId": "app_server",
-            "elementIds": [
-              "app_server"
-            ],
-            "action": "add",
-            "enter": "zoom_in"
-          }
-        ],
-        "connections": [],
-        "interactions": [
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_users_to_gateway_fwd"
-          },
-          {
-            "entityId": "edge_api_gateway",
-            "elementIds": [
-              "edge_api_gateway"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_gateway_to_limiter_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "edge_rate_limiter",
-            "elementIds": [
-              "edge_rate_limiter"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_limiter_to_server_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "app_server",
-            "elementIds": [
-              "app_server"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_server_to_db_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "app_db",
-            "elementIds": [
-              "app_db"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_server_to_db_fwd"
-          }
-        ]
-      },
-      "animationPlan": {
-        "entities": [
-          {
-            "entityId": "app_server",
-            "action": "add",
-            "delay": 0.37399999999999994,
-            "duration": 0.62,
-            "easing": "cubic-bezier(0.4,0,0.2,1)",
-            "scale": 1.2,
-            "isPrimary": true
-          }
-        ],
-        "connections": [],
-        "camera": null
-      },
-      "cameraPlan": null,
-      "sceneDiff": {
-        "addedEntities": [],
-        "removedEntities": [],
-        "movedEntities": [],
-        "updatedEntities": [
-          {
-            "id": "edge_api_gateway",
-            "changes": {
-              "importance": {
-                "from": "primary",
-                "to": "secondary"
-              }
-            }
-          },
-          {
-            "id": "app_server",
-            "changes": {
-              "status": {
-                "from": "normal",
-                "to": "overloaded"
-              },
-              "importance": {
-                "from": "secondary",
-                "to": "primary"
-              }
-            }
-          }
-        ],
-        "addedConnections": [],
-        "removedConnections": [],
-        "addedInteractions": [],
-        "removedInteractions": [],
-        "interactionIntensityChanged": [
-          {
-            "id": "i_c_users_to_gateway_fwd",
-            "from": "medium",
-            "to": "high"
-          },
-          {
-            "id": "i_c_gateway_to_limiter_fwd",
-            "from": "medium",
-            "to": "high"
-          },
-          {
-            "id": "i_c_limiter_to_server_fwd",
-            "from": "medium",
-            "to": "high"
-          },
-          {
-            "id": "i_c_server_to_db_fwd",
-            "from": "medium",
-            "to": "high"
-          }
-        ],
-        "cameraChanged": {
-          "from": {
-            "mode": "focus",
-            "target": "edge_api_gateway",
-            "zoom": 1
-          },
-          "to": {
-            "mode": "focus",
-            "target": "app_server",
-            "zoom": 1.04
-          }
-        }
-      }
-    },
-    {
-      "id": "s7",
-      "start": 36,
-      "end": 42,
-      "narration": "A Load Balancer is added after the Rate Limiter and the Server scales out so requests fan out across multiple servers before hitting the Database.",
-      "elements": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "sourceEntityId": "users",
-          "label": "Users",
-          "icon": "users",
-          "position": {
-            "x": 74,
-            "y": 7
-          },
-          "visualStyle": {
-            "size": 95.4,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.223856110453192,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 33.8352,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "edge_api_gateway",
-          "type": "api_gateway",
-          "sourceEntityId": "edge_api_gateway",
-          "label": "API Gateway",
-          "icon": "route",
-          "position": {
-            "x": 26,
-            "y": 23.3
-          },
-          "visualStyle": {
-            "size": 95.4,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.223856110453192,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 33.8352,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "edge_rate_limiter",
-          "type": "rate_limiter",
-          "sourceEntityId": "edge_rate_limiter",
-          "label": "Rate Limiter",
-          "icon": "timer",
-          "position": {
-            "x": 74,
-            "y": 39.6
-          },
-          "visualStyle": {
-            "size": 95.4,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.223856110453192,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 33.8352,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "edge_load_balancer",
-          "type": "load_balancer",
-          "sourceEntityId": "edge_load_balancer",
-          "label": "Load Balancer",
-          "icon": "shuffle",
-          "position": {
-            "x": 26,
-            "y": 55.900000000000006
-          },
-          "enter": "zoom_in",
-          "visualStyle": {
-            "size": 95.4,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.223856110453192,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 33.8352,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "app_server_1",
-          "type": "server",
-          "sourceEntityId": "app_server",
-          "icon": "server",
-          "position": {
-            "x": 25.80648148148148,
-            "y": 72.2
-          },
-          "enter": "zoom_in",
-          "visualStyle": {
-            "size": 95.4,
-            "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.223856110453192,
-            "strokeColor": "#35C4C8",
-            "glow": false,
-            "glowColor": "#35C4C8",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 33.8352,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_server",
-          "type": "server",
-          "sourceEntityId": "app_server",
-          "label": "Server",
-          "icon": "server",
-          "position": {
-            "x": 50,
-            "y": 72.2
-          },
-          "visualStyle": {
-            "size": 95.4,
-            "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.223856110453192,
-            "strokeColor": "#35C4C8",
-            "glow": false,
-            "glowColor": "#35C4C8",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 33.8352,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_server_3",
-          "type": "server",
-          "sourceEntityId": "app_server",
-          "icon": "server",
-          "position": {
-            "x": 74.19351851851852,
-            "y": 72.2
-          },
-          "enter": "zoom_in",
-          "visualStyle": {
-            "size": 95.4,
-            "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.223856110453192,
-            "strokeColor": "#35C4C8",
-            "glow": false,
-            "glowColor": "#35C4C8",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 33.8352,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_db",
-          "type": "database",
-          "sourceEntityId": "app_db",
-          "label": "Database",
-          "icon": "database",
-          "position": {
-            "x": 74,
-            "y": 88.5
-          },
-          "visualStyle": {
-            "size": 95.4,
-            "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.223856110453192,
-            "strokeColor": "#35C4C8",
-            "glow": false,
-            "glowColor": "#35C4C8",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 33.8352,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        }
-      ],
-      "entities": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "Users",
-          "icon": "users",
-          "layout": {
-            "x": 74,
-            "y": 7
-          }
-        },
-        {
-          "id": "edge_api_gateway",
-          "type": "api_gateway",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "API Gateway",
-          "icon": "route",
-          "layout": {
-            "x": 26,
-            "y": 23.3
-          }
-        },
-        {
-          "id": "edge_rate_limiter",
-          "type": "rate_limiter",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "Rate Limiter",
-          "icon": "timer",
-          "layout": {
-            "x": 74,
-            "y": 39.6
-          }
-        },
-        {
-          "id": "edge_load_balancer",
-          "type": "load_balancer",
-          "count": 1,
-          "importance": "primary",
-          "status": "active",
-          "label": "Load Balancer",
-          "icon": "shuffle",
-          "layout": {
-            "x": 26,
-            "y": 55.900000000000006
-          }
-        },
-        {
-          "id": "app_server",
-          "type": "server",
-          "count": 3,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Server",
-          "icon": "server",
-          "layout": {
-            "x": 50,
-            "y": 72.2
-          }
-        },
-        {
-          "id": "app_db",
-          "type": "database",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Database",
-          "icon": "database",
-          "layout": {
-            "x": 74,
-            "y": 88.5
-          }
-        }
-      ],
-      "connections": [
-        {
-          "id": "c_users_to_gateway",
-          "from": "users",
-          "to": "edge_api_gateway",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_gateway_to_limiter",
-          "from": "edge_api_gateway",
-          "to": "edge_rate_limiter",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_limiter_to_lb",
-          "from": "edge_rate_limiter",
-          "to": "edge_load_balancer",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_lb_to_server",
-          "from": "edge_load_balancer",
-          "to": "app_server",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_server_to_db",
-          "from": "app_server",
-          "to": "app_db",
-          "direction": "one_way",
-          "style": "solid"
-        }
-      ],
-      "interactions": [
-        {
-          "id": "i_c_users_to_gateway_fwd",
-          "from": "users",
-          "to": "edge_api_gateway",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_gateway_to_limiter_fwd",
-          "from": "edge_api_gateway",
-          "to": "edge_rate_limiter",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_limiter_to_lb_fwd",
-          "from": "edge_rate_limiter",
-          "to": "edge_load_balancer",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_lb_to_server_fwd",
-          "from": "edge_load_balancer",
-          "to": "app_server",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_server_to_db_fwd",
-          "from": "app_server",
-          "to": "app_db",
-          "type": "flow",
-          "intensity": "medium"
-        }
-      ],
-      "sourceCamera": {
-        "mode": "focus",
-        "target": "edge_load_balancer",
-        "zoom": 1
-      },
-      "directives": {
-        "camera": {
-          "mode": "follow_action",
-          "zoom": "wide",
-          "active_zone": "upper_third",
-          "reserve_bottom_percent": 25
-        },
-        "visual": {
-          "theme": "default",
-          "background_texture": "grid",
-          "glow_strength": "soft"
-        },
-        "motion": {
-          "entry_style": "draw_in",
-          "pacing": "balanced"
-        },
-        "flow": {
-          "renderer": "hybrid"
-        }
-      },
-      "source": {
-        "entities": [
-          {
-            "id": "users",
-            "type": "users_cluster",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Users",
-            "icon": "users",
-            "layout": {
-              "x": 74,
-              "y": 7
-            }
-          },
-          {
-            "id": "edge_api_gateway",
-            "type": "api_gateway",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "API Gateway",
-            "icon": "route",
-            "layout": {
-              "x": 26,
-              "y": 23.3
-            }
-          },
-          {
-            "id": "edge_rate_limiter",
-            "type": "rate_limiter",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Rate Limiter",
-            "icon": "timer",
-            "layout": {
-              "x": 74,
-              "y": 39.6
-            }
-          },
-          {
-            "id": "edge_load_balancer",
-            "type": "load_balancer",
-            "count": 1,
-            "importance": "primary",
-            "status": "active",
-            "label": "Load Balancer",
-            "icon": "shuffle",
-            "layout": {
-              "x": 26,
-              "y": 55.900000000000006
-            }
-          },
-          {
-            "id": "app_server",
-            "type": "server",
-            "count": 3,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Server",
-            "icon": "server",
-            "layout": {
-              "x": 50,
-              "y": 72.2
-            }
-          },
-          {
-            "id": "app_db",
-            "type": "database",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Database",
-            "icon": "database",
-            "layout": {
-              "x": 74,
-              "y": 88.5
-            }
-          }
-        ],
-        "connections": [
-          {
-            "id": "c_users_to_gateway",
-            "from": "users",
-            "to": "edge_api_gateway",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_gateway_to_limiter",
-            "from": "edge_api_gateway",
-            "to": "edge_rate_limiter",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_limiter_to_lb",
-            "from": "edge_rate_limiter",
-            "to": "edge_load_balancer",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_lb_to_server",
-            "from": "edge_load_balancer",
-            "to": "app_server",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_server_to_db",
-            "from": "app_server",
-            "to": "app_db",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "interactions": [
-          {
-            "id": "i_c_users_to_gateway_fwd",
-            "from": "users",
-            "to": "edge_api_gateway",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_gateway_to_limiter_fwd",
-            "from": "edge_api_gateway",
-            "to": "edge_rate_limiter",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_limiter_to_lb_fwd",
-            "from": "edge_rate_limiter",
-            "to": "edge_load_balancer",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_lb_to_server_fwd",
-            "from": "edge_load_balancer",
-            "to": "app_server",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_server_to_db_fwd",
-            "from": "app_server",
-            "to": "app_db",
-            "type": "flow",
-            "intensity": "medium"
-          }
-        ],
-        "camera": {
-          "mode": "focus",
-          "target": "edge_load_balancer",
-          "zoom": 1
-        }
-      },
-      "motionPersonality": "ENERGETIC",
-      "diff": {
-        "entityDiffs": [
-          {
-            "type": "entity_added",
-            "entityId": "edge_load_balancer"
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "edge_api_gateway",
-            "from": {
-              "x": 26,
-              "y": 23.625
-            },
-            "to": {
-              "x": 26,
-              "y": 23.3
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "edge_rate_limiter",
-            "from": {
-              "x": 74,
-              "y": 40.25
-            },
-            "to": {
-              "x": 74,
-              "y": 39.6
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "app_server",
-            "from": {
-              "x": 26,
-              "y": 56.875
-            },
-            "to": {
-              "x": 50,
-              "y": 72.2
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "app_db",
-            "from": {
-              "x": 74,
-              "y": 73.5
-            },
-            "to": {
-              "x": 74,
-              "y": 88.5
-            }
-          },
-          {
-            "type": "entity_count_changed",
-            "entityId": "app_server",
-            "from": 1,
-            "to": 3
-          },
-          {
-            "type": "entity_status_changed",
-            "entityId": "app_server",
-            "from": "overloaded",
-            "to": "normal"
-          },
-          {
-            "type": "entity_importance_changed",
-            "entityId": "app_server",
-            "from": "primary",
-            "to": "secondary"
-          }
-        ],
-        "connectionDiffs": [
-          {
-            "type": "connection_added",
-            "connectionId": "c_limiter_to_lb"
-          },
-          {
-            "type": "connection_added",
-            "connectionId": "c_lb_to_server"
-          },
-          {
-            "type": "connection_removed",
-            "connectionId": "c_limiter_to_server"
-          }
-        ],
-        "interactionDiffs": [
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_limiter_to_lb_fwd"
-          },
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_lb_to_server_fwd"
-          },
-          {
-            "type": "interaction_removed",
-            "interactionId": "i_c_limiter_to_server_fwd"
-          },
-          {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_users_to_gateway_fwd",
-            "from": "high",
-            "to": "medium"
-          },
-          {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_gateway_to_limiter_fwd",
-            "from": "high",
-            "to": "medium"
-          },
-          {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_server_to_db_fwd",
-            "from": "high",
-            "to": "medium"
-          }
-        ],
-        "cameraDiffs": [
-          {
-            "type": "camera_changed",
-            "from": {
-              "mode": "focus",
-              "target": "app_server",
-              "zoom": 1.04
-            },
-            "to": {
-              "mode": "focus",
-              "target": "edge_load_balancer",
-              "zoom": 1
-            }
-          }
-        ]
-      },
-      "hierarchyTransition": null,
-      "plan": {
-        "phaseOrder": [
-          "removals",
-          "moves",
-          "additions",
-          "connections",
-          "interactions",
-          "camera"
-        ],
-        "removals": [],
-        "moves": [
-          {
-            "entityId": "edge_api_gateway",
-            "elementIds": [
-              "edge_api_gateway"
-            ],
-            "action": "move"
-          },
-          {
-            "entityId": "edge_rate_limiter",
-            "elementIds": [
-              "edge_rate_limiter"
-            ],
-            "action": "move"
-          },
-          {
-            "entityId": "app_server",
-            "elementIds": [
-              "app_server_1",
-              "app_server",
-              "app_server_3"
-            ],
-            "action": "move"
-          },
-          {
-            "entityId": "app_db",
-            "elementIds": [
-              "app_db"
-            ],
-            "action": "move"
-          }
-        ],
-        "additions": [
-          {
-            "entityId": "edge_load_balancer",
-            "elementIds": [
-              "edge_load_balancer"
-            ],
-            "action": "add",
-            "enter": "zoom_in",
-            "cleanup": false
-          },
-          {
-            "entityId": "app_server",
-            "elementIds": [
-              "app_server_1",
-              "app_server",
-              "app_server_3"
-            ],
-            "action": "add",
-            "enter": "zoom_in"
-          }
-        ],
-        "connections": [
-          {
-            "entityId": "edge_rate_limiter",
-            "elementIds": [
-              "edge_rate_limiter"
-            ],
-            "action": "connect",
-            "connectionId": "c_limiter_to_server",
-            "cleanup": false
-          },
-          {
-            "entityId": "edge_load_balancer",
-            "elementIds": [
-              "edge_load_balancer"
-            ],
-            "action": "connect",
-            "connectionId": "c_lb_to_server",
-            "cleanup": false
-          },
-          {
-            "entityId": "app_server",
-            "elementIds": [
-              "app_server_1",
-              "app_server",
-              "app_server_3"
-            ],
-            "action": "connect",
-            "connectionId": "c_limiter_to_server",
-            "cleanup": false
-          }
-        ],
-        "interactions": [
-          {
-            "entityId": "edge_rate_limiter",
-            "elementIds": [
-              "edge_rate_limiter"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_gateway_to_limiter_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "edge_load_balancer",
-            "elementIds": [
-              "edge_load_balancer"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_lb_to_server_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "app_server",
-            "elementIds": [
-              "app_server_1",
-              "app_server",
-              "app_server_3"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_server_to_db_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_users_to_gateway_fwd"
-          },
-          {
-            "entityId": "edge_api_gateway",
-            "elementIds": [
-              "edge_api_gateway"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_gateway_to_limiter_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "app_db",
-            "elementIds": [
-              "app_db"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_server_to_db_fwd"
-          }
-        ]
-      },
-      "animationPlan": {
-        "entities": [
-          {
-            "entityId": "edge_api_gateway",
-            "action": "move",
-            "delay": 0.6000000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          },
-          {
-            "entityId": "edge_rate_limiter",
-            "action": "move",
-            "delay": 0.6400000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          },
-          {
-            "entityId": "app_server",
-            "action": "move",
-            "delay": 0.68,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          },
-          {
-            "entityId": "app_db",
-            "action": "move",
-            "delay": 0.7200000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          },
-          {
-            "entityId": "edge_load_balancer",
-            "action": "add",
-            "delay": 0.37399999999999994,
-            "duration": 0.62,
-            "easing": "cubic-bezier(0.4,0,0.2,1)",
-            "scale": 1.2,
-            "isPrimary": true
-          }
-        ],
-        "connections": [
-          {
-            "connectionId": "c_limiter_to_lb",
-            "delay": 0.504,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          },
-          {
-            "connectionId": "c_lb_to_server",
-            "delay": 0.544,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          },
-          {
-            "connectionId": "c_limiter_to_server",
-            "delay": 0.584,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          }
-        ],
-        "camera": null
-      },
-      "cameraPlan": null,
-      "sceneDiff": {
-        "addedEntities": [
-          {
-            "id": "edge_load_balancer",
-            "type": "load_balancer",
-            "count": 1,
-            "importance": "primary",
-            "status": "active",
-            "label": "Load Balancer",
-            "icon": "shuffle",
-            "layout": {
-              "x": 26,
-              "y": 55.900000000000006
-            }
-          }
-        ],
-        "removedEntities": [],
-        "movedEntities": [
-          {
-            "id": "edge_api_gateway",
-            "from": {
-              "x": 26,
-              "y": 23.625
-            },
-            "to": {
-              "x": 26,
-              "y": 23.3
-            }
-          },
-          {
-            "id": "edge_rate_limiter",
-            "from": {
-              "x": 74,
-              "y": 40.25
-            },
-            "to": {
-              "x": 74,
-              "y": 39.6
-            }
-          },
-          {
-            "id": "app_server",
-            "from": {
-              "x": 26,
-              "y": 56.875
-            },
-            "to": {
-              "x": 50,
-              "y": 72.2
-            }
-          },
-          {
-            "id": "app_db",
-            "from": {
-              "x": 74,
-              "y": 73.5
-            },
-            "to": {
-              "x": 74,
-              "y": 88.5
-            }
-          }
-        ],
-        "updatedEntities": [
-          {
-            "id": "app_server",
-            "changes": {
-              "status": {
-                "from": "overloaded",
-                "to": "normal"
-              },
-              "count": {
-                "from": 1,
-                "to": 3
-              },
-              "importance": {
-                "from": "primary",
-                "to": "secondary"
-              }
-            }
-          }
-        ],
-        "addedConnections": [
-          {
-            "id": "c_limiter_to_lb",
-            "from": "edge_rate_limiter",
-            "to": "edge_load_balancer",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_lb_to_server",
-            "from": "edge_load_balancer",
-            "to": "app_server",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "removedConnections": [
-          {
-            "id": "c_limiter_to_server",
-            "from": "edge_rate_limiter",
-            "to": "app_server",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "addedInteractions": [
-          {
-            "id": "i_c_limiter_to_lb_fwd",
-            "from": "edge_rate_limiter",
-            "to": "edge_load_balancer",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_lb_to_server_fwd",
-            "from": "edge_load_balancer",
-            "to": "app_server",
-            "type": "flow",
-            "intensity": "medium"
-          }
-        ],
-        "removedInteractions": [
-          {
-            "id": "i_c_limiter_to_server_fwd",
-            "from": "edge_rate_limiter",
-            "to": "app_server",
-            "type": "burst",
-            "intensity": "high"
-          }
-        ],
-        "interactionIntensityChanged": [
-          {
-            "id": "i_c_users_to_gateway_fwd",
-            "from": "high",
-            "to": "medium"
-          },
-          {
-            "id": "i_c_gateway_to_limiter_fwd",
-            "from": "high",
-            "to": "medium"
-          },
-          {
-            "id": "i_c_server_to_db_fwd",
-            "from": "high",
-            "to": "medium"
-          }
-        ],
-        "cameraChanged": {
-          "from": {
-            "mode": "focus",
-            "target": "app_server",
-            "zoom": 1.04
-          },
-          "to": {
-            "mode": "focus",
-            "target": "edge_load_balancer",
-            "zoom": 1
-          }
-        }
-      }
-    },
-    {
-      "id": "s8",
-      "start": 42,
-      "end": 48,
-      "narration": "A Cache is added next to the Rate Limiter so the Rate Limiter can store counters and enforce the same limit consistently for all incoming requests.",
-      "elements": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "sourceEntityId": "users",
-          "label": "Users",
-          "icon": "users",
-          "position": {
-            "x": 74,
-            "y": 7
-          },
-          "visualStyle": {
-            "size": 91.8,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "edge_api_gateway",
-          "type": "api_gateway",
-          "sourceEntityId": "edge_api_gateway",
-          "label": "API Gateway",
-          "icon": "route",
-          "position": {
-            "x": 26,
-            "y": 20.583333333333336
-          },
-          "visualStyle": {
-            "size": 91.8,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "edge_rate_limiter",
-          "type": "rate_limiter",
-          "sourceEntityId": "edge_rate_limiter",
-          "label": "Rate Limiter",
-          "icon": "timer",
-          "position": {
-            "x": 74,
-            "y": 34.16666666666667
-          },
-          "visualStyle": {
-            "size": 91.8,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "limiter_cache",
-          "type": "cache",
-          "sourceEntityId": "limiter_cache",
-          "label": "Cache",
-          "icon": "memory-stick",
-          "position": {
-            "x": 26,
-            "y": 47.75
-          },
-          "enter": "zoom_in",
-          "visualStyle": {
-            "size": 91.8,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "edge_load_balancer",
-          "type": "load_balancer",
-          "sourceEntityId": "edge_load_balancer",
-          "label": "Load Balancer",
-          "icon": "shuffle",
-          "position": {
-            "x": 74,
-            "y": 61.333333333333336
-          },
-          "visualStyle": {
-            "size": 91.8,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "app_server_1",
-          "type": "server",
-          "sourceEntityId": "app_server",
-          "icon": "server",
-          "position": {
-            "x": 26.71944444444444,
-            "y": 74.91666666666667
-          },
-          "visualStyle": {
-            "size": 91.8,
-            "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#35C4C8",
-            "glow": false,
-            "glowColor": "#35C4C8",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_server",
-          "type": "server",
-          "sourceEntityId": "app_server",
-          "label": "Server",
-          "icon": "server",
-          "position": {
-            "x": 50,
-            "y": 74.91666666666667
-          },
-          "visualStyle": {
-            "size": 91.8,
-            "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#35C4C8",
-            "glow": false,
-            "glowColor": "#35C4C8",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_server_3",
-          "type": "server",
-          "sourceEntityId": "app_server",
-          "icon": "server",
-          "position": {
-            "x": 73.28055555555557,
-            "y": 74.91666666666667
-          },
-          "visualStyle": {
-            "size": 91.8,
-            "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#35C4C8",
-            "glow": false,
-            "glowColor": "#35C4C8",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_db",
-          "type": "database",
-          "sourceEntityId": "app_db",
-          "label": "Database",
-          "icon": "database",
-          "position": {
-            "x": 26,
-            "y": 88.5
-          },
-          "visualStyle": {
-            "size": 91.8,
-            "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#35C4C8",
-            "glow": false,
-            "glowColor": "#35C4C8",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        }
-      ],
-      "entities": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "Users",
-          "icon": "users",
-          "layout": {
-            "x": 74,
-            "y": 7
-          }
-        },
-        {
-          "id": "edge_api_gateway",
-          "type": "api_gateway",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "API Gateway",
-          "icon": "route",
-          "layout": {
-            "x": 26,
-            "y": 20.583333333333336
-          }
-        },
-        {
-          "id": "edge_rate_limiter",
-          "type": "rate_limiter",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "Rate Limiter",
-          "icon": "timer",
-          "layout": {
-            "x": 74,
-            "y": 34.16666666666667
-          }
-        },
-        {
-          "id": "limiter_cache",
-          "type": "cache",
-          "count": 1,
-          "importance": "primary",
-          "status": "active",
-          "label": "Cache",
-          "icon": "memory-stick",
-          "layout": {
-            "x": 26,
-            "y": 47.75
-          }
-        },
-        {
-          "id": "edge_load_balancer",
-          "type": "load_balancer",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "Load Balancer",
-          "icon": "shuffle",
-          "layout": {
-            "x": 74,
-            "y": 61.333333333333336
-          }
-        },
-        {
-          "id": "app_server",
-          "type": "server",
-          "count": 3,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Server",
-          "icon": "server",
-          "layout": {
-            "x": 50,
-            "y": 74.91666666666667
-          }
-        },
-        {
-          "id": "app_db",
-          "type": "database",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Database",
-          "icon": "database",
-          "layout": {
-            "x": 26,
-            "y": 88.5
-          }
-        }
-      ],
-      "connections": [
-        {
-          "id": "c_users_to_gateway",
-          "from": "users",
-          "to": "edge_api_gateway",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_gateway_to_limiter",
-          "from": "edge_api_gateway",
-          "to": "edge_rate_limiter",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_limiter_to_cache",
-          "from": "edge_rate_limiter",
-          "to": "limiter_cache",
-          "direction": "bidirectional",
-          "style": "solid"
-        },
-        {
-          "id": "c_limiter_to_lb",
-          "from": "edge_rate_limiter",
-          "to": "edge_load_balancer",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_lb_to_server",
-          "from": "edge_load_balancer",
-          "to": "app_server",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_server_to_db",
-          "from": "app_server",
-          "to": "app_db",
-          "direction": "one_way",
-          "style": "solid"
-        }
-      ],
-      "interactions": [
-        {
-          "id": "i_c_users_to_gateway_fwd",
-          "from": "users",
-          "to": "edge_api_gateway",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_gateway_to_limiter_fwd",
-          "from": "edge_api_gateway",
-          "to": "edge_rate_limiter",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_limiter_to_cache_fwd",
-          "from": "edge_rate_limiter",
-          "to": "limiter_cache",
-          "type": "ping",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_limiter_to_cache_rev",
-          "from": "limiter_cache",
-          "to": "edge_rate_limiter",
-          "type": "ping",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_limiter_to_lb_fwd",
-          "from": "edge_rate_limiter",
-          "to": "edge_load_balancer",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_lb_to_server_fwd",
-          "from": "edge_load_balancer",
-          "to": "app_server",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_server_to_db_fwd",
-          "from": "app_server",
-          "to": "app_db",
-          "type": "flow",
-          "intensity": "medium"
-        }
-      ],
-      "sourceCamera": {
-        "mode": "focus",
-        "target": "limiter_cache",
-        "zoom": 1
-      },
-      "directives": {
-        "camera": {
-          "mode": "follow_action",
-          "zoom": "wide",
-          "active_zone": "upper_third",
-          "reserve_bottom_percent": 25
-        },
-        "visual": {
-          "theme": "default",
-          "background_texture": "grid",
-          "glow_strength": "soft"
-        },
-        "motion": {
-          "entry_style": "draw_in",
-          "pacing": "balanced"
-        },
-        "flow": {
-          "renderer": "hybrid"
-        }
-      },
-      "source": {
-        "entities": [
-          {
-            "id": "users",
-            "type": "users_cluster",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Users",
-            "icon": "users",
-            "layout": {
-              "x": 74,
-              "y": 7
-            }
-          },
-          {
-            "id": "edge_api_gateway",
-            "type": "api_gateway",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "API Gateway",
-            "icon": "route",
-            "layout": {
-              "x": 26,
-              "y": 20.583333333333336
-            }
-          },
-          {
-            "id": "edge_rate_limiter",
-            "type": "rate_limiter",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Rate Limiter",
-            "icon": "timer",
-            "layout": {
-              "x": 74,
-              "y": 34.16666666666667
-            }
-          },
-          {
-            "id": "limiter_cache",
-            "type": "cache",
-            "count": 1,
-            "importance": "primary",
-            "status": "active",
-            "label": "Cache",
-            "icon": "memory-stick",
-            "layout": {
-              "x": 26,
-              "y": 47.75
-            }
-          },
-          {
-            "id": "edge_load_balancer",
-            "type": "load_balancer",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Load Balancer",
-            "icon": "shuffle",
-            "layout": {
-              "x": 74,
-              "y": 61.333333333333336
-            }
-          },
-          {
-            "id": "app_server",
-            "type": "server",
-            "count": 3,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Server",
-            "icon": "server",
-            "layout": {
-              "x": 50,
-              "y": 74.91666666666667
-            }
-          },
-          {
-            "id": "app_db",
-            "type": "database",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Database",
-            "icon": "database",
-            "layout": {
-              "x": 26,
-              "y": 88.5
-            }
-          }
-        ],
-        "connections": [
-          {
-            "id": "c_users_to_gateway",
-            "from": "users",
-            "to": "edge_api_gateway",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_gateway_to_limiter",
-            "from": "edge_api_gateway",
-            "to": "edge_rate_limiter",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_limiter_to_cache",
-            "from": "edge_rate_limiter",
-            "to": "limiter_cache",
-            "direction": "bidirectional",
-            "style": "solid"
-          },
-          {
-            "id": "c_limiter_to_lb",
-            "from": "edge_rate_limiter",
-            "to": "edge_load_balancer",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_lb_to_server",
-            "from": "edge_load_balancer",
-            "to": "app_server",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_server_to_db",
-            "from": "app_server",
-            "to": "app_db",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "interactions": [
-          {
-            "id": "i_c_users_to_gateway_fwd",
-            "from": "users",
-            "to": "edge_api_gateway",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_gateway_to_limiter_fwd",
-            "from": "edge_api_gateway",
-            "to": "edge_rate_limiter",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_limiter_to_cache_fwd",
-            "from": "edge_rate_limiter",
-            "to": "limiter_cache",
-            "type": "ping",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_limiter_to_cache_rev",
-            "from": "limiter_cache",
-            "to": "edge_rate_limiter",
-            "type": "ping",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_limiter_to_lb_fwd",
-            "from": "edge_rate_limiter",
-            "to": "edge_load_balancer",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_lb_to_server_fwd",
-            "from": "edge_load_balancer",
-            "to": "app_server",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_server_to_db_fwd",
-            "from": "app_server",
-            "to": "app_db",
-            "type": "flow",
-            "intensity": "medium"
-          }
-        ],
-        "camera": {
-          "mode": "focus",
-          "target": "limiter_cache",
-          "zoom": 1
-        }
-      },
-      "motionPersonality": "ENERGETIC",
-      "diff": {
-        "entityDiffs": [
-          {
-            "type": "entity_added",
-            "entityId": "limiter_cache"
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "edge_api_gateway",
-            "from": {
-              "x": 26,
-              "y": 23.3
-            },
-            "to": {
-              "x": 26,
-              "y": 20.583333333333336
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "edge_rate_limiter",
-            "from": {
-              "x": 74,
-              "y": 39.6
-            },
-            "to": {
-              "x": 74,
-              "y": 34.16666666666667
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "edge_load_balancer",
-            "from": {
-              "x": 26,
-              "y": 55.900000000000006
-            },
-            "to": {
-              "x": 74,
-              "y": 61.333333333333336
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "app_server",
-            "from": {
-              "x": 50,
-              "y": 72.2
-            },
-            "to": {
-              "x": 50,
-              "y": 74.91666666666667
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "app_db",
-            "from": {
-              "x": 74,
-              "y": 88.5
-            },
-            "to": {
-              "x": 26,
-              "y": 88.5
-            }
-          },
-          {
-            "type": "entity_importance_changed",
-            "entityId": "edge_load_balancer",
-            "from": "primary",
-            "to": "secondary"
-          }
-        ],
-        "connectionDiffs": [
-          {
-            "type": "connection_added",
-            "connectionId": "c_limiter_to_cache"
-          }
-        ],
-        "interactionDiffs": [
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_limiter_to_cache_fwd"
-          },
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_limiter_to_cache_rev"
-          }
-        ],
-        "cameraDiffs": [
-          {
-            "type": "camera_changed",
-            "from": {
-              "mode": "focus",
-              "target": "edge_load_balancer",
-              "zoom": 1
-            },
-            "to": {
-              "mode": "focus",
-              "target": "limiter_cache",
-              "zoom": 1
-            }
-          }
-        ]
-      },
-      "hierarchyTransition": null,
-      "plan": {
-        "phaseOrder": [
-          "removals",
-          "moves",
-          "additions",
-          "connections",
-          "interactions",
-          "camera"
-        ],
-        "removals": [],
-        "moves": [
-          {
-            "entityId": "edge_api_gateway",
-            "elementIds": [
-              "edge_api_gateway"
-            ],
-            "action": "move"
-          },
-          {
-            "entityId": "edge_rate_limiter",
-            "elementIds": [
-              "edge_rate_limiter"
-            ],
-            "action": "move"
-          },
-          {
-            "entityId": "edge_load_balancer",
-            "elementIds": [
-              "edge_load_balancer"
-            ],
-            "action": "move"
-          },
-          {
-            "entityId": "app_server",
-            "elementIds": [
-              "app_server_1",
-              "app_server",
-              "app_server_3"
-            ],
-            "action": "move"
-          },
-          {
-            "entityId": "app_db",
-            "elementIds": [
-              "app_db"
-            ],
-            "action": "move"
-          }
-        ],
-        "additions": [
-          {
-            "entityId": "limiter_cache",
-            "elementIds": [
-              "limiter_cache"
-            ],
-            "action": "add",
-            "enter": "zoom_in",
-            "cleanup": false
-          }
-        ],
-        "connections": [
-          {
-            "entityId": "edge_rate_limiter",
-            "elementIds": [
-              "edge_rate_limiter"
-            ],
-            "action": "connect",
-            "connectionId": "c_limiter_to_cache"
-          },
-          {
-            "entityId": "limiter_cache",
-            "elementIds": [
-              "limiter_cache"
-            ],
-            "action": "connect",
-            "connectionId": "c_limiter_to_cache"
-          }
-        ],
-        "interactions": [
-          {
-            "entityId": "edge_rate_limiter",
-            "elementIds": [
-              "edge_rate_limiter"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_limiter_to_cache_rev",
-            "cleanup": false
-          },
-          {
-            "entityId": "limiter_cache",
-            "elementIds": [
-              "limiter_cache"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_limiter_to_cache_rev",
-            "cleanup": false
-          }
-        ]
-      },
-      "animationPlan": {
-        "entities": [
-          {
-            "entityId": "edge_api_gateway",
-            "action": "move",
-            "delay": 0.6000000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          },
-          {
-            "entityId": "edge_rate_limiter",
-            "action": "move",
-            "delay": 0.6400000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          },
-          {
-            "entityId": "edge_load_balancer",
-            "action": "move",
-            "delay": 0.68,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          },
-          {
-            "entityId": "app_server",
-            "action": "move",
-            "delay": 0.7200000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          },
-          {
-            "entityId": "app_db",
-            "action": "move",
-            "delay": 0.7600000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          },
-          {
-            "entityId": "limiter_cache",
-            "action": "add",
-            "delay": 0.37399999999999994,
-            "duration": 0.62,
-            "easing": "cubic-bezier(0.4,0,0.2,1)",
-            "scale": 1.2,
-            "isPrimary": true
-          }
-        ],
-        "connections": [
-          {
-            "connectionId": "c_limiter_to_cache",
-            "delay": 0.504,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.4,0,0.2,1)"
-          }
-        ],
-        "camera": null
-      },
-      "cameraPlan": null,
-      "sceneDiff": {
-        "addedEntities": [
-          {
-            "id": "limiter_cache",
-            "type": "cache",
-            "count": 1,
-            "importance": "primary",
-            "status": "active",
-            "label": "Cache",
-            "icon": "memory-stick",
-            "layout": {
-              "x": 26,
-              "y": 47.75
-            }
-          }
-        ],
-        "removedEntities": [],
-        "movedEntities": [
-          {
-            "id": "edge_api_gateway",
-            "from": {
-              "x": 26,
-              "y": 23.3
-            },
-            "to": {
-              "x": 26,
-              "y": 20.583333333333336
-            }
-          },
-          {
-            "id": "edge_rate_limiter",
-            "from": {
-              "x": 74,
-              "y": 39.6
-            },
-            "to": {
-              "x": 74,
-              "y": 34.16666666666667
-            }
-          },
-          {
-            "id": "edge_load_balancer",
-            "from": {
-              "x": 26,
-              "y": 55.900000000000006
-            },
-            "to": {
-              "x": 74,
-              "y": 61.333333333333336
-            }
-          },
-          {
-            "id": "app_server",
-            "from": {
-              "x": 50,
-              "y": 72.2
-            },
-            "to": {
-              "x": 50,
-              "y": 74.91666666666667
-            }
-          },
-          {
-            "id": "app_db",
-            "from": {
-              "x": 74,
-              "y": 88.5
-            },
-            "to": {
-              "x": 26,
-              "y": 88.5
-            }
-          }
-        ],
-        "updatedEntities": [
-          {
-            "id": "edge_load_balancer",
-            "changes": {
-              "importance": {
-                "from": "primary",
-                "to": "secondary"
-              }
-            }
-          }
-        ],
-        "addedConnections": [
-          {
-            "id": "c_limiter_to_cache",
-            "from": "edge_rate_limiter",
-            "to": "limiter_cache",
-            "direction": "bidirectional",
-            "style": "solid"
-          }
-        ],
-        "removedConnections": [],
-        "addedInteractions": [
-          {
-            "id": "i_c_limiter_to_cache_fwd",
-            "from": "edge_rate_limiter",
-            "to": "limiter_cache",
-            "type": "ping",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_limiter_to_cache_rev",
-            "from": "limiter_cache",
-            "to": "edge_rate_limiter",
-            "type": "ping",
-            "intensity": "medium"
-          }
-        ],
-        "removedInteractions": [],
-        "interactionIntensityChanged": [],
-        "cameraChanged": {
-          "from": {
-            "mode": "focus",
-            "target": "edge_load_balancer",
-            "zoom": 1
-          },
-          "to": {
-            "mode": "focus",
-            "target": "limiter_cache",
-            "zoom": 1
-          }
-        }
-      }
-    },
-    {
-      "id": "s9",
+      "id": "s9-recap-decouple",
       "start": 48,
       "end": 54,
-      "narration": "During a burst, the API Gateway feeds the Rate Limiter, allowed requests flow to the Load Balancer, and traffic stays smooth across the scaled Servers and the Database.",
+      "narration": "The queue decouples the bursty users from steady workers with buffering.",
       "elements": [
         {
           "id": "users",
@@ -5736,220 +4333,72 @@ const renderSpec = {
           "label": "Users",
           "icon": "users",
           "position": {
-            "x": 74,
-            "y": 7
+            "x": 50,
+            "y": 9.66
           },
           "visualStyle": {
-            "size": 91.8,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "edge_api_gateway",
-          "type": "api_gateway",
-          "sourceEntityId": "edge_api_gateway",
-          "label": "API Gateway",
-          "icon": "route",
-          "position": {
-            "x": 26,
-            "y": 20.583333333333336
-          },
-          "visualStyle": {
-            "size": 91.8,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "edge_rate_limiter",
-          "type": "rate_limiter",
-          "sourceEntityId": "edge_rate_limiter",
-          "label": "Rate Limiter",
-          "icon": "timer",
-          "position": {
-            "x": 74,
-            "y": 34.16666666666667
-          },
-          "visualStyle": {
-            "size": 91.8,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "limiter_cache",
-          "type": "cache",
-          "sourceEntityId": "limiter_cache",
-          "label": "Cache",
-          "icon": "memory-stick",
-          "position": {
-            "x": 26,
-            "y": 47.75
-          },
-          "visualStyle": {
-            "size": 91.8,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "edge_load_balancer",
-          "type": "load_balancer",
-          "sourceEntityId": "edge_load_balancer",
-          "label": "Load Balancer",
-          "icon": "shuffle",
-          "position": {
-            "x": 74,
-            "y": 61.333333333333336
-          },
-          "visualStyle": {
-            "size": 91.8,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "app_server_1",
-          "type": "server",
-          "sourceEntityId": "app_server",
-          "icon": "server",
-          "position": {
-            "x": 26.71944444444444,
-            "y": 74.91666666666667
-          },
-          "visualStyle": {
-            "size": 91.8,
+            "size": 149.4,
             "opacity": 1,
             "color": "#1F314D",
-            "strokeWidth": 2.181493066686209,
+            "strokeWidth": 2.7829653249726274,
             "strokeColor": "#35C4C8",
             "glow": false,
             "glowColor": "#35C4C8",
             "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
+            "fontSize": 52.987199999999994,
             "fontWeight": 600,
             "status": "normal"
           }
         },
         {
-          "id": "app_server",
-          "type": "server",
-          "sourceEntityId": "app_server",
-          "label": "Server",
-          "icon": "server",
+          "id": "message_queue",
+          "type": "message_queue",
+          "sourceEntityId": "message_queue",
+          "label": "Message Queue",
+          "icon": "inbox",
           "position": {
             "x": 50,
-            "y": 74.91666666666667
+            "y": 40.25
           },
           "visualStyle": {
-            "size": 91.8,
+            "size": 149.4,
             "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#35C4C8",
+            "color": "#34D399",
+            "strokeWidth": 2.7829653249726274,
+            "strokeColor": "#34D399",
             "glow": false,
-            "glowColor": "#35C4C8",
+            "glowColor": "#34D399",
             "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
+            "fontSize": 52.987199999999994,
             "fontWeight": 600,
-            "status": "normal"
+            "status": "active"
           }
         },
         {
-          "id": "app_server_3",
-          "type": "server",
-          "sourceEntityId": "app_server",
-          "icon": "server",
+          "id": "worker",
+          "type": "worker",
+          "sourceEntityId": "worker",
+          "label": "Worker",
+          "icon": "cpu",
           "position": {
-            "x": 73.28055555555557,
-            "y": 74.91666666666667
+            "x": 50,
+            "y": 70.84
           },
           "visualStyle": {
-            "size": 91.8,
+            "size": 149.4,
             "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#35C4C8",
+            "color": "#34D399",
+            "strokeWidth": 2.7829653249726274,
+            "strokeColor": "#34D399",
             "glow": false,
-            "glowColor": "#35C4C8",
+            "glowColor": "#34D399",
             "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
+            "fontSize": 52.987199999999994,
             "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_db",
-          "type": "database",
-          "sourceEntityId": "app_db",
-          "label": "Database",
-          "icon": "database",
-          "position": {
-            "x": 26,
-            "y": 88.5
-          },
-          "visualStyle": {
-            "size": 91.8,
-            "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#35C4C8",
-            "glow": false,
-            "glowColor": "#35C4C8",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
-            "fontWeight": 600,
-            "status": "normal"
+            "status": "active"
           }
         }
       ],
@@ -5959,1022 +4408,69 @@ const renderSpec = {
           "type": "users_cluster",
           "count": 1,
           "importance": "secondary",
-          "status": "active",
+          "status": "normal",
           "label": "Users",
           "icon": "users",
           "layout": {
-            "x": 74,
-            "y": 7
+            "x": 50,
+            "y": 9.66
           }
         },
         {
-          "id": "edge_api_gateway",
-          "type": "api_gateway",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "API Gateway",
-          "icon": "route",
-          "layout": {
-            "x": 26,
-            "y": 20.583333333333336
-          }
-        },
-        {
-          "id": "edge_rate_limiter",
-          "type": "rate_limiter",
+          "id": "message_queue",
+          "type": "message_queue",
           "count": 1,
           "importance": "primary",
           "status": "active",
-          "label": "Rate Limiter",
-          "icon": "timer",
-          "layout": {
-            "x": 74,
-            "y": 34.16666666666667
-          }
-        },
-        {
-          "id": "limiter_cache",
-          "type": "cache",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "Cache",
-          "icon": "memory-stick",
-          "layout": {
-            "x": 26,
-            "y": 47.75
-          }
-        },
-        {
-          "id": "edge_load_balancer",
-          "type": "load_balancer",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "Load Balancer",
-          "icon": "shuffle",
-          "layout": {
-            "x": 74,
-            "y": 61.333333333333336
-          }
-        },
-        {
-          "id": "app_server",
-          "type": "server",
-          "count": 3,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Server",
-          "icon": "server",
+          "label": "Message Queue",
+          "icon": "inbox",
           "layout": {
             "x": 50,
-            "y": 74.91666666666667
+            "y": 40.25
           }
         },
         {
-          "id": "app_db",
-          "type": "database",
+          "id": "worker",
+          "type": "worker",
           "count": 1,
           "importance": "secondary",
-          "status": "normal",
-          "label": "Database",
-          "icon": "database",
+          "status": "active",
+          "label": "Worker",
+          "icon": "cpu",
           "layout": {
-            "x": 26,
-            "y": 88.5
+            "x": 50,
+            "y": 70.84
           }
         }
       ],
       "connections": [
         {
-          "id": "c_users_to_gateway",
+          "id": "c_users_to_queue_ingestion",
           "from": "users",
-          "to": "edge_api_gateway",
+          "to": "message_queue",
           "direction": "one_way",
           "style": "solid"
         },
         {
-          "id": "c_gateway_to_limiter",
-          "from": "edge_api_gateway",
-          "to": "edge_rate_limiter",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_limiter_to_cache",
-          "from": "edge_rate_limiter",
-          "to": "limiter_cache",
-          "direction": "bidirectional",
-          "style": "solid"
-        },
-        {
-          "id": "c_limiter_to_lb",
-          "from": "edge_rate_limiter",
-          "to": "edge_load_balancer",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_lb_to_server",
-          "from": "edge_load_balancer",
-          "to": "app_server",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_server_to_db",
-          "from": "app_server",
-          "to": "app_db",
+          "id": "c_queue_to_worker_dispatch",
+          "from": "message_queue",
+          "to": "worker",
           "direction": "one_way",
           "style": "solid"
         }
       ],
       "interactions": [
         {
-          "id": "i_c_users_to_gateway_fwd",
+          "id": "i_c_users_to_queue_ingestion_fwd",
           "from": "users",
-          "to": "edge_api_gateway",
+          "to": "message_queue",
           "type": "burst",
           "intensity": "high"
         },
         {
-          "id": "i_c_gateway_to_limiter_fwd",
-          "from": "edge_api_gateway",
-          "to": "edge_rate_limiter",
-          "type": "burst",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_limiter_to_cache_fwd",
-          "from": "edge_rate_limiter",
-          "to": "limiter_cache",
-          "type": "ping",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_limiter_to_cache_rev",
-          "from": "limiter_cache",
-          "to": "edge_rate_limiter",
-          "type": "ping",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_limiter_to_lb_fwd",
-          "from": "edge_rate_limiter",
-          "to": "edge_load_balancer",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_lb_to_server_fwd",
-          "from": "edge_load_balancer",
-          "to": "app_server",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_server_to_db_fwd",
-          "from": "app_server",
-          "to": "app_db",
-          "type": "flow",
-          "intensity": "medium"
-        }
-      ],
-      "sourceCamera": {
-        "mode": "focus",
-        "target": "edge_rate_limiter",
-        "zoom": 1
-      },
-      "directives": {
-        "camera": {
-          "mode": "follow_action",
-          "zoom": "wide",
-          "active_zone": "upper_third",
-          "reserve_bottom_percent": 25
-        },
-        "visual": {
-          "theme": "default",
-          "background_texture": "grid",
-          "glow_strength": "soft"
-        },
-        "motion": {
-          "entry_style": "draw_in",
-          "pacing": "balanced"
-        },
-        "flow": {
-          "renderer": "hybrid"
-        }
-      },
-      "source": {
-        "entities": [
-          {
-            "id": "users",
-            "type": "users_cluster",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Users",
-            "icon": "users",
-            "layout": {
-              "x": 74,
-              "y": 7
-            }
-          },
-          {
-            "id": "edge_api_gateway",
-            "type": "api_gateway",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "API Gateway",
-            "icon": "route",
-            "layout": {
-              "x": 26,
-              "y": 20.583333333333336
-            }
-          },
-          {
-            "id": "edge_rate_limiter",
-            "type": "rate_limiter",
-            "count": 1,
-            "importance": "primary",
-            "status": "active",
-            "label": "Rate Limiter",
-            "icon": "timer",
-            "layout": {
-              "x": 74,
-              "y": 34.16666666666667
-            }
-          },
-          {
-            "id": "limiter_cache",
-            "type": "cache",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Cache",
-            "icon": "memory-stick",
-            "layout": {
-              "x": 26,
-              "y": 47.75
-            }
-          },
-          {
-            "id": "edge_load_balancer",
-            "type": "load_balancer",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Load Balancer",
-            "icon": "shuffle",
-            "layout": {
-              "x": 74,
-              "y": 61.333333333333336
-            }
-          },
-          {
-            "id": "app_server",
-            "type": "server",
-            "count": 3,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Server",
-            "icon": "server",
-            "layout": {
-              "x": 50,
-              "y": 74.91666666666667
-            }
-          },
-          {
-            "id": "app_db",
-            "type": "database",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Database",
-            "icon": "database",
-            "layout": {
-              "x": 26,
-              "y": 88.5
-            }
-          }
-        ],
-        "connections": [
-          {
-            "id": "c_users_to_gateway",
-            "from": "users",
-            "to": "edge_api_gateway",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_gateway_to_limiter",
-            "from": "edge_api_gateway",
-            "to": "edge_rate_limiter",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_limiter_to_cache",
-            "from": "edge_rate_limiter",
-            "to": "limiter_cache",
-            "direction": "bidirectional",
-            "style": "solid"
-          },
-          {
-            "id": "c_limiter_to_lb",
-            "from": "edge_rate_limiter",
-            "to": "edge_load_balancer",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_lb_to_server",
-            "from": "edge_load_balancer",
-            "to": "app_server",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_server_to_db",
-            "from": "app_server",
-            "to": "app_db",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "interactions": [
-          {
-            "id": "i_c_users_to_gateway_fwd",
-            "from": "users",
-            "to": "edge_api_gateway",
-            "type": "burst",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_gateway_to_limiter_fwd",
-            "from": "edge_api_gateway",
-            "to": "edge_rate_limiter",
-            "type": "burst",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_limiter_to_cache_fwd",
-            "from": "edge_rate_limiter",
-            "to": "limiter_cache",
-            "type": "ping",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_limiter_to_cache_rev",
-            "from": "limiter_cache",
-            "to": "edge_rate_limiter",
-            "type": "ping",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_limiter_to_lb_fwd",
-            "from": "edge_rate_limiter",
-            "to": "edge_load_balancer",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_lb_to_server_fwd",
-            "from": "edge_load_balancer",
-            "to": "app_server",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_server_to_db_fwd",
-            "from": "app_server",
-            "to": "app_db",
-            "type": "flow",
-            "intensity": "medium"
-          }
-        ],
-        "camera": {
-          "mode": "focus",
-          "target": "edge_rate_limiter",
-          "zoom": 1
-        }
-      },
-      "motionPersonality": "ENERGETIC",
-      "diff": {
-        "entityDiffs": [
-          {
-            "type": "entity_importance_changed",
-            "entityId": "edge_rate_limiter",
-            "from": "secondary",
-            "to": "primary"
-          },
-          {
-            "type": "entity_importance_changed",
-            "entityId": "limiter_cache",
-            "from": "primary",
-            "to": "secondary"
-          }
-        ],
-        "connectionDiffs": [],
-        "interactionDiffs": [
-          {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_users_to_gateway_fwd",
-            "from": "medium",
-            "to": "high"
-          },
-          {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_gateway_to_limiter_fwd",
-            "from": "medium",
-            "to": "high"
-          },
-          {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_limiter_to_cache_fwd",
-            "from": "medium",
-            "to": "high"
-          },
-          {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_limiter_to_cache_rev",
-            "from": "medium",
-            "to": "high"
-          }
-        ],
-        "cameraDiffs": [
-          {
-            "type": "camera_changed",
-            "from": {
-              "mode": "focus",
-              "target": "limiter_cache",
-              "zoom": 1
-            },
-            "to": {
-              "mode": "focus",
-              "target": "edge_rate_limiter",
-              "zoom": 1
-            }
-          }
-        ]
-      },
-      "hierarchyTransition": null,
-      "plan": {
-        "phaseOrder": [
-          "removals",
-          "moves",
-          "additions",
-          "connections",
-          "interactions",
-          "camera"
-        ],
-        "removals": [],
-        "moves": [],
-        "additions": [
-          {
-            "entityId": "edge_rate_limiter",
-            "elementIds": [
-              "edge_rate_limiter"
-            ],
-            "action": "add",
-            "enter": "zoom_in"
-          }
-        ],
-        "connections": [],
-        "interactions": [
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_users_to_gateway_fwd"
-          },
-          {
-            "entityId": "edge_api_gateway",
-            "elementIds": [
-              "edge_api_gateway"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_gateway_to_limiter_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "edge_rate_limiter",
-            "elementIds": [
-              "edge_rate_limiter"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_limiter_to_cache_rev",
-            "cleanup": false
-          },
-          {
-            "entityId": "limiter_cache",
-            "elementIds": [
-              "limiter_cache"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_limiter_to_cache_rev",
-            "cleanup": false
-          }
-        ]
-      },
-      "animationPlan": {
-        "entities": [
-          {
-            "entityId": "edge_rate_limiter",
-            "action": "add",
-            "delay": 0.37399999999999994,
-            "duration": 0.62,
-            "easing": "cubic-bezier(0.4,0,0.2,1)",
-            "scale": 1.2,
-            "isPrimary": true
-          }
-        ],
-        "connections": [],
-        "camera": null
-      },
-      "cameraPlan": null,
-      "sceneDiff": {
-        "addedEntities": [],
-        "removedEntities": [],
-        "movedEntities": [],
-        "updatedEntities": [
-          {
-            "id": "edge_rate_limiter",
-            "changes": {
-              "importance": {
-                "from": "secondary",
-                "to": "primary"
-              }
-            }
-          },
-          {
-            "id": "limiter_cache",
-            "changes": {
-              "importance": {
-                "from": "primary",
-                "to": "secondary"
-              }
-            }
-          }
-        ],
-        "addedConnections": [],
-        "removedConnections": [],
-        "addedInteractions": [],
-        "removedInteractions": [],
-        "interactionIntensityChanged": [
-          {
-            "id": "i_c_users_to_gateway_fwd",
-            "from": "medium",
-            "to": "high"
-          },
-          {
-            "id": "i_c_gateway_to_limiter_fwd",
-            "from": "medium",
-            "to": "high"
-          },
-          {
-            "id": "i_c_limiter_to_cache_fwd",
-            "from": "medium",
-            "to": "high"
-          },
-          {
-            "id": "i_c_limiter_to_cache_rev",
-            "from": "medium",
-            "to": "high"
-          }
-        ],
-        "cameraChanged": {
-          "from": {
-            "mode": "focus",
-            "target": "limiter_cache",
-            "zoom": 1
-          },
-          "to": {
-            "mode": "focus",
-            "target": "edge_rate_limiter",
-            "zoom": 1
-          }
-        }
-      }
-    },
-    {
-      "id": "s10",
-      "start": 54,
-      "end": 60,
-      "narration": "The final stack shows Users entering an API Gateway, then a Rate Limiter with a Cache for counters, then a Load Balancer spreading requests across Servers that read and write the Database.",
-      "elements": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "sourceEntityId": "users",
-          "label": "Users",
-          "icon": "users",
-          "position": {
-            "x": 74,
-            "y": 7
-          },
-          "visualStyle": {
-            "size": 91.8,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "edge_api_gateway",
-          "type": "api_gateway",
-          "sourceEntityId": "edge_api_gateway",
-          "label": "API Gateway",
-          "icon": "route",
-          "position": {
-            "x": 26,
-            "y": 20.583333333333336
-          },
-          "visualStyle": {
-            "size": 91.8,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "edge_rate_limiter",
-          "type": "rate_limiter",
-          "sourceEntityId": "edge_rate_limiter",
-          "label": "Rate Limiter",
-          "icon": "timer",
-          "position": {
-            "x": 74,
-            "y": 34.16666666666667
-          },
-          "visualStyle": {
-            "size": 91.8,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "limiter_cache",
-          "type": "cache",
-          "sourceEntityId": "limiter_cache",
-          "label": "Cache",
-          "icon": "memory-stick",
-          "position": {
-            "x": 26,
-            "y": 47.75
-          },
-          "visualStyle": {
-            "size": 91.8,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "edge_load_balancer",
-          "type": "load_balancer",
-          "sourceEntityId": "edge_load_balancer",
-          "label": "Load Balancer",
-          "icon": "shuffle",
-          "position": {
-            "x": 74,
-            "y": 61.333333333333336
-          },
-          "visualStyle": {
-            "size": 91.8,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "app_server_1",
-          "type": "server",
-          "sourceEntityId": "app_server",
-          "icon": "server",
-          "position": {
-            "x": 26.71944444444444,
-            "y": 74.91666666666667
-          },
-          "visualStyle": {
-            "size": 91.8,
-            "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#35C4C8",
-            "glow": false,
-            "glowColor": "#35C4C8",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_server",
-          "type": "server",
-          "sourceEntityId": "app_server",
-          "label": "Server",
-          "icon": "server",
-          "position": {
-            "x": 50,
-            "y": 74.91666666666667
-          },
-          "visualStyle": {
-            "size": 91.8,
-            "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#35C4C8",
-            "glow": false,
-            "glowColor": "#35C4C8",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_server_3",
-          "type": "server",
-          "sourceEntityId": "app_server",
-          "icon": "server",
-          "position": {
-            "x": 73.28055555555557,
-            "y": 74.91666666666667
-          },
-          "visualStyle": {
-            "size": 91.8,
-            "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#35C4C8",
-            "glow": false,
-            "glowColor": "#35C4C8",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "app_db",
-          "type": "database",
-          "sourceEntityId": "app_db",
-          "label": "Database",
-          "icon": "database",
-          "position": {
-            "x": 26,
-            "y": 88.5
-          },
-          "visualStyle": {
-            "size": 91.8,
-            "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.181493066686209,
-            "strokeColor": "#35C4C8",
-            "glow": false,
-            "glowColor": "#35C4C8",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 32.5584,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        }
-      ],
-      "entities": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "Users",
-          "icon": "users",
-          "layout": {
-            "x": 74,
-            "y": 7
-          }
-        },
-        {
-          "id": "edge_api_gateway",
-          "type": "api_gateway",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "API Gateway",
-          "icon": "route",
-          "layout": {
-            "x": 26,
-            "y": 20.583333333333336
-          }
-        },
-        {
-          "id": "edge_rate_limiter",
-          "type": "rate_limiter",
-          "count": 1,
-          "importance": "primary",
-          "status": "active",
-          "label": "Rate Limiter",
-          "icon": "timer",
-          "layout": {
-            "x": 74,
-            "y": 34.16666666666667
-          }
-        },
-        {
-          "id": "limiter_cache",
-          "type": "cache",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "Cache",
-          "icon": "memory-stick",
-          "layout": {
-            "x": 26,
-            "y": 47.75
-          }
-        },
-        {
-          "id": "edge_load_balancer",
-          "type": "load_balancer",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "Load Balancer",
-          "icon": "shuffle",
-          "layout": {
-            "x": 74,
-            "y": 61.333333333333336
-          }
-        },
-        {
-          "id": "app_server",
-          "type": "server",
-          "count": 3,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Server",
-          "icon": "server",
-          "layout": {
-            "x": 50,
-            "y": 74.91666666666667
-          }
-        },
-        {
-          "id": "app_db",
-          "type": "database",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Database",
-          "icon": "database",
-          "layout": {
-            "x": 26,
-            "y": 88.5
-          }
-        }
-      ],
-      "connections": [
-        {
-          "id": "c_users_to_gateway",
-          "from": "users",
-          "to": "edge_api_gateway",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_gateway_to_limiter",
-          "from": "edge_api_gateway",
-          "to": "edge_rate_limiter",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_limiter_to_cache",
-          "from": "edge_rate_limiter",
-          "to": "limiter_cache",
-          "direction": "bidirectional",
-          "style": "solid"
-        },
-        {
-          "id": "c_limiter_to_lb",
-          "from": "edge_rate_limiter",
-          "to": "edge_load_balancer",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_lb_to_server",
-          "from": "edge_load_balancer",
-          "to": "app_server",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_server_to_db",
-          "from": "app_server",
-          "to": "app_db",
-          "direction": "one_way",
-          "style": "solid"
-        }
-      ],
-      "interactions": [
-        {
-          "id": "i_c_users_to_gateway_fwd",
-          "from": "users",
-          "to": "edge_api_gateway",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_gateway_to_limiter_fwd",
-          "from": "edge_api_gateway",
-          "to": "edge_rate_limiter",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_limiter_to_cache_fwd",
-          "from": "edge_rate_limiter",
-          "to": "limiter_cache",
-          "type": "ping",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_limiter_to_cache_rev",
-          "from": "limiter_cache",
-          "to": "edge_rate_limiter",
-          "type": "ping",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_limiter_to_lb_fwd",
-          "from": "edge_rate_limiter",
-          "to": "edge_load_balancer",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_lb_to_server_fwd",
-          "from": "edge_load_balancer",
-          "to": "app_server",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_server_to_db_fwd",
-          "from": "app_server",
-          "to": "app_db",
+          "id": "i_c_queue_to_worker_dispatch_fwd",
+          "from": "message_queue",
+          "to": "worker",
           "type": "flow",
           "intensity": "medium"
         }
@@ -7010,184 +4506,69 @@ const renderSpec = {
             "type": "users_cluster",
             "count": 1,
             "importance": "secondary",
-            "status": "active",
+            "status": "normal",
             "label": "Users",
             "icon": "users",
             "layout": {
-              "x": 74,
-              "y": 7
+              "x": 50,
+              "y": 9.66
             }
           },
           {
-            "id": "edge_api_gateway",
-            "type": "api_gateway",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "API Gateway",
-            "icon": "route",
-            "layout": {
-              "x": 26,
-              "y": 20.583333333333336
-            }
-          },
-          {
-            "id": "edge_rate_limiter",
-            "type": "rate_limiter",
+            "id": "message_queue",
+            "type": "message_queue",
             "count": 1,
             "importance": "primary",
             "status": "active",
-            "label": "Rate Limiter",
-            "icon": "timer",
-            "layout": {
-              "x": 74,
-              "y": 34.16666666666667
-            }
-          },
-          {
-            "id": "limiter_cache",
-            "type": "cache",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Cache",
-            "icon": "memory-stick",
-            "layout": {
-              "x": 26,
-              "y": 47.75
-            }
-          },
-          {
-            "id": "edge_load_balancer",
-            "type": "load_balancer",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Load Balancer",
-            "icon": "shuffle",
-            "layout": {
-              "x": 74,
-              "y": 61.333333333333336
-            }
-          },
-          {
-            "id": "app_server",
-            "type": "server",
-            "count": 3,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Server",
-            "icon": "server",
+            "label": "Message Queue",
+            "icon": "inbox",
             "layout": {
               "x": 50,
-              "y": 74.91666666666667
+              "y": 40.25
             }
           },
           {
-            "id": "app_db",
-            "type": "database",
+            "id": "worker",
+            "type": "worker",
             "count": 1,
             "importance": "secondary",
-            "status": "normal",
-            "label": "Database",
-            "icon": "database",
+            "status": "active",
+            "label": "Worker",
+            "icon": "cpu",
             "layout": {
-              "x": 26,
-              "y": 88.5
+              "x": 50,
+              "y": 70.84
             }
           }
         ],
         "connections": [
           {
-            "id": "c_users_to_gateway",
+            "id": "c_users_to_queue_ingestion",
             "from": "users",
-            "to": "edge_api_gateway",
+            "to": "message_queue",
             "direction": "one_way",
             "style": "solid"
           },
           {
-            "id": "c_gateway_to_limiter",
-            "from": "edge_api_gateway",
-            "to": "edge_rate_limiter",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_limiter_to_cache",
-            "from": "edge_rate_limiter",
-            "to": "limiter_cache",
-            "direction": "bidirectional",
-            "style": "solid"
-          },
-          {
-            "id": "c_limiter_to_lb",
-            "from": "edge_rate_limiter",
-            "to": "edge_load_balancer",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_lb_to_server",
-            "from": "edge_load_balancer",
-            "to": "app_server",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_server_to_db",
-            "from": "app_server",
-            "to": "app_db",
+            "id": "c_queue_to_worker_dispatch",
+            "from": "message_queue",
+            "to": "worker",
             "direction": "one_way",
             "style": "solid"
           }
         ],
         "interactions": [
           {
-            "id": "i_c_users_to_gateway_fwd",
+            "id": "i_c_users_to_queue_ingestion_fwd",
             "from": "users",
-            "to": "edge_api_gateway",
-            "type": "flow",
-            "intensity": "medium"
+            "to": "message_queue",
+            "type": "burst",
+            "intensity": "high"
           },
           {
-            "id": "i_c_gateway_to_limiter_fwd",
-            "from": "edge_api_gateway",
-            "to": "edge_rate_limiter",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_limiter_to_cache_fwd",
-            "from": "edge_rate_limiter",
-            "to": "limiter_cache",
-            "type": "ping",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_limiter_to_cache_rev",
-            "from": "limiter_cache",
-            "to": "edge_rate_limiter",
-            "type": "ping",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_limiter_to_lb_fwd",
-            "from": "edge_rate_limiter",
-            "to": "edge_load_balancer",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_lb_to_server_fwd",
-            "from": "edge_load_balancer",
-            "to": "app_server",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_server_to_db_fwd",
-            "from": "app_server",
-            "to": "app_db",
+            "id": "i_c_queue_to_worker_dispatch_fwd",
+            "from": "message_queue",
+            "to": "worker",
             "type": "flow",
             "intensity": "medium"
           }
@@ -7197,50 +4578,577 @@ const renderSpec = {
           "zoom": 1
         }
       },
-      "motionPersonality": "ENERGETIC",
+      "motionPersonality": "CALM",
       "diff": {
-        "entityDiffs": [],
+        "entityDiffs": [
+          {
+            "type": "entity_removed",
+            "entityId": "dead_letter_queue"
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "users",
+            "from": {
+              "x": 50,
+              "y": 7.664999999999999
+            },
+            "to": {
+              "x": 50,
+              "y": 9.66
+            }
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "message_queue",
+            "from": {
+              "x": 50,
+              "y": 29.38833333333334
+            },
+            "to": {
+              "x": 50,
+              "y": 40.25
+            }
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "worker",
+            "from": {
+              "x": 50,
+              "y": 51.11166666666668
+            },
+            "to": {
+              "x": 50,
+              "y": 70.84
+            }
+          }
+        ],
+        "connectionDiffs": [
+          {
+            "type": "connection_removed",
+            "connectionId": "c_worker_to_dlq_async_event"
+          }
+        ],
+        "interactionDiffs": [
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_worker_to_dlq_async_event_fwd"
+          },
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_users_to_queue_ingestion_fwd",
+            "from": "low",
+            "to": "high"
+          }
+        ],
+        "cameraDiffs": []
+      },
+      "hierarchyTransition": null,
+      "plan": {
+        "phaseOrder": [
+          "removals",
+          "moves",
+          "additions",
+          "connections",
+          "interactions",
+          "camera"
+        ],
+        "removals": [
+          {
+            "entityId": "dead_letter_queue",
+            "elementIds": [
+              "dead_letter_queue"
+            ],
+            "action": "remove",
+            "exit": "zoom_out",
+            "cleanup": true
+          }
+        ],
+        "moves": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "move"
+          },
+          {
+            "entityId": "message_queue",
+            "elementIds": [
+              "message_queue"
+            ],
+            "action": "move"
+          },
+          {
+            "entityId": "worker",
+            "elementIds": [
+              "worker"
+            ],
+            "action": "move"
+          }
+        ],
+        "additions": [],
+        "connections": [
+          {
+            "entityId": "worker",
+            "elementIds": [
+              "worker"
+            ],
+            "action": "connect",
+            "connectionId": "c_worker_to_dlq_async_event"
+          },
+          {
+            "entityId": "dead_letter_queue",
+            "elementIds": [
+              "dead_letter_queue"
+            ],
+            "action": "connect",
+            "connectionId": "c_worker_to_dlq_async_event"
+          }
+        ],
+        "interactions": [
+          {
+            "entityId": "worker",
+            "elementIds": [
+              "worker"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_worker_to_dlq_async_event_fwd"
+          },
+          {
+            "entityId": "dead_letter_queue",
+            "elementIds": [
+              "dead_letter_queue"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_worker_to_dlq_async_event_fwd"
+          },
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+          },
+          {
+            "entityId": "message_queue",
+            "elementIds": [
+              "message_queue"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+          }
+        ]
+      },
+      "animationPlan": {
+        "entities": [
+          {
+            "entityId": "dead_letter_queue",
+            "action": "remove",
+            "delay": 0,
+            "duration": 0.9,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          },
+          {
+            "entityId": "users",
+            "action": "move",
+            "delay": 0.6000000000000001,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          },
+          {
+            "entityId": "message_queue",
+            "action": "move",
+            "delay": 0.68,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          },
+          {
+            "entityId": "worker",
+            "action": "move",
+            "delay": 0.7600000000000001,
+            "duration": 0.95,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          }
+        ],
+        "connections": [
+          {
+            "connectionId": "c_worker_to_dlq_async_event",
+            "delay": 0.504,
+            "duration": 0.42,
+            "easing": "cubic-bezier(0.2,0,0,1)"
+          }
+        ],
+        "camera": null
+      },
+      "cameraPlan": null,
+      "sceneDiff": {
+        "addedEntities": [],
+        "removedEntities": [
+          {
+            "id": "dead_letter_queue",
+            "type": "dead_letter_queue",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Dead Letter Queue",
+            "icon": "archive",
+            "layout": {
+              "x": 50,
+              "y": 72.83500000000001
+            }
+          }
+        ],
+        "movedEntities": [
+          {
+            "id": "users",
+            "from": {
+              "x": 50,
+              "y": 7.664999999999999
+            },
+            "to": {
+              "x": 50,
+              "y": 9.66
+            }
+          },
+          {
+            "id": "message_queue",
+            "from": {
+              "x": 50,
+              "y": 29.38833333333334
+            },
+            "to": {
+              "x": 50,
+              "y": 40.25
+            }
+          },
+          {
+            "id": "worker",
+            "from": {
+              "x": 50,
+              "y": 51.11166666666668
+            },
+            "to": {
+              "x": 50,
+              "y": 70.84
+            }
+          }
+        ],
+        "updatedEntities": [],
+        "addedConnections": [],
+        "removedConnections": [
+          {
+            "id": "c_worker_to_dlq_async_event",
+            "from": "worker",
+            "to": "dead_letter_queue",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "addedInteractions": [],
+        "removedInteractions": [
+          {
+            "id": "i_c_worker_to_dlq_async_event_fwd",
+            "from": "worker",
+            "to": "dead_letter_queue",
+            "type": "broadcast",
+            "intensity": "low"
+          }
+        ],
+        "interactionIntensityChanged": [
+          {
+            "id": "i_c_users_to_queue_ingestion_fwd",
+            "from": "low",
+            "to": "high"
+          }
+        ],
+        "cameraChanged": null
+      }
+    },
+    {
+      "id": "s10-ending-rule-of-thumb",
+      "start": 54,
+      "end": 60,
+      "narration": "When traffic surges, buffer in a queue and let workers pull steadily.",
+      "elements": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "sourceEntityId": "users",
+          "label": "Users",
+          "icon": "users",
+          "position": {
+            "x": 50,
+            "y": 9.66
+          },
+          "visualStyle": {
+            "size": 149.4,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.7829653249726274,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 52.987199999999994,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        },
+        {
+          "id": "message_queue",
+          "type": "message_queue",
+          "sourceEntityId": "message_queue",
+          "label": "Message Queue",
+          "icon": "inbox",
+          "position": {
+            "x": 50,
+            "y": 40.25
+          },
+          "visualStyle": {
+            "size": 149.4,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.7829653249726274,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 52.987199999999994,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "worker",
+          "type": "worker",
+          "sourceEntityId": "worker",
+          "label": "Worker",
+          "icon": "cpu",
+          "position": {
+            "x": 50,
+            "y": 70.84
+          },
+          "visualStyle": {
+            "size": 149.4,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.7829653249726274,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 52.987199999999994,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        }
+      ],
+      "entities": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "count": 1,
+          "importance": "secondary",
+          "status": "normal",
+          "label": "Users",
+          "icon": "users",
+          "layout": {
+            "x": 50,
+            "y": 9.66
+          }
+        },
+        {
+          "id": "message_queue",
+          "type": "message_queue",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Message Queue",
+          "icon": "inbox",
+          "layout": {
+            "x": 50,
+            "y": 40.25
+          }
+        },
+        {
+          "id": "worker",
+          "type": "worker",
+          "count": 1,
+          "importance": "primary",
+          "status": "active",
+          "label": "Worker",
+          "icon": "cpu",
+          "layout": {
+            "x": 50,
+            "y": 70.84
+          }
+        }
+      ],
+      "connections": [
+        {
+          "id": "c_users_to_queue_ingestion",
+          "from": "users",
+          "to": "message_queue",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_queue_to_worker_dispatch",
+          "from": "message_queue",
+          "to": "worker",
+          "direction": "one_way",
+          "style": "solid"
+        }
+      ],
+      "interactions": [
+        {
+          "id": "i_c_users_to_queue_ingestion_fwd",
+          "from": "users",
+          "to": "message_queue",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_queue_to_worker_dispatch_fwd",
+          "from": "message_queue",
+          "to": "worker",
+          "type": "flow",
+          "intensity": "medium"
+        }
+      ],
+      "sourceCamera": {
+        "mode": "wide",
+        "zoom": 1
+      },
+      "directives": {
+        "camera": {
+          "mode": "wide_recap",
+          "zoom": "wide",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "default",
+          "background_texture": "grid",
+          "glow_strength": "soft"
+        },
+        "motion": {
+          "entry_style": "draw_in",
+          "pacing": "balanced"
+        },
+        "flow": {
+          "renderer": "dashed"
+        }
+      },
+      "source": {
+        "entities": [
+          {
+            "id": "users",
+            "type": "users_cluster",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Users",
+            "icon": "users",
+            "layout": {
+              "x": 50,
+              "y": 9.66
+            }
+          },
+          {
+            "id": "message_queue",
+            "type": "message_queue",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Message Queue",
+            "icon": "inbox",
+            "layout": {
+              "x": 50,
+              "y": 40.25
+            }
+          },
+          {
+            "id": "worker",
+            "type": "worker",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "Worker",
+            "icon": "cpu",
+            "layout": {
+              "x": 50,
+              "y": 70.84
+            }
+          }
+        ],
+        "connections": [
+          {
+            "id": "c_users_to_queue_ingestion",
+            "from": "users",
+            "to": "message_queue",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_queue_to_worker_dispatch",
+            "from": "message_queue",
+            "to": "worker",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "interactions": [
+          {
+            "id": "i_c_users_to_queue_ingestion_fwd",
+            "from": "users",
+            "to": "message_queue",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_queue_to_worker_dispatch_fwd",
+            "from": "message_queue",
+            "to": "worker",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
+        "camera": {
+          "mode": "wide",
+          "zoom": 1
+        }
+      },
+      "motionPersonality": "CALM",
+      "diff": {
+        "entityDiffs": [
+          {
+            "type": "entity_importance_changed",
+            "entityId": "message_queue",
+            "from": "primary",
+            "to": "secondary"
+          },
+          {
+            "type": "entity_importance_changed",
+            "entityId": "worker",
+            "from": "secondary",
+            "to": "primary"
+          }
+        ],
         "connectionDiffs": [],
         "interactionDiffs": [
           {
             "type": "interaction_intensity_changed",
-            "interactionId": "i_c_users_to_gateway_fwd",
-            "from": "high",
-            "to": "medium"
-          },
-          {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_gateway_to_limiter_fwd",
-            "from": "high",
-            "to": "medium"
-          },
-          {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_limiter_to_cache_fwd",
-            "from": "high",
-            "to": "medium"
-          },
-          {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_limiter_to_cache_rev",
+            "interactionId": "i_c_users_to_queue_ingestion_fwd",
             "from": "high",
             "to": "medium"
           }
         ],
-        "cameraDiffs": [
-          {
-            "type": "camera_changed",
-            "from": {
-              "mode": "focus",
-              "target": "edge_rate_limiter",
-              "zoom": 1
-            },
-            "to": {
-              "mode": "wide",
-              "zoom": 1
-            }
-          }
-        ]
+        "cameraDiffs": []
       },
       "hierarchyTransition": null,
       "plan": {
@@ -7254,7 +5162,16 @@ const renderSpec = {
         ],
         "removals": [],
         "moves": [],
-        "additions": [],
+        "additions": [
+          {
+            "entityId": "worker",
+            "elementIds": [
+              "worker"
+            ],
+            "action": "add",
+            "enter": "zoom_in"
+          }
+        ],
         "connections": [],
         "interactions": [
           {
@@ -7263,39 +5180,30 @@ const renderSpec = {
               "users"
             ],
             "action": "interact",
-            "interactionId": "i_c_users_to_gateway_fwd"
+            "interactionId": "i_c_users_to_queue_ingestion_fwd"
           },
           {
-            "entityId": "edge_api_gateway",
+            "entityId": "message_queue",
             "elementIds": [
-              "edge_api_gateway"
+              "message_queue"
             ],
             "action": "interact",
-            "interactionId": "i_c_gateway_to_limiter_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "edge_rate_limiter",
-            "elementIds": [
-              "edge_rate_limiter"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_limiter_to_cache_rev",
-            "cleanup": false
-          },
-          {
-            "entityId": "limiter_cache",
-            "elementIds": [
-              "limiter_cache"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_limiter_to_cache_rev",
-            "cleanup": false
+            "interactionId": "i_c_users_to_queue_ingestion_fwd"
           }
         ]
       },
       "animationPlan": {
-        "entities": [],
+        "entities": [
+          {
+            "entityId": "worker",
+            "action": "add",
+            "delay": 1.8499999999999999,
+            "duration": 0.62,
+            "easing": "cubic-bezier(0.2,0,0,1)",
+            "scale": 1.2,
+            "isPrimary": true
+          }
+        ],
         "connections": [],
         "camera": null
       },
@@ -7304,44 +5212,38 @@ const renderSpec = {
         "addedEntities": [],
         "removedEntities": [],
         "movedEntities": [],
-        "updatedEntities": [],
+        "updatedEntities": [
+          {
+            "id": "message_queue",
+            "changes": {
+              "importance": {
+                "from": "primary",
+                "to": "secondary"
+              }
+            }
+          },
+          {
+            "id": "worker",
+            "changes": {
+              "importance": {
+                "from": "secondary",
+                "to": "primary"
+              }
+            }
+          }
+        ],
         "addedConnections": [],
         "removedConnections": [],
         "addedInteractions": [],
         "removedInteractions": [],
         "interactionIntensityChanged": [
           {
-            "id": "i_c_users_to_gateway_fwd",
-            "from": "high",
-            "to": "medium"
-          },
-          {
-            "id": "i_c_gateway_to_limiter_fwd",
-            "from": "high",
-            "to": "medium"
-          },
-          {
-            "id": "i_c_limiter_to_cache_fwd",
-            "from": "high",
-            "to": "medium"
-          },
-          {
-            "id": "i_c_limiter_to_cache_rev",
+            "id": "i_c_users_to_queue_ingestion_fwd",
             "from": "high",
             "to": "medium"
           }
         ],
-        "cameraChanged": {
-          "from": {
-            "mode": "focus",
-            "target": "edge_rate_limiter",
-            "zoom": 1
-          },
-          "to": {
-            "mode": "wide",
-            "zoom": 1
-          }
-        }
+        "cameraChanged": null
       }
     }
   ]

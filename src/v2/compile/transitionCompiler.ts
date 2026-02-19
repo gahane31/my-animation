@@ -78,6 +78,11 @@ const toCamera = (scene: LaidOutScene): Camera => {
   }
 
   if (cameraMode === 'follow_action') {
+    // Preserve topology context in dense scenes instead of over-focusing on one node.
+    if (scene.laidOutEntities.length >= 4) {
+      return {mode: 'wide', zoom: zoomByPreset('wide')};
+    }
+
     const zoomCap = resolveFollowActionZoomCap(scene);
     return {
       mode: 'focus',
@@ -187,6 +192,7 @@ const toInteractions = (
     }
 
     const intensity = connection.intensity ?? 'medium';
+    const trafficOutcome = connection.traffic_outcome ?? 'normal';
     const interactionType =
       connection.kind === 'cache_lookup'
         ? 'ping'
@@ -194,16 +200,28 @@ const toInteractions = (
           ? 'burst'
           : connection.pattern === 'broadcast'
             ? 'broadcast'
-            : connection.pattern === 'ping'
-              ? 'ping'
-              : 'flow';
-    interactions.push({
-      id: `i_${connection.id}_fwd`,
-      from: connection.from,
-      to: connection.to,
-      type: interactionType,
-      intensity,
-    });
+              : connection.pattern === 'ping'
+                ? 'ping'
+                : 'flow';
+    const pushForwardInteraction = (idSuffix: string, type: Interaction['type']): void => {
+      interactions.push({
+        id: `i_${connection.id}_${idSuffix}`,
+        from: connection.from,
+        to: connection.to,
+        type,
+        intensity,
+      });
+    };
+
+    if (trafficOutcome === 'block') {
+      pushForwardInteraction('blocked', 'blocked');
+      continue;
+    }
+
+    pushForwardInteraction('fwd', interactionType);
+    if (trafficOutcome === 'allow_and_block') {
+      pushForwardInteraction('blocked', 'blocked');
+    }
 
     if (connectionType === 'both_ways') {
       interactions.push({

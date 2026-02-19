@@ -107,7 +107,7 @@ const interactionSchema = {
     to: {type: 'string', minLength: 1},
     type: {
       type: 'string',
-      enum: ['flow', 'burst', 'broadcast', 'ping'],
+      enum: ['flow', 'burst', 'broadcast', 'ping', 'blocked'],
     },
     intensity: nullableIntensity,
   },

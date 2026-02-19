@@ -15,7 +15,8 @@ import type {StoryIntentAgent} from '../agents/storyIntentAgent.js';
 import type {TopologyDirectorAgent} from '../agents/topologyDirectorAgent.js';
 import type {MotionPersonalityId} from '../../config/motionPersonalityTokens.js';
 import {topologyPlanSchema, type TopologyPlan} from '../schema/topologyPlan.schema.js';
-import {storyIntentSchema} from '../schema/storyIntent.schema.js';
+import {storyIntentSchema, type StoryIntent} from '../schema/storyIntent.schema.js';
+import {analyzeSceneGaps} from '../analysis/sceneGapAnalyzer.js';
 
 export interface GenerateVideoV2Input {
   topic: string;
@@ -25,7 +26,7 @@ export interface GenerateVideoV2Input {
   storyIntentInputPath?: string;
   animate?: boolean;
   stableLayout?: boolean;
-  personality?: MotionPersonalityId;
+  personality?: MotionPersonalityId | string;
   outputPath?: string;
   storyIntentOutputPath?: string;
   topologyOutputPath?: string;
@@ -55,6 +56,59 @@ const toMotionPersonality = (tone: 'fast' | 'educational' | 'dramatic'): MotionP
   return 'PREMIUM';
 };
 
+const normalizeMotionPersonality = (
+  value: MotionPersonalityId | string | undefined,
+): MotionPersonalityId | undefined => {
+  if (!value) {
+    return undefined;
+  }
+
+  const normalized = value.trim().toLowerCase();
+  if (!normalized) {
+    return undefined;
+  }
+
+  if (normalized === 'calm') {
+    return 'CALM';
+  }
+
+  if (normalized === 'energetic') {
+    return 'ENERGETIC';
+  }
+
+  if (normalized === 'premium') {
+    return 'PREMIUM';
+  }
+
+  if (
+    normalized === 'educational' ||
+    normalized === 'beginner' ||
+    normalized === 'slow' ||
+    normalized === 'steady'
+  ) {
+    return 'CALM';
+  }
+
+  if (
+    normalized === 'fast' ||
+    normalized === 'dramatic' ||
+    normalized === 'reel_fast' ||
+    normalized === 'reelfast'
+  ) {
+    return 'ENERGETIC';
+  }
+
+  if (
+    normalized === 'cinematic' ||
+    normalized === 'default' ||
+    normalized === 'balanced'
+  ) {
+    return 'PREMIUM';
+  }
+
+  return undefined;
+};
+
 export const generateVideoV2 = async (
   input: GenerateVideoV2Input,
   dependencies: GenerateVideoV2Dependencies = {},
@@ -77,6 +131,7 @@ export const generateVideoV2 = async (
 
   let storyIntentOutputPath: string | undefined;
   let storyIntentTone: 'fast' | 'educational' | 'dramatic' = 'educational';
+  let storyIntentForAnalysis: StoryIntent | undefined;
   let topologyPlan: TopologyPlan;
 
   if (input.topologyInputPath) {
@@ -93,6 +148,7 @@ export const generateVideoV2 = async (
       const storyIntentRaw = await readFile(input.storyIntentInputPath, {encoding: 'utf8'});
       const parsedStoryIntent = storyIntentSchema.parse(JSON.parse(storyIntentRaw) as unknown);
       storyIntentTone = parsedStoryIntent.tone;
+      storyIntentForAnalysis = parsedStoryIntent;
 
       storyIntentOutputPath = await writeJsonArtifact({
         outputPath: input.storyIntentOutputPath ?? V2_PIPELINE_DEFAULTS.storyIntentPath,
@@ -129,6 +185,7 @@ export const generateVideoV2 = async (
     );
 
     storyIntentTone = storyIntent.tone;
+    storyIntentForAnalysis = storyIntent;
     storyIntentOutputPath = await writeJsonArtifact({
       outputPath: input.storyIntentOutputPath ?? V2_PIPELINE_DEFAULTS.storyIntentPath,
       label: 'v2_story_intent',
@@ -175,6 +232,21 @@ export const generateVideoV2 = async (
     runContext: artifactRunContext,
   });
 
+  if (storyIntentForAnalysis) {
+    const gapAnalysis = analyzeSceneGaps({
+      storyIntent: storyIntentForAnalysis,
+      topologyPlan,
+      laidOutPlan,
+    });
+    await writeJsonArtifact({
+      outputPath: V2_PIPELINE_DEFAULTS.gapAnalysisPath,
+      label: 'v2_gap_analysis',
+      value: gapAnalysis,
+      logger,
+      runContext: artifactRunContext,
+    });
+  }
+
   const designedMoments = compileLaidOutPlanToDesignedMoments(laidOutPlan);
   await writeJsonArtifact({
     outputPath: V2_PIPELINE_DEFAULTS.designedMomentsPath,
@@ -184,7 +256,14 @@ export const generateVideoV2 = async (
     runContext: artifactRunContext,
   });
 
-  const personality = input.personality ?? toMotionPersonality(storyIntentTone);
+  const normalizedPersonality = normalizeMotionPersonality(input.personality);
+  if (input.personality && !normalizedPersonality) {
+    logger.warn('Unknown motion personality provided; falling back to tone-derived personality', {
+      requestedPersonality: input.personality,
+      fallbackFromTone: storyIntentTone,
+    });
+  }
+  const personality = normalizedPersonality ?? toMotionPersonality(storyIntentTone);
   const animate = input.animate ?? Boolean(input.topologyInputPath);
   const stableLayout = input.stableLayout ?? true;
   const renderSpec = motionCanvasAgent.buildRenderSpec(designedMoments, {
