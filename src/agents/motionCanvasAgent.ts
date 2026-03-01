@@ -83,6 +83,12 @@ const DEFAULT_SECONDARY_POSITION = {x: 50, y: 70};
 const REPLICA_RENDER_TYPES = new Set<ComponentType>([
   ComponentType.Server,
   ComponentType.Worker,
+  ComponentType.WorkerNode,
+  ComponentType.JobProcessor,
+  ComponentType.Cache,
+  ComponentType.EdgeCache,
+  ComponentType.QueryCache,
+  ComponentType.ApplicationCache,
   ComponentType.MessageQueue,
   ComponentType.Queue,
   ComponentType.DeadLetterQueue,
@@ -177,6 +183,9 @@ const componentNormalizedWidth = (type: ComponentType): number => {
       return 170 / 1080 * 100;
     case ComponentType.Worker:
       return 136 / 1080 * 100;
+    case ComponentType.WorkerNode:
+    case ComponentType.JobProcessor:
+      return 136 / 1080 * 100;
     default:
       return 150 / 1080 * 100;
   }
@@ -201,6 +210,9 @@ const componentNormalizedHeight = (type: ComponentType): number => {
     case ComponentType.Cdn:
       return 130 / 1920 * 100;
     case ComponentType.Worker:
+      return 136 / 1920 * 100;
+    case ComponentType.WorkerNode:
+    case ComponentType.JobProcessor:
       return 136 / 1920 * 100;
     default:
       return 120 / 1920 * 100;
@@ -263,7 +275,12 @@ const expandEntityInstances = (
 ): EntityInstance[] => {
   const basePosition = resolveBasePosition(entity);
   const roundedCount = Math.round(entity.count ?? 1);
-  const count = shouldRenderAsReplicas(entity.type)
+  const normalizedType = String(entity.type).toLowerCase();
+  const replicaEligible =
+    shouldRenderAsReplicas(entity.type) ||
+    (roundedCount > 1 &&
+      (normalizedType.includes('worker') || normalizedType.includes('server')));
+  const count = replicaEligible
     ? Math.max(1, Math.min(MAX_CLUSTER_SIZE, roundedCount))
     : 1;
 
@@ -452,6 +469,78 @@ const buildExplicitSceneCameraPlan = (
   };
 };
 
+const AGGRESSIVE_ADD_FOCUS_DURATION = 0.26;
+const AGGRESSIVE_ADD_FOCUS_HOLD_DURATION = 0.6;
+const AGGRESSIVE_ADD_FOCUS_EASING = 'cubic-bezier(0.16,1,0.3,1)';
+
+const resolveAddedEntityIds = (
+  diff: MomentDiff,
+): string[] =>
+  diff.entityDiffs
+    .filter((entry) => entry.type === 'entity_added')
+    .map((entry) => entry.entityId);
+
+const resolveAddedFocusEntityId = (
+  addedEntityIds: string[],
+  moment: DesignedMoment,
+): string | undefined => {
+  const addedEntityIdSet = new Set(addedEntityIds);
+  if (addedEntityIdSet.size === 0) {
+    return undefined;
+  }
+
+  const transitionEntityId = moment.transition?.entityId;
+  if (transitionEntityId && addedEntityIdSet.has(transitionEntityId)) {
+    return transitionEntityId;
+  }
+
+  const primaryAdded = moment.entities.find(
+    (entity) => addedEntityIdSet.has(entity.id) && entity.importance === 'primary',
+  );
+  if (primaryAdded) {
+    return primaryAdded.id;
+  }
+
+  const firstAddedBySceneOrder = moment.entities.find((entity) => addedEntityIdSet.has(entity.id));
+  if (firstAddedBySceneOrder) {
+    return firstAddedBySceneOrder.id;
+  }
+
+  return addedEntityIds[0];
+};
+
+const resolveAggressiveAddZoom = (entityCount: number): number => {
+  if (entityCount <= 3) {
+    return 2.8;
+  }
+
+  if (entityCount <= 5) {
+    return 2.5;
+  }
+
+  if (entityCount <= 7) {
+    return 2.3;
+  }
+
+  return 2.1;
+};
+
+const buildAggressiveAddFocusCameraPlan = (
+  existingPlan: SceneCameraPlan | null,
+  targetEntityId: string,
+  currentEntityInstances: Map<string, string[]>,
+  entityCount: number,
+): SceneCameraPlan => ({
+  targetId: targetEntityId,
+  targetElementId: resolveTargetElementId(currentEntityInstances, targetEntityId),
+  targetPosition: undefined,
+  zoom: Math.max(existingPlan?.zoom ?? 1.1, resolveAggressiveAddZoom(entityCount)),
+  duration: AGGRESSIVE_ADD_FOCUS_DURATION,
+  holdDuration: AGGRESSIVE_ADD_FOCUS_HOLD_DURATION,
+  easing: AGGRESSIVE_ADD_FOCUS_EASING,
+  motionType: 'introduce_primary',
+});
+
 const hasSceneVisualActivity = (scene: MotionSceneSpec): boolean => {
   const hasStructuralChange =
     (scene.diff?.entityDiffs.length ?? 0) > 0 || (scene.diff?.connectionDiffs.length ?? 0) > 0;
@@ -554,11 +643,30 @@ const attachDiffAndPlan = (
     sceneDuration,
     primaryEntityIds,
     personality,
-    isHook: Boolean(
-      currentMoment.isHook || currentMoment.directives?.motion.pacing === 'reel_fast',
-    ),
+    isHook: Boolean(currentMoment.isHook),
     transition: currentMoment.transition,
+    pacing: currentMoment.directives?.motion.pacing ?? 'balanced',
   });
+  const isPureIntroScene =
+    previousMoment.entities.length === 0 &&
+    diff.entityDiffs.length > 0 &&
+    diff.entityDiffs.every((entry) => entry.type === 'entity_added');
+  const introDelayBase = Math.max(0.02, Math.min(sceneDuration * 0.03, 0.12));
+  const animationPlanWithIntroTiming = isPureIntroScene
+    ? {
+      ...animationPlan,
+      entities: animationPlan.entities.map((timing, index) =>
+        timing.action !== 'add'
+          ? timing
+          : {
+            ...timing,
+            delay: Math.min(
+              timing.delay,
+              introDelayBase + index * 0.03 + (timing.isPrimary ? 0.05 : 0),
+            ),
+          }),
+    }
+    : animationPlan;
   const stablePlan = stableLayout
     ? {
       ...plan,
@@ -567,10 +675,10 @@ const attachDiffAndPlan = (
     : plan;
   const stableAnimationPlan = stableLayout
     ? {
-      ...animationPlan,
+      ...animationPlanWithIntroTiming,
       camera: null,
     }
-    : animationPlan;
+    : animationPlanWithIntroTiming;
   const hierarchy = stableLayout
     ? undefined
     : buildHierarchyPlan(currentMoment, diff, previousHierarchy, personality);
@@ -625,9 +733,44 @@ const attachDiffAndPlan = (
     sceneCameraPlan = explicitCameraPlan;
   }
 
-  // Stable layout means no camera chase between scenes; keep framing locked.
-  const sceneCameraAction = stableLayout ? undefined : stablePlan.cameraAction ?? scene.camera;
-  const resolvedSceneCameraPlan = stableLayout ? null : sceneCameraPlan;
+  const addedEntityIds = resolveAddedEntityIds(diff);
+  const addedFocusEntityId = resolveAddedFocusEntityId(addedEntityIds, currentMoment);
+  const hasExistingSceneContext = previousMoment.entities.length > 0;
+  const transitionTargetEntityId = currentMoment.transition?.entityId;
+  const hasExplicitAddedTransitionTarget =
+    transitionTargetEntityId !== undefined && addedEntityIds.includes(transitionTargetEntityId);
+  const shouldUseInsertionFocus =
+    hasExistingSceneContext &&
+    (addedEntityIds.length === 1 || hasExplicitAddedTransitionTarget);
+  const shouldAggressivelyFocusNewAdditions =
+    shouldUseInsertionFocus &&
+    addedFocusEntityId !== undefined &&
+    directiveCameraMode !== 'wide_recap';
+  if (shouldAggressivelyFocusNewAdditions && addedFocusEntityId) {
+    sceneCameraPlan = buildAggressiveAddFocusCameraPlan(
+      sceneCameraPlan,
+      addedFocusEntityId,
+      currentEntityInstances,
+      currentMoment.entities.length,
+    );
+  }
+
+  // Stable layout disables automatic camera chase, but still honors explicit
+  // topology camera directives (follow_action / wide_recap / focus) so scenes remain cinematic.
+  const hasAddFocusCamera = shouldAggressivelyFocusNewAdditions && sceneCameraPlan !== null;
+  const shouldKeepDirectiveCameraInStableLayout =
+    stableLayout &&
+    ((hasExplicitFollowCamera && sceneCameraPlan !== null) || hasAddFocusCamera);
+  const sceneCameraAction = stableLayout
+    ? shouldKeepDirectiveCameraInStableLayout
+      ? scene.camera ?? (hasAddFocusCamera ? CameraActionType.Focus : undefined)
+      : undefined
+    : stablePlan.cameraAction ?? scene.camera;
+  const resolvedSceneCameraPlan = stableLayout
+    ? shouldKeepDirectiveCameraInStableLayout
+      ? sceneCameraPlan
+      : null
+    : sceneCameraPlan;
 
   return {
     scene: {

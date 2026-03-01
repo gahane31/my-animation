@@ -130,6 +130,22 @@ Rules:
     - motion.entry_style = "draw_in"
     - flow.renderer = "hybrid" or "dashed"
     Use "neon"/"strong" only when StoryIntent explicitly asks for it.
+17.2 Do not keep directives identical across all scenes.
+    - Vary motion/flow/camera by scene role so visuals are perceptibly different.
+    - hook/problem/escalation/climax:
+      camera.mode = "follow_action", camera.zoom = "tight" or "medium",
+      motion.pacing = "reel_fast",
+      flow.renderer = "hybrid" or "packets".
+    - setup/solution/expansion:
+      camera.mode = "follow_action",
+      motion.pacing = "balanced" or "reel_fast" based on complexity.
+    - recap/ending:
+      camera.mode = "wide_recap",
+      motion.pacing = "balanced",
+      flow.renderer = "dashed" or "hybrid".
+    - If the previous scene used the exact same directive tuple
+      (camera.mode, camera.zoom, motion.entry_style, motion.pacing, flow.renderer),
+      change at least one field unless doing so would break clarity.
 18. For recap/final scenes, use directives.camera.mode = "wide_recap".
 19. operations[] are metadata for change explanation:
     - Keep minimal.

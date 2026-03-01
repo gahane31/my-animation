@@ -4,6 +4,7 @@ import {
   easeInCubic,
   easeInOutCubic,
   easeOutCubic,
+  waitFor,
   type ThreadGenerator,
   type TimingFunction,
 } from '@motion-canvas/core';
@@ -11,9 +12,9 @@ import {CameraActionType} from '../schema/visualGrammar.js';
 import type {CameraState, RuntimeLogger} from './types.js';
 import type {PixelPosition} from './positioning.js';
 
-const DEFAULT_CAMERA_DURATION = 1;
-const MIN_CAMERA_DURATION = 0.8;
-const MAX_CAMERA_DURATION = 1.2;
+const DEFAULT_CAMERA_DURATION = 0.45;
+const MIN_CAMERA_DURATION = 0.28;
+const MAX_CAMERA_DURATION = 0.62;
 const ZOOM_IN_SCALE = 1.2;
 const ZOOM_OUT_SCALE = 1;
 const PAN_DISTANCE = 200;
@@ -72,6 +73,8 @@ export interface CameraPlanInput {
   activeZone?: 'upper_third' | 'center';
   reserveBottomPercent?: number;
   zoomOverride?: number;
+  holdDuration?: number;
+  resetAfterHold?: boolean;
   easingOverride?: string;
   allowDrift?: boolean;
   lockXAxis?: boolean;
@@ -190,11 +193,11 @@ const createSubtleDrift = (
   cameraState: CameraState,
   sceneDuration: number,
 ): CameraPlan | null => {
-  if (sceneDuration <= 3) {
+  if (sceneDuration <= 2.4) {
     return null;
   }
 
-  const driftDuration = clamp(sceneDuration * 0.24, 0.9, 1.4);
+  const driftDuration = clamp(sceneDuration * 0.16, 0.35, 0.7);
   const startX = cameraState.x;
   const driftX = startX + SUBTLE_DRIFT_DISTANCE;
 
@@ -218,6 +221,8 @@ export const createCameraPlan = ({
   activeZone = 'upper_third',
   reserveBottomPercent = 25,
   zoomOverride,
+  holdDuration = 0,
+  resetAfterHold = false,
   easingOverride,
   allowDrift = true,
   lockXAxis = false,
@@ -269,22 +274,63 @@ export const createCameraPlan = ({
     contentBounds,
   );
 
+  const resolvedHoldDuration = Math.max(
+    0,
+    Math.min(holdDuration, Math.max(0, sceneDuration - baseDuration - 0.08)),
+  );
+
+  const withHoldThread = (function* withHold() {
+    yield* baseThread;
+    if (resolvedHoldDuration > 0) {
+      yield* waitFor(resolvedHoldDuration);
+    }
+  })();
+
+  const remainingAfterFocus = Math.max(
+    0,
+    sceneDuration - baseDuration - resolvedHoldDuration,
+  );
+  const shouldResetAfterHold =
+    resetAfterHold && remainingAfterFocus > 0.12;
+  const resetDuration = shouldResetAfterHold
+    ? Math.max(0.18, Math.min(0.34, remainingAfterFocus * 0.55))
+    : 0;
+  const resetThread = shouldResetAfterHold
+    ? createCameraTransition(
+      view,
+      cameraState,
+      CameraActionType.Wide,
+      resetDuration,
+      {x: 0, y: 0},
+      timingFunction,
+      undefined,
+      lockXAxis,
+      contentBounds,
+    )
+    : null;
+  const withHoldAndResetThread = (function* withHoldAndReset() {
+    yield* withHoldThread;
+    if (resetThread) {
+      yield* resetThread;
+    }
+  })();
+
   if (!driftPlan) {
     return {
-      thread: baseThread,
-      duration: baseDuration,
+      thread: withHoldAndResetThread,
+      duration: baseDuration + resolvedHoldDuration + resetDuration,
       action: resolvedAction,
     };
   }
 
   const compositeThread = (function* cameraCompositeThread() {
-    yield* baseThread;
+    yield* withHoldAndResetThread;
     yield* driftPlan.thread;
   })();
 
   return {
     thread: compositeThread,
-    duration: baseDuration + driftPlan.duration,
+    duration: baseDuration + resolvedHoldDuration + resetDuration + driftPlan.duration,
     action: resolvedAction,
   };
 };

@@ -80,7 +80,7 @@ const resolveHorizontalPosition = (
   nonReplicaRank: number,
   total: number,
 ): number => {
-  if (total < 5) {
+  if (total <= 5) {
     return STACK_CENTER_X;
   }
 
@@ -418,7 +418,7 @@ const optimizeHorizontalPositions = (
     count?: number;
   }>,
 ): Map<string, number> => {
-  if (laidOutEntities.length < 5 || scene.visibleConnections.length < 3) {
+  if (laidOutEntities.length <= 5 || scene.visibleConnections.length < 3) {
     return new Map(laidOutEntities.map((entity) => [entity.id, entity.x]));
   }
 

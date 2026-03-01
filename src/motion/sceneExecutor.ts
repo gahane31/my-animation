@@ -58,8 +58,8 @@ const CAPTION_FADE_IN_DURATION = 0.2;
 
 const CAPTION_TOTAL_DURATION =
   CAPTION_FADE_OUT_DURATION + CAPTION_TEXT_DURATION + CAPTION_FADE_IN_DURATION;
-const DEFAULT_ENTRY_FADE_DURATION = 0.35;
-const DEFAULT_REMOVAL_DURATION = 0.3;
+const DEFAULT_ENTRY_FADE_DURATION = 0.22;
+const DEFAULT_REMOVAL_DURATION = 0.2;
 const MAX_RECOMMENDED_SCENE_ELEMENTS = 6;
 
 const formatMetadata = (metadata?: Record<string, unknown>): string => {
@@ -1225,8 +1225,14 @@ const executeConnectionLineTransitions = (
   const additionRevealByEntityId = new Map(
     additionTimings.map((timing) => [timing.entityId, timing.delay + timing.duration * 0.68]),
   );
+  const moveTimings = (scene.animationPlan?.entities ?? []).filter(
+    (timing) => timing.action === 'move',
+  );
+  const moveSettleByEntityId = new Map(
+    moveTimings.map((timing) => [timing.entityId, timing.delay + timing.duration * 0.6]),
+  );
   const resolveEntityRevealTime = (entityId: string): number =>
-    additionRevealByEntityId.get(entityId) ?? 0;
+    Math.max(additionRevealByEntityId.get(entityId) ?? 0, moveSettleByEntityId.get(entityId) ?? 0);
 
   connectionDiffs.forEach((diff, index) => {
     const line = state.connections.get(diff.connectionId);
@@ -1242,7 +1248,7 @@ const executeConnectionLineTransitions = (
       : 0;
 
     if (diff.type === 'connection_added') {
-      const drawDelay = Math.max(timing.delay, endpointRevealTime + 0.02);
+      const drawDelay = Math.max(timing.delay, endpointRevealTime + 0.04);
       maxEnd = Math.max(maxEnd, drawDelay + timing.duration);
       line.start(0);
       line.end(0);
@@ -1498,8 +1504,14 @@ const executeInteractionFlowsPhase = (
   const additionRevealByEntityId = new Map(
     additionTimings.map((timing) => [timing.entityId, timing.delay + timing.duration * 0.68]),
   );
+  const moveTimings = (scene.animationPlan?.entities ?? []).filter(
+    (timing) => timing.action === 'move',
+  );
+  const moveSettleByEntityId = new Map(
+    moveTimings.map((timing) => [timing.entityId, timing.delay + timing.duration * 0.6]),
+  );
   const resolveEntityRevealTime = (entityId: string): number =>
-    additionRevealByEntityId.get(entityId) ?? 0;
+    Math.max(additionRevealByEntityId.get(entityId) ?? 0, moveSettleByEntityId.get(entityId) ?? 0);
 
   const streamEndPadding = Math.min(0.02, sceneDuration * 0.015);
   const addedConnectionDiffs = (scene.diff?.connectionDiffs ?? []).filter(
@@ -1568,13 +1580,13 @@ const executeInteractionFlowsPhase = (
       entryStyle === 'draw_in'
         ? Math.max(
             timing.delay + Math.max(0.06, timing.duration * 0.88),
-            fromReveal + 0.02,
-            toReveal + 0.02,
+            fromReveal + 0.04,
+            toReveal + 0.04,
           )
         : Math.max(
             timing.delay + Math.max(0.03, timing.duration * 0.2),
-            fromReveal + 0.02,
-            toReveal + 0.02,
+            fromReveal + 0.04,
+            toReveal + 0.04,
           );
 
     return Math.max(connectionReveal, fromReveal, toReveal);
@@ -2187,6 +2199,26 @@ const resolveCameraTiming = (
   scene: MotionSceneSpec,
   sceneDuration: number,
 ): {delay: number; duration: number} | null => {
+  if (scene.cameraPlan?.motionType === 'introduce_primary') {
+    const earliestAddDelay = Math.min(
+      ...(scene.animationPlan?.entities
+        .filter((timing) => timing.action === 'add')
+        .map((timing) => timing.delay) ?? [0]),
+    );
+    const hasAdditions = Number.isFinite(earliestAddDelay);
+    const spotlightDelay = hasAdditions
+      ? Math.max(0, earliestAddDelay - Math.min(0.03, sceneDuration * 0.03))
+      : 0;
+
+    return {
+      delay: spotlightDelay,
+      duration: Math.max(
+        0.18,
+        Math.min(0.42, scene.cameraPlan.duration, Math.max(0.22, sceneDuration * 0.24)),
+      ),
+    };
+  }
+
   const plannedTiming = scene.animationPlan?.camera;
   if (plannedTiming) {
     return {
@@ -2201,17 +2233,26 @@ const resolveCameraTiming = (
 
   const directiveCameraMode = scene.directives?.camera.mode;
   if (directiveCameraMode === 'follow_action' || directiveCameraMode === 'wide_recap') {
+    const earliestAddDelay = Math.min(
+      ...(scene.animationPlan?.entities
+        .filter((timing) => timing.action === 'add')
+        .map((timing) => timing.delay) ?? [0]),
+    );
+    const hasAdditions = Number.isFinite(earliestAddDelay) && earliestAddDelay > 0;
+    const followDelay = hasAdditions
+      ? Math.max(0, earliestAddDelay - Math.min(0.08, sceneDuration * 0.08))
+      : 0;
     const immediateDuration = Math.max(
-      0.08,
+      0.18,
       Math.min(
-        0.24,
+        0.42,
         scene.cameraPlan.duration,
-        Math.max(0.12, sceneDuration * 0.18),
+        Math.max(0.22, sceneDuration * 0.28),
       ),
     );
 
     return {
-      delay: 0,
+      delay: directiveCameraMode === 'follow_action' ? followDelay : 0,
       duration: immediateDuration,
     };
   }
@@ -2259,12 +2300,29 @@ const resolveCameraFocusTarget = (
   primaryElement: LifecycleResult | undefined,
   firstNewElement: LifecycleResult | undefined,
 ): PixelPosition | undefined => {
+  const focusLifecycle = resolveCameraFocusLifecycle(
+    scene,
+    lifecycleResults,
+    sceneElementById,
+    primaryElement,
+    firstNewElement,
+  );
+  return focusLifecycle?.targetPosition;
+};
+
+const resolveCameraFocusLifecycle = (
+  scene: MotionSceneSpec,
+  lifecycleResults: LifecycleResult[],
+  sceneElementById: Map<string, MotionElementSpec>,
+  primaryElement: LifecycleResult | undefined,
+  firstNewElement: LifecycleResult | undefined,
+): LifecycleResult | undefined => {
   if (scene.cameraPlan?.targetElementId) {
     const targetLifecycle = lifecycleResults.find(
       (result) => result.elementState.id === scene.cameraPlan?.targetElementId,
     );
     if (targetLifecycle) {
-      return targetLifecycle.targetPosition;
+      return targetLifecycle;
     }
   }
 
@@ -2273,13 +2331,35 @@ const resolveCameraFocusTarget = (
       const sourceId = resolveElementSourceId(sceneElementById, result.elementState.id);
       return sourceId === scene.cameraPlan?.targetId;
     });
-
     if (targetLifecycle) {
-      return targetLifecycle.targetPosition;
+      return targetLifecycle;
     }
   }
 
-  return primaryElement?.targetPosition ?? firstNewElement?.targetPosition;
+  return primaryElement ?? firstNewElement;
+};
+
+const collectFocusedElementBounds = (
+  lifecycleResult: LifecycleResult | undefined,
+  sceneElementById: Map<string, MotionElementSpec>,
+): {minX: number; maxX: number; minY: number; maxY: number} | undefined => {
+  if (!lifecycleResult) {
+    return undefined;
+  }
+
+  const element = sceneElementById.get(lifecycleResult.elementState.id);
+  const size = resolveAnchorSize(element);
+  const labelPadding = element?.label ? 26 : 16;
+  const focusPadding = 10;
+  const x = lifecycleResult.targetPosition.x;
+  const y = lifecycleResult.targetPosition.y;
+
+  return {
+    minX: x - size.halfWidth - focusPadding,
+    maxX: x + size.halfWidth + focusPadding,
+    minY: y - size.halfHeight - focusPadding,
+    maxY: y + size.halfHeight + labelPadding + focusPadding,
+  };
 };
 
 function* executeStaticScene(
@@ -2450,9 +2530,17 @@ export function* executeScene(
   const cameraTiming = resolveCameraTiming(scene, sceneDuration);
   const cameraAction = resolveSceneCameraAction(scene, cameraTiming !== null);
   const directiveCameraMode = scene.directives?.camera.mode;
-  const isFollowOrRecapCamera =
-    directiveCameraMode === 'follow_action' || directiveCameraMode === 'wide_recap';
+  const isWideRecapCamera = directiveCameraMode === 'wide_recap';
   const shouldRunCamera = Boolean(cameraAction) || Boolean(scene.cameraPlan);
+  const focusLifecycle = shouldRunCamera
+    ? resolveCameraFocusLifecycle(
+      scene,
+      lifecycleResults,
+      sceneElementById,
+      primaryElement,
+      firstNewElement,
+    )
+    : undefined;
   const focusTarget = shouldRunCamera
     ? resolveCameraFocusTarget(
       scene,
@@ -2462,27 +2550,38 @@ export function* executeScene(
       firstNewElement,
     )
     : undefined;
-  const sceneContentBounds = collectSceneContentBounds(lifecycleResults, sceneElementById);
+  const shouldUseFocusedContentBounds = scene.cameraPlan?.motionType === 'introduce_primary';
+  const sceneContentBounds = shouldUseFocusedContentBounds
+    ? collectFocusedElementBounds(focusLifecycle, sceneElementById) ??
+      collectSceneContentBounds(lifecycleResults, sceneElementById)
+    : collectSceneContentBounds(lifecycleResults, sceneElementById);
+  const cameraDelay = cameraTiming?.delay ?? 0;
+  const cameraAvailableDuration = Math.max(0.1, sceneDuration - cameraDelay);
   const cameraExecution = shouldRunCamera
     ? createCameraPlan({
       view,
       cameraState: state.camera,
-      sceneDuration: sceneDuration,
+      sceneDuration: cameraAvailableDuration,
       durationOverride: cameraTiming?.duration,
       action: cameraAction,
       focusTarget,
-      activeZone: scene.directives?.camera.active_zone ?? 'upper_third',
-      reserveBottomPercent: scene.directives?.camera.reserve_bottom_percent ?? 25,
+      activeZone: shouldUseFocusedContentBounds
+        ? 'center'
+        : scene.directives?.camera.active_zone ?? 'upper_third',
+      reserveBottomPercent: shouldUseFocusedContentBounds
+        ? 0
+        : scene.directives?.camera.reserve_bottom_percent ?? 25,
       zoomOverride: scene.cameraPlan?.zoom,
+      holdDuration: scene.cameraPlan?.holdDuration ?? 0,
+      resetAfterHold: shouldUseFocusedContentBounds,
       easingOverride: scene.cameraPlan?.easing,
-      allowDrift: !isFollowOrRecapCamera,
-      lockXAxis: isFollowOrRecapCamera,
+      allowDrift: !isWideRecapCamera && !shouldUseFocusedContentBounds,
+      lockXAxis: isWideRecapCamera,
       contentBounds: sceneContentBounds,
       logger: state.logger,
     })
     : null;
 
-  const cameraDelay = cameraTiming?.delay ?? 0;
   const cameraThread = cameraExecution
     ? createDelayedThread(cameraDelay, cameraExecution.thread)
     : undefined;

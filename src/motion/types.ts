@@ -83,6 +83,7 @@ export interface SceneCameraPlan {
   };
   zoom: number;
   duration: number;
+  holdDuration?: number;
   easing: string;
   motionType: CameraMotionType;
 }

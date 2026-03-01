@@ -17,6 +17,9 @@ import {
   type LucideIconName,
 } from '../catalog/iconCatalog.js';
 import type {LaidOutPlan, LaidOutScene} from '../schema/compiledPlan.schema.js';
+import {topologySceneDirectivesSchema} from '../schema/topologyPlan.schema.js';
+
+const REEL_FAST_MAX_SCENE_DURATION_SECONDS = 4;
 
 const TEMPLATE_BY_ARCHETYPE: Record<string, TemplateId> = {
   hook: 'HERO_FOCUS',
@@ -47,22 +50,22 @@ const resolveFollowActionZoomCap = (scene: LaidOutScene): number => {
   const entityCount = scene.laidOutEntities.length;
 
   if (entityCount <= 2) {
-    return 1.18;
+    return 1.24;
   }
 
   if (entityCount === 3) {
-    return 1.12;
+    return 1.18;
   }
 
   if (entityCount === 4) {
-    return 1.08;
+    return 1.14;
   }
 
   if (entityCount === 5) {
-    return 1.04;
+    return 1.11;
   }
 
-  return 1;
+  return 1.08;
 };
 
 const toCamera = (scene: LaidOutScene): Camera => {
@@ -78,16 +81,20 @@ const toCamera = (scene: LaidOutScene): Camera => {
   }
 
   if (cameraMode === 'follow_action') {
-    // Preserve topology context in dense scenes instead of over-focusing on one node.
-    if (scene.laidOutEntities.length >= 4) {
-      return {mode: 'wide', zoom: zoomByPreset('wide')};
-    }
-
     const zoomCap = resolveFollowActionZoomCap(scene);
+    const pacingBoost = scene.directives?.motion.pacing === 'reel_fast' ? 0.02 : 0;
+    const minFollowZoom =
+      scene.laidOutEntities.length <= 3
+        ? 1.16
+        : scene.laidOutEntities.length <= 5
+          ? 1.12
+          : scene.laidOutEntities.length <= 7
+            ? 1.08
+            : 1.05;
     return {
       mode: 'focus',
       target: focusTarget,
-      zoom: Math.min(zoom, zoomCap),
+      zoom: Math.max(minFollowZoom, Math.min(zoom + pacingBoost, zoomCap)),
     };
   }
 
@@ -261,6 +268,40 @@ const toMomentTransition = (scene: LaidOutScene): MomentTransition | undefined =
   return undefined;
 };
 
+const resolveSceneDirectives = (scene: LaidOutScene) =>
+  topologySceneDirectivesSchema.parse(scene.directives ?? {});
+
+const forceReelFastDirectives = (scene: LaidOutScene): LaidOutScene => {
+  const directives = resolveSceneDirectives(scene);
+  return {
+    ...scene,
+    directives: {
+      ...directives,
+      motion: {
+        ...directives.motion,
+        pacing: 'reel_fast',
+      },
+    },
+  };
+};
+
+const compressSceneTimelineForReelFast = (scenes: LaidOutScene[]): LaidOutScene[] => {
+  let cursor = 0;
+
+  return scenes.map((scene) => {
+    const originalDuration = Math.max(1, scene.end - scene.start);
+    const compressedDuration = Math.min(REEL_FAST_MAX_SCENE_DURATION_SECONDS, originalDuration);
+    const start = cursor;
+    const end = start + compressedDuration;
+    cursor = end;
+    return {
+      ...scene,
+      start,
+      end,
+    };
+  });
+};
+
 const toDesignedMoment = (scene: LaidOutScene): DesignedMoment => {
   const entities = toDesignedEntities(scene);
   const visibleEntityIds = new Set(entities.map((entity) => entity.id));
@@ -304,13 +345,17 @@ const validateSceneDurations = (scenes: LaidOutScene[]): void => {
 export const compileLaidOutPlanToDesignedMoments = (
   laidOutPlan: LaidOutPlan,
 ): DesignedMomentsVideo => {
-  const scenes = [...laidOutPlan.scenes].sort((left, right) => left.start - right.start);
-  validateSceneDurations(scenes);
+  const sortedScenes = [...laidOutPlan.scenes].sort((left, right) => left.start - right.start);
+  const reelFastScenes = compressSceneTimelineForReelFast(
+    sortedScenes.map(forceReelFastDirectives),
+  );
+  validateSceneDurations(reelFastScenes);
 
-  const moments = scenes.map((scene) => toDesignedMoment(scene));
+  const moments = reelFastScenes.map((scene) => toDesignedMoment(scene));
+  const compiledDuration = reelFastScenes[reelFastScenes.length - 1]?.end ?? laidOutPlan.duration;
 
   return DesignedMomentsVideoSchema.parse({
-    duration: laidOutPlan.duration,
+    duration: compiledDuration,
     moments,
   });
 };

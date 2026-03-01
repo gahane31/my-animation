@@ -79,8 +79,10 @@ export const resolveEntityStyle = (
   const statusColor = STATUS_COLOR_MAP[status];
   const themeColors = resolveThemeColors(visual);
   const glowMultiplier = resolveGlowMultiplier(visual);
-  const glowEnabled =
-    (visual?.theme ?? 'default') === 'neon' && (visual?.glow_strength ?? 'soft') === 'strong';
+  const resolvedTheme = visual?.theme ?? 'default';
+  const glowEnabled = (visual?.glow_strength ?? 'soft') === 'strong';
+  const normalGlowColor =
+    resolvedTheme === 'default' ? themeColors.connection : themeColors.glow;
   const size = StyleTokens.sizes.medium;
   const baseGlowBlur =
     status === 'overloaded' || status === 'error'
@@ -94,7 +96,7 @@ export const resolveEntityStyle = (
     strokeWidth: Math.max(1.8, StyleTokens.stroke.normal * 0.72),
     strokeColor: status === 'normal' ? themeColors.connection : statusColor,
     glow: glowEnabled,
-    glowColor: status === 'normal' ? themeColors.glow : statusColor,
+    glowColor: status === 'normal' ? normalGlowColor : statusColor,
     glowBlur: glowEnabled ? Math.max(8, baseGlowBlur * glowMultiplier) : 0,
     textColor: StyleTokens.colors.text,
     fontSize: StyleTokens.text.fontSizeSecondary * 1.14,

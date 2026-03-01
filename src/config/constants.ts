@@ -1,9 +1,9 @@
 export const VIDEO_LIMITS = {
   maxDurationSeconds: 90,
   maxSceneDurationSeconds: 8,
-  maxStructuralIdleSeconds: 6,
+  maxStructuralIdleSeconds: 4,
   // Backward-compatible alias for legacy modules.
-  maxVisualIdleSeconds: 6,
+  maxVisualIdleSeconds: 4,
   firstMotionDeadlineSeconds: 1,
 } as const;
 

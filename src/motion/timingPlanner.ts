@@ -35,6 +35,8 @@ export interface SceneAnimationTimings {
   camera: CameraTimingPlan | null;
 }
 
+type MotionPacing = 'balanced' | 'reel_fast';
+
 interface PhaseWindow {
   start: number;
   end: number;
@@ -86,6 +88,22 @@ const transitionPaceMultiplier = (transition?: MomentTransition): number => {
   }
 };
 
+const directivePacingMultipliers = (
+  pacing: MotionPacing = 'balanced',
+): {duration: number; stagger: number} => {
+  if (pacing === 'reel_fast') {
+    return {
+      duration: 0.58,
+      stagger: 0.5,
+    };
+  }
+
+  return {
+    duration: 1,
+    stagger: 1,
+  };
+};
+
 export const planEntityTimings = (
   diff: MomentDiff,
   sceneDuration: number,
@@ -93,13 +111,19 @@ export const planEntityTimings = (
   personality: MotionPersonalityId = DEFAULT_MOTION_PERSONALITY,
   isHook = false,
   transition?: MomentTransition,
+  pacing: MotionPacing = 'balanced',
 ): EntityTimingPlan[] => {
   const personalityTokens =
     MotionPersonalities[personality] ?? MotionPersonalities[DEFAULT_MOTION_PERSONALITY];
   const hookSpeedMultiplier = isHook ? HookTokens.motionBoost.speedMultiplier : 1;
   const hookStaggerMultiplier = isHook ? HookTokens.motionBoost.staggerMultiplier : 1;
-  const effectiveSpeedMultiplier = personalityTokens.speedMultiplier * hookSpeedMultiplier;
-  const effectiveStagger = personalityTokens.stagger * hookStaggerMultiplier;
+  const directivePacing = directivePacingMultipliers(pacing);
+  const effectiveSpeedMultiplier =
+    personalityTokens.speedMultiplier *
+    hookSpeedMultiplier *
+    directivePacing.duration;
+  const effectiveStagger =
+    personalityTokens.stagger * hookStaggerMultiplier * directivePacing.stagger;
   const paceMultiplier = transitionPaceMultiplier(transition);
   const phases = getScenePhases(sceneDuration);
   const timings: EntityTimingPlan[] = [];
@@ -117,7 +141,7 @@ export const planEntityTimings = (
         entityId: entry.entityId,
         action: 'remove',
         delay,
-        duration: clampTimingDuration(baseDuration * effectiveSpeedMultiplier * paceMultiplier, 0.24, 0.9),
+        duration: clampTimingDuration(baseDuration * effectiveSpeedMultiplier * paceMultiplier, 0.12, 0.28),
         easing: personalityTokens.easing,
       });
     });
@@ -135,7 +159,7 @@ export const planEntityTimings = (
         entityId: entry.entityId,
         action: 'move',
         delay,
-        duration: clampTimingDuration(baseDuration * effectiveSpeedMultiplier * paceMultiplier, 0.28, 0.95),
+        duration: clampTimingDuration(baseDuration * effectiveSpeedMultiplier * paceMultiplier, 0.14, 0.34),
         easing: personalityTokens.easing,
       });
     });
@@ -143,6 +167,9 @@ export const planEntityTimings = (
   const additionCandidates = diff.entityDiffs.filter(
     (entry) => entityDiffIsAdd(entry.type) || entityDiffIsPromotedPrimary(entry),
   );
+  const isPureIntroduction =
+    diff.entityDiffs.length > 0 &&
+    diff.entityDiffs.every((entry) => entityDiffIsAdd(entry.type));
 
   // Keep entering entities from colliding with outgoing/moving entities.
   // We let removals/moves visibly clear first, then start additions.
@@ -152,10 +179,16 @@ export const planEntityTimings = (
   const latestMoveClear = timings
     .filter((timing) => timing.action === 'move')
     .reduce((maxClear, timing) => Math.max(maxClear, timing.delay + timing.duration * 0.55), 0);
-  const additionDelayFloor = Math.max(phases.enter.start, latestRemovalClear, latestMoveClear);
+  // Keep additions early enough for reel pacing while still respecting
+  // any active removals/moves to avoid visible collisions.
+  const earlyIntroStart = Math.max(0.02, Math.min(sceneDuration * 0.03, 0.12));
+  const earlyGeneralStart = Math.max(0.16, Math.min(sceneDuration * 0.12, 0.72));
+  const additionDelayFloor = isPureIntroduction
+    ? earlyIntroStart
+    : Math.max(earlyGeneralStart, latestRemovalClear, latestMoveClear);
   const additionDelayCap = Math.max(
     additionDelayFloor + 0.02,
-    Math.min(sceneDuration * 0.82, phases.connect.start),
+    Math.min(sceneDuration * 0.72, phases.connect.end),
   );
 
   const additionsOrdered = [...additionCandidates].sort((left, right) => {
@@ -184,8 +217,8 @@ export const planEntityTimings = (
         effectiveSpeedMultiplier *
         paceMultiplier *
         ADDITION_DURATION_MULTIPLIER,
-      0.2,
-      isPrimary ? 0.62 : 0.54,
+      0.12,
+      isPrimary ? 0.32 : 0.28,
     );
 
     timings.push({
@@ -208,25 +241,32 @@ export const planConnectionTimings = (
   personality: MotionPersonalityId = DEFAULT_MOTION_PERSONALITY,
   isHook = false,
   transition?: MomentTransition,
+  pacing: MotionPacing = 'balanced',
 ): ConnectionTimingPlan[] => {
   const personalityTokens =
     MotionPersonalities[personality] ?? MotionPersonalities[DEFAULT_MOTION_PERSONALITY];
   const hookSpeedMultiplier = isHook ? HookTokens.motionBoost.speedMultiplier : 1;
   const hookStaggerMultiplier = isHook ? HookTokens.motionBoost.staggerMultiplier : 1;
-  const effectiveSpeedMultiplier = personalityTokens.speedMultiplier * hookSpeedMultiplier;
-  const effectiveStagger = personalityTokens.stagger * hookStaggerMultiplier;
+  const directivePacing = directivePacingMultipliers(pacing);
+  const effectiveSpeedMultiplier =
+    personalityTokens.speedMultiplier *
+    hookSpeedMultiplier *
+    directivePacing.duration;
+  const effectiveStagger =
+    personalityTokens.stagger * hookStaggerMultiplier * directivePacing.stagger;
   const paceMultiplier = transitionPaceMultiplier(transition);
   const phases = getScenePhases(sceneDuration);
   const baseDuration = phaseDuration(phases.connect);
-  const connectionStart = Math.min(
-    sceneDuration * 0.14,
-    Math.max(0.12, phases.enter.start * 0.28),
+  const connectionStart = Math.max(
+    0.08,
+    Math.min(sceneDuration * 0.14, 0.45),
+    phases.move.start + Math.min(0.14, sceneDuration * 0.05),
   );
 
   return diff.connectionDiffs.map((entry, index) => ({
     connectionId: entry.connectionId,
     delay: clampDelay(connectionStart + index * effectiveStagger, phases.connect.end),
-    duration: clampTimingDuration(baseDuration * effectiveSpeedMultiplier * paceMultiplier, 0.14, 0.42),
+    duration: clampTimingDuration(baseDuration * effectiveSpeedMultiplier * paceMultiplier, 0.08, 0.2),
     easing: personalityTokens.easing,
   }));
 };
@@ -236,20 +276,34 @@ export const planCameraTiming = (
   sceneDuration: number,
   personality: MotionPersonalityId = DEFAULT_MOTION_PERSONALITY,
   isHook = false,
+  pacing: MotionPacing = 'balanced',
 ): CameraTimingPlan | null => {
   const personalityTokens =
     MotionPersonalities[personality] ?? MotionPersonalities[DEFAULT_MOTION_PERSONALITY];
   const hookSpeedMultiplier = isHook ? HookTokens.motionBoost.speedMultiplier : 1;
-  const effectiveSpeedMultiplier = personalityTokens.speedMultiplier * hookSpeedMultiplier;
+  const directivePacing = directivePacingMultipliers(pacing);
+  const effectiveSpeedMultiplier =
+    personalityTokens.speedMultiplier *
+    hookSpeedMultiplier *
+    directivePacing.duration;
   const phases = getScenePhases(sceneDuration);
 
   if (diff.cameraDiffs.length === 0) {
     return null;
   }
 
+  const cameraDelay =
+    pacing === 'reel_fast'
+      ? Math.min(phases.camera.start, sceneDuration * 0.32)
+      : phases.camera.start;
+
   return {
-    delay: phases.camera.start,
-    duration: phaseDuration(phases.camera) * effectiveSpeedMultiplier,
+    delay: cameraDelay,
+    duration: clampTimingDuration(
+      phaseDuration(phases.camera) * effectiveSpeedMultiplier,
+      0.16,
+      0.36,
+    ),
     easing: personalityTokens.easing,
   };
 };
@@ -261,6 +315,7 @@ interface PlanSceneAnimationTimingsInput {
   personality?: MotionPersonalityId;
   isHook?: boolean;
   transition?: MomentTransition;
+  pacing?: MotionPacing;
 }
 
 export const planSceneAnimationTimings = ({
@@ -270,8 +325,17 @@ export const planSceneAnimationTimings = ({
   personality = DEFAULT_MOTION_PERSONALITY,
   isHook = false,
   transition,
+  pacing = 'balanced',
 }: PlanSceneAnimationTimingsInput): SceneAnimationTimings => ({
-  entities: planEntityTimings(diff, sceneDuration, primaryEntityIds, personality, isHook, transition),
-  connections: planConnectionTimings(diff, sceneDuration, personality, isHook, transition),
-  camera: planCameraTiming(diff, sceneDuration, personality, isHook),
+  entities: planEntityTimings(
+    diff,
+    sceneDuration,
+    primaryEntityIds,
+    personality,
+    isHook,
+    transition,
+    pacing,
+  ),
+  connections: planConnectionTimings(diff, sceneDuration, personality, isHook, transition, pacing),
+  camera: planCameraTiming(diff, sceneDuration, personality, isHook, pacing),
 });

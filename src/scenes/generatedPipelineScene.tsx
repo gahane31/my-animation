@@ -12,13 +12,14 @@ import {advanceTimeline, createTimelineState, waitUntil} from '../motion/timelin
 import type {MotionRenderSpec} from '../motion/types.js';
 
 const renderSpec = {
-  "duration": 60,
+  "duration": 40,
   "scenes": [
     {
-      "id": "s1-baseline-direct",
+      "id": "s1-hook-same-seat",
       "start": 0,
-      "end": 6,
-      "narration": "Users send requests straight to a worker, and work starts immediately.",
+      "end": 4,
+      "narration": "Two users tap the same seat, and both requests hit the booking server.",
+      "camera": "focus",
       "elements": [
         {
           "id": "users",
@@ -47,11 +48,11 @@ const renderSpec = {
           }
         },
         {
-          "id": "worker",
-          "type": "worker",
-          "sourceEntityId": "worker",
-          "label": "Worker",
-          "icon": "cpu",
+          "id": "booking_server",
+          "type": "server",
+          "sourceEntityId": "booking_server",
+          "label": "Booking Server",
+          "icon": "server",
           "position": {
             "x": 50,
             "y": 68.18
@@ -77,7 +78,7 @@ const renderSpec = {
         {
           "id": "users",
           "type": "users_cluster",
-          "count": 1,
+          "count": 2,
           "importance": "secondary",
           "status": "active",
           "label": "Users",
@@ -88,13 +89,13 @@ const renderSpec = {
           }
         },
         {
-          "id": "worker",
-          "type": "worker",
+          "id": "booking_server",
+          "type": "server",
           "count": 1,
           "importance": "primary",
           "status": "active",
-          "label": "Worker",
-          "icon": "cpu",
+          "label": "Booking Server",
+          "icon": "server",
           "layout": {
             "x": 50,
             "y": 68.18
@@ -103,31 +104,31 @@ const renderSpec = {
       ],
       "connections": [
         {
-          "id": "c_users_to_worker_request",
+          "id": "c_users_to_booking_server",
           "from": "users",
-          "to": "worker",
+          "to": "booking_server",
           "direction": "one_way",
           "style": "solid"
         }
       ],
       "interactions": [
         {
-          "id": "i_c_users_to_worker_request_fwd",
+          "id": "i_c_users_to_booking_server_fwd",
           "from": "users",
-          "to": "worker",
+          "to": "booking_server",
           "type": "flow",
-          "intensity": "medium"
+          "intensity": "high"
         }
       ],
       "sourceCamera": {
         "mode": "focus",
-        "target": "worker",
-        "zoom": 1
+        "target": "booking_server",
+        "zoom": 1.2
       },
       "directives": {
         "camera": {
           "mode": "follow_action",
-          "zoom": "wide",
+          "zoom": "tight",
           "active_zone": "upper_third",
           "reserve_bottom_percent": 25
         },
@@ -137,11 +138,11 @@ const renderSpec = {
           "glow_strength": "soft"
         },
         "motion": {
-          "entry_style": "draw_in",
-          "pacing": "balanced"
+          "entry_style": "elastic_pop",
+          "pacing": "reel_fast"
         },
         "flow": {
-          "renderer": "hybrid"
+          "renderer": "packets"
         }
       },
       "source": {
@@ -149,7 +150,7 @@ const renderSpec = {
           {
             "id": "users",
             "type": "users_cluster",
-            "count": 1,
+            "count": 2,
             "importance": "secondary",
             "status": "active",
             "label": "Users",
@@ -160,13 +161,13 @@ const renderSpec = {
             }
           },
           {
-            "id": "worker",
-            "type": "worker",
+            "id": "booking_server",
+            "type": "server",
             "count": 1,
             "importance": "primary",
             "status": "active",
-            "label": "Worker",
-            "icon": "cpu",
+            "label": "Booking Server",
+            "icon": "server",
             "layout": {
               "x": 50,
               "y": 68.18
@@ -175,29 +176,29 @@ const renderSpec = {
         ],
         "connections": [
           {
-            "id": "c_users_to_worker_request",
+            "id": "c_users_to_booking_server",
             "from": "users",
-            "to": "worker",
+            "to": "booking_server",
             "direction": "one_way",
             "style": "solid"
           }
         ],
         "interactions": [
           {
-            "id": "i_c_users_to_worker_request_fwd",
+            "id": "i_c_users_to_booking_server_fwd",
             "from": "users",
-            "to": "worker",
+            "to": "booking_server",
             "type": "flow",
-            "intensity": "medium"
+            "intensity": "high"
           }
         ],
         "camera": {
           "mode": "focus",
-          "target": "worker",
-          "zoom": 1
+          "target": "booking_server",
+          "zoom": 1.2
         }
       },
-      "motionPersonality": "CALM",
+      "motionPersonality": "ENERGETIC",
       "diff": {
         "entityDiffs": [
           {
@@ -206,19 +207,19 @@ const renderSpec = {
           },
           {
             "type": "entity_added",
-            "entityId": "worker"
+            "entityId": "booking_server"
           }
         ],
         "connectionDiffs": [
           {
             "type": "connection_added",
-            "connectionId": "c_users_to_worker_request"
+            "connectionId": "c_users_to_booking_server"
           }
         ],
         "interactionDiffs": [
           {
             "type": "interaction_added",
-            "interactionId": "i_c_users_to_worker_request_fwd"
+            "interactionId": "i_c_users_to_booking_server_fwd"
           }
         ],
         "cameraDiffs": [
@@ -227,8 +228,8 @@ const renderSpec = {
             "from": null,
             "to": {
               "mode": "focus",
-              "target": "worker",
-              "zoom": 1
+              "target": "booking_server",
+              "zoom": 1.2
             }
           }
         ]
@@ -255,9 +256,9 @@ const renderSpec = {
             "enter": "zoom_in"
           },
           {
-            "entityId": "worker",
+            "entityId": "booking_server",
             "elementIds": [
-              "worker"
+              "booking_server"
             ],
             "action": "add",
             "enter": "zoom_in"
@@ -270,15 +271,15 @@ const renderSpec = {
               "users"
             ],
             "action": "connect",
-            "connectionId": "c_users_to_worker_request"
+            "connectionId": "c_users_to_booking_server"
           },
           {
-            "entityId": "worker",
+            "entityId": "booking_server",
             "elementIds": [
-              "worker"
+              "booking_server"
             ],
             "action": "connect",
-            "connectionId": "c_users_to_worker_request"
+            "connectionId": "c_users_to_booking_server"
           }
         ],
         "interactions": [
@@ -288,15 +289,15 @@ const renderSpec = {
               "users"
             ],
             "action": "interact",
-            "interactionId": "i_c_users_to_worker_request_fwd"
+            "interactionId": "i_c_users_to_booking_server_fwd"
           },
           {
-            "entityId": "worker",
+            "entityId": "booking_server",
             "elementIds": [
-              "worker"
+              "booking_server"
             ],
             "action": "interact",
-            "interactionId": "i_c_users_to_worker_request_fwd"
+            "interactionId": "i_c_users_to_booking_server_fwd"
           }
         ]
       },
@@ -305,38 +306,45 @@ const renderSpec = {
           {
             "entityId": "users",
             "action": "add",
-            "delay": 1.7999999999999998,
-            "duration": 0.54,
-            "easing": "cubic-bezier(0.2,0,0,1)",
+            "delay": 0.12,
+            "duration": 0.28,
+            "easing": "cubic-bezier(0.4,0,0.2,1)",
             "isPrimary": false
           },
           {
-            "entityId": "worker",
+            "entityId": "booking_server",
             "action": "add",
-            "delay": 1.882,
-            "duration": 0.62,
-            "easing": "cubic-bezier(0.2,0,0,1)",
+            "delay": 0.2,
+            "duration": 0.32,
+            "easing": "cubic-bezier(0.4,0,0.2,1)",
             "scale": 1.2,
             "isPrimary": true
           }
         ],
         "connections": [
           {
-            "connectionId": "c_users_to_worker_request",
-            "delay": 0.504,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
+            "connectionId": "c_users_to_booking_server",
+            "delay": 0.54,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
           }
         ],
         "camera": null
       },
-      "cameraPlan": null,
+      "cameraPlan": {
+        "targetId": "booking_server",
+        "targetElementId": "booking_server",
+        "zoom": 1.2,
+        "duration": 0.55,
+        "easing": "cubic-bezier(0.2,0,0,1)",
+        "motionType": "focus_primary"
+      },
       "sceneDiff": {
         "addedEntities": [
           {
             "id": "users",
             "type": "users_cluster",
-            "count": 1,
+            "count": 2,
             "importance": "secondary",
             "status": "active",
             "label": "Users",
@@ -347,13 +355,13 @@ const renderSpec = {
             }
           },
           {
-            "id": "worker",
-            "type": "worker",
+            "id": "booking_server",
+            "type": "server",
             "count": 1,
             "importance": "primary",
             "status": "active",
-            "label": "Worker",
-            "icon": "cpu",
+            "label": "Booking Server",
+            "icon": "server",
             "layout": {
               "x": 50,
               "y": 68.18
@@ -365,9 +373,9 @@ const renderSpec = {
         "updatedEntities": [],
         "addedConnections": [
           {
-            "id": "c_users_to_worker_request",
+            "id": "c_users_to_booking_server",
             "from": "users",
-            "to": "worker",
+            "to": "booking_server",
             "direction": "one_way",
             "style": "solid"
           }
@@ -375,11 +383,11 @@ const renderSpec = {
         "removedConnections": [],
         "addedInteractions": [
           {
-            "id": "i_c_users_to_worker_request_fwd",
+            "id": "i_c_users_to_booking_server_fwd",
             "from": "users",
-            "to": "worker",
+            "to": "booking_server",
             "type": "flow",
-            "intensity": "medium"
+            "intensity": "high"
           }
         ],
         "removedInteractions": [],
@@ -388,312 +396,18 @@ const renderSpec = {
           "from": null,
           "to": {
             "mode": "focus",
-            "target": "worker",
-            "zoom": 1
+            "target": "booking_server",
+            "zoom": 1.2
           }
         }
       }
     },
     {
-      "id": "s2-spike-overload",
-      "start": 6,
-      "end": 12,
-      "narration": "A traffic spike hits, and the worker overloads under the burst.",
-      "elements": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "sourceEntityId": "users",
-          "label": "Users",
-          "icon": "users",
-          "position": {
-            "x": 50,
-            "y": 12.32
-          },
-          "visualStyle": {
-            "size": 162,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.897944098839728,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 57.455999999999996,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "worker",
-          "type": "worker",
-          "sourceEntityId": "worker",
-          "label": "Worker",
-          "icon": "cpu",
-          "position": {
-            "x": 50,
-            "y": 68.18
-          },
-          "visualStyle": {
-            "size": 162,
-            "opacity": 1,
-            "color": "#EF4444",
-            "strokeWidth": 2.897944098839728,
-            "strokeColor": "#EF4444",
-            "glow": false,
-            "glowColor": "#EF4444",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 57.455999999999996,
-            "fontWeight": 600,
-            "status": "overloaded"
-          }
-        }
-      ],
-      "entities": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "Users",
-          "icon": "users",
-          "layout": {
-            "x": 50,
-            "y": 12.32
-          }
-        },
-        {
-          "id": "worker",
-          "type": "worker",
-          "count": 1,
-          "importance": "primary",
-          "status": "overloaded",
-          "label": "Worker",
-          "icon": "cpu",
-          "layout": {
-            "x": 50,
-            "y": 68.18
-          }
-        }
-      ],
-      "connections": [
-        {
-          "id": "c_users_to_worker_request",
-          "from": "users",
-          "to": "worker",
-          "direction": "one_way",
-          "style": "solid"
-        }
-      ],
-      "interactions": [
-        {
-          "id": "i_c_users_to_worker_request_fwd",
-          "from": "users",
-          "to": "worker",
-          "type": "burst",
-          "intensity": "high"
-        }
-      ],
-      "sourceCamera": {
-        "mode": "focus",
-        "target": "worker",
-        "zoom": 1.1
-      },
-      "directives": {
-        "camera": {
-          "mode": "follow_action",
-          "zoom": "medium",
-          "active_zone": "upper_third",
-          "reserve_bottom_percent": 25
-        },
-        "visual": {
-          "theme": "default",
-          "background_texture": "grid",
-          "glow_strength": "soft"
-        },
-        "motion": {
-          "entry_style": "draw_in",
-          "pacing": "balanced"
-        },
-        "flow": {
-          "renderer": "hybrid"
-        }
-      },
-      "source": {
-        "entities": [
-          {
-            "id": "users",
-            "type": "users_cluster",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Users",
-            "icon": "users",
-            "layout": {
-              "x": 50,
-              "y": 12.32
-            }
-          },
-          {
-            "id": "worker",
-            "type": "worker",
-            "count": 1,
-            "importance": "primary",
-            "status": "overloaded",
-            "label": "Worker",
-            "icon": "cpu",
-            "layout": {
-              "x": 50,
-              "y": 68.18
-            }
-          }
-        ],
-        "connections": [
-          {
-            "id": "c_users_to_worker_request",
-            "from": "users",
-            "to": "worker",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "interactions": [
-          {
-            "id": "i_c_users_to_worker_request_fwd",
-            "from": "users",
-            "to": "worker",
-            "type": "burst",
-            "intensity": "high"
-          }
-        ],
-        "camera": {
-          "mode": "focus",
-          "target": "worker",
-          "zoom": 1.1
-        }
-      },
-      "motionPersonality": "CALM",
-      "diff": {
-        "entityDiffs": [
-          {
-            "type": "entity_status_changed",
-            "entityId": "worker",
-            "from": "active",
-            "to": "overloaded"
-          }
-        ],
-        "connectionDiffs": [],
-        "interactionDiffs": [
-          {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_users_to_worker_request_fwd",
-            "from": "medium",
-            "to": "high"
-          }
-        ],
-        "cameraDiffs": [
-          {
-            "type": "camera_changed",
-            "from": {
-              "mode": "focus",
-              "target": "worker",
-              "zoom": 1
-            },
-            "to": {
-              "mode": "focus",
-              "target": "worker",
-              "zoom": 1.1
-            }
-          }
-        ]
-      },
-      "hierarchyTransition": null,
-      "plan": {
-        "phaseOrder": [
-          "removals",
-          "moves",
-          "additions",
-          "connections",
-          "interactions",
-          "camera"
-        ],
-        "removals": [],
-        "moves": [],
-        "additions": [],
-        "connections": [],
-        "interactions": [
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_users_to_worker_request_fwd"
-          },
-          {
-            "entityId": "worker",
-            "elementIds": [
-              "worker"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_users_to_worker_request_fwd"
-          }
-        ]
-      },
-      "animationPlan": {
-        "entities": [],
-        "connections": [],
-        "camera": null
-      },
-      "cameraPlan": null,
-      "sceneDiff": {
-        "addedEntities": [],
-        "removedEntities": [],
-        "movedEntities": [],
-        "updatedEntities": [
-          {
-            "id": "worker",
-            "changes": {
-              "status": {
-                "from": "active",
-                "to": "overloaded"
-              }
-            }
-          }
-        ],
-        "addedConnections": [],
-        "removedConnections": [],
-        "addedInteractions": [],
-        "removedInteractions": [],
-        "interactionIntensityChanged": [
-          {
-            "id": "i_c_users_to_worker_request_fwd",
-            "from": "medium",
-            "to": "high"
-          }
-        ],
-        "cameraChanged": {
-          "from": {
-            "mode": "focus",
-            "target": "worker",
-            "zoom": 1
-          },
-          "to": {
-            "mode": "focus",
-            "target": "worker",
-            "zoom": 1.1
-          }
-        }
-      }
-    },
-    {
-      "id": "s3-insert-queue-buffer",
-      "start": 12,
-      "end": 18,
-      "narration": "A message queue is inserted, so requests become queued tasks.",
+      "id": "s2-problem-race-to-db",
+      "start": 4,
+      "end": 8,
+      "narration": "Without a guard, both server calls try to write the same seat in the database.",
+      "camera": "focus",
       "elements": [
         {
           "id": "users",
@@ -721,14 +435,39 @@ const renderSpec = {
           }
         },
         {
-          "id": "message_queue",
-          "type": "message_queue",
-          "sourceEntityId": "message_queue",
-          "label": "Message Queue",
-          "icon": "inbox",
+          "id": "booking_server",
+          "type": "server",
+          "sourceEntityId": "booking_server",
+          "label": "Booking Server",
+          "icon": "server",
           "position": {
             "x": 50,
             "y": 40.25
+          },
+          "visualStyle": {
+            "size": 149.4,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.7829653249726274,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 52.987199999999994,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "seat_db",
+          "type": "primary_database",
+          "sourceEntityId": "seat_db",
+          "label": "Seat Database",
+          "icon": "database",
+          "position": {
+            "x": 50,
+            "y": 70.84
           },
           "enter": "zoom_in",
           "visualStyle": {
@@ -745,38 +484,13 @@ const renderSpec = {
             "fontWeight": 600,
             "status": "active"
           }
-        },
-        {
-          "id": "worker",
-          "type": "worker",
-          "sourceEntityId": "worker",
-          "label": "Worker",
-          "icon": "cpu",
-          "position": {
-            "x": 50,
-            "y": 70.84
-          },
-          "visualStyle": {
-            "size": 149.4,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.7829653249726274,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 52.987199999999994,
-            "fontWeight": 600,
-            "status": "active"
-          }
         }
       ],
       "entities": [
         {
           "id": "users",
           "type": "users_cluster",
-          "count": 1,
+          "count": 2,
           "importance": "secondary",
           "status": "active",
           "label": "Users",
@@ -787,26 +501,26 @@ const renderSpec = {
           }
         },
         {
-          "id": "message_queue",
-          "type": "message_queue",
+          "id": "booking_server",
+          "type": "server",
           "count": 1,
-          "importance": "primary",
+          "importance": "secondary",
           "status": "active",
-          "label": "Message Queue",
-          "icon": "inbox",
+          "label": "Booking Server",
+          "icon": "server",
           "layout": {
             "x": 50,
             "y": 40.25
           }
         },
         {
-          "id": "worker",
-          "type": "worker",
+          "id": "seat_db",
+          "type": "primary_database",
           "count": 1,
-          "importance": "secondary",
+          "importance": "primary",
           "status": "active",
-          "label": "Worker",
-          "icon": "cpu",
+          "label": "Seat Database",
+          "icon": "database",
           "layout": {
             "x": 50,
             "y": 70.84
@@ -815,56 +529,56 @@ const renderSpec = {
       ],
       "connections": [
         {
-          "id": "c_users_to_queue_ingestion",
+          "id": "c_users_to_booking_server",
           "from": "users",
-          "to": "message_queue",
+          "to": "booking_server",
           "direction": "one_way",
           "style": "solid"
         },
         {
-          "id": "c_queue_to_worker_dispatch",
-          "from": "message_queue",
-          "to": "worker",
+          "id": "c_booking_server_to_seat_db",
+          "from": "booking_server",
+          "to": "seat_db",
           "direction": "one_way",
           "style": "solid"
         }
       ],
       "interactions": [
         {
-          "id": "i_c_users_to_queue_ingestion_fwd",
+          "id": "i_c_users_to_booking_server_fwd",
           "from": "users",
-          "to": "message_queue",
+          "to": "booking_server",
           "type": "flow",
-          "intensity": "medium"
+          "intensity": "high"
         },
         {
-          "id": "i_c_queue_to_worker_dispatch_fwd",
-          "from": "message_queue",
-          "to": "worker",
-          "type": "broadcast",
-          "intensity": "medium"
+          "id": "i_c_booking_server_to_seat_db_fwd",
+          "from": "booking_server",
+          "to": "seat_db",
+          "type": "burst",
+          "intensity": "high"
         }
       ],
       "sourceCamera": {
         "mode": "focus",
-        "target": "message_queue",
-        "zoom": 1
+        "target": "seat_db",
+        "zoom": 1.16
       },
       "directives": {
         "camera": {
           "mode": "follow_action",
-          "zoom": "wide",
+          "zoom": "medium",
           "active_zone": "upper_third",
           "reserve_bottom_percent": 25
         },
         "visual": {
           "theme": "default",
-          "background_texture": "grid",
+          "background_texture": "none",
           "glow_strength": "soft"
         },
         "motion": {
           "entry_style": "draw_in",
-          "pacing": "balanced"
+          "pacing": "reel_fast"
         },
         "flow": {
           "renderer": "hybrid"
@@ -875,7 +589,7 @@ const renderSpec = {
           {
             "id": "users",
             "type": "users_cluster",
-            "count": 1,
+            "count": 2,
             "importance": "secondary",
             "status": "active",
             "label": "Users",
@@ -886,26 +600,26 @@ const renderSpec = {
             }
           },
           {
-            "id": "message_queue",
-            "type": "message_queue",
+            "id": "booking_server",
+            "type": "server",
             "count": 1,
-            "importance": "primary",
+            "importance": "secondary",
             "status": "active",
-            "label": "Message Queue",
-            "icon": "inbox",
+            "label": "Booking Server",
+            "icon": "server",
             "layout": {
               "x": 50,
               "y": 40.25
             }
           },
           {
-            "id": "worker",
-            "type": "worker",
+            "id": "seat_db",
+            "type": "primary_database",
             "count": 1,
-            "importance": "secondary",
+            "importance": "primary",
             "status": "active",
-            "label": "Worker",
-            "icon": "cpu",
+            "label": "Seat Database",
+            "icon": "database",
             "layout": {
               "x": 50,
               "y": 70.84
@@ -914,48 +628,48 @@ const renderSpec = {
         ],
         "connections": [
           {
-            "id": "c_users_to_queue_ingestion",
+            "id": "c_users_to_booking_server",
             "from": "users",
-            "to": "message_queue",
+            "to": "booking_server",
             "direction": "one_way",
             "style": "solid"
           },
           {
-            "id": "c_queue_to_worker_dispatch",
-            "from": "message_queue",
-            "to": "worker",
+            "id": "c_booking_server_to_seat_db",
+            "from": "booking_server",
+            "to": "seat_db",
             "direction": "one_way",
             "style": "solid"
           }
         ],
         "interactions": [
           {
-            "id": "i_c_users_to_queue_ingestion_fwd",
+            "id": "i_c_users_to_booking_server_fwd",
             "from": "users",
-            "to": "message_queue",
+            "to": "booking_server",
             "type": "flow",
-            "intensity": "medium"
+            "intensity": "high"
           },
           {
-            "id": "i_c_queue_to_worker_dispatch_fwd",
-            "from": "message_queue",
-            "to": "worker",
-            "type": "broadcast",
-            "intensity": "medium"
+            "id": "i_c_booking_server_to_seat_db_fwd",
+            "from": "booking_server",
+            "to": "seat_db",
+            "type": "burst",
+            "intensity": "high"
           }
         ],
         "camera": {
           "mode": "focus",
-          "target": "message_queue",
-          "zoom": 1
+          "target": "seat_db",
+          "zoom": 1.16
         }
       },
-      "motionPersonality": "CALM",
+      "motionPersonality": "ENERGETIC",
       "diff": {
         "entityDiffs": [
           {
             "type": "entity_added",
-            "entityId": "message_queue"
+            "entityId": "seat_db"
           },
           {
             "type": "entity_moved",
@@ -971,25 +685,19 @@ const renderSpec = {
           },
           {
             "type": "entity_moved",
-            "entityId": "worker",
+            "entityId": "booking_server",
             "from": {
               "x": 50,
               "y": 68.18
             },
             "to": {
               "x": 50,
-              "y": 70.84
+              "y": 40.25
             }
           },
           {
-            "type": "entity_status_changed",
-            "entityId": "worker",
-            "from": "overloaded",
-            "to": "active"
-          },
-          {
             "type": "entity_importance_changed",
-            "entityId": "worker",
+            "entityId": "booking_server",
             "from": "primary",
             "to": "secondary"
           }
@@ -997,29 +705,13 @@ const renderSpec = {
         "connectionDiffs": [
           {
             "type": "connection_added",
-            "connectionId": "c_users_to_queue_ingestion"
-          },
-          {
-            "type": "connection_added",
-            "connectionId": "c_queue_to_worker_dispatch"
-          },
-          {
-            "type": "connection_removed",
-            "connectionId": "c_users_to_worker_request"
+            "connectionId": "c_booking_server_to_seat_db"
           }
         ],
         "interactionDiffs": [
           {
             "type": "interaction_added",
-            "interactionId": "i_c_users_to_queue_ingestion_fwd"
-          },
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_queue_to_worker_dispatch_fwd"
-          },
-          {
-            "type": "interaction_removed",
-            "interactionId": "i_c_users_to_worker_request_fwd"
+            "interactionId": "i_c_booking_server_to_seat_db_fwd"
           }
         ],
         "cameraDiffs": [
@@ -1027,13 +719,13 @@ const renderSpec = {
             "type": "camera_changed",
             "from": {
               "mode": "focus",
-              "target": "worker",
-              "zoom": 1.1
+              "target": "booking_server",
+              "zoom": 1.2
             },
             "to": {
               "mode": "focus",
-              "target": "message_queue",
-              "zoom": 1
+              "target": "seat_db",
+              "zoom": 1.16
             }
           }
         ]
@@ -1058,18 +750,18 @@ const renderSpec = {
             "action": "move"
           },
           {
-            "entityId": "worker",
+            "entityId": "booking_server",
             "elementIds": [
-              "worker"
+              "booking_server"
             ],
             "action": "move"
           }
         ],
         "additions": [
           {
-            "entityId": "message_queue",
+            "entityId": "seat_db",
             "elementIds": [
-              "message_queue"
+              "seat_db"
             ],
             "action": "add",
             "enter": "zoom_in",
@@ -1078,60 +770,38 @@ const renderSpec = {
         ],
         "connections": [
           {
-            "entityId": "users",
+            "entityId": "booking_server",
             "elementIds": [
-              "users"
+              "booking_server"
             ],
             "action": "connect",
-            "connectionId": "c_users_to_worker_request",
-            "cleanup": false
+            "connectionId": "c_booking_server_to_seat_db"
           },
           {
-            "entityId": "message_queue",
+            "entityId": "seat_db",
             "elementIds": [
-              "message_queue"
+              "seat_db"
             ],
             "action": "connect",
-            "connectionId": "c_queue_to_worker_dispatch",
-            "cleanup": false
-          },
-          {
-            "entityId": "worker",
-            "elementIds": [
-              "worker"
-            ],
-            "action": "connect",
-            "connectionId": "c_users_to_worker_request",
-            "cleanup": false
+            "connectionId": "c_booking_server_to_seat_db"
           }
         ],
         "interactions": [
           {
-            "entityId": "users",
+            "entityId": "booking_server",
             "elementIds": [
-              "users"
+              "booking_server"
             ],
             "action": "interact",
-            "interactionId": "i_c_users_to_worker_request_fwd",
-            "cleanup": false
+            "interactionId": "i_c_booking_server_to_seat_db_fwd"
           },
           {
-            "entityId": "message_queue",
+            "entityId": "seat_db",
             "elementIds": [
-              "message_queue"
+              "seat_db"
             ],
             "action": "interact",
-            "interactionId": "i_c_queue_to_worker_dispatch_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "worker",
-            "elementIds": [
-              "worker"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_users_to_worker_request_fwd",
-            "cleanup": false
+            "interactionId": "i_c_booking_server_to_seat_db_fwd"
           }
         ]
       },
@@ -1140,63 +810,59 @@ const renderSpec = {
           {
             "entityId": "users",
             "action": "move",
-            "delay": 0.6000000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
+            "delay": 0.4,
+            "duration": 0.34,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
           },
           {
-            "entityId": "worker",
+            "entityId": "booking_server",
             "action": "move",
-            "delay": 0.68,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
+            "delay": 0.42000000000000004,
+            "duration": 0.34,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
           },
           {
-            "entityId": "message_queue",
+            "entityId": "seat_db",
             "action": "add",
-            "delay": 1.8499999999999999,
-            "duration": 0.62,
-            "easing": "cubic-bezier(0.2,0,0,1)",
+            "delay": 0.6570000000000001,
+            "duration": 0.260983296,
+            "easing": "cubic-bezier(0.4,0,0.2,1)",
             "scale": 1.2,
             "isPrimary": true
           }
         ],
         "connections": [
           {
-            "connectionId": "c_users_to_queue_ingestion",
-            "delay": 0.504,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "connectionId": "c_queue_to_worker_dispatch",
-            "delay": 0.584,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "connectionId": "c_users_to_worker_request",
-            "delay": 0.664,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
+            "connectionId": "c_booking_server_to_seat_db",
+            "delay": 0.54,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
           }
         ],
         "camera": null
       },
-      "cameraPlan": null,
+      "cameraPlan": {
+        "targetId": "seat_db",
+        "targetElementId": "seat_db",
+        "zoom": 2.8,
+        "duration": 0.26,
+        "holdDuration": 0.6,
+        "easing": "cubic-bezier(0.16,1,0.3,1)",
+        "motionType": "introduce_primary"
+      },
       "sceneDiff": {
         "addedEntities": [
           {
-            "id": "message_queue",
-            "type": "message_queue",
+            "id": "seat_db",
+            "type": "primary_database",
             "count": 1,
             "importance": "primary",
             "status": "active",
-            "label": "Message Queue",
-            "icon": "inbox",
+            "label": "Seat Database",
+            "icon": "database",
             "layout": {
               "x": 50,
-              "y": 40.25
+              "y": 70.84
             }
           }
         ],
@@ -1214,25 +880,21 @@ const renderSpec = {
             }
           },
           {
-            "id": "worker",
+            "id": "booking_server",
             "from": {
               "x": 50,
               "y": 68.18
             },
             "to": {
               "x": 50,
-              "y": 70.84
+              "y": 40.25
             }
           }
         ],
         "updatedEntities": [
           {
-            "id": "worker",
+            "id": "booking_server",
             "changes": {
-              "status": {
-                "from": "overloaded",
-                "to": "active"
-              },
               "importance": {
                 "from": "primary",
                 "to": "secondary"
@@ -1242,74 +904,45 @@ const renderSpec = {
         ],
         "addedConnections": [
           {
-            "id": "c_users_to_queue_ingestion",
-            "from": "users",
-            "to": "message_queue",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_queue_to_worker_dispatch",
-            "from": "message_queue",
-            "to": "worker",
+            "id": "c_booking_server_to_seat_db",
+            "from": "booking_server",
+            "to": "seat_db",
             "direction": "one_way",
             "style": "solid"
           }
         ],
-        "removedConnections": [
-          {
-            "id": "c_users_to_worker_request",
-            "from": "users",
-            "to": "worker",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
+        "removedConnections": [],
         "addedInteractions": [
           {
-            "id": "i_c_users_to_queue_ingestion_fwd",
-            "from": "users",
-            "to": "message_queue",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_queue_to_worker_dispatch_fwd",
-            "from": "message_queue",
-            "to": "worker",
-            "type": "broadcast",
-            "intensity": "medium"
-          }
-        ],
-        "removedInteractions": [
-          {
-            "id": "i_c_users_to_worker_request_fwd",
-            "from": "users",
-            "to": "worker",
+            "id": "i_c_booking_server_to_seat_db_fwd",
+            "from": "booking_server",
+            "to": "seat_db",
             "type": "burst",
             "intensity": "high"
           }
         ],
+        "removedInteractions": [],
         "interactionIntensityChanged": [],
         "cameraChanged": {
           "from": {
             "mode": "focus",
-            "target": "worker",
-            "zoom": 1.1
+            "target": "booking_server",
+            "zoom": 1.2
           },
           "to": {
             "mode": "focus",
-            "target": "message_queue",
-            "zoom": 1
+            "target": "seat_db",
+            "zoom": 1.16
           }
         }
       }
     },
     {
-      "id": "s4-burst-piles-into-queue",
-      "start": 18,
-      "end": 24,
-      "narration": "The burst piles up safely inside the queue as a growing backlog.",
+      "id": "s3-solution-seat-lock",
+      "start": 8,
+      "end": 12,
+      "narration": "An authorization lock sits before the database, so only one request enters.",
+      "camera": "focus",
       "elements": [
         {
           "id": "users",
@@ -1319,71 +952,97 @@ const renderSpec = {
           "icon": "users",
           "position": {
             "x": 50,
-            "y": 9.66
+            "y": 7.664999999999999
           },
           "visualStyle": {
-            "size": 149.4,
+            "size": 135,
             "opacity": 1,
             "color": "#34D399",
-            "strokeWidth": 2.7829653249726274,
+            "strokeWidth": 2.645448922205832,
             "strokeColor": "#34D399",
             "glow": false,
             "glowColor": "#34D399",
             "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 52.987199999999994,
+            "fontSize": 47.879999999999995,
             "fontWeight": 600,
             "status": "active"
           }
         },
         {
-          "id": "message_queue",
-          "type": "message_queue",
-          "sourceEntityId": "message_queue",
-          "label": "Message Queue",
-          "icon": "inbox",
+          "id": "booking_server",
+          "type": "server",
+          "sourceEntityId": "booking_server",
+          "label": "Booking Server",
+          "icon": "server",
           "position": {
             "x": 50,
-            "y": 40.25
+            "y": 29.38833333333334
           },
           "visualStyle": {
-            "size": 149.4,
-            "opacity": 1,
-            "color": "#EF4444",
-            "strokeWidth": 2.7829653249726274,
-            "strokeColor": "#EF4444",
-            "glow": false,
-            "glowColor": "#EF4444",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 52.987199999999994,
-            "fontWeight": 600,
-            "status": "overloaded"
-          }
-        },
-        {
-          "id": "worker",
-          "type": "worker",
-          "sourceEntityId": "worker",
-          "label": "Worker",
-          "icon": "cpu",
-          "position": {
-            "x": 50,
-            "y": 70.84
-          },
-          "visualStyle": {
-            "size": 149.4,
+            "size": 135,
             "opacity": 1,
             "color": "#34D399",
-            "strokeWidth": 2.7829653249726274,
+            "strokeWidth": 2.645448922205832,
             "strokeColor": "#34D399",
             "glow": false,
             "glowColor": "#34D399",
             "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 52.987199999999994,
+            "fontSize": 47.879999999999995,
             "fontWeight": 600,
             "status": "active"
+          }
+        },
+        {
+          "id": "seat_lock",
+          "type": "authorization_lock",
+          "sourceEntityId": "seat_lock",
+          "label": "Seat Lock",
+          "icon": "lock",
+          "position": {
+            "x": 50,
+            "y": 51.11166666666668
+          },
+          "enter": "zoom_in",
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "seat_db",
+          "type": "primary_database",
+          "sourceEntityId": "seat_db",
+          "label": "Seat Database",
+          "icon": "database",
+          "position": {
+            "x": 50,
+            "y": 72.83500000000001
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "normal"
           }
         }
       ],
@@ -1391,79 +1050,106 @@ const renderSpec = {
         {
           "id": "users",
           "type": "users_cluster",
-          "count": 1,
+          "count": 2,
           "importance": "secondary",
           "status": "active",
           "label": "Users",
           "icon": "users",
           "layout": {
             "x": 50,
-            "y": 9.66
+            "y": 7.664999999999999
           }
         },
         {
-          "id": "message_queue",
-          "type": "message_queue",
-          "count": 1,
-          "importance": "primary",
-          "status": "overloaded",
-          "label": "Message Queue",
-          "icon": "inbox",
-          "layout": {
-            "x": 50,
-            "y": 40.25
-          }
-        },
-        {
-          "id": "worker",
-          "type": "worker",
+          "id": "booking_server",
+          "type": "server",
           "count": 1,
           "importance": "secondary",
           "status": "active",
-          "label": "Worker",
-          "icon": "cpu",
+          "label": "Booking Server",
+          "icon": "server",
           "layout": {
             "x": 50,
-            "y": 70.84
+            "y": 29.38833333333334
+          }
+        },
+        {
+          "id": "seat_lock",
+          "type": "authorization_lock",
+          "count": 1,
+          "importance": "primary",
+          "status": "active",
+          "label": "Seat Lock",
+          "icon": "lock",
+          "layout": {
+            "x": 50,
+            "y": 51.11166666666668
+          }
+        },
+        {
+          "id": "seat_db",
+          "type": "primary_database",
+          "count": 1,
+          "importance": "secondary",
+          "status": "normal",
+          "label": "Seat Database",
+          "icon": "database",
+          "layout": {
+            "x": 50,
+            "y": 72.83500000000001
           }
         }
       ],
       "connections": [
         {
-          "id": "c_users_to_queue_ingestion",
+          "id": "c_users_to_booking_server",
           "from": "users",
-          "to": "message_queue",
+          "to": "booking_server",
           "direction": "one_way",
           "style": "solid"
         },
         {
-          "id": "c_queue_to_worker_dispatch",
-          "from": "message_queue",
-          "to": "worker",
+          "id": "c_booking_server_to_seat_lock",
+          "from": "booking_server",
+          "to": "seat_lock",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_seat_lock_to_seat_db",
+          "from": "seat_lock",
+          "to": "seat_db",
           "direction": "one_way",
           "style": "solid"
         }
       ],
       "interactions": [
         {
-          "id": "i_c_users_to_queue_ingestion_fwd",
+          "id": "i_c_users_to_booking_server_fwd",
           "from": "users",
-          "to": "message_queue",
-          "type": "burst",
+          "to": "booking_server",
+          "type": "flow",
           "intensity": "high"
         },
         {
-          "id": "i_c_queue_to_worker_dispatch_fwd",
-          "from": "message_queue",
-          "to": "worker",
-          "type": "broadcast",
+          "id": "i_c_booking_server_to_seat_lock_fwd",
+          "from": "booking_server",
+          "to": "seat_lock",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_seat_lock_to_seat_db_fwd",
+          "from": "seat_lock",
+          "to": "seat_db",
+          "type": "flow",
           "intensity": "medium"
         }
       ],
       "sourceCamera": {
         "mode": "focus",
-        "target": "message_queue",
-        "zoom": 1.1
+        "target": "seat_lock",
+        "zoom": 1.12
       },
       "directives": {
         "camera": {
@@ -1479,10 +1165,10 @@ const renderSpec = {
         },
         "motion": {
           "entry_style": "draw_in",
-          "pacing": "balanced"
+          "pacing": "reel_fast"
         },
         "flow": {
-          "renderer": "hybrid"
+          "renderer": "dashed"
         }
       },
       "source": {
@@ -1490,96 +1176,880 @@ const renderSpec = {
           {
             "id": "users",
             "type": "users_cluster",
-            "count": 1,
+            "count": 2,
             "importance": "secondary",
             "status": "active",
             "label": "Users",
             "icon": "users",
             "layout": {
               "x": 50,
-              "y": 9.66
+              "y": 7.664999999999999
             }
           },
           {
-            "id": "message_queue",
-            "type": "message_queue",
-            "count": 1,
-            "importance": "primary",
-            "status": "overloaded",
-            "label": "Message Queue",
-            "icon": "inbox",
-            "layout": {
-              "x": 50,
-              "y": 40.25
-            }
-          },
-          {
-            "id": "worker",
-            "type": "worker",
+            "id": "booking_server",
+            "type": "server",
             "count": 1,
             "importance": "secondary",
             "status": "active",
-            "label": "Worker",
-            "icon": "cpu",
+            "label": "Booking Server",
+            "icon": "server",
             "layout": {
               "x": 50,
-              "y": 70.84
+              "y": 29.38833333333334
+            }
+          },
+          {
+            "id": "seat_lock",
+            "type": "authorization_lock",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "Seat Lock",
+            "icon": "lock",
+            "layout": {
+              "x": 50,
+              "y": 51.11166666666668
+            }
+          },
+          {
+            "id": "seat_db",
+            "type": "primary_database",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Seat Database",
+            "icon": "database",
+            "layout": {
+              "x": 50,
+              "y": 72.83500000000001
             }
           }
         ],
         "connections": [
           {
-            "id": "c_users_to_queue_ingestion",
+            "id": "c_users_to_booking_server",
             "from": "users",
-            "to": "message_queue",
+            "to": "booking_server",
             "direction": "one_way",
             "style": "solid"
           },
           {
-            "id": "c_queue_to_worker_dispatch",
-            "from": "message_queue",
-            "to": "worker",
+            "id": "c_booking_server_to_seat_lock",
+            "from": "booking_server",
+            "to": "seat_lock",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_seat_lock_to_seat_db",
+            "from": "seat_lock",
+            "to": "seat_db",
             "direction": "one_way",
             "style": "solid"
           }
         ],
         "interactions": [
           {
-            "id": "i_c_users_to_queue_ingestion_fwd",
+            "id": "i_c_users_to_booking_server_fwd",
             "from": "users",
-            "to": "message_queue",
-            "type": "burst",
+            "to": "booking_server",
+            "type": "flow",
             "intensity": "high"
           },
           {
-            "id": "i_c_queue_to_worker_dispatch_fwd",
-            "from": "message_queue",
-            "to": "worker",
-            "type": "broadcast",
+            "id": "i_c_booking_server_to_seat_lock_fwd",
+            "from": "booking_server",
+            "to": "seat_lock",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_seat_lock_to_seat_db_fwd",
+            "from": "seat_lock",
+            "to": "seat_db",
+            "type": "flow",
             "intensity": "medium"
           }
         ],
         "camera": {
           "mode": "focus",
-          "target": "message_queue",
-          "zoom": 1.1
+          "target": "seat_lock",
+          "zoom": 1.12
         }
       },
-      "motionPersonality": "CALM",
+      "motionPersonality": "ENERGETIC",
       "diff": {
         "entityDiffs": [
           {
+            "type": "entity_added",
+            "entityId": "seat_lock"
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "users",
+            "from": {
+              "x": 50,
+              "y": 9.66
+            },
+            "to": {
+              "x": 50,
+              "y": 7.664999999999999
+            }
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "booking_server",
+            "from": {
+              "x": 50,
+              "y": 40.25
+            },
+            "to": {
+              "x": 50,
+              "y": 29.38833333333334
+            }
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "seat_db",
+            "from": {
+              "x": 50,
+              "y": 70.84
+            },
+            "to": {
+              "x": 50,
+              "y": 72.83500000000001
+            }
+          },
+          {
             "type": "entity_status_changed",
-            "entityId": "message_queue",
+            "entityId": "seat_db",
             "from": "active",
-            "to": "overloaded"
+            "to": "normal"
+          },
+          {
+            "type": "entity_importance_changed",
+            "entityId": "seat_db",
+            "from": "primary",
+            "to": "secondary"
           }
         ],
+        "connectionDiffs": [
+          {
+            "type": "connection_added",
+            "connectionId": "c_booking_server_to_seat_lock"
+          },
+          {
+            "type": "connection_added",
+            "connectionId": "c_seat_lock_to_seat_db"
+          },
+          {
+            "type": "connection_removed",
+            "connectionId": "c_booking_server_to_seat_db"
+          }
+        ],
+        "interactionDiffs": [
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_booking_server_to_seat_lock_fwd"
+          },
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_seat_lock_to_seat_db_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_booking_server_to_seat_db_fwd"
+          }
+        ],
+        "cameraDiffs": [
+          {
+            "type": "camera_changed",
+            "from": {
+              "mode": "focus",
+              "target": "seat_db",
+              "zoom": 1.16
+            },
+            "to": {
+              "mode": "focus",
+              "target": "seat_lock",
+              "zoom": 1.12
+            }
+          }
+        ]
+      },
+      "hierarchyTransition": null,
+      "plan": {
+        "phaseOrder": [
+          "removals",
+          "moves",
+          "additions",
+          "connections",
+          "interactions",
+          "camera"
+        ],
+        "removals": [],
+        "moves": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "move"
+          },
+          {
+            "entityId": "booking_server",
+            "elementIds": [
+              "booking_server"
+            ],
+            "action": "move"
+          },
+          {
+            "entityId": "seat_db",
+            "elementIds": [
+              "seat_db"
+            ],
+            "action": "move"
+          }
+        ],
+        "additions": [
+          {
+            "entityId": "seat_lock",
+            "elementIds": [
+              "seat_lock"
+            ],
+            "action": "add",
+            "enter": "zoom_in",
+            "cleanup": false
+          }
+        ],
+        "connections": [
+          {
+            "entityId": "booking_server",
+            "elementIds": [
+              "booking_server"
+            ],
+            "action": "connect",
+            "connectionId": "c_booking_server_to_seat_db",
+            "cleanup": false
+          },
+          {
+            "entityId": "seat_lock",
+            "elementIds": [
+              "seat_lock"
+            ],
+            "action": "connect",
+            "connectionId": "c_seat_lock_to_seat_db",
+            "cleanup": false
+          },
+          {
+            "entityId": "seat_db",
+            "elementIds": [
+              "seat_db"
+            ],
+            "action": "connect",
+            "connectionId": "c_booking_server_to_seat_db",
+            "cleanup": false
+          }
+        ],
+        "interactions": [
+          {
+            "entityId": "booking_server",
+            "elementIds": [
+              "booking_server"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_booking_server_to_seat_db_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "seat_lock",
+            "elementIds": [
+              "seat_lock"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_seat_lock_to_seat_db_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "seat_db",
+            "elementIds": [
+              "seat_db"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_booking_server_to_seat_db_fwd",
+            "cleanup": false
+          }
+        ]
+      },
+      "animationPlan": {
+        "entities": [
+          {
+            "entityId": "users",
+            "action": "move",
+            "delay": 0.4,
+            "duration": 0.34,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "booking_server",
+            "action": "move",
+            "delay": 0.42000000000000004,
+            "duration": 0.34,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "seat_db",
+            "action": "move",
+            "delay": 0.44,
+            "duration": 0.34,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "seat_lock",
+            "action": "add",
+            "delay": 0.677,
+            "duration": 0.32,
+            "easing": "cubic-bezier(0.4,0,0.2,1)",
+            "scale": 1.2,
+            "isPrimary": true
+          }
+        ],
+        "connections": [
+          {
+            "connectionId": "c_booking_server_to_seat_lock",
+            "delay": 0.54,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "connectionId": "c_seat_lock_to_seat_db",
+            "delay": 0.56,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "connectionId": "c_booking_server_to_seat_db",
+            "delay": 0.5800000000000001,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          }
+        ],
+        "camera": null
+      },
+      "cameraPlan": {
+        "targetId": "seat_lock",
+        "targetElementId": "seat_lock",
+        "zoom": 2.5,
+        "duration": 0.26,
+        "holdDuration": 0.6,
+        "easing": "cubic-bezier(0.16,1,0.3,1)",
+        "motionType": "introduce_primary"
+      },
+      "sceneDiff": {
+        "addedEntities": [
+          {
+            "id": "seat_lock",
+            "type": "authorization_lock",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "Seat Lock",
+            "icon": "lock",
+            "layout": {
+              "x": 50,
+              "y": 51.11166666666668
+            }
+          }
+        ],
+        "removedEntities": [],
+        "movedEntities": [
+          {
+            "id": "users",
+            "from": {
+              "x": 50,
+              "y": 9.66
+            },
+            "to": {
+              "x": 50,
+              "y": 7.664999999999999
+            }
+          },
+          {
+            "id": "booking_server",
+            "from": {
+              "x": 50,
+              "y": 40.25
+            },
+            "to": {
+              "x": 50,
+              "y": 29.38833333333334
+            }
+          },
+          {
+            "id": "seat_db",
+            "from": {
+              "x": 50,
+              "y": 70.84
+            },
+            "to": {
+              "x": 50,
+              "y": 72.83500000000001
+            }
+          }
+        ],
+        "updatedEntities": [
+          {
+            "id": "seat_db",
+            "changes": {
+              "status": {
+                "from": "active",
+                "to": "normal"
+              },
+              "importance": {
+                "from": "primary",
+                "to": "secondary"
+              }
+            }
+          }
+        ],
+        "addedConnections": [
+          {
+            "id": "c_booking_server_to_seat_lock",
+            "from": "booking_server",
+            "to": "seat_lock",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_seat_lock_to_seat_db",
+            "from": "seat_lock",
+            "to": "seat_db",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "removedConnections": [
+          {
+            "id": "c_booking_server_to_seat_db",
+            "from": "booking_server",
+            "to": "seat_db",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "addedInteractions": [
+          {
+            "id": "i_c_booking_server_to_seat_lock_fwd",
+            "from": "booking_server",
+            "to": "seat_lock",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_seat_lock_to_seat_db_fwd",
+            "from": "seat_lock",
+            "to": "seat_db",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
+        "removedInteractions": [
+          {
+            "id": "i_c_booking_server_to_seat_db_fwd",
+            "from": "booking_server",
+            "to": "seat_db",
+            "type": "burst",
+            "intensity": "high"
+          }
+        ],
+        "interactionIntensityChanged": [],
+        "cameraChanged": {
+          "from": {
+            "mode": "focus",
+            "target": "seat_db",
+            "zoom": 1.16
+          },
+          "to": {
+            "mode": "focus",
+            "target": "seat_lock",
+            "zoom": 1.12
+          }
+        }
+      }
+    },
+    {
+      "id": "s4-escalation-allow-block",
+      "start": 12,
+      "end": 16,
+      "narration": "The lock allows the first user and blocks the second user for that seat.",
+      "camera": "focus",
+      "elements": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "sourceEntityId": "users",
+          "label": "Users",
+          "icon": "users",
+          "position": {
+            "x": 50,
+            "y": 7.664999999999999
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "booking_server",
+          "type": "server",
+          "sourceEntityId": "booking_server",
+          "label": "Booking Server",
+          "icon": "server",
+          "position": {
+            "x": 50,
+            "y": 29.38833333333334
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "seat_lock",
+          "type": "authorization_lock",
+          "sourceEntityId": "seat_lock",
+          "label": "Seat Lock",
+          "icon": "lock",
+          "position": {
+            "x": 50,
+            "y": 51.11166666666668
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "seat_db",
+          "type": "primary_database",
+          "sourceEntityId": "seat_db",
+          "label": "Seat Database",
+          "icon": "database",
+          "position": {
+            "x": 50,
+            "y": 72.83500000000001
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        }
+      ],
+      "entities": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "count": 2,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Users",
+          "icon": "users",
+          "layout": {
+            "x": 50,
+            "y": 7.664999999999999
+          }
+        },
+        {
+          "id": "booking_server",
+          "type": "server",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Booking Server",
+          "icon": "server",
+          "layout": {
+            "x": 50,
+            "y": 29.38833333333334
+          }
+        },
+        {
+          "id": "seat_lock",
+          "type": "authorization_lock",
+          "count": 1,
+          "importance": "primary",
+          "status": "active",
+          "label": "Seat Lock",
+          "icon": "lock",
+          "layout": {
+            "x": 50,
+            "y": 51.11166666666668
+          }
+        },
+        {
+          "id": "seat_db",
+          "type": "primary_database",
+          "count": 1,
+          "importance": "secondary",
+          "status": "normal",
+          "label": "Seat Database",
+          "icon": "database",
+          "layout": {
+            "x": 50,
+            "y": 72.83500000000001
+          }
+        }
+      ],
+      "connections": [
+        {
+          "id": "c_users_to_booking_server",
+          "from": "users",
+          "to": "booking_server",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_booking_server_to_seat_lock",
+          "from": "booking_server",
+          "to": "seat_lock",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_seat_lock_to_seat_db",
+          "from": "seat_lock",
+          "to": "seat_db",
+          "direction": "one_way",
+          "style": "solid"
+        }
+      ],
+      "interactions": [
+        {
+          "id": "i_c_users_to_booking_server_fwd",
+          "from": "users",
+          "to": "booking_server",
+          "type": "flow",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_booking_server_to_seat_lock_fwd",
+          "from": "booking_server",
+          "to": "seat_lock",
+          "type": "flow",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_seat_lock_to_seat_db_fwd",
+          "from": "seat_lock",
+          "to": "seat_db",
+          "type": "flow",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_seat_lock_to_seat_db_blocked",
+          "from": "seat_lock",
+          "to": "seat_db",
+          "type": "blocked",
+          "intensity": "high"
+        }
+      ],
+      "sourceCamera": {
+        "mode": "focus",
+        "target": "seat_lock",
+        "zoom": 1.14
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "tight",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "default",
+          "background_texture": "none",
+          "glow_strength": "soft"
+        },
+        "motion": {
+          "entry_style": "drop_bounce",
+          "pacing": "reel_fast"
+        },
+        "flow": {
+          "renderer": "packets"
+        }
+      },
+      "source": {
+        "entities": [
+          {
+            "id": "users",
+            "type": "users_cluster",
+            "count": 2,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Users",
+            "icon": "users",
+            "layout": {
+              "x": 50,
+              "y": 7.664999999999999
+            }
+          },
+          {
+            "id": "booking_server",
+            "type": "server",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Booking Server",
+            "icon": "server",
+            "layout": {
+              "x": 50,
+              "y": 29.38833333333334
+            }
+          },
+          {
+            "id": "seat_lock",
+            "type": "authorization_lock",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "Seat Lock",
+            "icon": "lock",
+            "layout": {
+              "x": 50,
+              "y": 51.11166666666668
+            }
+          },
+          {
+            "id": "seat_db",
+            "type": "primary_database",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Seat Database",
+            "icon": "database",
+            "layout": {
+              "x": 50,
+              "y": 72.83500000000001
+            }
+          }
+        ],
+        "connections": [
+          {
+            "id": "c_users_to_booking_server",
+            "from": "users",
+            "to": "booking_server",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_booking_server_to_seat_lock",
+            "from": "booking_server",
+            "to": "seat_lock",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_seat_lock_to_seat_db",
+            "from": "seat_lock",
+            "to": "seat_db",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "interactions": [
+          {
+            "id": "i_c_users_to_booking_server_fwd",
+            "from": "users",
+            "to": "booking_server",
+            "type": "flow",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_booking_server_to_seat_lock_fwd",
+            "from": "booking_server",
+            "to": "seat_lock",
+            "type": "flow",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_seat_lock_to_seat_db_fwd",
+            "from": "seat_lock",
+            "to": "seat_db",
+            "type": "flow",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_seat_lock_to_seat_db_blocked",
+            "from": "seat_lock",
+            "to": "seat_db",
+            "type": "blocked",
+            "intensity": "high"
+          }
+        ],
+        "camera": {
+          "mode": "focus",
+          "target": "seat_lock",
+          "zoom": 1.14
+        }
+      },
+      "motionPersonality": "ENERGETIC",
+      "diff": {
+        "entityDiffs": [],
         "connectionDiffs": [],
         "interactionDiffs": [
           {
+            "type": "interaction_added",
+            "interactionId": "i_c_seat_lock_to_seat_db_blocked"
+          },
+          {
             "type": "interaction_intensity_changed",
-            "interactionId": "i_c_users_to_queue_ingestion_fwd",
+            "interactionId": "i_c_booking_server_to_seat_lock_fwd",
+            "from": "medium",
+            "to": "high"
+          },
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_seat_lock_to_seat_db_fwd",
             "from": "medium",
             "to": "high"
           }
@@ -1589,13 +2059,13 @@ const renderSpec = {
             "type": "camera_changed",
             "from": {
               "mode": "focus",
-              "target": "message_queue",
-              "zoom": 1
+              "target": "seat_lock",
+              "zoom": 1.12
             },
             "to": {
               "mode": "focus",
-              "target": "message_queue",
-              "zoom": 1.1
+              "target": "seat_lock",
+              "zoom": 1.14
             }
           }
         ]
@@ -1616,20 +2086,30 @@ const renderSpec = {
         "connections": [],
         "interactions": [
           {
-            "entityId": "users",
+            "entityId": "seat_lock",
             "elementIds": [
-              "users"
+              "seat_lock"
             ],
             "action": "interact",
-            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+            "interactionId": "i_c_seat_lock_to_seat_db_fwd",
+            "cleanup": false
           },
           {
-            "entityId": "message_queue",
+            "entityId": "seat_db",
             "elementIds": [
-              "message_queue"
+              "seat_db"
             ],
             "action": "interact",
-            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+            "interactionId": "i_c_seat_lock_to_seat_db_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "booking_server",
+            "elementIds": [
+              "booking_server"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_booking_server_to_seat_lock_fwd"
           }
         ]
       },
@@ -1638,29 +2118,39 @@ const renderSpec = {
         "connections": [],
         "camera": null
       },
-      "cameraPlan": null,
+      "cameraPlan": {
+        "targetId": "seat_lock",
+        "targetElementId": "seat_lock",
+        "zoom": 1.14,
+        "duration": 0.55,
+        "easing": "cubic-bezier(0.2,0,0,1)",
+        "motionType": "focus_primary"
+      },
       "sceneDiff": {
         "addedEntities": [],
         "removedEntities": [],
         "movedEntities": [],
-        "updatedEntities": [
-          {
-            "id": "message_queue",
-            "changes": {
-              "status": {
-                "from": "active",
-                "to": "overloaded"
-              }
-            }
-          }
-        ],
+        "updatedEntities": [],
         "addedConnections": [],
         "removedConnections": [],
-        "addedInteractions": [],
+        "addedInteractions": [
+          {
+            "id": "i_c_seat_lock_to_seat_db_blocked",
+            "from": "seat_lock",
+            "to": "seat_db",
+            "type": "blocked",
+            "intensity": "high"
+          }
+        ],
         "removedInteractions": [],
         "interactionIntensityChanged": [
           {
-            "id": "i_c_users_to_queue_ingestion_fwd",
+            "id": "i_c_booking_server_to_seat_lock_fwd",
+            "from": "medium",
+            "to": "high"
+          },
+          {
+            "id": "i_c_seat_lock_to_seat_db_fwd",
             "from": "medium",
             "to": "high"
           }
@@ -1668,129 +2158,235 @@ const renderSpec = {
         "cameraChanged": {
           "from": {
             "mode": "focus",
-            "target": "message_queue",
-            "zoom": 1
+            "target": "seat_lock",
+            "zoom": 1.12
           },
           "to": {
             "mode": "focus",
-            "target": "message_queue",
-            "zoom": 1.1
+            "target": "seat_lock",
+            "zoom": 1.14
           }
         }
       }
     },
     {
-      "id": "s5-workers-pull-steady",
-      "start": 24,
-      "end": 30,
-      "narration": "Workers pull from the queue at a steady, controlled rate.",
+      "id": "s5-solution-hold-in-cache",
+      "start": 16,
+      "end": 20,
+      "narration": "The server writes a short seat hold into cache before confirming in the database.",
+      "camera": "focus",
       "elements": [
         {
-          "id": "message_queue",
-          "type": "message_queue",
-          "sourceEntityId": "message_queue",
-          "label": "Message Queue",
-          "icon": "inbox",
+          "id": "users",
+          "type": "users_cluster",
+          "sourceEntityId": "users",
+          "label": "Users",
+          "icon": "users",
           "position": {
             "x": 50,
-            "y": 12.32
+            "y": 7.664999999999999
           },
           "visualStyle": {
-            "size": 162,
+            "size": 135,
             "opacity": 1,
             "color": "#34D399",
-            "strokeWidth": 2.897944098839728,
+            "strokeWidth": 2.645448922205832,
             "strokeColor": "#34D399",
             "glow": false,
             "glowColor": "#34D399",
             "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 57.455999999999996,
+            "fontSize": 47.879999999999995,
             "fontWeight": 600,
             "status": "active"
           }
         },
         {
-          "id": "worker",
-          "type": "worker",
-          "sourceEntityId": "worker",
-          "label": "Worker",
-          "icon": "cpu",
+          "id": "booking_server",
+          "type": "server",
+          "sourceEntityId": "booking_server",
+          "label": "Booking Server",
+          "icon": "server",
           "position": {
             "x": 50,
-            "y": 68.18
+            "y": 29.38833333333334
           },
           "visualStyle": {
-            "size": 162,
+            "size": 135,
             "opacity": 1,
             "color": "#34D399",
-            "strokeWidth": 2.897944098839728,
+            "strokeWidth": 2.645448922205832,
             "strokeColor": "#34D399",
             "glow": false,
             "glowColor": "#34D399",
             "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 57.455999999999996,
+            "fontSize": 47.879999999999995,
             "fontWeight": 600,
             "status": "active"
+          }
+        },
+        {
+          "id": "seat_cache",
+          "type": "cache",
+          "sourceEntityId": "seat_cache",
+          "label": "Seat Hold Cache",
+          "icon": "memory-stick",
+          "position": {
+            "x": 50,
+            "y": 51.11166666666668
+          },
+          "enter": "zoom_in",
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "seat_db",
+          "type": "primary_database",
+          "sourceEntityId": "seat_db",
+          "label": "Seat Database",
+          "icon": "database",
+          "position": {
+            "x": 50,
+            "y": 72.83500000000001
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "normal"
           }
         }
       ],
       "entities": [
         {
-          "id": "message_queue",
-          "type": "message_queue",
-          "count": 1,
-          "importance": "primary",
+          "id": "users",
+          "type": "users_cluster",
+          "count": 2,
+          "importance": "secondary",
           "status": "active",
-          "label": "Message Queue",
-          "icon": "inbox",
+          "label": "Users",
+          "icon": "users",
           "layout": {
             "x": 50,
-            "y": 12.32
+            "y": 7.664999999999999
           }
         },
         {
-          "id": "worker",
-          "type": "worker",
+          "id": "booking_server",
+          "type": "server",
           "count": 1,
           "importance": "secondary",
           "status": "active",
-          "label": "Worker",
-          "icon": "cpu",
+          "label": "Booking Server",
+          "icon": "server",
           "layout": {
             "x": 50,
-            "y": 68.18
+            "y": 29.38833333333334
+          }
+        },
+        {
+          "id": "seat_cache",
+          "type": "cache",
+          "count": 1,
+          "importance": "primary",
+          "status": "active",
+          "label": "Seat Hold Cache",
+          "icon": "memory-stick",
+          "layout": {
+            "x": 50,
+            "y": 51.11166666666668
+          }
+        },
+        {
+          "id": "seat_db",
+          "type": "primary_database",
+          "count": 1,
+          "importance": "secondary",
+          "status": "normal",
+          "label": "Seat Database",
+          "icon": "database",
+          "layout": {
+            "x": 50,
+            "y": 72.83500000000001
           }
         }
       ],
       "connections": [
         {
-          "id": "c_queue_to_worker_dispatch",
-          "from": "message_queue",
-          "to": "worker",
+          "id": "c_users_to_booking_server",
+          "from": "users",
+          "to": "booking_server",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_booking_server_to_seat_cache",
+          "from": "booking_server",
+          "to": "seat_cache",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_booking_server_to_seat_db",
+          "from": "booking_server",
+          "to": "seat_db",
           "direction": "one_way",
           "style": "solid"
         }
       ],
       "interactions": [
         {
-          "id": "i_c_queue_to_worker_dispatch_fwd",
-          "from": "message_queue",
-          "to": "worker",
+          "id": "i_c_users_to_booking_server_fwd",
+          "from": "users",
+          "to": "booking_server",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_booking_server_to_seat_cache_fwd",
+          "from": "booking_server",
+          "to": "seat_cache",
+          "type": "burst",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_booking_server_to_seat_db_fwd",
+          "from": "booking_server",
+          "to": "seat_db",
           "type": "flow",
           "intensity": "medium"
         }
       ],
       "sourceCamera": {
         "mode": "focus",
-        "target": "message_queue",
-        "zoom": 1.18
+        "target": "seat_cache",
+        "zoom": 1.12
       },
       "directives": {
         "camera": {
           "mode": "follow_action",
-          "zoom": "tight",
+          "zoom": "medium",
           "active_zone": "upper_third",
           "reserve_bottom_percent": 25
         },
@@ -1801,7 +2397,7 @@ const renderSpec = {
         },
         "motion": {
           "entry_style": "draw_in",
-          "pacing": "balanced"
+          "pacing": "reel_fast"
         },
         "flow": {
           "renderer": "hybrid"
@@ -1810,104 +2406,166 @@ const renderSpec = {
       "source": {
         "entities": [
           {
-            "id": "message_queue",
-            "type": "message_queue",
-            "count": 1,
-            "importance": "primary",
+            "id": "users",
+            "type": "users_cluster",
+            "count": 2,
+            "importance": "secondary",
             "status": "active",
-            "label": "Message Queue",
-            "icon": "inbox",
+            "label": "Users",
+            "icon": "users",
             "layout": {
               "x": 50,
-              "y": 12.32
+              "y": 7.664999999999999
             }
           },
           {
-            "id": "worker",
-            "type": "worker",
+            "id": "booking_server",
+            "type": "server",
             "count": 1,
             "importance": "secondary",
             "status": "active",
-            "label": "Worker",
-            "icon": "cpu",
+            "label": "Booking Server",
+            "icon": "server",
             "layout": {
               "x": 50,
-              "y": 68.18
+              "y": 29.38833333333334
+            }
+          },
+          {
+            "id": "seat_cache",
+            "type": "cache",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "Seat Hold Cache",
+            "icon": "memory-stick",
+            "layout": {
+              "x": 50,
+              "y": 51.11166666666668
+            }
+          },
+          {
+            "id": "seat_db",
+            "type": "primary_database",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Seat Database",
+            "icon": "database",
+            "layout": {
+              "x": 50,
+              "y": 72.83500000000001
             }
           }
         ],
         "connections": [
           {
-            "id": "c_queue_to_worker_dispatch",
-            "from": "message_queue",
-            "to": "worker",
+            "id": "c_users_to_booking_server",
+            "from": "users",
+            "to": "booking_server",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_booking_server_to_seat_cache",
+            "from": "booking_server",
+            "to": "seat_cache",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_booking_server_to_seat_db",
+            "from": "booking_server",
+            "to": "seat_db",
             "direction": "one_way",
             "style": "solid"
           }
         ],
         "interactions": [
           {
-            "id": "i_c_queue_to_worker_dispatch_fwd",
-            "from": "message_queue",
-            "to": "worker",
+            "id": "i_c_users_to_booking_server_fwd",
+            "from": "users",
+            "to": "booking_server",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_booking_server_to_seat_cache_fwd",
+            "from": "booking_server",
+            "to": "seat_cache",
+            "type": "burst",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_booking_server_to_seat_db_fwd",
+            "from": "booking_server",
+            "to": "seat_db",
             "type": "flow",
             "intensity": "medium"
           }
         ],
         "camera": {
           "mode": "focus",
-          "target": "message_queue",
-          "zoom": 1.18
+          "target": "seat_cache",
+          "zoom": 1.12
         }
       },
-      "motionPersonality": "CALM",
+      "motionPersonality": "ENERGETIC",
       "diff": {
         "entityDiffs": [
           {
+            "type": "entity_added",
+            "entityId": "seat_cache"
+          },
+          {
             "type": "entity_removed",
-            "entityId": "users"
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "message_queue",
-            "from": {
-              "x": 50,
-              "y": 40.25
-            },
-            "to": {
-              "x": 50,
-              "y": 12.32
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "worker",
-            "from": {
-              "x": 50,
-              "y": 70.84
-            },
-            "to": {
-              "x": 50,
-              "y": 68.18
-            }
-          },
-          {
-            "type": "entity_status_changed",
-            "entityId": "message_queue",
-            "from": "overloaded",
-            "to": "active"
+            "entityId": "seat_lock"
           }
         ],
         "connectionDiffs": [
           {
+            "type": "connection_added",
+            "connectionId": "c_booking_server_to_seat_cache"
+          },
+          {
+            "type": "connection_added",
+            "connectionId": "c_booking_server_to_seat_db"
+          },
+          {
             "type": "connection_removed",
-            "connectionId": "c_users_to_queue_ingestion"
+            "connectionId": "c_booking_server_to_seat_lock"
+          },
+          {
+            "type": "connection_removed",
+            "connectionId": "c_seat_lock_to_seat_db"
           }
         ],
         "interactionDiffs": [
           {
+            "type": "interaction_added",
+            "interactionId": "i_c_booking_server_to_seat_cache_fwd"
+          },
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_booking_server_to_seat_db_fwd"
+          },
+          {
             "type": "interaction_removed",
-            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+            "interactionId": "i_c_booking_server_to_seat_lock_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_seat_lock_to_seat_db_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_seat_lock_to_seat_db_blocked"
+          },
+          {
+            "type": "interaction_intensity_changed",
+            "interactionId": "i_c_users_to_booking_server_fwd",
+            "from": "high",
+            "to": "medium"
           }
         ],
         "cameraDiffs": [
@@ -1915,12 +2573,666 @@ const renderSpec = {
             "type": "camera_changed",
             "from": {
               "mode": "focus",
-              "target": "message_queue",
-              "zoom": 1.1
+              "target": "seat_lock",
+              "zoom": 1.14
             },
             "to": {
               "mode": "focus",
-              "target": "message_queue",
+              "target": "seat_cache",
+              "zoom": 1.12
+            }
+          }
+        ]
+      },
+      "hierarchyTransition": null,
+      "plan": {
+        "phaseOrder": [
+          "removals",
+          "moves",
+          "additions",
+          "connections",
+          "interactions",
+          "camera"
+        ],
+        "removals": [
+          {
+            "entityId": "seat_lock",
+            "elementIds": [
+              "seat_lock"
+            ],
+            "action": "remove",
+            "exit": "zoom_out",
+            "cleanup": true
+          }
+        ],
+        "moves": [],
+        "additions": [
+          {
+            "entityId": "seat_cache",
+            "elementIds": [
+              "seat_cache"
+            ],
+            "action": "add",
+            "enter": "zoom_in",
+            "cleanup": false
+          }
+        ],
+        "connections": [
+          {
+            "entityId": "booking_server",
+            "elementIds": [
+              "booking_server"
+            ],
+            "action": "connect",
+            "connectionId": "c_booking_server_to_seat_lock",
+            "cleanup": false
+          },
+          {
+            "entityId": "seat_cache",
+            "elementIds": [
+              "seat_cache"
+            ],
+            "action": "connect",
+            "connectionId": "c_booking_server_to_seat_cache"
+          },
+          {
+            "entityId": "seat_db",
+            "elementIds": [
+              "seat_db"
+            ],
+            "action": "connect",
+            "connectionId": "c_seat_lock_to_seat_db",
+            "cleanup": false
+          },
+          {
+            "entityId": "seat_lock",
+            "elementIds": [
+              "seat_lock"
+            ],
+            "action": "connect",
+            "connectionId": "c_seat_lock_to_seat_db",
+            "cleanup": false
+          }
+        ],
+        "interactions": [
+          {
+            "entityId": "booking_server",
+            "elementIds": [
+              "booking_server"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_booking_server_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "seat_cache",
+            "elementIds": [
+              "seat_cache"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_booking_server_to_seat_cache_fwd"
+          },
+          {
+            "entityId": "seat_db",
+            "elementIds": [
+              "seat_db"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_seat_lock_to_seat_db_blocked",
+            "cleanup": false
+          },
+          {
+            "entityId": "seat_lock",
+            "elementIds": [
+              "seat_lock"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_seat_lock_to_seat_db_blocked",
+            "cleanup": false
+          },
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_booking_server_fwd"
+          }
+        ]
+      },
+      "animationPlan": {
+        "entities": [
+          {
+            "entityId": "seat_lock",
+            "action": "remove",
+            "delay": 0,
+            "duration": 0.28,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "seat_cache",
+            "action": "add",
+            "delay": 0.53,
+            "duration": 0.32,
+            "easing": "cubic-bezier(0.4,0,0.2,1)",
+            "scale": 1.2,
+            "isPrimary": true
+          }
+        ],
+        "connections": [
+          {
+            "connectionId": "c_booking_server_to_seat_cache",
+            "delay": 0.54,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "connectionId": "c_booking_server_to_seat_db",
+            "delay": 0.56,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "connectionId": "c_booking_server_to_seat_lock",
+            "delay": 0.5800000000000001,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "connectionId": "c_seat_lock_to_seat_db",
+            "delay": 0.6000000000000001,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          }
+        ],
+        "camera": null
+      },
+      "cameraPlan": {
+        "targetId": "seat_cache",
+        "targetElementId": "seat_cache",
+        "zoom": 2.5,
+        "duration": 0.26,
+        "holdDuration": 0.6,
+        "easing": "cubic-bezier(0.16,1,0.3,1)",
+        "motionType": "introduce_primary"
+      },
+      "sceneDiff": {
+        "addedEntities": [
+          {
+            "id": "seat_cache",
+            "type": "cache",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "Seat Hold Cache",
+            "icon": "memory-stick",
+            "layout": {
+              "x": 50,
+              "y": 51.11166666666668
+            }
+          }
+        ],
+        "removedEntities": [
+          {
+            "id": "seat_lock",
+            "type": "authorization_lock",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "Seat Lock",
+            "icon": "lock",
+            "layout": {
+              "x": 50,
+              "y": 51.11166666666668
+            }
+          }
+        ],
+        "movedEntities": [],
+        "updatedEntities": [],
+        "addedConnections": [
+          {
+            "id": "c_booking_server_to_seat_cache",
+            "from": "booking_server",
+            "to": "seat_cache",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_booking_server_to_seat_db",
+            "from": "booking_server",
+            "to": "seat_db",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "removedConnections": [
+          {
+            "id": "c_booking_server_to_seat_lock",
+            "from": "booking_server",
+            "to": "seat_lock",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_seat_lock_to_seat_db",
+            "from": "seat_lock",
+            "to": "seat_db",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "addedInteractions": [
+          {
+            "id": "i_c_booking_server_to_seat_cache_fwd",
+            "from": "booking_server",
+            "to": "seat_cache",
+            "type": "burst",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_booking_server_to_seat_db_fwd",
+            "from": "booking_server",
+            "to": "seat_db",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
+        "removedInteractions": [
+          {
+            "id": "i_c_booking_server_to_seat_lock_fwd",
+            "from": "booking_server",
+            "to": "seat_lock",
+            "type": "flow",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_seat_lock_to_seat_db_fwd",
+            "from": "seat_lock",
+            "to": "seat_db",
+            "type": "flow",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_seat_lock_to_seat_db_blocked",
+            "from": "seat_lock",
+            "to": "seat_db",
+            "type": "blocked",
+            "intensity": "high"
+          }
+        ],
+        "interactionIntensityChanged": [
+          {
+            "id": "i_c_users_to_booking_server_fwd",
+            "from": "high",
+            "to": "medium"
+          }
+        ],
+        "cameraChanged": {
+          "from": {
+            "mode": "focus",
+            "target": "seat_lock",
+            "zoom": 1.14
+          },
+          "to": {
+            "mode": "focus",
+            "target": "seat_cache",
+            "zoom": 1.12
+          }
+        }
+      }
+    },
+    {
+      "id": "s6-expansion-atomic-check-set",
+      "start": 20,
+      "end": 24,
+      "narration": "The server does one atomic cache check-and-set, so only one hold exists.",
+      "camera": "focus",
+      "elements": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "sourceEntityId": "users",
+          "label": "Users",
+          "icon": "users",
+          "position": {
+            "x": 50,
+            "y": 9.66
+          },
+          "visualStyle": {
+            "size": 149.4,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.7829653249726274,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 52.987199999999994,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        },
+        {
+          "id": "booking_server",
+          "type": "server",
+          "sourceEntityId": "booking_server",
+          "label": "Booking Server",
+          "icon": "server",
+          "position": {
+            "x": 50,
+            "y": 40.25
+          },
+          "visualStyle": {
+            "size": 149.4,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.7829653249726274,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 52.987199999999994,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "seat_cache",
+          "type": "cache",
+          "sourceEntityId": "seat_cache",
+          "label": "Seat Hold Cache",
+          "icon": "memory-stick",
+          "position": {
+            "x": 50,
+            "y": 70.84
+          },
+          "visualStyle": {
+            "size": 149.4,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.7829653249726274,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 52.987199999999994,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        }
+      ],
+      "entities": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "count": 2,
+          "importance": "secondary",
+          "status": "normal",
+          "label": "Users",
+          "icon": "users",
+          "layout": {
+            "x": 50,
+            "y": 9.66
+          }
+        },
+        {
+          "id": "booking_server",
+          "type": "server",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Booking Server",
+          "icon": "server",
+          "layout": {
+            "x": 50,
+            "y": 40.25
+          }
+        },
+        {
+          "id": "seat_cache",
+          "type": "cache",
+          "count": 1,
+          "importance": "primary",
+          "status": "active",
+          "label": "Seat Hold Cache",
+          "icon": "memory-stick",
+          "layout": {
+            "x": 50,
+            "y": 70.84
+          }
+        }
+      ],
+      "connections": [
+        {
+          "id": "c_users_to_booking_server",
+          "from": "users",
+          "to": "booking_server",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_booking_server_to_seat_cache",
+          "from": "booking_server",
+          "to": "seat_cache",
+          "direction": "bidirectional",
+          "style": "solid"
+        }
+      ],
+      "interactions": [
+        {
+          "id": "i_c_users_to_booking_server_fwd",
+          "from": "users",
+          "to": "booking_server",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_booking_server_to_seat_cache_fwd",
+          "from": "booking_server",
+          "to": "seat_cache",
+          "type": "ping",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_booking_server_to_seat_cache_rev",
+          "from": "seat_cache",
+          "to": "booking_server",
+          "type": "ping",
+          "intensity": "high"
+        }
+      ],
+      "sourceCamera": {
+        "mode": "focus",
+        "target": "seat_cache",
+        "zoom": 1.18
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "tight",
+          "active_zone": "center",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "default",
+          "background_texture": "none",
+          "glow_strength": "soft"
+        },
+        "motion": {
+          "entry_style": "elastic_pop",
+          "pacing": "reel_fast"
+        },
+        "flow": {
+          "renderer": "packets"
+        }
+      },
+      "source": {
+        "entities": [
+          {
+            "id": "users",
+            "type": "users_cluster",
+            "count": 2,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Users",
+            "icon": "users",
+            "layout": {
+              "x": 50,
+              "y": 9.66
+            }
+          },
+          {
+            "id": "booking_server",
+            "type": "server",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Booking Server",
+            "icon": "server",
+            "layout": {
+              "x": 50,
+              "y": 40.25
+            }
+          },
+          {
+            "id": "seat_cache",
+            "type": "cache",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "Seat Hold Cache",
+            "icon": "memory-stick",
+            "layout": {
+              "x": 50,
+              "y": 70.84
+            }
+          }
+        ],
+        "connections": [
+          {
+            "id": "c_users_to_booking_server",
+            "from": "users",
+            "to": "booking_server",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_booking_server_to_seat_cache",
+            "from": "booking_server",
+            "to": "seat_cache",
+            "direction": "bidirectional",
+            "style": "solid"
+          }
+        ],
+        "interactions": [
+          {
+            "id": "i_c_users_to_booking_server_fwd",
+            "from": "users",
+            "to": "booking_server",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_booking_server_to_seat_cache_fwd",
+            "from": "booking_server",
+            "to": "seat_cache",
+            "type": "ping",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_booking_server_to_seat_cache_rev",
+            "from": "seat_cache",
+            "to": "booking_server",
+            "type": "ping",
+            "intensity": "high"
+          }
+        ],
+        "camera": {
+          "mode": "focus",
+          "target": "seat_cache",
+          "zoom": 1.18
+        }
+      },
+      "motionPersonality": "ENERGETIC",
+      "diff": {
+        "entityDiffs": [
+          {
+            "type": "entity_removed",
+            "entityId": "seat_db"
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "users",
+            "from": {
+              "x": 50,
+              "y": 7.664999999999999
+            },
+            "to": {
+              "x": 50,
+              "y": 9.66
+            }
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "booking_server",
+            "from": {
+              "x": 50,
+              "y": 29.38833333333334
+            },
+            "to": {
+              "x": 50,
+              "y": 40.25
+            }
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "seat_cache",
+            "from": {
+              "x": 50,
+              "y": 51.11166666666668
+            },
+            "to": {
+              "x": 50,
+              "y": 70.84
+            }
+          },
+          {
+            "type": "entity_status_changed",
+            "entityId": "users",
+            "from": "active",
+            "to": "normal"
+          }
+        ],
+        "connectionDiffs": [
+          {
+            "type": "connection_removed",
+            "connectionId": "c_booking_server_to_seat_db"
+          }
+        ],
+        "interactionDiffs": [
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_booking_server_to_seat_cache_rev"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_booking_server_to_seat_db_fwd"
+          }
+        ],
+        "cameraDiffs": [
+          {
+            "type": "camera_changed",
+            "from": {
+              "mode": "focus",
+              "target": "seat_cache",
+              "zoom": 1.12
+            },
+            "to": {
+              "mode": "focus",
+              "target": "seat_cache",
               "zoom": 1.18
             }
           }
@@ -1938,9 +3250,9 @@ const renderSpec = {
         ],
         "removals": [
           {
-            "entityId": "users",
+            "entityId": "seat_db",
             "elementIds": [
-              "users"
+              "seat_db"
             ],
             "action": "remove",
             "exit": "zoom_out",
@@ -1949,16 +3261,23 @@ const renderSpec = {
         ],
         "moves": [
           {
-            "entityId": "message_queue",
+            "entityId": "users",
             "elementIds": [
-              "message_queue"
+              "users"
             ],
             "action": "move"
           },
           {
-            "entityId": "worker",
+            "entityId": "booking_server",
             "elementIds": [
-              "worker"
+              "booking_server"
+            ],
+            "action": "move"
+          },
+          {
+            "entityId": "seat_cache",
+            "elementIds": [
+              "seat_cache"
             ],
             "action": "move"
           }
@@ -1966,124 +3285,158 @@ const renderSpec = {
         "additions": [],
         "connections": [
           {
-            "entityId": "users",
+            "entityId": "booking_server",
             "elementIds": [
-              "users"
+              "booking_server"
             ],
             "action": "connect",
-            "connectionId": "c_users_to_queue_ingestion"
+            "connectionId": "c_booking_server_to_seat_db"
           },
           {
-            "entityId": "message_queue",
+            "entityId": "seat_db",
             "elementIds": [
-              "message_queue"
+              "seat_db"
             ],
             "action": "connect",
-            "connectionId": "c_users_to_queue_ingestion"
+            "connectionId": "c_booking_server_to_seat_db"
           }
         ],
         "interactions": [
           {
-            "entityId": "users",
+            "entityId": "seat_cache",
             "elementIds": [
-              "users"
+              "seat_cache"
             ],
             "action": "interact",
-            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+            "interactionId": "i_c_booking_server_to_seat_cache_rev"
           },
           {
-            "entityId": "message_queue",
+            "entityId": "booking_server",
             "elementIds": [
-              "message_queue"
+              "booking_server"
             ],
             "action": "interact",
-            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+            "interactionId": "i_c_booking_server_to_seat_db_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "seat_db",
+            "elementIds": [
+              "seat_db"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_booking_server_to_seat_db_fwd"
           }
         ]
       },
       "animationPlan": {
         "entities": [
           {
-            "entityId": "users",
+            "entityId": "seat_db",
             "action": "remove",
             "delay": 0,
-            "duration": 0.9,
-            "easing": "cubic-bezier(0.2,0,0,1)"
+            "duration": 0.28,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
           },
           {
-            "entityId": "message_queue",
+            "entityId": "users",
             "action": "move",
-            "delay": 0.6000000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
+            "delay": 0.4,
+            "duration": 0.34,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
           },
           {
-            "entityId": "worker",
+            "entityId": "booking_server",
             "action": "move",
-            "delay": 0.68,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
+            "delay": 0.42000000000000004,
+            "duration": 0.34,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "seat_cache",
+            "action": "move",
+            "delay": 0.44,
+            "duration": 0.34,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
           }
         ],
         "connections": [
           {
-            "connectionId": "c_users_to_queue_ingestion",
-            "delay": 0.504,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
+            "connectionId": "c_booking_server_to_seat_db",
+            "delay": 0.54,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
           }
         ],
         "camera": null
       },
-      "cameraPlan": null,
+      "cameraPlan": {
+        "targetId": "seat_cache",
+        "targetElementId": "seat_cache",
+        "zoom": 1.18,
+        "duration": 0.55,
+        "easing": "cubic-bezier(0.2,0,0,1)",
+        "motionType": "focus_primary"
+      },
       "sceneDiff": {
         "addedEntities": [],
         "removedEntities": [
           {
-            "id": "users",
-            "type": "users_cluster",
+            "id": "seat_db",
+            "type": "primary_database",
             "count": 1,
             "importance": "secondary",
-            "status": "active",
-            "label": "Users",
-            "icon": "users",
+            "status": "normal",
+            "label": "Seat Database",
+            "icon": "database",
             "layout": {
               "x": 50,
-              "y": 9.66
+              "y": 72.83500000000001
             }
           }
         ],
         "movedEntities": [
           {
-            "id": "message_queue",
+            "id": "users",
             "from": {
               "x": 50,
-              "y": 40.25
+              "y": 7.664999999999999
             },
             "to": {
               "x": 50,
-              "y": 12.32
+              "y": 9.66
             }
           },
           {
-            "id": "worker",
+            "id": "booking_server",
             "from": {
               "x": 50,
-              "y": 70.84
+              "y": 29.38833333333334
             },
             "to": {
               "x": 50,
-              "y": 68.18
+              "y": 40.25
+            }
+          },
+          {
+            "id": "seat_cache",
+            "from": {
+              "x": 50,
+              "y": 51.11166666666668
+            },
+            "to": {
+              "x": 50,
+              "y": 70.84
             }
           }
         ],
         "updatedEntities": [
           {
-            "id": "message_queue",
+            "id": "users",
             "changes": {
               "status": {
-                "from": "overloaded",
-                "to": "active"
+                "from": "active",
+                "to": "normal"
               }
             }
           }
@@ -2091,43 +3444,52 @@ const renderSpec = {
         "addedConnections": [],
         "removedConnections": [
           {
-            "id": "c_users_to_queue_ingestion",
-            "from": "users",
-            "to": "message_queue",
+            "id": "c_booking_server_to_seat_db",
+            "from": "booking_server",
+            "to": "seat_db",
             "direction": "one_way",
             "style": "solid"
           }
         ],
-        "addedInteractions": [],
+        "addedInteractions": [
+          {
+            "id": "i_c_booking_server_to_seat_cache_rev",
+            "from": "seat_cache",
+            "to": "booking_server",
+            "type": "ping",
+            "intensity": "high"
+          }
+        ],
         "removedInteractions": [
           {
-            "id": "i_c_users_to_queue_ingestion_fwd",
-            "from": "users",
-            "to": "message_queue",
-            "type": "burst",
-            "intensity": "high"
+            "id": "i_c_booking_server_to_seat_db_fwd",
+            "from": "booking_server",
+            "to": "seat_db",
+            "type": "flow",
+            "intensity": "medium"
           }
         ],
         "interactionIntensityChanged": [],
         "cameraChanged": {
           "from": {
             "mode": "focus",
-            "target": "message_queue",
-            "zoom": 1.1
+            "target": "seat_cache",
+            "zoom": 1.12
           },
           "to": {
             "mode": "focus",
-            "target": "message_queue",
+            "target": "seat_cache",
             "zoom": 1.18
           }
         }
       }
     },
     {
-      "id": "s6-scale-queue-brokers",
-      "start": 30,
-      "end": 36,
-      "narration": "We scale out the message queue so buffering capacity grows.",
+      "id": "s7-escalation-surge-scale-lock-layer",
+      "start": 24,
+      "end": 28,
+      "narration": "During a booking surge, traffic fans out to multiple lock instances sharing cache.",
+      "camera": "focus",
       "elements": [
         {
           "id": "users",
@@ -2140,116 +3502,66 @@ const renderSpec = {
             "y": 9.66
           },
           "visualStyle": {
-            "size": 122.4,
+            "size": 149.4,
             "opacity": 1,
             "color": "#34D399",
-            "strokeWidth": 2.5189712185731703,
+            "strokeWidth": 2.7829653249726274,
             "strokeColor": "#34D399",
             "glow": false,
             "glowColor": "#34D399",
             "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 43.4112,
+            "fontSize": 52.987199999999994,
             "fontWeight": 600,
             "status": "active"
           }
         },
         {
-          "id": "message_queue_1",
-          "type": "message_queue",
-          "sourceEntityId": "message_queue",
-          "icon": "inbox",
-          "position": {
-            "x": 27.635555555555552,
-            "y": 40.25
-          },
-          "enter": "zoom_in",
-          "visualStyle": {
-            "size": 122.4,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.5189712185731703,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 43.4112,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "message_queue",
-          "type": "message_queue",
-          "sourceEntityId": "message_queue",
-          "label": "Message Queue",
-          "icon": "inbox",
+          "id": "seat_lock",
+          "type": "authorization_lock",
+          "sourceEntityId": "seat_lock",
+          "label": "Seat Lock",
+          "icon": "lock",
           "position": {
             "x": 50,
             "y": 40.25
           },
           "visualStyle": {
-            "size": 122.4,
+            "size": 149.4,
             "opacity": 1,
             "color": "#34D399",
-            "strokeWidth": 2.5189712185731703,
+            "strokeWidth": 2.7829653249726274,
             "strokeColor": "#34D399",
             "glow": false,
             "glowColor": "#34D399",
             "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 43.4112,
+            "fontSize": 52.987199999999994,
             "fontWeight": 600,
             "status": "active"
           }
         },
         {
-          "id": "message_queue_3",
-          "type": "message_queue",
-          "sourceEntityId": "message_queue",
-          "icon": "inbox",
-          "position": {
-            "x": 72.36444444444444,
-            "y": 40.25
-          },
-          "enter": "zoom_in",
-          "visualStyle": {
-            "size": 122.4,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.5189712185731703,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 43.4112,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "worker",
-          "type": "worker",
-          "sourceEntityId": "worker",
-          "label": "Worker",
-          "icon": "cpu",
+          "id": "seat_cache",
+          "type": "cache",
+          "sourceEntityId": "seat_cache",
+          "label": "Seat Hold Cache",
+          "icon": "memory-stick",
           "position": {
             "x": 50,
             "y": 70.84
           },
           "visualStyle": {
-            "size": 122.4,
+            "size": 149.4,
             "opacity": 1,
             "color": "#34D399",
-            "strokeWidth": 2.5189712185731703,
+            "strokeWidth": 2.7829653249726274,
             "strokeColor": "#34D399",
             "glow": false,
             "glowColor": "#34D399",
             "glowBlur": 0,
             "textColor": "#E8F6FF",
-            "fontSize": 43.4112,
+            "fontSize": 52.987199999999994,
             "fontWeight": 600,
             "status": "active"
           }
@@ -2259,7 +3571,7 @@ const renderSpec = {
         {
           "id": "users",
           "type": "users_cluster",
-          "count": 1,
+          "count": 6,
           "importance": "secondary",
           "status": "active",
           "label": "Users",
@@ -2270,26 +3582,26 @@ const renderSpec = {
           }
         },
         {
-          "id": "message_queue",
-          "type": "message_queue",
+          "id": "seat_lock",
+          "type": "authorization_lock",
           "count": 3,
           "importance": "primary",
           "status": "active",
-          "label": "Message Queue",
-          "icon": "inbox",
+          "label": "Seat Lock",
+          "icon": "lock",
           "layout": {
             "x": 50,
             "y": 40.25
           }
         },
         {
-          "id": "worker",
-          "type": "worker",
+          "id": "seat_cache",
+          "type": "cache",
           "count": 1,
           "importance": "secondary",
           "status": "active",
-          "label": "Worker",
-          "icon": "cpu",
+          "label": "Seat Hold Cache",
+          "icon": "memory-stick",
           "layout": {
             "x": 50,
             "y": 70.84
@@ -2298,45 +3610,52 @@ const renderSpec = {
       ],
       "connections": [
         {
-          "id": "c_users_to_queue_ingestion",
+          "id": "c_users_to_seat_lock",
           "from": "users",
-          "to": "message_queue",
+          "to": "seat_lock",
           "direction": "one_way",
           "style": "solid"
         },
         {
-          "id": "c_queue_to_worker_dispatch",
-          "from": "message_queue",
-          "to": "worker",
-          "direction": "one_way",
+          "id": "c_seat_lock_to_seat_cache",
+          "from": "seat_lock",
+          "to": "seat_cache",
+          "direction": "bidirectional",
           "style": "solid"
         }
       ],
       "interactions": [
         {
-          "id": "i_c_users_to_queue_ingestion_fwd",
+          "id": "i_c_users_to_seat_lock_fwd",
           "from": "users",
-          "to": "message_queue",
-          "type": "flow",
-          "intensity": "medium"
+          "to": "seat_lock",
+          "type": "burst",
+          "intensity": "high"
         },
         {
-          "id": "i_c_queue_to_worker_dispatch_fwd",
-          "from": "message_queue",
-          "to": "worker",
-          "type": "broadcast",
-          "intensity": "medium"
+          "id": "i_c_seat_lock_to_seat_cache_fwd",
+          "from": "seat_lock",
+          "to": "seat_cache",
+          "type": "ping",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_seat_lock_to_seat_cache_rev",
+          "from": "seat_cache",
+          "to": "seat_lock",
+          "type": "ping",
+          "intensity": "high"
         }
       ],
       "sourceCamera": {
         "mode": "focus",
-        "target": "message_queue",
-        "zoom": 1
+        "target": "seat_lock",
+        "zoom": 1.16
       },
       "directives": {
         "camera": {
           "mode": "follow_action",
-          "zoom": "wide",
+          "zoom": "medium",
           "active_zone": "upper_third",
           "reserve_bottom_percent": 25
         },
@@ -2346,8 +3665,8 @@ const renderSpec = {
           "glow_strength": "soft"
         },
         "motion": {
-          "entry_style": "draw_in",
-          "pacing": "balanced"
+          "entry_style": "drop_bounce",
+          "pacing": "reel_fast"
         },
         "flow": {
           "renderer": "hybrid"
@@ -2358,7 +3677,7 @@ const renderSpec = {
           {
             "id": "users",
             "type": "users_cluster",
-            "count": 1,
+            "count": 6,
             "importance": "secondary",
             "status": "active",
             "label": "Users",
@@ -2369,26 +3688,26 @@ const renderSpec = {
             }
           },
           {
-            "id": "message_queue",
-            "type": "message_queue",
+            "id": "seat_lock",
+            "type": "authorization_lock",
             "count": 3,
             "importance": "primary",
             "status": "active",
-            "label": "Message Queue",
-            "icon": "inbox",
+            "label": "Seat Lock",
+            "icon": "lock",
             "layout": {
               "x": 50,
               "y": 40.25
             }
           },
           {
-            "id": "worker",
-            "type": "worker",
+            "id": "seat_cache",
+            "type": "cache",
             "count": 1,
             "importance": "secondary",
             "status": "active",
-            "label": "Worker",
-            "icon": "cpu",
+            "label": "Seat Hold Cache",
+            "icon": "memory-stick",
             "layout": {
               "x": 50,
               "y": 70.84
@@ -2397,90 +3716,121 @@ const renderSpec = {
         ],
         "connections": [
           {
-            "id": "c_users_to_queue_ingestion",
+            "id": "c_users_to_seat_lock",
             "from": "users",
-            "to": "message_queue",
+            "to": "seat_lock",
             "direction": "one_way",
             "style": "solid"
           },
           {
-            "id": "c_queue_to_worker_dispatch",
-            "from": "message_queue",
-            "to": "worker",
-            "direction": "one_way",
+            "id": "c_seat_lock_to_seat_cache",
+            "from": "seat_lock",
+            "to": "seat_cache",
+            "direction": "bidirectional",
             "style": "solid"
           }
         ],
         "interactions": [
           {
-            "id": "i_c_users_to_queue_ingestion_fwd",
+            "id": "i_c_users_to_seat_lock_fwd",
             "from": "users",
-            "to": "message_queue",
-            "type": "flow",
-            "intensity": "medium"
+            "to": "seat_lock",
+            "type": "burst",
+            "intensity": "high"
           },
           {
-            "id": "i_c_queue_to_worker_dispatch_fwd",
-            "from": "message_queue",
-            "to": "worker",
-            "type": "broadcast",
-            "intensity": "medium"
+            "id": "i_c_seat_lock_to_seat_cache_fwd",
+            "from": "seat_lock",
+            "to": "seat_cache",
+            "type": "ping",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_seat_lock_to_seat_cache_rev",
+            "from": "seat_cache",
+            "to": "seat_lock",
+            "type": "ping",
+            "intensity": "high"
           }
         ],
         "camera": {
           "mode": "focus",
-          "target": "message_queue",
-          "zoom": 1
+          "target": "seat_lock",
+          "zoom": 1.16
         }
       },
-      "motionPersonality": "CALM",
+      "motionPersonality": "ENERGETIC",
       "diff": {
         "entityDiffs": [
           {
             "type": "entity_added",
-            "entityId": "users"
+            "entityId": "seat_lock"
           },
           {
-            "type": "entity_moved",
-            "entityId": "message_queue",
-            "from": {
-              "x": 50,
-              "y": 12.32
-            },
-            "to": {
-              "x": 50,
-              "y": 40.25
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "worker",
-            "from": {
-              "x": 50,
-              "y": 68.18
-            },
-            "to": {
-              "x": 50,
-              "y": 70.84
-            }
+            "type": "entity_removed",
+            "entityId": "booking_server"
           },
           {
             "type": "entity_count_changed",
-            "entityId": "message_queue",
-            "from": 1,
-            "to": 3
+            "entityId": "users",
+            "from": 2,
+            "to": 6
+          },
+          {
+            "type": "entity_status_changed",
+            "entityId": "users",
+            "from": "normal",
+            "to": "active"
+          },
+          {
+            "type": "entity_importance_changed",
+            "entityId": "seat_cache",
+            "from": "primary",
+            "to": "secondary"
           }
         ],
         "connectionDiffs": [
           {
             "type": "connection_added",
-            "connectionId": "c_users_to_queue_ingestion"
+            "connectionId": "c_users_to_seat_lock"
+          },
+          {
+            "type": "connection_added",
+            "connectionId": "c_seat_lock_to_seat_cache"
+          },
+          {
+            "type": "connection_removed",
+            "connectionId": "c_users_to_booking_server"
+          },
+          {
+            "type": "connection_removed",
+            "connectionId": "c_booking_server_to_seat_cache"
           }
         ],
         "interactionDiffs": [
           {
             "type": "interaction_added",
-            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+            "interactionId": "i_c_users_to_seat_lock_fwd"
+          },
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_seat_lock_to_seat_cache_fwd"
+          },
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_seat_lock_to_seat_cache_rev"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_users_to_booking_server_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_booking_server_to_seat_cache_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_booking_server_to_seat_cache_rev"
           }
         ],
         "cameraDiffs": [
@@ -2488,13 +3838,13 @@ const renderSpec = {
             "type": "camera_changed",
             "from": {
               "mode": "focus",
-              "target": "message_queue",
+              "target": "seat_cache",
               "zoom": 1.18
             },
             "to": {
               "mode": "focus",
-              "target": "message_queue",
-              "zoom": 1
+              "target": "seat_lock",
+              "zoom": 1.16
             }
           }
         ]
@@ -2509,40 +3859,31 @@ const renderSpec = {
           "interactions",
           "camera"
         ],
-        "removals": [],
-        "moves": [
+        "removals": [
           {
-            "entityId": "message_queue",
+            "entityId": "booking_server",
             "elementIds": [
-              "message_queue_1",
-              "message_queue",
-              "message_queue_3"
+              "booking_server"
             ],
-            "action": "move"
-          },
-          {
-            "entityId": "worker",
-            "elementIds": [
-              "worker"
-            ],
-            "action": "move"
+            "action": "remove",
+            "exit": "zoom_out",
+            "cleanup": true
           }
         ],
+        "moves": [],
         "additions": [
           {
-            "entityId": "users",
+            "entityId": "seat_lock",
             "elementIds": [
-              "users"
+              "seat_lock"
             ],
             "action": "add",
             "enter": "zoom_in"
           },
           {
-            "entityId": "message_queue",
+            "entityId": "users",
             "elementIds": [
-              "message_queue_1",
-              "message_queue",
-              "message_queue_3"
+              "users"
             ],
             "action": "add",
             "enter": "zoom_in"
@@ -2555,17 +3896,35 @@ const renderSpec = {
               "users"
             ],
             "action": "connect",
-            "connectionId": "c_users_to_queue_ingestion"
+            "connectionId": "c_users_to_booking_server",
+            "cleanup": false
           },
           {
-            "entityId": "message_queue",
+            "entityId": "seat_lock",
             "elementIds": [
-              "message_queue_1",
-              "message_queue",
-              "message_queue_3"
+              "seat_lock"
             ],
             "action": "connect",
-            "connectionId": "c_users_to_queue_ingestion"
+            "connectionId": "c_seat_lock_to_seat_cache",
+            "cleanup": false
+          },
+          {
+            "entityId": "seat_cache",
+            "elementIds": [
+              "seat_cache"
+            ],
+            "action": "connect",
+            "connectionId": "c_booking_server_to_seat_cache",
+            "cleanup": false
+          },
+          {
+            "entityId": "booking_server",
+            "elementIds": [
+              "booking_server"
+            ],
+            "action": "connect",
+            "connectionId": "c_booking_server_to_seat_cache",
+            "cleanup": false
           }
         ],
         "interactions": [
@@ -2575,155 +3934,256 @@ const renderSpec = {
               "users"
             ],
             "action": "interact",
-            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+            "interactionId": "i_c_users_to_booking_server_fwd",
+            "cleanup": false
           },
           {
-            "entityId": "message_queue",
+            "entityId": "seat_lock",
             "elementIds": [
-              "message_queue_1",
-              "message_queue",
-              "message_queue_3"
+              "seat_lock"
             ],
             "action": "interact",
-            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+            "interactionId": "i_c_seat_lock_to_seat_cache_rev",
+            "cleanup": false
+          },
+          {
+            "entityId": "seat_cache",
+            "elementIds": [
+              "seat_cache"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_booking_server_to_seat_cache_rev",
+            "cleanup": false
+          },
+          {
+            "entityId": "booking_server",
+            "elementIds": [
+              "booking_server"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_booking_server_to_seat_cache_rev",
+            "cleanup": false
           }
         ]
       },
       "animationPlan": {
         "entities": [
           {
-            "entityId": "message_queue",
-            "action": "move",
-            "delay": 0.6000000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
+            "entityId": "booking_server",
+            "action": "remove",
+            "delay": 0,
+            "duration": 0.28,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
           },
           {
-            "entityId": "worker",
-            "action": "move",
-            "delay": 0.68,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "users",
+            "entityId": "seat_lock",
             "action": "add",
-            "delay": 1.7999999999999998,
-            "duration": 0.54,
-            "easing": "cubic-bezier(0.2,0,0,1)",
-            "isPrimary": false
+            "delay": 0.53,
+            "duration": 0.32,
+            "easing": "cubic-bezier(0.4,0,0.2,1)",
+            "scale": 1.2,
+            "isPrimary": true
           }
         ],
         "connections": [
           {
-            "connectionId": "c_users_to_queue_ingestion",
-            "delay": 0.504,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
+            "connectionId": "c_users_to_seat_lock",
+            "delay": 0.54,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "connectionId": "c_seat_lock_to_seat_cache",
+            "delay": 0.56,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "connectionId": "c_users_to_booking_server",
+            "delay": 0.5800000000000001,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "connectionId": "c_booking_server_to_seat_cache",
+            "delay": 0.6000000000000001,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
           }
         ],
         "camera": null
       },
-      "cameraPlan": null,
+      "cameraPlan": {
+        "targetId": "seat_lock",
+        "targetElementId": "seat_lock",
+        "zoom": 2.8,
+        "duration": 0.26,
+        "holdDuration": 0.6,
+        "easing": "cubic-bezier(0.16,1,0.3,1)",
+        "motionType": "introduce_primary"
+      },
       "sceneDiff": {
         "addedEntities": [
           {
-            "id": "users",
-            "type": "users_cluster",
-            "count": 1,
-            "importance": "secondary",
+            "id": "seat_lock",
+            "type": "authorization_lock",
+            "count": 3,
+            "importance": "primary",
             "status": "active",
-            "label": "Users",
-            "icon": "users",
+            "label": "Seat Lock",
+            "icon": "lock",
             "layout": {
-              "x": 50,
-              "y": 9.66
-            }
-          }
-        ],
-        "removedEntities": [],
-        "movedEntities": [
-          {
-            "id": "message_queue",
-            "from": {
-              "x": 50,
-              "y": 12.32
-            },
-            "to": {
               "x": 50,
               "y": 40.25
             }
-          },
+          }
+        ],
+        "removedEntities": [
           {
-            "id": "worker",
-            "from": {
+            "id": "booking_server",
+            "type": "server",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Booking Server",
+            "icon": "server",
+            "layout": {
               "x": 50,
-              "y": 68.18
-            },
-            "to": {
-              "x": 50,
-              "y": 70.84
+              "y": 40.25
             }
           }
         ],
+        "movedEntities": [],
         "updatedEntities": [
           {
-            "id": "message_queue",
+            "id": "users",
             "changes": {
+              "status": {
+                "from": "normal",
+                "to": "active"
+              },
               "count": {
-                "from": 1,
-                "to": 3
+                "from": 2,
+                "to": 6
+              }
+            }
+          },
+          {
+            "id": "seat_cache",
+            "changes": {
+              "importance": {
+                "from": "primary",
+                "to": "secondary"
               }
             }
           }
         ],
         "addedConnections": [
           {
-            "id": "c_users_to_queue_ingestion",
+            "id": "c_users_to_seat_lock",
             "from": "users",
-            "to": "message_queue",
+            "to": "seat_lock",
             "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_seat_lock_to_seat_cache",
+            "from": "seat_lock",
+            "to": "seat_cache",
+            "direction": "bidirectional",
             "style": "solid"
           }
         ],
-        "removedConnections": [],
-        "addedInteractions": [
+        "removedConnections": [
           {
-            "id": "i_c_users_to_queue_ingestion_fwd",
+            "id": "c_users_to_booking_server",
             "from": "users",
-            "to": "message_queue",
-            "type": "flow",
-            "intensity": "medium"
+            "to": "booking_server",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_booking_server_to_seat_cache",
+            "from": "booking_server",
+            "to": "seat_cache",
+            "direction": "bidirectional",
+            "style": "solid"
           }
         ],
-        "removedInteractions": [],
+        "addedInteractions": [
+          {
+            "id": "i_c_users_to_seat_lock_fwd",
+            "from": "users",
+            "to": "seat_lock",
+            "type": "burst",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_seat_lock_to_seat_cache_fwd",
+            "from": "seat_lock",
+            "to": "seat_cache",
+            "type": "ping",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_seat_lock_to_seat_cache_rev",
+            "from": "seat_cache",
+            "to": "seat_lock",
+            "type": "ping",
+            "intensity": "high"
+          }
+        ],
+        "removedInteractions": [
+          {
+            "id": "i_c_users_to_booking_server_fwd",
+            "from": "users",
+            "to": "booking_server",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_booking_server_to_seat_cache_fwd",
+            "from": "booking_server",
+            "to": "seat_cache",
+            "type": "ping",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_booking_server_to_seat_cache_rev",
+            "from": "seat_cache",
+            "to": "booking_server",
+            "type": "ping",
+            "intensity": "high"
+          }
+        ],
         "interactionIntensityChanged": [],
         "cameraChanged": {
           "from": {
             "mode": "focus",
-            "target": "message_queue",
+            "target": "seat_cache",
             "zoom": 1.18
           },
           "to": {
             "mode": "focus",
-            "target": "message_queue",
-            "zoom": 1
+            "target": "seat_lock",
+            "zoom": 1.16
           }
         }
       }
     },
     {
-      "id": "s7-retry-to-dlq",
-      "start": 36,
-      "end": 42,
-      "narration": "Failed tasks are retried, and stubborn ones go to a dead letter queue.",
+      "id": "s8-solution-payment-then-commit",
+      "start": 28,
+      "end": 32,
+      "narration": "After a hold, payment service confirms, and the database commits the seat.",
+      "camera": "focus",
       "elements": [
         {
-          "id": "message_queue",
-          "type": "message_queue",
-          "sourceEntityId": "message_queue",
-          "label": "Message Queue",
-          "icon": "inbox",
+          "id": "users",
+          "type": "users_cluster",
+          "sourceEntityId": "users",
+          "label": "Users",
+          "icon": "users",
           "position": {
             "x": 50,
             "y": 7.664999999999999
@@ -2744,11 +4204,11 @@ const renderSpec = {
           }
         },
         {
-          "id": "worker",
-          "type": "worker",
-          "sourceEntityId": "worker",
-          "label": "Worker",
-          "icon": "cpu",
+          "id": "booking_server",
+          "type": "server",
+          "sourceEntityId": "booking_server",
+          "label": "Booking Server",
+          "icon": "server",
           "position": {
             "x": 50,
             "y": 29.38833333333334
@@ -2769,11 +4229,11 @@ const renderSpec = {
           }
         },
         {
-          "id": "retry_policy",
-          "type": "retry_policy",
-          "sourceEntityId": "retry_policy",
-          "label": "Retry Policy",
-          "icon": "rotate-cw",
+          "id": "payment_service",
+          "type": "payment_service",
+          "sourceEntityId": "payment_service",
+          "label": "Payment Service",
+          "icon": "credit-card",
           "position": {
             "x": 50,
             "y": 51.11166666666668
@@ -2795,80 +4255,79 @@ const renderSpec = {
           }
         },
         {
-          "id": "dead_letter_queue",
-          "type": "dead_letter_queue",
-          "sourceEntityId": "dead_letter_queue",
-          "label": "Dead Letter Queue",
-          "icon": "archive",
+          "id": "seat_db",
+          "type": "primary_database",
+          "sourceEntityId": "seat_db",
+          "label": "Seat Database",
+          "icon": "database",
           "position": {
             "x": 50,
             "y": 72.83500000000001
           },
-          "enter": "zoom_in",
           "visualStyle": {
             "size": 135,
             "opacity": 1,
-            "color": "#34D399",
+            "color": "#1F314D",
             "strokeWidth": 2.645448922205832,
-            "strokeColor": "#34D399",
+            "strokeColor": "#35C4C8",
             "glow": false,
-            "glowColor": "#34D399",
+            "glowColor": "#35C4C8",
             "glowBlur": 0,
             "textColor": "#E8F6FF",
             "fontSize": 47.879999999999995,
             "fontWeight": 600,
-            "status": "active"
+            "status": "normal"
           }
         }
       ],
       "entities": [
         {
-          "id": "message_queue",
-          "type": "message_queue",
-          "count": 1,
+          "id": "users",
+          "type": "users_cluster",
+          "count": 2,
           "importance": "secondary",
           "status": "active",
-          "label": "Message Queue",
-          "icon": "inbox",
+          "label": "Users",
+          "icon": "users",
           "layout": {
             "x": 50,
             "y": 7.664999999999999
           }
         },
         {
-          "id": "worker",
-          "type": "worker",
+          "id": "booking_server",
+          "type": "server",
           "count": 1,
           "importance": "secondary",
           "status": "active",
-          "label": "Worker",
-          "icon": "cpu",
+          "label": "Booking Server",
+          "icon": "server",
           "layout": {
             "x": 50,
             "y": 29.38833333333334
           }
         },
         {
-          "id": "retry_policy",
-          "type": "retry_policy",
+          "id": "payment_service",
+          "type": "payment_service",
           "count": 1,
-          "importance": "secondary",
+          "importance": "primary",
           "status": "active",
-          "label": "Retry Policy",
-          "icon": "rotate-cw",
+          "label": "Payment Service",
+          "icon": "credit-card",
           "layout": {
             "x": 50,
             "y": 51.11166666666668
           }
         },
         {
-          "id": "dead_letter_queue",
-          "type": "dead_letter_queue",
+          "id": "seat_db",
+          "type": "primary_database",
           "count": 1,
-          "importance": "primary",
-          "status": "active",
-          "label": "Dead Letter Queue",
-          "icon": "archive",
+          "importance": "secondary",
+          "status": "normal",
+          "label": "Seat Database",
+          "icon": "database",
           "layout": {
             "x": 50,
             "y": 72.83500000000001
@@ -2877,67 +4336,61 @@ const renderSpec = {
       ],
       "connections": [
         {
-          "id": "c_queue_to_worker_dispatch",
-          "from": "message_queue",
-          "to": "worker",
+          "id": "c_users_to_booking_server",
+          "from": "users",
+          "to": "booking_server",
           "direction": "one_way",
           "style": "solid"
         },
         {
-          "id": "c_worker_to_retry_policy_retry",
-          "from": "worker",
-          "to": "retry_policy",
-          "direction": "one_way",
+          "id": "c_booking_server_to_payment_service",
+          "from": "booking_server",
+          "to": "payment_service",
+          "direction": "bidirectional",
           "style": "solid"
         },
         {
-          "id": "c_retry_policy_to_dlq_retry",
-          "from": "retry_policy",
-          "to": "dead_letter_queue",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_worker_to_dlq_async_event",
-          "from": "worker",
-          "to": "dead_letter_queue",
+          "id": "c_booking_server_to_seat_db",
+          "from": "booking_server",
+          "to": "seat_db",
           "direction": "one_way",
           "style": "solid"
         }
       ],
       "interactions": [
         {
-          "id": "i_c_queue_to_worker_dispatch_fwd",
-          "from": "message_queue",
-          "to": "worker",
-          "type": "broadcast",
+          "id": "i_c_users_to_booking_server_fwd",
+          "from": "users",
+          "to": "booking_server",
+          "type": "flow",
           "intensity": "medium"
         },
         {
-          "id": "i_c_worker_to_retry_policy_retry_fwd",
-          "from": "worker",
-          "to": "retry_policy",
-          "type": "burst",
+          "id": "i_c_booking_server_to_payment_service_fwd",
+          "from": "booking_server",
+          "to": "payment_service",
+          "type": "flow",
           "intensity": "medium"
         },
         {
-          "id": "i_c_retry_policy_to_dlq_retry_fwd",
-          "from": "retry_policy",
-          "to": "dead_letter_queue",
-          "type": "burst",
-          "intensity": "low"
+          "id": "i_c_booking_server_to_payment_service_rev",
+          "from": "payment_service",
+          "to": "booking_server",
+          "type": "flow",
+          "intensity": "medium"
         },
         {
-          "id": "i_c_worker_to_dlq_async_event_fwd",
-          "from": "worker",
-          "to": "dead_letter_queue",
-          "type": "broadcast",
-          "intensity": "low"
+          "id": "i_c_booking_server_to_seat_db_fwd",
+          "from": "booking_server",
+          "to": "seat_db",
+          "type": "flow",
+          "intensity": "medium"
         }
       ],
       "sourceCamera": {
-        "mode": "wide",
-        "zoom": 1
+        "mode": "focus",
+        "target": "payment_service",
+        "zoom": 1.12
       },
       "directives": {
         "camera": {
@@ -2948,66 +4401,66 @@ const renderSpec = {
         },
         "visual": {
           "theme": "default",
-          "background_texture": "grid",
+          "background_texture": "none",
           "glow_strength": "soft"
         },
         "motion": {
           "entry_style": "draw_in",
-          "pacing": "balanced"
+          "pacing": "reel_fast"
         },
         "flow": {
-          "renderer": "hybrid"
+          "renderer": "dashed"
         }
       },
       "source": {
         "entities": [
           {
-            "id": "message_queue",
-            "type": "message_queue",
-            "count": 1,
+            "id": "users",
+            "type": "users_cluster",
+            "count": 2,
             "importance": "secondary",
             "status": "active",
-            "label": "Message Queue",
-            "icon": "inbox",
+            "label": "Users",
+            "icon": "users",
             "layout": {
               "x": 50,
               "y": 7.664999999999999
             }
           },
           {
-            "id": "worker",
-            "type": "worker",
+            "id": "booking_server",
+            "type": "server",
             "count": 1,
             "importance": "secondary",
             "status": "active",
-            "label": "Worker",
-            "icon": "cpu",
+            "label": "Booking Server",
+            "icon": "server",
             "layout": {
               "x": 50,
               "y": 29.38833333333334
             }
           },
           {
-            "id": "retry_policy",
-            "type": "retry_policy",
+            "id": "payment_service",
+            "type": "payment_service",
             "count": 1,
-            "importance": "secondary",
+            "importance": "primary",
             "status": "active",
-            "label": "Retry Policy",
-            "icon": "rotate-cw",
+            "label": "Payment Service",
+            "icon": "credit-card",
             "layout": {
               "x": 50,
               "y": 51.11166666666668
             }
           },
           {
-            "id": "dead_letter_queue",
-            "type": "dead_letter_queue",
+            "id": "seat_db",
+            "type": "primary_database",
             "count": 1,
-            "importance": "primary",
-            "status": "active",
-            "label": "Dead Letter Queue",
-            "icon": "archive",
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Seat Database",
+            "icon": "database",
             "layout": {
               "x": 50,
               "y": 72.83500000000001
@@ -3016,90 +4469,92 @@ const renderSpec = {
         ],
         "connections": [
           {
-            "id": "c_queue_to_worker_dispatch",
-            "from": "message_queue",
-            "to": "worker",
+            "id": "c_users_to_booking_server",
+            "from": "users",
+            "to": "booking_server",
             "direction": "one_way",
             "style": "solid"
           },
           {
-            "id": "c_worker_to_retry_policy_retry",
-            "from": "worker",
-            "to": "retry_policy",
-            "direction": "one_way",
+            "id": "c_booking_server_to_payment_service",
+            "from": "booking_server",
+            "to": "payment_service",
+            "direction": "bidirectional",
             "style": "solid"
           },
           {
-            "id": "c_retry_policy_to_dlq_retry",
-            "from": "retry_policy",
-            "to": "dead_letter_queue",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_worker_to_dlq_async_event",
-            "from": "worker",
-            "to": "dead_letter_queue",
+            "id": "c_booking_server_to_seat_db",
+            "from": "booking_server",
+            "to": "seat_db",
             "direction": "one_way",
             "style": "solid"
           }
         ],
         "interactions": [
           {
-            "id": "i_c_queue_to_worker_dispatch_fwd",
-            "from": "message_queue",
-            "to": "worker",
-            "type": "broadcast",
+            "id": "i_c_users_to_booking_server_fwd",
+            "from": "users",
+            "to": "booking_server",
+            "type": "flow",
             "intensity": "medium"
           },
           {
-            "id": "i_c_worker_to_retry_policy_retry_fwd",
-            "from": "worker",
-            "to": "retry_policy",
-            "type": "burst",
+            "id": "i_c_booking_server_to_payment_service_fwd",
+            "from": "booking_server",
+            "to": "payment_service",
+            "type": "flow",
             "intensity": "medium"
           },
           {
-            "id": "i_c_retry_policy_to_dlq_retry_fwd",
-            "from": "retry_policy",
-            "to": "dead_letter_queue",
-            "type": "burst",
-            "intensity": "low"
+            "id": "i_c_booking_server_to_payment_service_rev",
+            "from": "payment_service",
+            "to": "booking_server",
+            "type": "flow",
+            "intensity": "medium"
           },
           {
-            "id": "i_c_worker_to_dlq_async_event_fwd",
-            "from": "worker",
-            "to": "dead_letter_queue",
-            "type": "broadcast",
-            "intensity": "low"
+            "id": "i_c_booking_server_to_seat_db_fwd",
+            "from": "booking_server",
+            "to": "seat_db",
+            "type": "flow",
+            "intensity": "medium"
           }
         ],
         "camera": {
-          "mode": "wide",
-          "zoom": 1
+          "mode": "focus",
+          "target": "payment_service",
+          "zoom": 1.12
         }
       },
-      "motionPersonality": "CALM",
+      "motionPersonality": "ENERGETIC",
       "diff": {
         "entityDiffs": [
           {
             "type": "entity_added",
-            "entityId": "retry_policy"
+            "entityId": "booking_server"
           },
           {
             "type": "entity_added",
-            "entityId": "dead_letter_queue"
+            "entityId": "payment_service"
+          },
+          {
+            "type": "entity_added",
+            "entityId": "seat_db"
           },
           {
             "type": "entity_removed",
-            "entityId": "users"
+            "entityId": "seat_lock"
+          },
+          {
+            "type": "entity_removed",
+            "entityId": "seat_cache"
           },
           {
             "type": "entity_moved",
-            "entityId": "message_queue",
+            "entityId": "users",
             "from": {
               "x": 50,
-              "y": 40.25
+              "y": 9.66
             },
             "to": {
               "x": 50,
@@ -3107,64 +4562,62 @@ const renderSpec = {
             }
           },
           {
-            "type": "entity_moved",
-            "entityId": "worker",
-            "from": {
-              "x": 50,
-              "y": 70.84
-            },
-            "to": {
-              "x": 50,
-              "y": 29.38833333333334
-            }
-          },
-          {
             "type": "entity_count_changed",
-            "entityId": "message_queue",
-            "from": 3,
-            "to": 1
-          },
-          {
-            "type": "entity_importance_changed",
-            "entityId": "message_queue",
-            "from": "primary",
-            "to": "secondary"
+            "entityId": "users",
+            "from": 6,
+            "to": 2
           }
         ],
         "connectionDiffs": [
           {
             "type": "connection_added",
-            "connectionId": "c_worker_to_retry_policy_retry"
+            "connectionId": "c_users_to_booking_server"
           },
           {
             "type": "connection_added",
-            "connectionId": "c_retry_policy_to_dlq_retry"
+            "connectionId": "c_booking_server_to_payment_service"
           },
           {
             "type": "connection_added",
-            "connectionId": "c_worker_to_dlq_async_event"
+            "connectionId": "c_booking_server_to_seat_db"
           },
           {
             "type": "connection_removed",
-            "connectionId": "c_users_to_queue_ingestion"
+            "connectionId": "c_users_to_seat_lock"
+          },
+          {
+            "type": "connection_removed",
+            "connectionId": "c_seat_lock_to_seat_cache"
           }
         ],
         "interactionDiffs": [
           {
             "type": "interaction_added",
-            "interactionId": "i_c_worker_to_retry_policy_retry_fwd"
+            "interactionId": "i_c_users_to_booking_server_fwd"
           },
           {
             "type": "interaction_added",
-            "interactionId": "i_c_retry_policy_to_dlq_retry_fwd"
+            "interactionId": "i_c_booking_server_to_payment_service_fwd"
           },
           {
             "type": "interaction_added",
-            "interactionId": "i_c_worker_to_dlq_async_event_fwd"
+            "interactionId": "i_c_booking_server_to_payment_service_rev"
+          },
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_booking_server_to_seat_db_fwd"
           },
           {
             "type": "interaction_removed",
-            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+            "interactionId": "i_c_users_to_seat_lock_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_seat_lock_to_seat_cache_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_seat_lock_to_seat_cache_rev"
           }
         ],
         "cameraDiffs": [
@@ -3172,8 +4625,1754 @@ const renderSpec = {
             "type": "camera_changed",
             "from": {
               "mode": "focus",
-              "target": "message_queue",
-              "zoom": 1
+              "target": "seat_lock",
+              "zoom": 1.16
+            },
+            "to": {
+              "mode": "focus",
+              "target": "payment_service",
+              "zoom": 1.12
+            }
+          }
+        ]
+      },
+      "hierarchyTransition": null,
+      "plan": {
+        "phaseOrder": [
+          "removals",
+          "moves",
+          "additions",
+          "connections",
+          "interactions",
+          "camera"
+        ],
+        "removals": [
+          {
+            "entityId": "seat_lock",
+            "elementIds": [
+              "seat_lock"
+            ],
+            "action": "remove",
+            "exit": "zoom_out",
+            "cleanup": true
+          },
+          {
+            "entityId": "seat_cache",
+            "elementIds": [
+              "seat_cache"
+            ],
+            "action": "remove",
+            "exit": "zoom_out",
+            "cleanup": true
+          },
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "remove",
+            "exit": "zoom_out",
+            "cleanup": true
+          }
+        ],
+        "moves": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "move"
+          }
+        ],
+        "additions": [
+          {
+            "entityId": "booking_server",
+            "elementIds": [
+              "booking_server"
+            ],
+            "action": "add",
+            "enter": "zoom_in"
+          },
+          {
+            "entityId": "payment_service",
+            "elementIds": [
+              "payment_service"
+            ],
+            "action": "add",
+            "enter": "zoom_in",
+            "cleanup": false
+          },
+          {
+            "entityId": "seat_db",
+            "elementIds": [
+              "seat_db"
+            ],
+            "action": "add",
+            "enter": "zoom_in"
+          }
+        ],
+        "connections": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "connect",
+            "connectionId": "c_users_to_seat_lock",
+            "cleanup": false
+          },
+          {
+            "entityId": "booking_server",
+            "elementIds": [
+              "booking_server"
+            ],
+            "action": "connect",
+            "connectionId": "c_booking_server_to_seat_db",
+            "cleanup": false
+          },
+          {
+            "entityId": "payment_service",
+            "elementIds": [
+              "payment_service"
+            ],
+            "action": "connect",
+            "connectionId": "c_booking_server_to_payment_service"
+          },
+          {
+            "entityId": "seat_db",
+            "elementIds": [
+              "seat_db"
+            ],
+            "action": "connect",
+            "connectionId": "c_booking_server_to_seat_db"
+          },
+          {
+            "entityId": "seat_lock",
+            "elementIds": [
+              "seat_lock"
+            ],
+            "action": "connect",
+            "connectionId": "c_seat_lock_to_seat_cache",
+            "cleanup": false
+          },
+          {
+            "entityId": "seat_cache",
+            "elementIds": [
+              "seat_cache"
+            ],
+            "action": "connect",
+            "connectionId": "c_seat_lock_to_seat_cache"
+          }
+        ],
+        "interactions": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_seat_lock_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "booking_server",
+            "elementIds": [
+              "booking_server"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_booking_server_to_seat_db_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "payment_service",
+            "elementIds": [
+              "payment_service"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_booking_server_to_payment_service_rev",
+            "cleanup": false
+          },
+          {
+            "entityId": "seat_db",
+            "elementIds": [
+              "seat_db"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_booking_server_to_seat_db_fwd"
+          },
+          {
+            "entityId": "seat_lock",
+            "elementIds": [
+              "seat_lock"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_seat_lock_to_seat_cache_rev",
+            "cleanup": false
+          },
+          {
+            "entityId": "seat_cache",
+            "elementIds": [
+              "seat_cache"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_seat_lock_to_seat_cache_rev",
+            "cleanup": false
+          }
+        ]
+      },
+      "animationPlan": {
+        "entities": [
+          {
+            "entityId": "seat_lock",
+            "action": "remove",
+            "delay": 0,
+            "duration": 0.28,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "seat_cache",
+            "action": "remove",
+            "delay": 0.02,
+            "duration": 0.28,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "users",
+            "action": "move",
+            "delay": 0.4,
+            "duration": 0.34,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "booking_server",
+            "action": "add",
+            "delay": 0.5870000000000001,
+            "duration": 0.28,
+            "easing": "cubic-bezier(0.4,0,0.2,1)",
+            "isPrimary": false
+          },
+          {
+            "entityId": "seat_db",
+            "action": "add",
+            "delay": 0.6170000000000001,
+            "duration": 0.28,
+            "easing": "cubic-bezier(0.4,0,0.2,1)",
+            "isPrimary": false
+          },
+          {
+            "entityId": "payment_service",
+            "action": "add",
+            "delay": 0.6970000000000001,
+            "duration": 0.32,
+            "easing": "cubic-bezier(0.4,0,0.2,1)",
+            "scale": 1.2,
+            "isPrimary": true
+          }
+        ],
+        "connections": [
+          {
+            "connectionId": "c_users_to_booking_server",
+            "delay": 0.54,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "connectionId": "c_booking_server_to_payment_service",
+            "delay": 0.56,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "connectionId": "c_booking_server_to_seat_db",
+            "delay": 0.5800000000000001,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "connectionId": "c_users_to_seat_lock",
+            "delay": 0.6000000000000001,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "connectionId": "c_seat_lock_to_seat_cache",
+            "delay": 0.62,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          }
+        ],
+        "camera": null
+      },
+      "cameraPlan": {
+        "targetId": "payment_service",
+        "targetElementId": "payment_service",
+        "zoom": 2.5,
+        "duration": 0.26,
+        "holdDuration": 0.6,
+        "easing": "cubic-bezier(0.16,1,0.3,1)",
+        "motionType": "introduce_primary"
+      },
+      "sceneDiff": {
+        "addedEntities": [
+          {
+            "id": "booking_server",
+            "type": "server",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Booking Server",
+            "icon": "server",
+            "layout": {
+              "x": 50,
+              "y": 29.38833333333334
+            }
+          },
+          {
+            "id": "payment_service",
+            "type": "payment_service",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "Payment Service",
+            "icon": "credit-card",
+            "layout": {
+              "x": 50,
+              "y": 51.11166666666668
+            }
+          },
+          {
+            "id": "seat_db",
+            "type": "primary_database",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Seat Database",
+            "icon": "database",
+            "layout": {
+              "x": 50,
+              "y": 72.83500000000001
+            }
+          }
+        ],
+        "removedEntities": [
+          {
+            "id": "seat_lock",
+            "type": "authorization_lock",
+            "count": 3,
+            "importance": "primary",
+            "status": "active",
+            "label": "Seat Lock",
+            "icon": "lock",
+            "layout": {
+              "x": 50,
+              "y": 40.25
+            }
+          },
+          {
+            "id": "seat_cache",
+            "type": "cache",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Seat Hold Cache",
+            "icon": "memory-stick",
+            "layout": {
+              "x": 50,
+              "y": 70.84
+            }
+          }
+        ],
+        "movedEntities": [
+          {
+            "id": "users",
+            "from": {
+              "x": 50,
+              "y": 9.66
+            },
+            "to": {
+              "x": 50,
+              "y": 7.664999999999999
+            }
+          }
+        ],
+        "updatedEntities": [
+          {
+            "id": "users",
+            "changes": {
+              "count": {
+                "from": 6,
+                "to": 2
+              }
+            }
+          }
+        ],
+        "addedConnections": [
+          {
+            "id": "c_users_to_booking_server",
+            "from": "users",
+            "to": "booking_server",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_booking_server_to_payment_service",
+            "from": "booking_server",
+            "to": "payment_service",
+            "direction": "bidirectional",
+            "style": "solid"
+          },
+          {
+            "id": "c_booking_server_to_seat_db",
+            "from": "booking_server",
+            "to": "seat_db",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "removedConnections": [
+          {
+            "id": "c_users_to_seat_lock",
+            "from": "users",
+            "to": "seat_lock",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_seat_lock_to_seat_cache",
+            "from": "seat_lock",
+            "to": "seat_cache",
+            "direction": "bidirectional",
+            "style": "solid"
+          }
+        ],
+        "addedInteractions": [
+          {
+            "id": "i_c_users_to_booking_server_fwd",
+            "from": "users",
+            "to": "booking_server",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_booking_server_to_payment_service_fwd",
+            "from": "booking_server",
+            "to": "payment_service",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_booking_server_to_payment_service_rev",
+            "from": "payment_service",
+            "to": "booking_server",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_booking_server_to_seat_db_fwd",
+            "from": "booking_server",
+            "to": "seat_db",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
+        "removedInteractions": [
+          {
+            "id": "i_c_users_to_seat_lock_fwd",
+            "from": "users",
+            "to": "seat_lock",
+            "type": "burst",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_seat_lock_to_seat_cache_fwd",
+            "from": "seat_lock",
+            "to": "seat_cache",
+            "type": "ping",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_seat_lock_to_seat_cache_rev",
+            "from": "seat_cache",
+            "to": "seat_lock",
+            "type": "ping",
+            "intensity": "high"
+          }
+        ],
+        "interactionIntensityChanged": [],
+        "cameraChanged": {
+          "from": {
+            "mode": "focus",
+            "target": "seat_lock",
+            "zoom": 1.16
+          },
+          "to": {
+            "mode": "focus",
+            "target": "payment_service",
+            "zoom": 1.12
+          }
+        }
+      }
+    },
+    {
+      "id": "s9-climax-timeout-release",
+      "start": 32,
+      "end": 36,
+      "narration": "If payment fails, the cache hold expires, and the seat becomes available again.",
+      "camera": "focus",
+      "elements": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "sourceEntityId": "users",
+          "label": "Users",
+          "icon": "users",
+          "position": {
+            "x": 50,
+            "y": 7.664999999999999
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#34D399",
+            "glow": true,
+            "glowColor": "#34D399",
+            "glowBlur": 25.35,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "payment_service",
+          "type": "payment_service",
+          "sourceEntityId": "payment_service",
+          "label": "Payment Service",
+          "icon": "credit-card",
+          "position": {
+            "x": 50,
+            "y": 29.38833333333334
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#FB923C",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#FB923C",
+            "glow": true,
+            "glowColor": "#FB923C",
+            "glowBlur": 33.15,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "error"
+          }
+        },
+        {
+          "id": "seat_cache",
+          "type": "cache",
+          "sourceEntityId": "seat_cache",
+          "label": "Seat Hold Cache",
+          "icon": "memory-stick",
+          "position": {
+            "x": 50,
+            "y": 51.11166666666668
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#FB923C",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#FB923C",
+            "glow": true,
+            "glowColor": "#FB923C",
+            "glowBlur": 33.15,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "error"
+          }
+        },
+        {
+          "id": "seat_db",
+          "type": "primary_database",
+          "sourceEntityId": "seat_db",
+          "label": "Seat Database",
+          "icon": "database",
+          "position": {
+            "x": 50,
+            "y": 72.83500000000001
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#35C4C8",
+            "glow": true,
+            "glowColor": "#35C4C8",
+            "glowBlur": 25.35,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        }
+      ],
+      "entities": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "count": 2,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Users",
+          "icon": "users",
+          "layout": {
+            "x": 50,
+            "y": 7.664999999999999
+          }
+        },
+        {
+          "id": "payment_service",
+          "type": "payment_service",
+          "count": 1,
+          "importance": "secondary",
+          "status": "error",
+          "label": "Payment Service",
+          "icon": "credit-card",
+          "layout": {
+            "x": 50,
+            "y": 29.38833333333334
+          }
+        },
+        {
+          "id": "seat_cache",
+          "type": "cache",
+          "count": 1,
+          "importance": "primary",
+          "status": "error",
+          "label": "Seat Hold Cache",
+          "icon": "memory-stick",
+          "layout": {
+            "x": 50,
+            "y": 51.11166666666668
+          }
+        },
+        {
+          "id": "seat_db",
+          "type": "primary_database",
+          "count": 1,
+          "importance": "secondary",
+          "status": "normal",
+          "label": "Seat Database",
+          "icon": "database",
+          "layout": {
+            "x": 50,
+            "y": 72.83500000000001
+          }
+        }
+      ],
+      "connections": [
+        {
+          "id": "c_users_to_payment_service",
+          "from": "users",
+          "to": "payment_service",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_payment_service_to_seat_cache",
+          "from": "payment_service",
+          "to": "seat_cache",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_seat_cache_to_seat_db",
+          "from": "seat_cache",
+          "to": "seat_db",
+          "direction": "one_way",
+          "style": "solid"
+        }
+      ],
+      "interactions": [
+        {
+          "id": "i_c_users_to_payment_service_fwd",
+          "from": "users",
+          "to": "payment_service",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_payment_service_to_seat_cache_blocked",
+          "from": "payment_service",
+          "to": "seat_cache",
+          "type": "blocked",
+          "intensity": "high"
+        },
+        {
+          "id": "i_c_seat_cache_to_seat_db_fwd",
+          "from": "seat_cache",
+          "to": "seat_db",
+          "type": "burst",
+          "intensity": "medium"
+        }
+      ],
+      "sourceCamera": {
+        "mode": "focus",
+        "target": "seat_cache",
+        "zoom": 1.14
+      },
+      "directives": {
+        "camera": {
+          "mode": "follow_action",
+          "zoom": "tight",
+          "active_zone": "upper_third",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "default",
+          "background_texture": "grid",
+          "glow_strength": "strong"
+        },
+        "motion": {
+          "entry_style": "elastic_pop",
+          "pacing": "reel_fast"
+        },
+        "flow": {
+          "renderer": "packets"
+        }
+      },
+      "source": {
+        "entities": [
+          {
+            "id": "users",
+            "type": "users_cluster",
+            "count": 2,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Users",
+            "icon": "users",
+            "layout": {
+              "x": 50,
+              "y": 7.664999999999999
+            }
+          },
+          {
+            "id": "payment_service",
+            "type": "payment_service",
+            "count": 1,
+            "importance": "secondary",
+            "status": "error",
+            "label": "Payment Service",
+            "icon": "credit-card",
+            "layout": {
+              "x": 50,
+              "y": 29.38833333333334
+            }
+          },
+          {
+            "id": "seat_cache",
+            "type": "cache",
+            "count": 1,
+            "importance": "primary",
+            "status": "error",
+            "label": "Seat Hold Cache",
+            "icon": "memory-stick",
+            "layout": {
+              "x": 50,
+              "y": 51.11166666666668
+            }
+          },
+          {
+            "id": "seat_db",
+            "type": "primary_database",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Seat Database",
+            "icon": "database",
+            "layout": {
+              "x": 50,
+              "y": 72.83500000000001
+            }
+          }
+        ],
+        "connections": [
+          {
+            "id": "c_users_to_payment_service",
+            "from": "users",
+            "to": "payment_service",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_payment_service_to_seat_cache",
+            "from": "payment_service",
+            "to": "seat_cache",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_seat_cache_to_seat_db",
+            "from": "seat_cache",
+            "to": "seat_db",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "interactions": [
+          {
+            "id": "i_c_users_to_payment_service_fwd",
+            "from": "users",
+            "to": "payment_service",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_payment_service_to_seat_cache_blocked",
+            "from": "payment_service",
+            "to": "seat_cache",
+            "type": "blocked",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_seat_cache_to_seat_db_fwd",
+            "from": "seat_cache",
+            "to": "seat_db",
+            "type": "burst",
+            "intensity": "medium"
+          }
+        ],
+        "camera": {
+          "mode": "focus",
+          "target": "seat_cache",
+          "zoom": 1.14
+        }
+      },
+      "motionPersonality": "ENERGETIC",
+      "diff": {
+        "entityDiffs": [
+          {
+            "type": "entity_added",
+            "entityId": "seat_cache"
+          },
+          {
+            "type": "entity_removed",
+            "entityId": "booking_server"
+          },
+          {
+            "type": "entity_moved",
+            "entityId": "payment_service",
+            "from": {
+              "x": 50,
+              "y": 51.11166666666668
+            },
+            "to": {
+              "x": 50,
+              "y": 29.38833333333334
+            }
+          },
+          {
+            "type": "entity_status_changed",
+            "entityId": "payment_service",
+            "from": "active",
+            "to": "error"
+          },
+          {
+            "type": "entity_importance_changed",
+            "entityId": "payment_service",
+            "from": "primary",
+            "to": "secondary"
+          }
+        ],
+        "connectionDiffs": [
+          {
+            "type": "connection_added",
+            "connectionId": "c_users_to_payment_service"
+          },
+          {
+            "type": "connection_added",
+            "connectionId": "c_payment_service_to_seat_cache"
+          },
+          {
+            "type": "connection_added",
+            "connectionId": "c_seat_cache_to_seat_db"
+          },
+          {
+            "type": "connection_removed",
+            "connectionId": "c_users_to_booking_server"
+          },
+          {
+            "type": "connection_removed",
+            "connectionId": "c_booking_server_to_payment_service"
+          },
+          {
+            "type": "connection_removed",
+            "connectionId": "c_booking_server_to_seat_db"
+          }
+        ],
+        "interactionDiffs": [
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_users_to_payment_service_fwd"
+          },
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_payment_service_to_seat_cache_blocked"
+          },
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_seat_cache_to_seat_db_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_users_to_booking_server_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_booking_server_to_payment_service_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_booking_server_to_payment_service_rev"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_booking_server_to_seat_db_fwd"
+          }
+        ],
+        "cameraDiffs": [
+          {
+            "type": "camera_changed",
+            "from": {
+              "mode": "focus",
+              "target": "payment_service",
+              "zoom": 1.12
+            },
+            "to": {
+              "mode": "focus",
+              "target": "seat_cache",
+              "zoom": 1.14
+            }
+          }
+        ]
+      },
+      "hierarchyTransition": null,
+      "plan": {
+        "phaseOrder": [
+          "removals",
+          "moves",
+          "additions",
+          "connections",
+          "interactions",
+          "camera"
+        ],
+        "removals": [
+          {
+            "entityId": "booking_server",
+            "elementIds": [
+              "booking_server"
+            ],
+            "action": "remove",
+            "exit": "zoom_out",
+            "cleanup": true
+          }
+        ],
+        "moves": [
+          {
+            "entityId": "payment_service",
+            "elementIds": [
+              "payment_service"
+            ],
+            "action": "move"
+          }
+        ],
+        "additions": [
+          {
+            "entityId": "seat_cache",
+            "elementIds": [
+              "seat_cache"
+            ],
+            "action": "add",
+            "enter": "zoom_in"
+          }
+        ],
+        "connections": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "connect",
+            "connectionId": "c_users_to_booking_server",
+            "cleanup": false
+          },
+          {
+            "entityId": "payment_service",
+            "elementIds": [
+              "payment_service"
+            ],
+            "action": "connect",
+            "connectionId": "c_booking_server_to_payment_service",
+            "cleanup": false
+          },
+          {
+            "entityId": "seat_cache",
+            "elementIds": [
+              "seat_cache"
+            ],
+            "action": "connect",
+            "connectionId": "c_seat_cache_to_seat_db",
+            "cleanup": false
+          },
+          {
+            "entityId": "seat_db",
+            "elementIds": [
+              "seat_db"
+            ],
+            "action": "connect",
+            "connectionId": "c_booking_server_to_seat_db",
+            "cleanup": false
+          },
+          {
+            "entityId": "booking_server",
+            "elementIds": [
+              "booking_server"
+            ],
+            "action": "connect",
+            "connectionId": "c_booking_server_to_seat_db",
+            "cleanup": false
+          }
+        ],
+        "interactions": [
+          {
+            "entityId": "users",
+            "elementIds": [
+              "users"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_users_to_booking_server_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "payment_service",
+            "elementIds": [
+              "payment_service"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_booking_server_to_payment_service_rev",
+            "cleanup": false
+          },
+          {
+            "entityId": "seat_cache",
+            "elementIds": [
+              "seat_cache"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_seat_cache_to_seat_db_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "seat_db",
+            "elementIds": [
+              "seat_db"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_booking_server_to_seat_db_fwd",
+            "cleanup": false
+          },
+          {
+            "entityId": "booking_server",
+            "elementIds": [
+              "booking_server"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_booking_server_to_seat_db_fwd",
+            "cleanup": false
+          }
+        ]
+      },
+      "animationPlan": {
+        "entities": [
+          {
+            "entityId": "booking_server",
+            "action": "remove",
+            "delay": 0,
+            "duration": 0.28,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "payment_service",
+            "action": "move",
+            "delay": 0.4,
+            "duration": 0.34,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "entityId": "seat_cache",
+            "action": "add",
+            "delay": 0.6370000000000001,
+            "duration": 0.32,
+            "easing": "cubic-bezier(0.4,0,0.2,1)",
+            "scale": 1.2,
+            "isPrimary": true
+          }
+        ],
+        "connections": [
+          {
+            "connectionId": "c_users_to_payment_service",
+            "delay": 0.54,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "connectionId": "c_payment_service_to_seat_cache",
+            "delay": 0.56,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "connectionId": "c_seat_cache_to_seat_db",
+            "delay": 0.5800000000000001,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "connectionId": "c_users_to_booking_server",
+            "delay": 0.6000000000000001,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "connectionId": "c_booking_server_to_payment_service",
+            "delay": 0.62,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          },
+          {
+            "connectionId": "c_booking_server_to_seat_db",
+            "delay": 0.64,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
+          }
+        ],
+        "camera": null
+      },
+      "cameraPlan": {
+        "targetId": "seat_cache",
+        "targetElementId": "seat_cache",
+        "zoom": 2.5,
+        "duration": 0.26,
+        "holdDuration": 0.6,
+        "easing": "cubic-bezier(0.16,1,0.3,1)",
+        "motionType": "introduce_primary"
+      },
+      "sceneDiff": {
+        "addedEntities": [
+          {
+            "id": "seat_cache",
+            "type": "cache",
+            "count": 1,
+            "importance": "primary",
+            "status": "error",
+            "label": "Seat Hold Cache",
+            "icon": "memory-stick",
+            "layout": {
+              "x": 50,
+              "y": 51.11166666666668
+            }
+          }
+        ],
+        "removedEntities": [
+          {
+            "id": "booking_server",
+            "type": "server",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Booking Server",
+            "icon": "server",
+            "layout": {
+              "x": 50,
+              "y": 29.38833333333334
+            }
+          }
+        ],
+        "movedEntities": [
+          {
+            "id": "payment_service",
+            "from": {
+              "x": 50,
+              "y": 51.11166666666668
+            },
+            "to": {
+              "x": 50,
+              "y": 29.38833333333334
+            }
+          }
+        ],
+        "updatedEntities": [
+          {
+            "id": "payment_service",
+            "changes": {
+              "status": {
+                "from": "active",
+                "to": "error"
+              },
+              "importance": {
+                "from": "primary",
+                "to": "secondary"
+              }
+            }
+          }
+        ],
+        "addedConnections": [
+          {
+            "id": "c_users_to_payment_service",
+            "from": "users",
+            "to": "payment_service",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_payment_service_to_seat_cache",
+            "from": "payment_service",
+            "to": "seat_cache",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_seat_cache_to_seat_db",
+            "from": "seat_cache",
+            "to": "seat_db",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "removedConnections": [
+          {
+            "id": "c_users_to_booking_server",
+            "from": "users",
+            "to": "booking_server",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_booking_server_to_payment_service",
+            "from": "booking_server",
+            "to": "payment_service",
+            "direction": "bidirectional",
+            "style": "solid"
+          },
+          {
+            "id": "c_booking_server_to_seat_db",
+            "from": "booking_server",
+            "to": "seat_db",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "addedInteractions": [
+          {
+            "id": "i_c_users_to_payment_service_fwd",
+            "from": "users",
+            "to": "payment_service",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_payment_service_to_seat_cache_blocked",
+            "from": "payment_service",
+            "to": "seat_cache",
+            "type": "blocked",
+            "intensity": "high"
+          },
+          {
+            "id": "i_c_seat_cache_to_seat_db_fwd",
+            "from": "seat_cache",
+            "to": "seat_db",
+            "type": "burst",
+            "intensity": "medium"
+          }
+        ],
+        "removedInteractions": [
+          {
+            "id": "i_c_users_to_booking_server_fwd",
+            "from": "users",
+            "to": "booking_server",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_booking_server_to_payment_service_fwd",
+            "from": "booking_server",
+            "to": "payment_service",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_booking_server_to_payment_service_rev",
+            "from": "payment_service",
+            "to": "booking_server",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_booking_server_to_seat_db_fwd",
+            "from": "booking_server",
+            "to": "seat_db",
+            "type": "flow",
+            "intensity": "medium"
+          }
+        ],
+        "interactionIntensityChanged": [],
+        "cameraChanged": {
+          "from": {
+            "mode": "focus",
+            "target": "payment_service",
+            "zoom": 1.12
+          },
+          "to": {
+            "mode": "focus",
+            "target": "seat_cache",
+            "zoom": 1.14
+          }
+        }
+      }
+    },
+    {
+      "id": "s10-recap-one-winner",
+      "start": 36,
+      "end": 40,
+      "narration": "Lock plus cache hold ensures one winner, and the database stays consistent.",
+      "camera": "wide",
+      "elements": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "sourceEntityId": "users",
+          "label": "Users",
+          "icon": "users",
+          "position": {
+            "x": 50,
+            "y": 7.664999999999999
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        },
+        {
+          "id": "seat_lock",
+          "type": "authorization_lock",
+          "sourceEntityId": "seat_lock",
+          "label": "Seat Lock",
+          "icon": "lock",
+          "position": {
+            "x": 50,
+            "y": 29.38833333333334
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "seat_cache",
+          "type": "cache",
+          "sourceEntityId": "seat_cache",
+          "label": "Seat Hold Cache",
+          "icon": "memory-stick",
+          "position": {
+            "x": 50,
+            "y": 51.11166666666668
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#34D399",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#34D399",
+            "glow": false,
+            "glowColor": "#34D399",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "active"
+          }
+        },
+        {
+          "id": "seat_db",
+          "type": "primary_database",
+          "sourceEntityId": "seat_db",
+          "label": "Seat Database",
+          "icon": "database",
+          "position": {
+            "x": 50,
+            "y": 72.83500000000001
+          },
+          "visualStyle": {
+            "size": 135,
+            "opacity": 1,
+            "color": "#1F314D",
+            "strokeWidth": 2.645448922205832,
+            "strokeColor": "#35C4C8",
+            "glow": false,
+            "glowColor": "#35C4C8",
+            "glowBlur": 0,
+            "textColor": "#E8F6FF",
+            "fontSize": 47.879999999999995,
+            "fontWeight": 600,
+            "status": "normal"
+          }
+        }
+      ],
+      "entities": [
+        {
+          "id": "users",
+          "type": "users_cluster",
+          "count": 2,
+          "importance": "secondary",
+          "status": "normal",
+          "label": "Users",
+          "icon": "users",
+          "layout": {
+            "x": 50,
+            "y": 7.664999999999999
+          }
+        },
+        {
+          "id": "seat_lock",
+          "type": "authorization_lock",
+          "count": 1,
+          "importance": "primary",
+          "status": "active",
+          "label": "Seat Lock",
+          "icon": "lock",
+          "layout": {
+            "x": 50,
+            "y": 29.38833333333334
+          }
+        },
+        {
+          "id": "seat_cache",
+          "type": "cache",
+          "count": 1,
+          "importance": "secondary",
+          "status": "active",
+          "label": "Seat Hold Cache",
+          "icon": "memory-stick",
+          "layout": {
+            "x": 50,
+            "y": 51.11166666666668
+          }
+        },
+        {
+          "id": "seat_db",
+          "type": "primary_database",
+          "count": 1,
+          "importance": "secondary",
+          "status": "normal",
+          "label": "Seat Database",
+          "icon": "database",
+          "layout": {
+            "x": 50,
+            "y": 72.83500000000001
+          }
+        }
+      ],
+      "connections": [
+        {
+          "id": "c_users_to_seat_lock",
+          "from": "users",
+          "to": "seat_lock",
+          "direction": "one_way",
+          "style": "solid"
+        },
+        {
+          "id": "c_seat_lock_to_seat_cache",
+          "from": "seat_lock",
+          "to": "seat_cache",
+          "direction": "bidirectional",
+          "style": "solid"
+        },
+        {
+          "id": "c_seat_cache_to_seat_db",
+          "from": "seat_cache",
+          "to": "seat_db",
+          "direction": "one_way",
+          "style": "solid"
+        }
+      ],
+      "interactions": [
+        {
+          "id": "i_c_users_to_seat_lock_fwd",
+          "from": "users",
+          "to": "seat_lock",
+          "type": "flow",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_seat_lock_to_seat_cache_fwd",
+          "from": "seat_lock",
+          "to": "seat_cache",
+          "type": "ping",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_seat_lock_to_seat_cache_rev",
+          "from": "seat_cache",
+          "to": "seat_lock",
+          "type": "ping",
+          "intensity": "medium"
+        },
+        {
+          "id": "i_c_seat_cache_to_seat_db_fwd",
+          "from": "seat_cache",
+          "to": "seat_db",
+          "type": "burst",
+          "intensity": "medium"
+        }
+      ],
+      "sourceCamera": {
+        "mode": "wide",
+        "zoom": 1
+      },
+      "directives": {
+        "camera": {
+          "mode": "wide_recap",
+          "zoom": "wide",
+          "active_zone": "center",
+          "reserve_bottom_percent": 25
+        },
+        "visual": {
+          "theme": "default",
+          "background_texture": "none",
+          "glow_strength": "soft"
+        },
+        "motion": {
+          "entry_style": "draw_in",
+          "pacing": "reel_fast"
+        },
+        "flow": {
+          "renderer": "dashed"
+        }
+      },
+      "source": {
+        "entities": [
+          {
+            "id": "users",
+            "type": "users_cluster",
+            "count": 2,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Users",
+            "icon": "users",
+            "layout": {
+              "x": 50,
+              "y": 7.664999999999999
+            }
+          },
+          {
+            "id": "seat_lock",
+            "type": "authorization_lock",
+            "count": 1,
+            "importance": "primary",
+            "status": "active",
+            "label": "Seat Lock",
+            "icon": "lock",
+            "layout": {
+              "x": 50,
+              "y": 29.38833333333334
+            }
+          },
+          {
+            "id": "seat_cache",
+            "type": "cache",
+            "count": 1,
+            "importance": "secondary",
+            "status": "active",
+            "label": "Seat Hold Cache",
+            "icon": "memory-stick",
+            "layout": {
+              "x": 50,
+              "y": 51.11166666666668
+            }
+          },
+          {
+            "id": "seat_db",
+            "type": "primary_database",
+            "count": 1,
+            "importance": "secondary",
+            "status": "normal",
+            "label": "Seat Database",
+            "icon": "database",
+            "layout": {
+              "x": 50,
+              "y": 72.83500000000001
+            }
+          }
+        ],
+        "connections": [
+          {
+            "id": "c_users_to_seat_lock",
+            "from": "users",
+            "to": "seat_lock",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_seat_lock_to_seat_cache",
+            "from": "seat_lock",
+            "to": "seat_cache",
+            "direction": "bidirectional",
+            "style": "solid"
+          },
+          {
+            "id": "c_seat_cache_to_seat_db",
+            "from": "seat_cache",
+            "to": "seat_db",
+            "direction": "one_way",
+            "style": "solid"
+          }
+        ],
+        "interactions": [
+          {
+            "id": "i_c_users_to_seat_lock_fwd",
+            "from": "users",
+            "to": "seat_lock",
+            "type": "flow",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_seat_lock_to_seat_cache_fwd",
+            "from": "seat_lock",
+            "to": "seat_cache",
+            "type": "ping",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_seat_lock_to_seat_cache_rev",
+            "from": "seat_cache",
+            "to": "seat_lock",
+            "type": "ping",
+            "intensity": "medium"
+          },
+          {
+            "id": "i_c_seat_cache_to_seat_db_fwd",
+            "from": "seat_cache",
+            "to": "seat_db",
+            "type": "burst",
+            "intensity": "medium"
+          }
+        ],
+        "camera": {
+          "mode": "wide",
+          "zoom": 1
+        }
+      },
+      "motionPersonality": "ENERGETIC",
+      "diff": {
+        "entityDiffs": [
+          {
+            "type": "entity_added",
+            "entityId": "seat_lock"
+          },
+          {
+            "type": "entity_removed",
+            "entityId": "payment_service"
+          },
+          {
+            "type": "entity_status_changed",
+            "entityId": "users",
+            "from": "active",
+            "to": "normal"
+          },
+          {
+            "type": "entity_status_changed",
+            "entityId": "seat_cache",
+            "from": "error",
+            "to": "active"
+          },
+          {
+            "type": "entity_importance_changed",
+            "entityId": "seat_cache",
+            "from": "primary",
+            "to": "secondary"
+          }
+        ],
+        "connectionDiffs": [
+          {
+            "type": "connection_added",
+            "connectionId": "c_users_to_seat_lock"
+          },
+          {
+            "type": "connection_added",
+            "connectionId": "c_seat_lock_to_seat_cache"
+          },
+          {
+            "type": "connection_removed",
+            "connectionId": "c_users_to_payment_service"
+          },
+          {
+            "type": "connection_removed",
+            "connectionId": "c_payment_service_to_seat_cache"
+          }
+        ],
+        "interactionDiffs": [
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_users_to_seat_lock_fwd"
+          },
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_seat_lock_to_seat_cache_fwd"
+          },
+          {
+            "type": "interaction_added",
+            "interactionId": "i_c_seat_lock_to_seat_cache_rev"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_users_to_payment_service_fwd"
+          },
+          {
+            "type": "interaction_removed",
+            "interactionId": "i_c_payment_service_to_seat_cache_blocked"
+          }
+        ],
+        "cameraDiffs": [
+          {
+            "type": "camera_changed",
+            "from": {
+              "mode": "focus",
+              "target": "seat_cache",
+              "zoom": 1.14
             },
             "to": {
               "mode": "wide",
@@ -3194,296 +6393,204 @@ const renderSpec = {
         ],
         "removals": [
           {
-            "entityId": "users",
+            "entityId": "payment_service",
             "elementIds": [
-              "users"
-            ],
-            "action": "remove",
-            "exit": "zoom_out",
-            "cleanup": true
-          },
-          {
-            "entityId": "message_queue",
-            "elementIds": [
-              "message_queue_1",
-              "message_queue_3"
+              "payment_service"
             ],
             "action": "remove",
             "exit": "zoom_out",
             "cleanup": true
           }
         ],
-        "moves": [
-          {
-            "entityId": "message_queue",
-            "elementIds": [
-              "message_queue"
-            ],
-            "action": "move"
-          },
-          {
-            "entityId": "worker",
-            "elementIds": [
-              "worker"
-            ],
-            "action": "move"
-          }
-        ],
+        "moves": [],
         "additions": [
           {
-            "entityId": "retry_policy",
+            "entityId": "seat_lock",
             "elementIds": [
-              "retry_policy"
+              "seat_lock"
             ],
             "action": "add",
             "enter": "zoom_in"
-          },
-          {
-            "entityId": "dead_letter_queue",
-            "elementIds": [
-              "dead_letter_queue"
-            ],
-            "action": "add",
-            "enter": "zoom_in",
-            "cleanup": false
           }
         ],
         "connections": [
           {
-            "entityId": "worker",
-            "elementIds": [
-              "worker"
-            ],
-            "action": "connect",
-            "connectionId": "c_worker_to_dlq_async_event",
-            "cleanup": false
-          },
-          {
-            "entityId": "retry_policy",
-            "elementIds": [
-              "retry_policy"
-            ],
-            "action": "connect",
-            "connectionId": "c_retry_policy_to_dlq_retry",
-            "cleanup": false
-          },
-          {
-            "entityId": "dead_letter_queue",
-            "elementIds": [
-              "dead_letter_queue"
-            ],
-            "action": "connect",
-            "connectionId": "c_worker_to_dlq_async_event",
-            "cleanup": false
-          },
-          {
             "entityId": "users",
             "elementIds": [
               "users"
             ],
             "action": "connect",
-            "connectionId": "c_users_to_queue_ingestion"
+            "connectionId": "c_users_to_payment_service",
+            "cleanup": false
           },
           {
-            "entityId": "message_queue",
+            "entityId": "seat_lock",
             "elementIds": [
-              "message_queue"
+              "seat_lock"
             ],
             "action": "connect",
-            "connectionId": "c_users_to_queue_ingestion"
+            "connectionId": "c_seat_lock_to_seat_cache",
+            "cleanup": false
+          },
+          {
+            "entityId": "seat_cache",
+            "elementIds": [
+              "seat_cache"
+            ],
+            "action": "connect",
+            "connectionId": "c_payment_service_to_seat_cache",
+            "cleanup": false
+          },
+          {
+            "entityId": "payment_service",
+            "elementIds": [
+              "payment_service"
+            ],
+            "action": "connect",
+            "connectionId": "c_payment_service_to_seat_cache",
+            "cleanup": false
           }
         ],
         "interactions": [
           {
-            "entityId": "worker",
-            "elementIds": [
-              "worker"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_worker_to_dlq_async_event_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "retry_policy",
-            "elementIds": [
-              "retry_policy"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_retry_policy_to_dlq_retry_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "dead_letter_queue",
-            "elementIds": [
-              "dead_letter_queue"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_worker_to_dlq_async_event_fwd",
-            "cleanup": false
-          },
-          {
             "entityId": "users",
             "elementIds": [
               "users"
             ],
             "action": "interact",
-            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+            "interactionId": "i_c_users_to_payment_service_fwd",
+            "cleanup": false
           },
           {
-            "entityId": "message_queue",
+            "entityId": "seat_lock",
             "elementIds": [
-              "message_queue"
+              "seat_lock"
             ],
             "action": "interact",
-            "interactionId": "i_c_users_to_queue_ingestion_fwd"
+            "interactionId": "i_c_seat_lock_to_seat_cache_rev",
+            "cleanup": false
+          },
+          {
+            "entityId": "seat_cache",
+            "elementIds": [
+              "seat_cache"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_payment_service_to_seat_cache_blocked",
+            "cleanup": false
+          },
+          {
+            "entityId": "payment_service",
+            "elementIds": [
+              "payment_service"
+            ],
+            "action": "interact",
+            "interactionId": "i_c_payment_service_to_seat_cache_blocked",
+            "cleanup": false
           }
         ]
       },
       "animationPlan": {
         "entities": [
           {
-            "entityId": "users",
+            "entityId": "payment_service",
             "action": "remove",
             "delay": 0,
-            "duration": 0.9,
-            "easing": "cubic-bezier(0.2,0,0,1)"
+            "duration": 0.28,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
           },
           {
-            "entityId": "message_queue",
-            "action": "move",
-            "delay": 0.6000000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "worker",
-            "action": "move",
-            "delay": 0.68,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "retry_policy",
+            "entityId": "seat_lock",
             "action": "add",
-            "delay": 1.7999999999999998,
-            "duration": 0.54,
-            "easing": "cubic-bezier(0.2,0,0,1)",
-            "isPrimary": false
-          },
-          {
-            "entityId": "dead_letter_queue",
-            "action": "add",
-            "delay": 1.882,
-            "duration": 0.62,
-            "easing": "cubic-bezier(0.2,0,0,1)",
+            "delay": 0.53,
+            "duration": 0.32,
+            "easing": "cubic-bezier(0.4,0,0.2,1)",
             "scale": 1.2,
             "isPrimary": true
           }
         ],
         "connections": [
           {
-            "connectionId": "c_worker_to_retry_policy_retry",
-            "delay": 0.504,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
+            "connectionId": "c_users_to_seat_lock",
+            "delay": 0.54,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
           },
           {
-            "connectionId": "c_retry_policy_to_dlq_retry",
-            "delay": 0.584,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
+            "connectionId": "c_seat_lock_to_seat_cache",
+            "delay": 0.56,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
           },
           {
-            "connectionId": "c_worker_to_dlq_async_event",
-            "delay": 0.664,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
+            "connectionId": "c_users_to_payment_service",
+            "delay": 0.5800000000000001,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
           },
           {
-            "connectionId": "c_users_to_queue_ingestion",
-            "delay": 0.744,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
+            "connectionId": "c_payment_service_to_seat_cache",
+            "delay": 0.6000000000000001,
+            "duration": 0.2,
+            "easing": "cubic-bezier(0.4,0,0.2,1)"
           }
         ],
         "camera": null
       },
-      "cameraPlan": null,
+      "cameraPlan": {
+        "zoom": 1,
+        "duration": 0.45,
+        "easing": "cubic-bezier(0.2,0,0,1)",
+        "motionType": "expand_architecture"
+      },
       "sceneDiff": {
         "addedEntities": [
           {
-            "id": "retry_policy",
-            "type": "retry_policy",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Retry Policy",
-            "icon": "rotate-cw",
-            "layout": {
-              "x": 50,
-              "y": 51.11166666666668
-            }
-          },
-          {
-            "id": "dead_letter_queue",
-            "type": "dead_letter_queue",
+            "id": "seat_lock",
+            "type": "authorization_lock",
             "count": 1,
             "importance": "primary",
             "status": "active",
-            "label": "Dead Letter Queue",
-            "icon": "archive",
+            "label": "Seat Lock",
+            "icon": "lock",
             "layout": {
-              "x": 50,
-              "y": 72.83500000000001
-            }
-          }
-        ],
-        "removedEntities": [
-          {
-            "id": "users",
-            "type": "users_cluster",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Users",
-            "icon": "users",
-            "layout": {
-              "x": 50,
-              "y": 9.66
-            }
-          }
-        ],
-        "movedEntities": [
-          {
-            "id": "message_queue",
-            "from": {
-              "x": 50,
-              "y": 40.25
-            },
-            "to": {
-              "x": 50,
-              "y": 7.664999999999999
-            }
-          },
-          {
-            "id": "worker",
-            "from": {
-              "x": 50,
-              "y": 70.84
-            },
-            "to": {
               "x": 50,
               "y": 29.38833333333334
             }
           }
         ],
+        "removedEntities": [
+          {
+            "id": "payment_service",
+            "type": "payment_service",
+            "count": 1,
+            "importance": "secondary",
+            "status": "error",
+            "label": "Payment Service",
+            "icon": "credit-card",
+            "layout": {
+              "x": 50,
+              "y": 29.38833333333334
+            }
+          }
+        ],
+        "movedEntities": [],
         "updatedEntities": [
           {
-            "id": "message_queue",
+            "id": "users",
             "changes": {
-              "count": {
-                "from": 3,
-                "to": 1
+              "status": {
+                "from": "active",
+                "to": "normal"
+              }
+            }
+          },
+          {
+            "id": "seat_cache",
+            "changes": {
+              "status": {
+                "from": "error",
+                "to": "active"
               },
               "importance": {
                 "from": "primary",
@@ -3494,1756 +6601,87 @@ const renderSpec = {
         ],
         "addedConnections": [
           {
-            "id": "c_worker_to_retry_policy_retry",
-            "from": "worker",
-            "to": "retry_policy",
+            "id": "c_users_to_seat_lock",
+            "from": "users",
+            "to": "seat_lock",
             "direction": "one_way",
             "style": "solid"
           },
           {
-            "id": "c_retry_policy_to_dlq_retry",
-            "from": "retry_policy",
-            "to": "dead_letter_queue",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_worker_to_dlq_async_event",
-            "from": "worker",
-            "to": "dead_letter_queue",
-            "direction": "one_way",
+            "id": "c_seat_lock_to_seat_cache",
+            "from": "seat_lock",
+            "to": "seat_cache",
+            "direction": "bidirectional",
             "style": "solid"
           }
         ],
         "removedConnections": [
           {
-            "id": "c_users_to_queue_ingestion",
+            "id": "c_users_to_payment_service",
             "from": "users",
-            "to": "message_queue",
+            "to": "payment_service",
+            "direction": "one_way",
+            "style": "solid"
+          },
+          {
+            "id": "c_payment_service_to_seat_cache",
+            "from": "payment_service",
+            "to": "seat_cache",
             "direction": "one_way",
             "style": "solid"
           }
         ],
         "addedInteractions": [
           {
-            "id": "i_c_worker_to_retry_policy_retry_fwd",
-            "from": "worker",
-            "to": "retry_policy",
-            "type": "burst",
+            "id": "i_c_users_to_seat_lock_fwd",
+            "from": "users",
+            "to": "seat_lock",
+            "type": "flow",
             "intensity": "medium"
           },
           {
-            "id": "i_c_retry_policy_to_dlq_retry_fwd",
-            "from": "retry_policy",
-            "to": "dead_letter_queue",
-            "type": "burst",
-            "intensity": "low"
+            "id": "i_c_seat_lock_to_seat_cache_fwd",
+            "from": "seat_lock",
+            "to": "seat_cache",
+            "type": "ping",
+            "intensity": "medium"
           },
           {
-            "id": "i_c_worker_to_dlq_async_event_fwd",
-            "from": "worker",
-            "to": "dead_letter_queue",
-            "type": "broadcast",
-            "intensity": "low"
+            "id": "i_c_seat_lock_to_seat_cache_rev",
+            "from": "seat_cache",
+            "to": "seat_lock",
+            "type": "ping",
+            "intensity": "medium"
           }
         ],
         "removedInteractions": [
           {
-            "id": "i_c_users_to_queue_ingestion_fwd",
+            "id": "i_c_users_to_payment_service_fwd",
             "from": "users",
-            "to": "message_queue",
+            "to": "payment_service",
             "type": "flow",
             "intensity": "medium"
+          },
+          {
+            "id": "i_c_payment_service_to_seat_cache_blocked",
+            "from": "payment_service",
+            "to": "seat_cache",
+            "type": "blocked",
+            "intensity": "high"
           }
         ],
         "interactionIntensityChanged": [],
         "cameraChanged": {
           "from": {
             "mode": "focus",
-            "target": "message_queue",
-            "zoom": 1
+            "target": "seat_cache",
+            "zoom": 1.14
           },
           "to": {
             "mode": "wide",
             "zoom": 1
           }
         }
-      }
-    },
-    {
-      "id": "s8-backlog-drains",
-      "start": 42,
-      "end": 48,
-      "narration": "The spike ends, and the queue backlog drains smoothly over time.",
-      "elements": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "sourceEntityId": "users",
-          "label": "Users",
-          "icon": "users",
-          "position": {
-            "x": 50,
-            "y": 7.664999999999999
-          },
-          "visualStyle": {
-            "size": 135,
-            "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.645448922205832,
-            "strokeColor": "#35C4C8",
-            "glow": false,
-            "glowColor": "#35C4C8",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 47.879999999999995,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "message_queue",
-          "type": "message_queue",
-          "sourceEntityId": "message_queue",
-          "label": "Message Queue",
-          "icon": "inbox",
-          "position": {
-            "x": 50,
-            "y": 29.38833333333334
-          },
-          "visualStyle": {
-            "size": 135,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.645448922205832,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 47.879999999999995,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "worker",
-          "type": "worker",
-          "sourceEntityId": "worker",
-          "label": "Worker",
-          "icon": "cpu",
-          "position": {
-            "x": 50,
-            "y": 51.11166666666668
-          },
-          "visualStyle": {
-            "size": 135,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.645448922205832,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 47.879999999999995,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "dead_letter_queue",
-          "type": "dead_letter_queue",
-          "sourceEntityId": "dead_letter_queue",
-          "label": "Dead Letter Queue",
-          "icon": "archive",
-          "position": {
-            "x": 50,
-            "y": 72.83500000000001
-          },
-          "visualStyle": {
-            "size": 135,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.645448922205832,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 47.879999999999995,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        }
-      ],
-      "entities": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Users",
-          "icon": "users",
-          "layout": {
-            "x": 50,
-            "y": 7.664999999999999
-          }
-        },
-        {
-          "id": "message_queue",
-          "type": "message_queue",
-          "count": 1,
-          "importance": "primary",
-          "status": "active",
-          "label": "Message Queue",
-          "icon": "inbox",
-          "layout": {
-            "x": 50,
-            "y": 29.38833333333334
-          }
-        },
-        {
-          "id": "worker",
-          "type": "worker",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "Worker",
-          "icon": "cpu",
-          "layout": {
-            "x": 50,
-            "y": 51.11166666666668
-          }
-        },
-        {
-          "id": "dead_letter_queue",
-          "type": "dead_letter_queue",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "Dead Letter Queue",
-          "icon": "archive",
-          "layout": {
-            "x": 50,
-            "y": 72.83500000000001
-          }
-        }
-      ],
-      "connections": [
-        {
-          "id": "c_users_to_queue_ingestion",
-          "from": "users",
-          "to": "message_queue",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_queue_to_worker_dispatch",
-          "from": "message_queue",
-          "to": "worker",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_worker_to_dlq_async_event",
-          "from": "worker",
-          "to": "dead_letter_queue",
-          "direction": "one_way",
-          "style": "solid"
-        }
-      ],
-      "interactions": [
-        {
-          "id": "i_c_users_to_queue_ingestion_fwd",
-          "from": "users",
-          "to": "message_queue",
-          "type": "flow",
-          "intensity": "low"
-        },
-        {
-          "id": "i_c_queue_to_worker_dispatch_fwd",
-          "from": "message_queue",
-          "to": "worker",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_worker_to_dlq_async_event_fwd",
-          "from": "worker",
-          "to": "dead_letter_queue",
-          "type": "broadcast",
-          "intensity": "low"
-        }
-      ],
-      "sourceCamera": {
-        "mode": "wide",
-        "zoom": 1
-      },
-      "directives": {
-        "camera": {
-          "mode": "follow_action",
-          "zoom": "wide",
-          "active_zone": "upper_third",
-          "reserve_bottom_percent": 25
-        },
-        "visual": {
-          "theme": "default",
-          "background_texture": "grid",
-          "glow_strength": "soft"
-        },
-        "motion": {
-          "entry_style": "draw_in",
-          "pacing": "balanced"
-        },
-        "flow": {
-          "renderer": "hybrid"
-        }
-      },
-      "source": {
-        "entities": [
-          {
-            "id": "users",
-            "type": "users_cluster",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Users",
-            "icon": "users",
-            "layout": {
-              "x": 50,
-              "y": 7.664999999999999
-            }
-          },
-          {
-            "id": "message_queue",
-            "type": "message_queue",
-            "count": 1,
-            "importance": "primary",
-            "status": "active",
-            "label": "Message Queue",
-            "icon": "inbox",
-            "layout": {
-              "x": 50,
-              "y": 29.38833333333334
-            }
-          },
-          {
-            "id": "worker",
-            "type": "worker",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Worker",
-            "icon": "cpu",
-            "layout": {
-              "x": 50,
-              "y": 51.11166666666668
-            }
-          },
-          {
-            "id": "dead_letter_queue",
-            "type": "dead_letter_queue",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Dead Letter Queue",
-            "icon": "archive",
-            "layout": {
-              "x": 50,
-              "y": 72.83500000000001
-            }
-          }
-        ],
-        "connections": [
-          {
-            "id": "c_users_to_queue_ingestion",
-            "from": "users",
-            "to": "message_queue",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_queue_to_worker_dispatch",
-            "from": "message_queue",
-            "to": "worker",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_worker_to_dlq_async_event",
-            "from": "worker",
-            "to": "dead_letter_queue",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "interactions": [
-          {
-            "id": "i_c_users_to_queue_ingestion_fwd",
-            "from": "users",
-            "to": "message_queue",
-            "type": "flow",
-            "intensity": "low"
-          },
-          {
-            "id": "i_c_queue_to_worker_dispatch_fwd",
-            "from": "message_queue",
-            "to": "worker",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_worker_to_dlq_async_event_fwd",
-            "from": "worker",
-            "to": "dead_letter_queue",
-            "type": "broadcast",
-            "intensity": "low"
-          }
-        ],
-        "camera": {
-          "mode": "wide",
-          "zoom": 1
-        }
-      },
-      "motionPersonality": "CALM",
-      "diff": {
-        "entityDiffs": [
-          {
-            "type": "entity_added",
-            "entityId": "users"
-          },
-          {
-            "type": "entity_removed",
-            "entityId": "retry_policy"
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "message_queue",
-            "from": {
-              "x": 50,
-              "y": 7.664999999999999
-            },
-            "to": {
-              "x": 50,
-              "y": 29.38833333333334
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "worker",
-            "from": {
-              "x": 50,
-              "y": 29.38833333333334
-            },
-            "to": {
-              "x": 50,
-              "y": 51.11166666666668
-            }
-          },
-          {
-            "type": "entity_importance_changed",
-            "entityId": "message_queue",
-            "from": "secondary",
-            "to": "primary"
-          },
-          {
-            "type": "entity_importance_changed",
-            "entityId": "dead_letter_queue",
-            "from": "primary",
-            "to": "secondary"
-          }
-        ],
-        "connectionDiffs": [
-          {
-            "type": "connection_added",
-            "connectionId": "c_users_to_queue_ingestion"
-          },
-          {
-            "type": "connection_removed",
-            "connectionId": "c_worker_to_retry_policy_retry"
-          },
-          {
-            "type": "connection_removed",
-            "connectionId": "c_retry_policy_to_dlq_retry"
-          }
-        ],
-        "interactionDiffs": [
-          {
-            "type": "interaction_added",
-            "interactionId": "i_c_users_to_queue_ingestion_fwd"
-          },
-          {
-            "type": "interaction_removed",
-            "interactionId": "i_c_worker_to_retry_policy_retry_fwd"
-          },
-          {
-            "type": "interaction_removed",
-            "interactionId": "i_c_retry_policy_to_dlq_retry_fwd"
-          }
-        ],
-        "cameraDiffs": []
-      },
-      "hierarchyTransition": null,
-      "plan": {
-        "phaseOrder": [
-          "removals",
-          "moves",
-          "additions",
-          "connections",
-          "interactions",
-          "camera"
-        ],
-        "removals": [
-          {
-            "entityId": "retry_policy",
-            "elementIds": [
-              "retry_policy"
-            ],
-            "action": "remove",
-            "exit": "zoom_out",
-            "cleanup": true
-          }
-        ],
-        "moves": [
-          {
-            "entityId": "message_queue",
-            "elementIds": [
-              "message_queue"
-            ],
-            "action": "move"
-          },
-          {
-            "entityId": "worker",
-            "elementIds": [
-              "worker"
-            ],
-            "action": "move"
-          }
-        ],
-        "additions": [
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "add",
-            "enter": "zoom_in"
-          },
-          {
-            "entityId": "message_queue",
-            "elementIds": [
-              "message_queue"
-            ],
-            "action": "add",
-            "enter": "zoom_in"
-          }
-        ],
-        "connections": [
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "connect",
-            "connectionId": "c_users_to_queue_ingestion"
-          },
-          {
-            "entityId": "message_queue",
-            "elementIds": [
-              "message_queue"
-            ],
-            "action": "connect",
-            "connectionId": "c_users_to_queue_ingestion"
-          },
-          {
-            "entityId": "worker",
-            "elementIds": [
-              "worker"
-            ],
-            "action": "connect",
-            "connectionId": "c_worker_to_retry_policy_retry"
-          },
-          {
-            "entityId": "retry_policy",
-            "elementIds": [
-              "retry_policy"
-            ],
-            "action": "connect",
-            "connectionId": "c_retry_policy_to_dlq_retry",
-            "cleanup": false
-          },
-          {
-            "entityId": "dead_letter_queue",
-            "elementIds": [
-              "dead_letter_queue"
-            ],
-            "action": "connect",
-            "connectionId": "c_retry_policy_to_dlq_retry"
-          }
-        ],
-        "interactions": [
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_users_to_queue_ingestion_fwd"
-          },
-          {
-            "entityId": "message_queue",
-            "elementIds": [
-              "message_queue"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_users_to_queue_ingestion_fwd"
-          },
-          {
-            "entityId": "worker",
-            "elementIds": [
-              "worker"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_worker_to_retry_policy_retry_fwd"
-          },
-          {
-            "entityId": "retry_policy",
-            "elementIds": [
-              "retry_policy"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_retry_policy_to_dlq_retry_fwd",
-            "cleanup": false
-          },
-          {
-            "entityId": "dead_letter_queue",
-            "elementIds": [
-              "dead_letter_queue"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_retry_policy_to_dlq_retry_fwd"
-          }
-        ]
-      },
-      "animationPlan": {
-        "entities": [
-          {
-            "entityId": "retry_policy",
-            "action": "remove",
-            "delay": 0,
-            "duration": 0.9,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "message_queue",
-            "action": "move",
-            "delay": 0.6000000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "worker",
-            "action": "move",
-            "delay": 0.68,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "users",
-            "action": "add",
-            "delay": 1.7999999999999998,
-            "duration": 0.54,
-            "easing": "cubic-bezier(0.2,0,0,1)",
-            "isPrimary": false
-          },
-          {
-            "entityId": "message_queue",
-            "action": "add",
-            "delay": 1.882,
-            "duration": 0.62,
-            "easing": "cubic-bezier(0.2,0,0,1)",
-            "scale": 1.2,
-            "isPrimary": true
-          }
-        ],
-        "connections": [
-          {
-            "connectionId": "c_users_to_queue_ingestion",
-            "delay": 0.504,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "connectionId": "c_worker_to_retry_policy_retry",
-            "delay": 0.584,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "connectionId": "c_retry_policy_to_dlq_retry",
-            "delay": 0.664,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          }
-        ],
-        "camera": null
-      },
-      "cameraPlan": null,
-      "sceneDiff": {
-        "addedEntities": [
-          {
-            "id": "users",
-            "type": "users_cluster",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Users",
-            "icon": "users",
-            "layout": {
-              "x": 50,
-              "y": 7.664999999999999
-            }
-          }
-        ],
-        "removedEntities": [
-          {
-            "id": "retry_policy",
-            "type": "retry_policy",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Retry Policy",
-            "icon": "rotate-cw",
-            "layout": {
-              "x": 50,
-              "y": 51.11166666666668
-            }
-          }
-        ],
-        "movedEntities": [
-          {
-            "id": "message_queue",
-            "from": {
-              "x": 50,
-              "y": 7.664999999999999
-            },
-            "to": {
-              "x": 50,
-              "y": 29.38833333333334
-            }
-          },
-          {
-            "id": "worker",
-            "from": {
-              "x": 50,
-              "y": 29.38833333333334
-            },
-            "to": {
-              "x": 50,
-              "y": 51.11166666666668
-            }
-          }
-        ],
-        "updatedEntities": [
-          {
-            "id": "message_queue",
-            "changes": {
-              "importance": {
-                "from": "secondary",
-                "to": "primary"
-              }
-            }
-          },
-          {
-            "id": "dead_letter_queue",
-            "changes": {
-              "importance": {
-                "from": "primary",
-                "to": "secondary"
-              }
-            }
-          }
-        ],
-        "addedConnections": [
-          {
-            "id": "c_users_to_queue_ingestion",
-            "from": "users",
-            "to": "message_queue",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "removedConnections": [
-          {
-            "id": "c_worker_to_retry_policy_retry",
-            "from": "worker",
-            "to": "retry_policy",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_retry_policy_to_dlq_retry",
-            "from": "retry_policy",
-            "to": "dead_letter_queue",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "addedInteractions": [
-          {
-            "id": "i_c_users_to_queue_ingestion_fwd",
-            "from": "users",
-            "to": "message_queue",
-            "type": "flow",
-            "intensity": "low"
-          }
-        ],
-        "removedInteractions": [
-          {
-            "id": "i_c_worker_to_retry_policy_retry_fwd",
-            "from": "worker",
-            "to": "retry_policy",
-            "type": "burst",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_retry_policy_to_dlq_retry_fwd",
-            "from": "retry_policy",
-            "to": "dead_letter_queue",
-            "type": "burst",
-            "intensity": "low"
-          }
-        ],
-        "interactionIntensityChanged": [],
-        "cameraChanged": null
-      }
-    },
-    {
-      "id": "s9-recap-decouple",
-      "start": 48,
-      "end": 54,
-      "narration": "The queue decouples the bursty users from steady workers with buffering.",
-      "elements": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "sourceEntityId": "users",
-          "label": "Users",
-          "icon": "users",
-          "position": {
-            "x": 50,
-            "y": 9.66
-          },
-          "visualStyle": {
-            "size": 149.4,
-            "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.7829653249726274,
-            "strokeColor": "#35C4C8",
-            "glow": false,
-            "glowColor": "#35C4C8",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 52.987199999999994,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "message_queue",
-          "type": "message_queue",
-          "sourceEntityId": "message_queue",
-          "label": "Message Queue",
-          "icon": "inbox",
-          "position": {
-            "x": 50,
-            "y": 40.25
-          },
-          "visualStyle": {
-            "size": 149.4,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.7829653249726274,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 52.987199999999994,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "worker",
-          "type": "worker",
-          "sourceEntityId": "worker",
-          "label": "Worker",
-          "icon": "cpu",
-          "position": {
-            "x": 50,
-            "y": 70.84
-          },
-          "visualStyle": {
-            "size": 149.4,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.7829653249726274,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 52.987199999999994,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        }
-      ],
-      "entities": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Users",
-          "icon": "users",
-          "layout": {
-            "x": 50,
-            "y": 9.66
-          }
-        },
-        {
-          "id": "message_queue",
-          "type": "message_queue",
-          "count": 1,
-          "importance": "primary",
-          "status": "active",
-          "label": "Message Queue",
-          "icon": "inbox",
-          "layout": {
-            "x": 50,
-            "y": 40.25
-          }
-        },
-        {
-          "id": "worker",
-          "type": "worker",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "Worker",
-          "icon": "cpu",
-          "layout": {
-            "x": 50,
-            "y": 70.84
-          }
-        }
-      ],
-      "connections": [
-        {
-          "id": "c_users_to_queue_ingestion",
-          "from": "users",
-          "to": "message_queue",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_queue_to_worker_dispatch",
-          "from": "message_queue",
-          "to": "worker",
-          "direction": "one_way",
-          "style": "solid"
-        }
-      ],
-      "interactions": [
-        {
-          "id": "i_c_users_to_queue_ingestion_fwd",
-          "from": "users",
-          "to": "message_queue",
-          "type": "burst",
-          "intensity": "high"
-        },
-        {
-          "id": "i_c_queue_to_worker_dispatch_fwd",
-          "from": "message_queue",
-          "to": "worker",
-          "type": "flow",
-          "intensity": "medium"
-        }
-      ],
-      "sourceCamera": {
-        "mode": "wide",
-        "zoom": 1
-      },
-      "directives": {
-        "camera": {
-          "mode": "wide_recap",
-          "zoom": "wide",
-          "active_zone": "upper_third",
-          "reserve_bottom_percent": 25
-        },
-        "visual": {
-          "theme": "default",
-          "background_texture": "grid",
-          "glow_strength": "soft"
-        },
-        "motion": {
-          "entry_style": "draw_in",
-          "pacing": "balanced"
-        },
-        "flow": {
-          "renderer": "dashed"
-        }
-      },
-      "source": {
-        "entities": [
-          {
-            "id": "users",
-            "type": "users_cluster",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Users",
-            "icon": "users",
-            "layout": {
-              "x": 50,
-              "y": 9.66
-            }
-          },
-          {
-            "id": "message_queue",
-            "type": "message_queue",
-            "count": 1,
-            "importance": "primary",
-            "status": "active",
-            "label": "Message Queue",
-            "icon": "inbox",
-            "layout": {
-              "x": 50,
-              "y": 40.25
-            }
-          },
-          {
-            "id": "worker",
-            "type": "worker",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Worker",
-            "icon": "cpu",
-            "layout": {
-              "x": 50,
-              "y": 70.84
-            }
-          }
-        ],
-        "connections": [
-          {
-            "id": "c_users_to_queue_ingestion",
-            "from": "users",
-            "to": "message_queue",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_queue_to_worker_dispatch",
-            "from": "message_queue",
-            "to": "worker",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "interactions": [
-          {
-            "id": "i_c_users_to_queue_ingestion_fwd",
-            "from": "users",
-            "to": "message_queue",
-            "type": "burst",
-            "intensity": "high"
-          },
-          {
-            "id": "i_c_queue_to_worker_dispatch_fwd",
-            "from": "message_queue",
-            "to": "worker",
-            "type": "flow",
-            "intensity": "medium"
-          }
-        ],
-        "camera": {
-          "mode": "wide",
-          "zoom": 1
-        }
-      },
-      "motionPersonality": "CALM",
-      "diff": {
-        "entityDiffs": [
-          {
-            "type": "entity_removed",
-            "entityId": "dead_letter_queue"
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "users",
-            "from": {
-              "x": 50,
-              "y": 7.664999999999999
-            },
-            "to": {
-              "x": 50,
-              "y": 9.66
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "message_queue",
-            "from": {
-              "x": 50,
-              "y": 29.38833333333334
-            },
-            "to": {
-              "x": 50,
-              "y": 40.25
-            }
-          },
-          {
-            "type": "entity_moved",
-            "entityId": "worker",
-            "from": {
-              "x": 50,
-              "y": 51.11166666666668
-            },
-            "to": {
-              "x": 50,
-              "y": 70.84
-            }
-          }
-        ],
-        "connectionDiffs": [
-          {
-            "type": "connection_removed",
-            "connectionId": "c_worker_to_dlq_async_event"
-          }
-        ],
-        "interactionDiffs": [
-          {
-            "type": "interaction_removed",
-            "interactionId": "i_c_worker_to_dlq_async_event_fwd"
-          },
-          {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_users_to_queue_ingestion_fwd",
-            "from": "low",
-            "to": "high"
-          }
-        ],
-        "cameraDiffs": []
-      },
-      "hierarchyTransition": null,
-      "plan": {
-        "phaseOrder": [
-          "removals",
-          "moves",
-          "additions",
-          "connections",
-          "interactions",
-          "camera"
-        ],
-        "removals": [
-          {
-            "entityId": "dead_letter_queue",
-            "elementIds": [
-              "dead_letter_queue"
-            ],
-            "action": "remove",
-            "exit": "zoom_out",
-            "cleanup": true
-          }
-        ],
-        "moves": [
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "move"
-          },
-          {
-            "entityId": "message_queue",
-            "elementIds": [
-              "message_queue"
-            ],
-            "action": "move"
-          },
-          {
-            "entityId": "worker",
-            "elementIds": [
-              "worker"
-            ],
-            "action": "move"
-          }
-        ],
-        "additions": [],
-        "connections": [
-          {
-            "entityId": "worker",
-            "elementIds": [
-              "worker"
-            ],
-            "action": "connect",
-            "connectionId": "c_worker_to_dlq_async_event"
-          },
-          {
-            "entityId": "dead_letter_queue",
-            "elementIds": [
-              "dead_letter_queue"
-            ],
-            "action": "connect",
-            "connectionId": "c_worker_to_dlq_async_event"
-          }
-        ],
-        "interactions": [
-          {
-            "entityId": "worker",
-            "elementIds": [
-              "worker"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_worker_to_dlq_async_event_fwd"
-          },
-          {
-            "entityId": "dead_letter_queue",
-            "elementIds": [
-              "dead_letter_queue"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_worker_to_dlq_async_event_fwd"
-          },
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_users_to_queue_ingestion_fwd"
-          },
-          {
-            "entityId": "message_queue",
-            "elementIds": [
-              "message_queue"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_users_to_queue_ingestion_fwd"
-          }
-        ]
-      },
-      "animationPlan": {
-        "entities": [
-          {
-            "entityId": "dead_letter_queue",
-            "action": "remove",
-            "delay": 0,
-            "duration": 0.9,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "users",
-            "action": "move",
-            "delay": 0.6000000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "message_queue",
-            "action": "move",
-            "delay": 0.68,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          },
-          {
-            "entityId": "worker",
-            "action": "move",
-            "delay": 0.7600000000000001,
-            "duration": 0.95,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          }
-        ],
-        "connections": [
-          {
-            "connectionId": "c_worker_to_dlq_async_event",
-            "delay": 0.504,
-            "duration": 0.42,
-            "easing": "cubic-bezier(0.2,0,0,1)"
-          }
-        ],
-        "camera": null
-      },
-      "cameraPlan": null,
-      "sceneDiff": {
-        "addedEntities": [],
-        "removedEntities": [
-          {
-            "id": "dead_letter_queue",
-            "type": "dead_letter_queue",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Dead Letter Queue",
-            "icon": "archive",
-            "layout": {
-              "x": 50,
-              "y": 72.83500000000001
-            }
-          }
-        ],
-        "movedEntities": [
-          {
-            "id": "users",
-            "from": {
-              "x": 50,
-              "y": 7.664999999999999
-            },
-            "to": {
-              "x": 50,
-              "y": 9.66
-            }
-          },
-          {
-            "id": "message_queue",
-            "from": {
-              "x": 50,
-              "y": 29.38833333333334
-            },
-            "to": {
-              "x": 50,
-              "y": 40.25
-            }
-          },
-          {
-            "id": "worker",
-            "from": {
-              "x": 50,
-              "y": 51.11166666666668
-            },
-            "to": {
-              "x": 50,
-              "y": 70.84
-            }
-          }
-        ],
-        "updatedEntities": [],
-        "addedConnections": [],
-        "removedConnections": [
-          {
-            "id": "c_worker_to_dlq_async_event",
-            "from": "worker",
-            "to": "dead_letter_queue",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "addedInteractions": [],
-        "removedInteractions": [
-          {
-            "id": "i_c_worker_to_dlq_async_event_fwd",
-            "from": "worker",
-            "to": "dead_letter_queue",
-            "type": "broadcast",
-            "intensity": "low"
-          }
-        ],
-        "interactionIntensityChanged": [
-          {
-            "id": "i_c_users_to_queue_ingestion_fwd",
-            "from": "low",
-            "to": "high"
-          }
-        ],
-        "cameraChanged": null
-      }
-    },
-    {
-      "id": "s10-ending-rule-of-thumb",
-      "start": 54,
-      "end": 60,
-      "narration": "When traffic surges, buffer in a queue and let workers pull steadily.",
-      "elements": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "sourceEntityId": "users",
-          "label": "Users",
-          "icon": "users",
-          "position": {
-            "x": 50,
-            "y": 9.66
-          },
-          "visualStyle": {
-            "size": 149.4,
-            "opacity": 1,
-            "color": "#1F314D",
-            "strokeWidth": 2.7829653249726274,
-            "strokeColor": "#35C4C8",
-            "glow": false,
-            "glowColor": "#35C4C8",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 52.987199999999994,
-            "fontWeight": 600,
-            "status": "normal"
-          }
-        },
-        {
-          "id": "message_queue",
-          "type": "message_queue",
-          "sourceEntityId": "message_queue",
-          "label": "Message Queue",
-          "icon": "inbox",
-          "position": {
-            "x": 50,
-            "y": 40.25
-          },
-          "visualStyle": {
-            "size": 149.4,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.7829653249726274,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 52.987199999999994,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        },
-        {
-          "id": "worker",
-          "type": "worker",
-          "sourceEntityId": "worker",
-          "label": "Worker",
-          "icon": "cpu",
-          "position": {
-            "x": 50,
-            "y": 70.84
-          },
-          "visualStyle": {
-            "size": 149.4,
-            "opacity": 1,
-            "color": "#34D399",
-            "strokeWidth": 2.7829653249726274,
-            "strokeColor": "#34D399",
-            "glow": false,
-            "glowColor": "#34D399",
-            "glowBlur": 0,
-            "textColor": "#E8F6FF",
-            "fontSize": 52.987199999999994,
-            "fontWeight": 600,
-            "status": "active"
-          }
-        }
-      ],
-      "entities": [
-        {
-          "id": "users",
-          "type": "users_cluster",
-          "count": 1,
-          "importance": "secondary",
-          "status": "normal",
-          "label": "Users",
-          "icon": "users",
-          "layout": {
-            "x": 50,
-            "y": 9.66
-          }
-        },
-        {
-          "id": "message_queue",
-          "type": "message_queue",
-          "count": 1,
-          "importance": "secondary",
-          "status": "active",
-          "label": "Message Queue",
-          "icon": "inbox",
-          "layout": {
-            "x": 50,
-            "y": 40.25
-          }
-        },
-        {
-          "id": "worker",
-          "type": "worker",
-          "count": 1,
-          "importance": "primary",
-          "status": "active",
-          "label": "Worker",
-          "icon": "cpu",
-          "layout": {
-            "x": 50,
-            "y": 70.84
-          }
-        }
-      ],
-      "connections": [
-        {
-          "id": "c_users_to_queue_ingestion",
-          "from": "users",
-          "to": "message_queue",
-          "direction": "one_way",
-          "style": "solid"
-        },
-        {
-          "id": "c_queue_to_worker_dispatch",
-          "from": "message_queue",
-          "to": "worker",
-          "direction": "one_way",
-          "style": "solid"
-        }
-      ],
-      "interactions": [
-        {
-          "id": "i_c_users_to_queue_ingestion_fwd",
-          "from": "users",
-          "to": "message_queue",
-          "type": "flow",
-          "intensity": "medium"
-        },
-        {
-          "id": "i_c_queue_to_worker_dispatch_fwd",
-          "from": "message_queue",
-          "to": "worker",
-          "type": "flow",
-          "intensity": "medium"
-        }
-      ],
-      "sourceCamera": {
-        "mode": "wide",
-        "zoom": 1
-      },
-      "directives": {
-        "camera": {
-          "mode": "wide_recap",
-          "zoom": "wide",
-          "active_zone": "upper_third",
-          "reserve_bottom_percent": 25
-        },
-        "visual": {
-          "theme": "default",
-          "background_texture": "grid",
-          "glow_strength": "soft"
-        },
-        "motion": {
-          "entry_style": "draw_in",
-          "pacing": "balanced"
-        },
-        "flow": {
-          "renderer": "dashed"
-        }
-      },
-      "source": {
-        "entities": [
-          {
-            "id": "users",
-            "type": "users_cluster",
-            "count": 1,
-            "importance": "secondary",
-            "status": "normal",
-            "label": "Users",
-            "icon": "users",
-            "layout": {
-              "x": 50,
-              "y": 9.66
-            }
-          },
-          {
-            "id": "message_queue",
-            "type": "message_queue",
-            "count": 1,
-            "importance": "secondary",
-            "status": "active",
-            "label": "Message Queue",
-            "icon": "inbox",
-            "layout": {
-              "x": 50,
-              "y": 40.25
-            }
-          },
-          {
-            "id": "worker",
-            "type": "worker",
-            "count": 1,
-            "importance": "primary",
-            "status": "active",
-            "label": "Worker",
-            "icon": "cpu",
-            "layout": {
-              "x": 50,
-              "y": 70.84
-            }
-          }
-        ],
-        "connections": [
-          {
-            "id": "c_users_to_queue_ingestion",
-            "from": "users",
-            "to": "message_queue",
-            "direction": "one_way",
-            "style": "solid"
-          },
-          {
-            "id": "c_queue_to_worker_dispatch",
-            "from": "message_queue",
-            "to": "worker",
-            "direction": "one_way",
-            "style": "solid"
-          }
-        ],
-        "interactions": [
-          {
-            "id": "i_c_users_to_queue_ingestion_fwd",
-            "from": "users",
-            "to": "message_queue",
-            "type": "flow",
-            "intensity": "medium"
-          },
-          {
-            "id": "i_c_queue_to_worker_dispatch_fwd",
-            "from": "message_queue",
-            "to": "worker",
-            "type": "flow",
-            "intensity": "medium"
-          }
-        ],
-        "camera": {
-          "mode": "wide",
-          "zoom": 1
-        }
-      },
-      "motionPersonality": "CALM",
-      "diff": {
-        "entityDiffs": [
-          {
-            "type": "entity_importance_changed",
-            "entityId": "message_queue",
-            "from": "primary",
-            "to": "secondary"
-          },
-          {
-            "type": "entity_importance_changed",
-            "entityId": "worker",
-            "from": "secondary",
-            "to": "primary"
-          }
-        ],
-        "connectionDiffs": [],
-        "interactionDiffs": [
-          {
-            "type": "interaction_intensity_changed",
-            "interactionId": "i_c_users_to_queue_ingestion_fwd",
-            "from": "high",
-            "to": "medium"
-          }
-        ],
-        "cameraDiffs": []
-      },
-      "hierarchyTransition": null,
-      "plan": {
-        "phaseOrder": [
-          "removals",
-          "moves",
-          "additions",
-          "connections",
-          "interactions",
-          "camera"
-        ],
-        "removals": [],
-        "moves": [],
-        "additions": [
-          {
-            "entityId": "worker",
-            "elementIds": [
-              "worker"
-            ],
-            "action": "add",
-            "enter": "zoom_in"
-          }
-        ],
-        "connections": [],
-        "interactions": [
-          {
-            "entityId": "users",
-            "elementIds": [
-              "users"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_users_to_queue_ingestion_fwd"
-          },
-          {
-            "entityId": "message_queue",
-            "elementIds": [
-              "message_queue"
-            ],
-            "action": "interact",
-            "interactionId": "i_c_users_to_queue_ingestion_fwd"
-          }
-        ]
-      },
-      "animationPlan": {
-        "entities": [
-          {
-            "entityId": "worker",
-            "action": "add",
-            "delay": 1.8499999999999999,
-            "duration": 0.62,
-            "easing": "cubic-bezier(0.2,0,0,1)",
-            "scale": 1.2,
-            "isPrimary": true
-          }
-        ],
-        "connections": [],
-        "camera": null
-      },
-      "cameraPlan": null,
-      "sceneDiff": {
-        "addedEntities": [],
-        "removedEntities": [],
-        "movedEntities": [],
-        "updatedEntities": [
-          {
-            "id": "message_queue",
-            "changes": {
-              "importance": {
-                "from": "primary",
-                "to": "secondary"
-              }
-            }
-          },
-          {
-            "id": "worker",
-            "changes": {
-              "importance": {
-                "from": "secondary",
-                "to": "primary"
-              }
-            }
-          }
-        ],
-        "addedConnections": [],
-        "removedConnections": [],
-        "addedInteractions": [],
-        "removedInteractions": [],
-        "interactionIntensityChanged": [
-          {
-            "id": "i_c_users_to_queue_ingestion_fwd",
-            "from": "high",
-            "to": "medium"
-          }
-        ],
-        "cameraChanged": null
       }
     }
   ]
